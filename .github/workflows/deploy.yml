@@ -22,12 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: main
       # Node のバージョンは mise.toml で管理
-      - uses: jdx/mise-action@v2
-      - uses: pnpm/action-setup@v4
+      - uses: jdx/mise-action@v5
+      - uses: pnpm/action-setup@v6
       - run: pnpm install --frozen-lockfile
       - name: Validate data
         run: pnpm -s lm validate all
@@ -44,7 +44,7 @@ jobs:
         run: pnpm -s lm og-pages all
         env:
           SITE_URL: ${{ vars.SITE_URL }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: site
           path: apps/web/dist
@@ -60,7 +60,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       PROJECT: ${{ vars.CLOUDFLARE_PROJECT }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: site
           path: dist
