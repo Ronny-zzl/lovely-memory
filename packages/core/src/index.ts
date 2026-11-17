@@ -5,3 +5,4 @@ export * from "./events.ts";
 export * from "./setlist-text.ts";
 export * from "./stats.ts";
 export * from "./members.ts";
+export * from "./patterns.ts";

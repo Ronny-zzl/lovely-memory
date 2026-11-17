@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import type { Song } from "@lovely-memory/core/runtime";
+import { neighbors, positionRole, type Song, type Transition } from "@lovely-memory/core/runtime";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, todayJst } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
@@ -30,8 +30,39 @@ function formatCredits(c: Song["credits"]): string[] {
   return groups.map((g) => `${g.roles.join("・")}：${g.name}`);
 }
 
+const ZONES = [
+  ["early", "前半"],
+  ["middle", "中盤"],
+  ["late", "後半"],
+] as const;
+
+const NEIGHBOR_SIZE = 3;
+
+function NeighborList({ title, items, pick, extra }: { title: string; items: Transition[]; pick: (t: Transition) => Song; extra?: string }) {
+  return (
+    <div className="neighbor-col">
+      <h4 className="neighbor-heading">{title}</h4>
+      {items.length === 0 && !extra ? (
+        <p className="muted small">—</p>
+      ) : (
+        <ul className="neighbor-list">
+          {items.slice(0, NEIGHBOR_SIZE).map((t) => (
+            <li key={pick(t).id}>
+              <Link to={`../${pick(t).id}`} relative="path" className="trend-song">
+                {pick(t).title}
+              </Link>
+              <span className="rank-count">{t.count}回</span>
+            </li>
+          ))}
+          {extra && <li className="muted small">{extra}</li>}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function SongDetailPage() {
-  const { artist, allStats } = useArtistData();
+  const { artist, allStats, patterns } = useArtistData();
   const songId = useParams().songId;
   const stats = allStats.songs.find((s) => s.song.id === songId);
 
@@ -53,12 +84,13 @@ export function SongDetailPage() {
   const sinceDebut = firstIdx >= 0 ? allStats.events.slice(firstIdx) : [];
   const sungIn = new Set(stats.performances.map((p) => p.eventId));
 
-  // セトリ内の位置
   const stageSize = (eventId: number, stageIndex: number) =>
     eventSetlists.get(eventId)?.stages[stageIndex]?.entries.length ?? 0;
-  const openers = stats.performances.filter((p) => p.position === 1 && !p.encore).length;
-  const closers = stats.performances.filter((p) => p.position === stageSize(p.eventId, p.stageIndex)).length;
-  const encores = stats.performances.filter((p) => p.encore).length;
+  // 本編での位置と前後の曲（コラボステージを除く）
+  const position = patterns.positions.find((p) => p.song.id === song.id);
+  const role = position && positionRole(position);
+  const zoned = position ? position.zones.early + position.zones.middle + position.zones.late : 0;
+  const near = neighbors(patterns, song.id);
 
   const history = [...stats.performances].reverse();
   // カバー曲は歌唱回数が少なく間隔も長いので、歌唱率・出現パターン等は出さない
@@ -75,6 +107,7 @@ export function SongDetailPage() {
           {song.title}
           {era && <span className={`badge era-${era.id}`}>{era.label}</span>}
           {unit && <UnitTag unit={unit} />}
+          {role && <span className="badge role">{role === "closer" ? "ラスト定番" : "1曲目定番"}</span>}
         </h2>
         {song.cover && (
           <p className="small">
@@ -168,9 +201,33 @@ export function SongDetailPage() {
                   />
                 ))}
               </div>
+            </section>
+          )}
+
+          {!isCover && position && position.count > 0 && (
+            <section className="song-section">
+              <h3 className="section-heading">
+                セトリでの位置<span className="muted small"> 本編 {position.count} 回</span>
+              </h3>
+              {zoned > 0 && (
+                <div className="zone-bar" role="img" aria-label={ZONES.map(([z, label]) => `${label} ${position.zones[z]}回`).join("、")}>
+                  {ZONES.map(([z, label]) =>
+                    position.zones[z] > 0 ? (
+                      <span key={z} className={`zone zone-${z}`} style={{ flexGrow: position.zones[z] }}>
+                        {label} {position.zones[z]}
+                      </span>
+                    ) : null,
+                  )}
+                </div>
+              )}
               <p className="small muted position-stats">
-                1 曲目 {openers} 回 ・ ラスト {closers} 回{encores > 0 && ` ・ アンコール ${encores} 回`}
+                1 曲目 {position.opener} 回 ・ ラスト {position.closer} 回
+                {position.encore > 0 && ` ・ アンコール ${position.encore} 回`}
               </p>
+              <div className="neighbors">
+                <NeighborList title="前に歌われた曲" items={near.before} pick={(t) => t.from} extra={position.opener > 0 ? `1 曲目 ${position.opener}回` : undefined} />
+                <NeighborList title="次に歌われた曲" items={near.after} pick={(t) => t.to} extra={position.closer > 0 ? `ラスト ${position.closer}回` : undefined} />
+              </div>
             </section>
           )}
 

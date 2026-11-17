@@ -1,9 +1,11 @@
 import {
+  computePatterns,
   computeStats,
   resolveEvents,
   type ArtistConfig,
   type ResolvedEvent,
   type Setlist,
+  type Patterns,
   type Song,
   type Stats,
 } from "@lovely-memory/core/runtime";
@@ -31,6 +33,8 @@ export type ArtistData = {
    * （絞り込み後の集計で判定すると、フィルタによって初披露が変わってしまうため）
    */
   allStats: Stats;
+  /** 全イベントの曲順の傾向（1 曲目・ラスト・つながり） */
+  patterns: Patterns;
 };
 
 async function load(artist: ArtistConfig): Promise<ArtistData> {
@@ -38,7 +42,8 @@ async function load(artist: ArtistConfig): Promise<ArtistData> {
   if (!loader) throw new Error(`no data for ${artist.id}`);
   const { songs, events: rawEvents, overrides, setlists } = (await loader()).default;
   const events = resolveEvents(rawEvents, overrides, artist);
-  return { artist, songs, events, setlists, allStats: computeStats({ songs, events, setlists }) };
+  const allStats = computeStats({ songs, events, setlists });
+  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events) };
 }
 
 const cache = new Map<string, Promise<ArtistData>>();
