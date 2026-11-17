@@ -83,7 +83,7 @@ export function TrendsPage() {
 
       <section className="song-section">
         <h3 className="section-heading">
-          よくあるつながり<span className="muted small"> 続けて歌われた 2 曲（分数は前の曲の後に続いた割合）</span>
+          よくあるつながり<span className="muted small"> 続けて歌われた 2 曲（分数は、前の曲の次にこの曲が来た割合）</span>
         </h3>
         <ul className="chain-list">
           {transitions.map((t) => (
