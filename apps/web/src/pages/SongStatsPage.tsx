@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { computeStats, eventHasType, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core";
 import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
@@ -265,7 +265,9 @@ export function SongStatsPage() {
               <tr key={s.song.id} className={s.count === 0 ? "unplayed" : undefined}>
                 <td className="rank">{s.count > 0 ? i + 1 : "–"}</td>
                 <td className="title">
-                  <span className="song-title">{s.song.title}</span>
+                  <Link to={s.song.id} className="song-title">
+                    {s.song.title}
+                  </Link>
                   <span className="song-meta">
                     {s.song.era && eraLabel.has(s.song.era) && (
                       <span className={`badge era-${s.song.era}`}>{eraLabel.get(s.song.era)}</span>

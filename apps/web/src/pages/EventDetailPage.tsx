@@ -78,7 +78,9 @@ export function EventDetailPage() {
                   return (
                     <li key={i} className={e.encore ? "encore" : undefined}>
                       <span className="item-no">{e.encore ? "EN" : `M${e.position}`}</span>
-                      <span className="item-title">{e.song.title}</span>
+                      <Link to={`/${artist.id}/songs/${e.song.id}`} className="item-title">
+                        {e.song.title}
+                      </Link>
                       {e.debut && (
                         <span className="badge debut" title="記録上の初披露">
                           初披露
