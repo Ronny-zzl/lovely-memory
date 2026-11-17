@@ -113,7 +113,7 @@ export function SongStatsPage() {
   const era = params.get("era") ?? "";
   const unit = params.get("unit") ?? "";
   const q = params.get("q") ?? "";
-  const sortKey = (params.get("sort") as SortKey) ?? "count";
+  const sortKey = (params.get("sort") as SortKey) ?? "rate";
   const desc = (params.get("dir") ?? (sortKey === "title" ? "asc" : "desc")) === "desc";
 
   const update = (patch: Record<string, string | null>) =>
@@ -176,7 +176,7 @@ export function SongStatsPage() {
 
   const setSort = (key: SortKey) => {
     if (key === sortKey) update({ dir: desc ? "asc" : "desc" });
-    else update({ sort: key === "count" ? null : key, dir: null });
+    else update({ sort: key === "rate" ? null : key, dir: null });
   };
 
   return (

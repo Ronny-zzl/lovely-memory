@@ -28,6 +28,7 @@ export function ArtistLayout() {
         <nav className="tabs">
           <NavLink to="songs">楽曲</NavLink>
           <NavLink to="events">公演</NavLink>
+          <NavLink to="members">メンバー</NavLink>
         </nav>
       </header>
       <Suspense fallback={<p className="muted">読み込み中…</p>}>

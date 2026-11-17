@@ -5,6 +5,7 @@ import { ArtistLayout } from "./pages/ArtistLayout.tsx";
 import { ArtistList } from "./pages/ArtistList.tsx";
 import { EventDetailPage } from "./pages/EventDetailPage.tsx";
 import { EventsPage } from "./pages/EventsPage.tsx";
+import { MembersPage } from "./pages/MembersPage.tsx";
 import { SongDetailPage } from "./pages/SongDetailPage.tsx";
 import { SongStatsPage } from "./pages/SongStatsPage.tsx";
 import "./styles.css";
@@ -21,6 +22,7 @@ const router = createHashRouter([
       { path: "songs/:songId", element: <SongDetailPage /> },
       { path: "events", element: <EventsPage /> },
       { path: "events/:eventId", element: <EventDetailPage /> },
+      { path: "members", element: <MembersPage /> },
     ],
   },
   { path: "*", element: <Navigate to="/" replace /> },
