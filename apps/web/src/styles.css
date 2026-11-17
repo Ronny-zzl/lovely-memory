@@ -917,3 +917,21 @@ a.item-title:hover {
 .date-chip .badge.collab {
   margin-left: 6px;
 }
+.stats-table .toggle-row td {
+  padding: 0;
+  border-bottom: 0;
+}
+.stats-table .toggle-row button {
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.stats-table .toggle-row button:hover {
+  color: var(--accent);
+  background: var(--row-hover);
+}

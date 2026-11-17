@@ -187,6 +187,10 @@ export function SongStatsPage() {
   ];
 
   const played = stats.songs.filter((s) => !s.song.cover && s.count > 0).length;
+  // 未披露曲は既定で畳む。曲名で検索しているときは、探している曲が隠れないよう常に表示
+  const unplayedCount = rows.filter((s) => s.count === 0).length;
+  const showUnplayed = params.get("unplayed") === "1" || q !== "";
+  const visibleRows = showUnplayed ? rows : rows.filter((s) => s.count > 0);
   const songTotal = songs.filter((s) => !s.cover && (includeCollab || !collabOnly.has(s.id))).length;
   // カバー曲は全公演の記録を表示する（上の絞り込みとは独立）。最近歌われた順
   const covers = allStats.songs
@@ -309,7 +313,7 @@ export function SongStatsPage() {
                 </td>
               </tr>
             )}
-            {rows.map((s, i) => (
+            {visibleRows.map((s, i) => (
               <tr key={s.song.id} className={s.count === 0 ? "unplayed" : undefined}>
                 <td className="rank">{s.count > 0 ? i + 1 : "–"}</td>
                 <td className="title">
@@ -330,6 +334,15 @@ export function SongStatsPage() {
                 ))}
               </tr>
             ))}
+            {unplayedCount > 0 && q === "" && (
+              <tr className="toggle-row">
+                <td colSpan={columns.length + 2}>
+                  <button type="button" onClick={() => update({ unplayed: showUnplayed ? null : "1" })}>
+                    {showUnplayed ? "▲ 未披露の曲を隠す" : `▼ 未披露の曲 ${unplayedCount} 曲を表示`}
+                  </button>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
