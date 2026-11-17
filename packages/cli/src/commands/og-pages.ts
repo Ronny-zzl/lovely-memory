@@ -7,6 +7,7 @@ import {
   displayTitle,
   formatDate,
   formatPercent,
+  tieupText,
   isLiveEvent,
   positionRole,
   resolveEvents,
@@ -87,12 +88,14 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     const img = `og/${p}.png`;
     const position = patterns.positions.find((x) => x.song.id === s.song.id);
     const role = position && positionRole(position);
+    const tieup = s.song.tieups.length ? `${s.song.tieups.map(tieupText).join("・")}。` : "";
     const description =
-      s.count === 0
-        ? `「${s.song.title}」はまだ歌われていません（${name}）。`
+      tieup +
+      (s.count === 0
+        ? `「${s.song.title}」はまだ歌われていません（${artist.name}）。`
         : s.song.cover
           ? `「${s.song.title}」（カバー曲・原曲: ${s.song.cover.artist}）の歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。`
-          : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} 公演）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`;
+          : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} 公演）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
     pages.push({ path: p, meta: { title: title(s.song.title), description, url: url(p), image: url(img), imageAlt: `「${s.song.title}」の歌唱記録` } });
     cards.push({ file: img, html: songCard(artist, s, position, role, host) });
   }
