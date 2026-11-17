@@ -5,11 +5,13 @@
  * イベント ID は eventernote の ID なので、アーティストをまたいで一意。
  */
 import { useSyncExternalStore } from "react";
+import type { AttendanceData, EventernoteLink } from "./attendance-backup.ts";
+
+export type { EventernoteLink };
 
 const KEY = "lovely-memory:attendance:v1";
 
-export type EventernoteLink = { user: string; ids: number[]; syncedAt: string };
-type Stored = { manual: Record<string, boolean>; eventernote?: EventernoteLink };
+type Stored = AttendanceData;
 
 const EMPTY: Stored = { manual: {} };
 
@@ -45,6 +47,10 @@ window.addEventListener("storage", (e) => {
 });
 
 export type Attendance = {
+  /** 保存している記録そのもの（バックアップ用） */
+  data: AttendanceData;
+  /** 記録をまるごと書き換える（バックアップからの読み込み） */
+  replaceAll(data: AttendanceData): void;
   eventernote?: EventernoteLink;
   isAttended(eventId: number): boolean;
   /** 印の出どころ（eventernote から読み込んだものを手で外した場合も "manual"） */
@@ -59,6 +65,10 @@ function build(s: Stored): Attendance {
   const imported = new Set(s.eventernote?.ids ?? []);
   const isAttended = (id: number) => s.manual[id] ?? imported.has(id);
   return {
+    data: s,
+    replaceAll(data) {
+      write({ manual: { ...data.manual }, eventernote: data.eventernote });
+    },
     eventernote: s.eventernote,
     isAttended,
     source: (id) => (id in s.manual ? "manual" : imported.has(id) ? "eventernote" : undefined),

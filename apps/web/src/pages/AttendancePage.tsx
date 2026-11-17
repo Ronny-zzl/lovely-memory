@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { isLiveEvent, type ResolvedEvent, type Song } from "@lovely-memory/core/runtime";
 import { fetchEventernote, useAttendance } from "../attendance.ts";
+import { AttendanceBackup } from "../components/AttendanceBackup.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { artists } from "../data.ts";
 import { displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst } from "../format.ts";
@@ -216,6 +217,7 @@ export function AttendancePage() {
           )}
         </>
       )}
+      <AttendanceBackup />
     </div>
   );
 }
