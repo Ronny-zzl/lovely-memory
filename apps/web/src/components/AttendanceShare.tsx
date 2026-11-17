@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { drawAttendanceCard, loadCardFont, type AttendanceCardData } from "../attendance-card.ts";
+import { cardChars, drawAttendanceCard, loadCardFont, type AttendanceCardData } from "../attendance-card.ts";
 
 /**
  * 参戦記録のシェア画像。
@@ -36,8 +36,7 @@ export function AttendanceShare({ card, postText, hashtags, fileName }: { card: 
     let cancelled = false;
     setBlob(undefined);
     setCopied(false);
-    const text = [card.artistName, card.subtitle ?? "", card.host, ...card.topSongs.map((s) => s.title), "よく聴いた曲披露されたすべて生で聴きましたまだいない（のべ）"].join("");
-    void loadCardFont(text).then(() => {
+    void loadCardFont(cardChars(card)).then(() => {
       if (cancelled || !canvasRef.current) return;
       drawAttendanceCard(canvasRef.current, card);
       canvasRef.current.toBlob((b) => {

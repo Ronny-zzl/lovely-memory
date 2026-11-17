@@ -32,9 +32,30 @@ const SUN_RAYS: Array<[number, number, number, number]> = [
 ];
 const MOON = "M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z";
 
+/**
+ * カードに描く文字をすべて集める。見えないキャンバスに一度描いて、fillText・measureText に渡った文字列を記録する
+ * （手で文字の一覧を持つと漏れが出て、その字だけ別のフォントで描かれてしまうため）
+ */
+export function cardChars(d: AttendanceCardData): string {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d")!;
+  let all = "…";
+  const fillText = ctx.fillText.bind(ctx);
+  const measureText = ctx.measureText.bind(ctx);
+  ctx.fillText = (text: string, x: number, y: number, maxWidth?: number) => {
+    all += text;
+    fillText(text, x, y, maxWidth);
+  };
+  ctx.measureText = (text: string) => {
+    all += text;
+    return measureText(text);
+  };
+  drawAttendanceCard(canvas, d);
+  return [...new Set(all)].join("");
+}
+
 /** カードに使う文字だけを含む Web フォントを読み込む（失敗・オフラインならシステムのフォントで描く） */
-export async function loadCardFont(text: string): Promise<void> {
-  const chars = [...new Set(text + "0123456789/%・回曲公演参戦記録時点ラブリィメモリー")].join("");
+export async function loadCardFont(chars: string): Promise<void> {
   const href = `https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=block&text=${encodeURIComponent(chars)}`;
   if (!document.querySelector(`link[data-card-font="${CSS.escape(href)}"]`)) {
     const link = document.createElement("link");
