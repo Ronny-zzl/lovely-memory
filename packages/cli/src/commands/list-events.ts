@@ -1,4 +1,4 @@
-import { resolveEvents } from "@lovely-memory/core";
+import { eventHasType, resolveEvents, type EventType } from "@lovely-memory/core";
 import { loadArtist, loadEvents, loadOverrides } from "../repo.ts";
 
 /**
@@ -10,7 +10,7 @@ export async function listEvents(artistId: string, opts: Record<string, unknown>
   const artist = await loadArtist(artistId);
   const events = resolveEvents(await loadEvents(artistId), await loadOverrides(artistId), artist);
   const filtered =
-    typeof opts.type === "string" ? events.filter((e) => e.types.includes(opts.type as (typeof e.types)[number])) : events;
+    typeof opts.type === "string" ? events.filter((e) => eventHasType(e, opts.type as EventType)) : events;
 
   const counts = new Map<string, number>();
   for (const e of filtered) {

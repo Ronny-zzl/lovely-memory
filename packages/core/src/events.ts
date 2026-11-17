@@ -15,10 +15,27 @@ export type ResolvedEvent = Event & {
   note?: string;
 };
 
-/** タイトルにマッチしたルールの種別をすべて返す（ルール順・重複なし）。無ければ defaultEventType */
+/** 表示・保存時の種別の並び順 */
+const TYPE_ORDER: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
+
+/** 種別の包含関係（子 → 親）。主催対バンは対バンの一種 */
+export const EVENT_TYPE_PARENT: Partial<Record<EventType, EventType>> = { taiban: "external" };
+
+function sortTypes(types: Iterable<EventType>): EventType[] {
+  return [...new Set(types)].sort((a, b) => TYPE_ORDER.indexOf(a) - TYPE_ORDER.indexOf(b));
+}
+
+/** タイトルにマッチしたルールの種別をすべて返す（重複なし）。無ければ defaultEventType */
 export function inferEventTypes(title: string, artist: ArtistConfig): EventType[] {
-  const types = artist.eventTypeRules.filter((r) => new RegExp(r.pattern, "i").test(title)).map((r) => r.type);
-  return types.length ? [...new Set(types)] : [artist.defaultEventType];
+  const types = artist.eventTypeRules
+    .filter((r) => new RegExp(r.pattern, "i").test(title))
+    .flatMap((r) => (Array.isArray(r.type) ? r.type : [r.type]));
+  return types.length ? sortTypes(types) : [artist.defaultEventType];
+}
+
+/** イベントが種別 t に該当するか（包含関係を考慮。主催対バンは「対バン」にも該当） */
+export function eventHasType(e: Pick<ResolvedEvent, "types">, t: EventType): boolean {
+  return e.types.some((x) => x === t || EVENT_TYPE_PARENT[x] === t);
 }
 
 /** ライブを伴うイベントか（特典会のみのイベントはセトリが存在しない） */
@@ -61,7 +78,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
 
     out.push({
       ...ev,
-      types: ovTypes ?? ev.types ?? inferEventTypes(ev.title, artist),
+      types: sortTypes(ovTypes ?? ev.types ?? inferEventTypes(ev.title, artist)),
       members,
       membersSource,
       note,

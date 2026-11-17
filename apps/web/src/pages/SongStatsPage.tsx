@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router";
-import { computeStats, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core";
+import { computeStats, eventHasType, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core";
 import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
@@ -104,7 +104,7 @@ export function SongStatsPage() {
 
   const presentTypes = useMemo(() => {
     const withSetlist = new Set(setlists.map((s) => s.event));
-    return LIVE_EVENT_TYPES.filter((t) => events.some((e) => e.types.includes(t) && withSetlist.has(e.id)));
+    return LIVE_EVENT_TYPES.filter((t) => events.some((e) => eventHasType(e, t) && withSetlist.has(e.id)));
   }, [events, setlists]);
 
   const selectedTypes = new Set<EventType>(
@@ -128,8 +128,8 @@ export function SongStatsPage() {
 
   const typesKey = [...selectedTypes].sort().join(",");
   const stats = useMemo(
-    // 種別のどれか 1 つでも選ばれていれば集計対象
-    () => computeStats({ songs, events, setlists, filter: (e) => e.types.some((t) => selectedTypes.has(t)) }),
+    // 選ばれた種別のどれかに該当すれば集計対象（主催対バンは「対バン・フェス」にも該当）
+    () => computeStats({ songs, events, setlists, filter: (e) => [...selectedTypes].some((t) => eventHasType(e, t)) }),
     // selectedTypes は毎回作り直されるので、内容を表す typesKey で再計算を判定する
     [songs, events, setlists, typesKey],
   );

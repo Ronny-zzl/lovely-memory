@@ -70,7 +70,15 @@ export const ArtistConfig = z.object({
    * イベント種別の推定ルール。タイトルにマッチしたルールの種別をすべて付ける（形式・料金・目的は両立しうるため）。
    * どれにも当たらなければ defaultEventType
    */
-  eventTypeRules: z.array(z.object({ pattern: z.string(), type: EventType })).default([]),
+  eventTypeRules: z
+    .array(
+      z.object({
+        pattern: z.string(),
+        /** 1 つでも複数でもよい（例: リリイベは常にフリーライブ → ["release", "free"]） */
+        type: z.union([EventType, z.array(EventType).min(1)]),
+      }),
+    )
+    .default([]),
   defaultEventType: EventType.default("external"),
 });
 export type ArtistConfig = z.infer<typeof ArtistConfig>;

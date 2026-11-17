@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { inferEventTypes, isLiveEvent, resolveEvents } from "./events.ts";
+import { eventHasType, inferEventTypes, isLiveEvent, resolveEvents } from "./events.ts";
 import { ArtistConfig, Overrides, type Event } from "./schema.ts";
 
 const artist = ArtistConfig.parse({
@@ -13,6 +13,7 @@ const artist = ArtistConfig.parse({
   sources: {},
   eventTypeRules: [
     { pattern: "チェキ会", type: "tokuten" },
+    { pattern: "発売記念", type: ["release", "free"] },
     { pattern: "日進月歩", type: "taiban" },
     { pattern: "Debut LIVE|単独公演", type: "oneman" },
   ],
@@ -33,7 +34,16 @@ describe("inferEventTypes", () => {
     expect(inferEventTypes("TAIBAN LIVE「日進月歩」vol.16", artist)).toEqual(["taiban"]);
     expect(inferEventTypes("Second Season Debut LIVE", artist)).toEqual(["oneman"]);
     expect(inferEventTypes("IDOLGROW vol.30", artist)).toEqual(["external"]);
-    expect(inferEventTypes("単独公演 日進月歩SP", artist)).toEqual(["taiban", "oneman"]);
+    // 並び順は種別の既定順（単独 → 主催対バン → …）
+    expect(inferEventTypes("単独公演 日進月歩SP", artist)).toEqual(["oneman", "taiban"]);
+    expect(inferEventTypes("シングル発売記念イベント", artist)).toEqual(["release", "free"]);
+  });
+
+  it("treats 主催対バン as a kind of 対バン", () => {
+    expect(eventHasType({ types: ["taiban"] }, "external")).toBe(true);
+    expect(eventHasType({ types: ["taiban"] }, "taiban")).toBe(true);
+    expect(eventHasType({ types: ["external"] }, "taiban")).toBe(false);
+    expect(eventHasType({ types: ["release", "free"] }, "free")).toBe(true);
   });
 
   it("treats tokuten-only events as non-live", () => {
@@ -78,7 +88,7 @@ describe("resolveEvents", () => {
     const r = resolveEvents(events, ov, artist);
     expect(r.map((e) => e.id)).toEqual([-1, 2, 4]);
     expect(r.find((e) => e.id === 4)).toMatchObject({
-      types: ["free", "release"],
+      types: ["release", "free"], // 既定の順に並べ替えられる
       members: ["b"],
       membersSource: "override",
       title: "修正後タイトル",

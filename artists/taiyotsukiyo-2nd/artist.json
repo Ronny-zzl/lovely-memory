@@ -30,8 +30,9 @@
   },
   "eventTypeRules": [
     { "pattern": "チェキ会|特典会", "type": "tokuten" },
-    { "pattern": "発売記念イベント|リリースイベント|リリイベ", "type": "release" },
+    { "pattern": "発売記念イベント|リリースイベント|リリイベ", "type": ["release", "free"] },
     { "pattern": "フリーライブ|フリーミニライブ|FREE LIVE", "type": "free" },
+    { "pattern": "無銭", "type": ["external", "free"] },
     { "pattern": "日進月歩", "type": "taiban" },
     { "pattern": "単独公演|Debut LIVE|大感謝祭|生誕祭|ワンマン", "type": "oneman" }
   ],

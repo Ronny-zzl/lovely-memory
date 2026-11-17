@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core";
+import { eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday, todayJst } from "../format.ts";
@@ -15,7 +15,7 @@ export function EventsPage() {
   const [params, setParams] = useSearchParams();
 
   const setlistByEvent = useMemo(() => new Map(allStats.events.map((e) => [e.event.id, e])), [allStats]);
-  const presentTypes = ALL_TYPES.filter((t) => events.some((e) => e.types.includes(t)));
+  const presentTypes = ALL_TYPES.filter((t) => events.some((e) => eventHasType(e, t)));
   const selected = new Set<EventType>(
     params.get("types")
       ? (params.get("types")!.split(",") as EventType[])
@@ -38,8 +38,8 @@ export function EventsPage() {
   };
 
   const today = todayJst();
-  // 種別のどれか 1 つでも選ばれていれば表示
-  const visible = events.filter((e) => e.types.some((t) => selected.has(t)));
+  // 選ばれた種別のどれかに該当すれば表示（主催対バンは「対バン・フェス」にも該当）
+  const visible = events.filter((e) => [...selected].some((t) => eventHasType(e, t)));
   const upcoming = visible.filter((e) => e.date >= today && !setlistByEvent.has(e.id));
   const past = visible.filter((e) => !upcoming.includes(e)).reverse();
 
