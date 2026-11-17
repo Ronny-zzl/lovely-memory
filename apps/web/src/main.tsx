@@ -1,3 +1,5 @@
+// ホーム画面への追加のイベントを、描画前から待ち受ける
+import "./install.ts";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";

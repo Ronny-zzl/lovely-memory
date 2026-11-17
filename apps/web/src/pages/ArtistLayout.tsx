@@ -1,5 +1,6 @@
 import { Suspense, use } from "react";
 import { Link, Navigate, NavLink, Outlet, useOutletContext, useParams } from "react-router";
+import { InstallButton } from "../components/InstallButton.tsx";
 import { findArtist, loadArtistData, type ArtistData } from "../data.ts";
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
 
@@ -10,6 +11,7 @@ export function ArtistLayout() {
   return (
     <div className="page">
       <header className="site-header">
+        <InstallButton />
         <Link to="/" className="breadcrumb">
           ラブリィメモリー
         </Link>

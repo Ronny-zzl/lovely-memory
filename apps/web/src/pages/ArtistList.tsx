@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { InstallButton } from "../components/InstallButton.tsx";
 import { artists } from "../data.ts";
 import { formatDate } from "../format.ts";
 
@@ -6,6 +7,7 @@ export function ArtistList() {
   return (
     <div className="page">
       <header className="site-header">
+        <InstallButton />
         <h1 className="site-title">ラブリィメモリー</h1>
         <p className="muted">ライブのセットリストを記録・集計する</p>
       </header>

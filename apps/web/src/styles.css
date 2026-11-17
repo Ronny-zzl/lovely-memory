@@ -100,6 +100,7 @@ a {
 /* ---------- header ---------- */
 
 .site-header {
+  position: relative;
   margin-bottom: 24px;
 }
 .breadcrumb {
@@ -1170,4 +1171,63 @@ a.item-title:hover {
   .share-buttons .share-x:hover {
     background: #d7dbdc;
   }
+}
+
+/* ホーム画面に追加 */
+.install {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
+/* トップページはタイトルが先頭行にあるので、ボタンと重ならないよう右を空ける */
+.install + .site-title {
+  padding-right: 10rem;
+}
+.install-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.install-button:hover {
+  background: var(--row-hover);
+}
+.install-button svg {
+  width: 14px;
+  height: 14px;
+}
+.install-help {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(280px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.install-help p {
+  margin: 0;
+}
+.install-help p + p {
+  margin-top: 6px;
+}
+.share-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin: 0 2px;
+  vertical-align: -0.15em;
+  color: var(--accent-2);
 }
