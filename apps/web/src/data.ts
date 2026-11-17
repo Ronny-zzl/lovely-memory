@@ -1,33 +1,20 @@
 import {
-  ArtistConfig,
   computeStats,
-  EventList,
-  Overrides,
   resolveEvents,
-  Setlist,
-  SongList,
+  type ArtistConfig,
   type ResolvedEvent,
+  type Setlist,
   type Song,
   type Stats,
-} from "@lovely-memory/core";
+} from "@lovely-memory/core/runtime";
+import { artists as configs, loaders } from "virtual:lovely-memory/artists";
 
 /*
- * artists/<id>/ 以下のデータを読み込む。
- * - artist.json は一覧表示に使うので常に同梱（eager）
- * - それ以外はアーティストのページを開いたときに初めて読み込む（アーティストごとにチャンク分割される）
+ * artists/<id>/ 以下のデータ。検証・既定値の補完はビルド時（plugins/artists-data.ts）に済んでいる。
+ * - artist.json は一覧表示に使うので常に同梱
+ * - それ以外はアーティストのページを開いたときに初めて読み込む（アーティストごとに 1 チャンク）
  */
-const configModules = import.meta.glob<unknown>("../../../artists/*/artist.json", { eager: true, import: "default" });
-const songModules = import.meta.glob<unknown>("../../../artists/*/songs.json", { import: "default" });
-const eventModules = import.meta.glob<unknown>("../../../artists/*/events.json", { import: "default" });
-const overrideModules = import.meta.glob<unknown>("../../../artists/*/overrides.json", { import: "default" });
-const setlistModules = import.meta.glob<unknown>("../../../artists/*/setlists/*.yaml", { import: "default" });
-
-/** "../../../artists/<id>/..." から <id> を取り出す */
-const artistIdOf = (path: string) => path.split("/artists/")[1]!.split("/")[0]!;
-
-export const artists: ArtistConfig[] = Object.values(configModules)
-  .map((raw) => ArtistConfig.parse(raw))
-  .sort((a, b) => a.id.localeCompare(b.id));
+export const artists: ArtistConfig[] = configs;
 
 export function findArtist(id: string | undefined): ArtistConfig | undefined {
   return artists.find((a) => a.id === id);
@@ -46,29 +33,11 @@ export type ArtistData = {
   allStats: Stats;
 };
 
-async function loadOne(
-  modules: Record<string, () => Promise<unknown>>,
-  artistId: string,
-  file: string,
-): Promise<unknown | undefined> {
-  const entry = Object.entries(modules).find(([p]) => artistIdOf(p) === artistId && p.endsWith(`/${file}`));
-  return entry ? entry[1]() : undefined;
-}
-
 async function load(artist: ArtistConfig): Promise<ArtistData> {
-  const [songsRaw, eventsRaw, overridesRaw, setlistsRaw] = await Promise.all([
-    loadOne(songModules, artist.id, "songs.json"),
-    loadOne(eventModules, artist.id, "events.json"),
-    loadOne(overrideModules, artist.id, "overrides.json"),
-    Promise.all(
-      Object.entries(setlistModules)
-        .filter(([p]) => artistIdOf(p) === artist.id)
-        .map(([, imp]) => imp()),
-    ),
-  ]);
-  const songs = SongList.parse(songsRaw ?? []);
-  const events = resolveEvents(EventList.parse(eventsRaw ?? []), Overrides.parse(overridesRaw ?? {}), artist);
-  const setlists = setlistsRaw.map((s) => Setlist.parse(s));
+  const loader = loaders[artist.id];
+  if (!loader) throw new Error(`no data for ${artist.id}`);
+  const { songs, events: rawEvents, overrides, setlists } = (await loader()).default;
+  const events = resolveEvents(rawEvents, overrides, artist);
   return { artist, songs, events, setlists, allStats: computeStats({ songs, events, setlists }) };
 }
 

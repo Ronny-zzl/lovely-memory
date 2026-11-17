@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { computeStats, eventHasType, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core";
+import { computeStats, eventHasType, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core/runtime";
 import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 

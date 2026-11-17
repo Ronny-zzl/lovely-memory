@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import type { Song } from "@lovely-memory/core";
+import type { Song } from "@lovely-memory/core/runtime";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";

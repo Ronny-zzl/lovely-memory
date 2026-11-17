@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core";
+import { eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday, todayJst } from "../format.ts";

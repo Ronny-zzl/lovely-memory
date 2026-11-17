@@ -1,4 +1,4 @@
-import type { ArtistConfig } from "@lovely-memory/core";
+import type { ArtistConfig } from "@lovely-memory/core/runtime";
 
 /** メンバーカラーの丸を並べる。出演していないメンバーは白抜き */
 export function MemberDots({ artist, present }: { artist: ArtistConfig; present: string[] }) {

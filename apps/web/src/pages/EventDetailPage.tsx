@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { isLiveEvent } from "@lovely-memory/core";
+import { isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";

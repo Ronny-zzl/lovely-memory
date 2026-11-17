@@ -1,7 +1,7 @@
 import { Suspense, use } from "react";
 import { Link, Navigate, NavLink, Outlet, useOutletContext, useParams } from "react-router";
 import { findArtist, loadArtistData, type ArtistData } from "../data.ts";
-import type { ArtistConfig } from "@lovely-memory/core";
+import type { ArtistConfig } from "@lovely-memory/core/runtime";
 
 export function ArtistLayout() {
   const artist = findArtist(useParams().artistId);

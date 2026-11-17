@@ -1,4 +1,4 @@
-import type { EventType } from "@lovely-memory/core";
+import type { EventType } from "@lovely-memory/core/runtime";
 
 export const EVENT_TYPE_LABEL: Record<EventType, string> = {
   oneman: "単独公演",

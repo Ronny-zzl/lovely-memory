@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
-import { computeMemberStats, isLiveEvent } from "@lovely-memory/core";
+import { computeMemberStats, isLiveEvent } from "@lovely-memory/core/runtime";
 import { displayTitle, formatDate, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 

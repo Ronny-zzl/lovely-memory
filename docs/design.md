@@ -171,6 +171,7 @@ lovely-memory/
 └─ .github/workflows/  sync.yml（每日，遍历所有有 eventernote 配置的艺人）, deploy.yml（GitHub Pages）
 ```
 
+- **浏览器端不带 zod**：`apps/web/plugins/artists-data.ts` 在构建时读取 `artists/`，用 zod 校验并补默认值后，以虚拟模块提供（每个艺人 1 个 chunk）。网页只从 `@lovely-memory/core/runtime`（不含 zod 的入口）导入。数据有误时构建失败。
 - 内部包直接导出 TS 源码（`exports: ./src/index.ts`），无需构建。Node（≥24）直接运行 .ts（type stripping），不使用 tsx。
 - 因此相对 import 必须带扩展名（`./schema.ts`），且只能使用可擦除的 TS 语法（tsconfig: `NodeNext` + `allowImportingTsExtensions` + `erasableSyntaxOnly` 在 typecheck 时强制）。
 - 同一组合的不同期视为不同的 artist（通过 `since`/`until` 区分），共享 eventernote actor ID 也没问题。

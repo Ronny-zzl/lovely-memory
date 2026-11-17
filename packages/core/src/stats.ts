@@ -1,5 +1,6 @@
 import type { ResolvedEvent } from "./events.ts";
-import { itemSong, setlistStages, type Setlist, type Song } from "./schema.ts";
+import type { Setlist, Song } from "./schema.ts";
+import { itemSong, setlistStages } from "./setlist.ts";
 import { findSong } from "./setlist-text.ts";
 
 /** 1 回の歌唱 */

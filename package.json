@@ -1,6 +1,7 @@
 {
   "name": "lovely-memory",
   "private": true,
+  "license": "MIT",
   "engines": {
     "node": ">=24"
   },
