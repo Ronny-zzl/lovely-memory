@@ -65,4 +65,5 @@ jobs:
       - name: Open setlist issues
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          SITE_URL: ${{ vars.SITE_URL }}
         run: pnpm -s lm open-setlist-issues all

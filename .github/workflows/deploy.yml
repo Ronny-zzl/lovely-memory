@@ -33,15 +33,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Validate data
         run: pnpm -s lm validate all
+      # アセットは相対パスなので、同じビルドをどの配信先でも使える
       - name: Build
         run: pnpm build
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web/dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: apps/web/dist
 
-  deploy:
+  github-pages:
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -50,3 +53,28 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # リポジトリ変数 CLOUDFLARE_PROJECT と、シークレット CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が必要
+  cloudflare:
+    needs: build
+    if: vars.CLOUDFLARE_PROJECT != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+      # 初回だけプロジェクトを作る（既にあればエラーになるが無視する）
+      - name: Create Pages project
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create ${{ vars.CLOUDFLARE_PROJECT }} --production-branch=main
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=main --commit-dirty=true

@@ -2,8 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { artistsData } from "./plugins/artists-data.ts";
 
-// GitHub Pages では BASE_PATH=/lovely-memory/ を渡してビルドする
+// hash ルーティングなので、アセットを相対パスにしておけば どの URL 配下に置いても動く
+// （GitHub Pages の /lovely-memory/ でも Cloudflare Pages のルートでも同じビルドを使える）
 export default defineConfig({
-  base: process.env.BASE_PATH ?? "/",
+  base: "./",
   plugins: [react(), artistsData()],
 });

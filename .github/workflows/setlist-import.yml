@@ -42,6 +42,7 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           COMMENT_BODY: ${{ github.event.comment.body }}
           GITHUB_TOKEN: ${{ github.token }}
+          SITE_URL: ${{ vars.SITE_URL }}
         run: |
           printf '%s' "$ISSUE_BODY" > "$RUNNER_TEMP/issue.md"
           printf '%s' "$COMMENT_BODY" > "$RUNNER_TEMP/comment.txt"

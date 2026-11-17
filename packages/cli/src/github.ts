@@ -23,11 +23,6 @@ export class GitHub {
     return this.repo.split("/")[0]!;
   }
 
-  /** GitHub Pages の URL（https://<owner>.github.io/<repo>/） */
-  get pagesUrl(): string {
-    const [owner, name] = this.repo.split("/");
-    return `https://${owner!.toLowerCase()}.github.io/${name}/`;
-  }
 
   private async api<T>(path: string, init: RequestInit = {}): Promise<{ status: number; data: T }> {
     const res = await fetch(`https://api.github.com/repos/${this.repo}${path}`, {

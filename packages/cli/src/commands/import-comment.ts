@@ -7,9 +7,8 @@ import {
   setlistStages,
   type Setlist,
 } from "@lovely-memory/core";
-import { GitHub } from "../github.ts";
 import { parseComment, parseMarker } from "../issue.ts";
-import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, writeJson } from "../repo.ts";
+import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, siteUrl, writeJson } from "../repo.ts";
 import { buildSetlist, countSongs, writeSetlist } from "../setlist-build.ts";
 
 /** ワークフローが次に何をするか（GITHUB_OUTPUT の status に書く） */
@@ -90,8 +89,8 @@ export async function importComment(_target: string | undefined, opts: Record<st
   await writeSetlist(target.artistId, result.setlist, event);
   if (result.songsChanged) await writeJson(artistPath(target.artistId, "songs.json"), songs);
 
-  const gh = GitHub.fromEnv();
-  const page = gh ? `${gh.pagesUrl}#/${target.artistId}/events/${event.id}` : undefined;
+  const site = siteUrl();
+  const page = site ? `${site}#/${target.artistId}/events/${event.id}` : undefined;
   return finish(
     "success",
     [

@@ -3,7 +3,7 @@ import { readdir } from "node:fs/promises";
 import { isLiveEvent, resolveEvents } from "@lovely-memory/core";
 import { GitHub } from "../github.ts";
 import { issueBody, issueTitle, parseMarker } from "../issue.ts";
-import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides } from "../repo.ts";
+import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, siteUrl } from "../repo.ts";
 import { setlistPath } from "../setlist-build.ts";
 import { jstDateDaysAgo } from "./sync.ts";
 
@@ -61,7 +61,7 @@ export async function openSetlistIssues(target: string, opts: Record<string, unk
       if (created === 0) await gh.ensureLabel(SETLIST_LABEL, "e0832b", "セトリ入力待ち（コメントに告知ポストを貼ると取り込み）");
       const n = await gh.createIssue({
         title,
-        body: issueBody(artist, e, gh.pagesUrl),
+        body: issueBody(artist, e, siteUrl()),
         labels: [SETLIST_LABEL],
         assignees: [gh.owner],
       });

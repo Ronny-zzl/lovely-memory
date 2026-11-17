@@ -66,3 +66,12 @@ export async function loadSetlistFiles(artistId: string): Promise<SetlistFile[]>
     }),
   );
 }
+
+/**
+ * 公開サイトの URL（末尾 /）。Issue 本文や返信のリンクに使う。
+ * ワークフローではリポジトリ変数 SITE_URL から渡す。未設定ならリンクを出さない。
+ */
+export function siteUrl(): string | undefined {
+  const u = process.env.SITE_URL?.trim();
+  return u ? (u.endsWith("/") ? u : `${u}/`) : undefined;
+}
