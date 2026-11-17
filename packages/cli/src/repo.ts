@@ -1,7 +1,8 @@
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import YAML from "yaml";
 import { ArtistConfig, Overrides, SongList, EventList, type Song } from "@lovely-memory/core";
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -50,3 +51,18 @@ export async function loadOverrides(artistId: string) {
 }
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export type SetlistFile = { file: string; path: string; raw: unknown };
+
+/** setlists/*.yaml を読み込む（スキーマ検証は呼び出し側で） */
+export async function loadSetlistFiles(artistId: string): Promise<SetlistFile[]> {
+  const dir = artistPath(artistId, "setlists");
+  if (!existsSync(dir)) return [];
+  const files = (await readdir(dir)).filter((f) => /\.ya?ml$/.test(f)).sort();
+  return Promise.all(
+    files.map(async (file) => {
+      const path = join(dir, file);
+      return { file, path, raw: YAML.parse(await readFile(path, "utf8")) };
+    }),
+  );
+}

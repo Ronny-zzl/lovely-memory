@@ -1,17 +1,29 @@
 import { parseArgs } from "node:util";
+import { addSetlist } from "./commands/add-setlist";
 import { addSong } from "./commands/add-song";
 import { importOfficial } from "./commands/import-official";
 import { importWikipedia } from "./commands/import-wikipedia";
 import { listEvents } from "./commands/list-events";
 import { sync } from "./commands/sync";
+import { validate } from "./commands/validate";
 
 const USAGE = `usage: pnpm lm <command> <artistId> [options]
 
 commands:
   sync               eventernote から events.json を更新（artistId に all で全アーティスト）
+                     開催から 30 日を過ぎたイベントは確定扱いで再取得しない
+                     --full             since まで全件取り直す
+                     --frozen-days <n>  確定扱いにする日数（既定 30）
                      --dry-run
   list-events        種別・出演メンバー判定後のイベント一覧を表示
                      --type <eventType>
+  add-setlist        公式 X のセトリ告知文（標準入力）から setlists/<eventId>.yaml を作成
+                     --event <id> | --date <YYYY-MM-DD>
+                     --source <ポストURL>  --file <path>
+                     --add-unknown  songs.json に無い曲を自動追加
+                     --force        既存ファイルを上書き
+  validate           データ全体の整合性チェック（artistId に all 可）
+                     --missing      セトリ未入力の終了済みイベントを一覧表示
   import-official    公式サイトのディスコグラフィから songs.json を更新（公式の値を優先）
                      --dry-run      書き込まずに結果を表示
   import-wikipedia   Wikipedia のディスコグラフィから songs.json を補完（空き項目のみ）
@@ -40,6 +52,14 @@ const { positionals, values } = parseArgs({
     alias: { type: "string", multiple: true },
     note: { type: "string" },
     type: { type: "string" },
+    full: { type: "boolean" },
+    "frozen-days": { type: "string" },
+    event: { type: "string" },
+    date: { type: "string" },
+    source: { type: "string" },
+    "add-unknown": { type: "boolean" },
+    force: { type: "boolean" },
+    missing: { type: "boolean" },
   },
 });
 const [command, artistId] = positionals;
@@ -48,6 +68,8 @@ type Command = (id: string, opts: Record<string, any>) => Promise<void>;
 const commands: Record<string, Command> = {
   sync,
   "list-events": listEvents,
+  "add-setlist": addSetlist,
+  validate,
   "import-official": importOfficial,
   "import-wikipedia": importWikipedia,
   "add-song": addSong,

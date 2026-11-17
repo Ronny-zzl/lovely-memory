@@ -30,7 +30,8 @@
   - `.actor li a[href=/actors/<name>/<id>]` → 出演者
   - `.note_count p` → 参加者数（不使用）
 - **只写 `Mozilla/5.0` 的 User-Agent 会返回 403。** 需要用带说明的 UA，例如 `Mozilla/5.0 (compatible; lovely-memory-sync; +<repo URL>)`。
-- 礼貌规则：每天 1 次，每次请求间隔 ≥3 秒。从新到旧翻页，遇到早于 2026-09-04 的活动就停止。日常运行通常只需要 3～4 页。
+- 礼貌规则：每次请求间隔 ≥3 秒。从新到旧翻页，遇到早于截止日的活动就停止。
+- **增量同步**：开演日超过 30 天的活动视为确定，不再重新抓取（日常只需 1～2 页）。每月 2 日 04:00 JST 全量同步一次（`--full`），以免漏掉事后补登的活动。
 - 1部・2部在 eventernote 上本来就是两场独立的活动。
 - robots.txt 只禁止 `/users/notice` 和 `/users/timeline`。
 
@@ -83,20 +84,32 @@ type Event = {
   type: EventType;       // 先根据标题关键词推断，再用 overrides 修正
 };
 
-// data/setlists/<eventId>.yaml
+// artists/<id>/setlists/<eventId>.yaml（由 `pnpm lm add-setlist` 从推文生成）
 type Setlist = {
   event: number;
   source?: string;       // 推文 URL
-  items: Array<string | {
-    song: string;        // 曲名或别名
-    debut?: boolean;     // 首唱（推文里的「(新曲)」）
-    members?: string[];  // 只在部分成员演唱时填写
-    note?: string;       // short ver. / medley / encore 等
-  }>;
+  // 二选一：单一舞台写 items，多舞台（fes 等）写 stages
+  items?: SetlistItem[];
+  stages?: Array<{ name?: string; members?: string[]; items: SetlistItem[] }>;
+};
+type SetlistItem = string | {
+  song: string;          // 曲名（正式表记）
+  members?: string[];    // 只在部分成员演唱时填写
+  encore?: boolean;
+  note?: string;         // short ver. / medley 等
 };
 ```
 
-成员是否出演，按以下规则判断：Setlist 项的 `members` → overrides → eventernote 的 performers。如果 eventernote 上 6 人一个都没登记，就当作全员出演。
+成员是否出演，按以下规则判断：Setlist 项的 `members` → 舞台的 `members` → overrides → eventernote 的 performers。如果 eventernote 上 6 人一个都没登记，就当作全员出演。
+
+**首唱不记录在数据里**，统计时取该曲最早出现的活动。推文里的「(新曲)」只表示是新歌，fes 等场合在首唱后仍会标注（例：10/4 クロフェス 的 ラブリィフェリス）。
+
+### 推文解析规则（`parseSetlistText`）
+
+- `M1_ 曲名` 形式的行为一曲，紧随其后的「作詞・作曲・編曲」行（可跨行）为其制作人员；`EN_` / `EN1_` 为安可。
+- 编号回到 M1 时开始新舞台，舞台名取之前最近的【…】；只有一个舞台时不设名字。
+- 曲名末尾的括号标签：「(新曲)」忽略，其它（short ver. 等）记入 note。
+- 推文中的制作人员只补 songs.json 的空字段，与官网不一致时只警告。
 
 ## 4. 成员
 
@@ -111,7 +124,7 @@ type Setlist = {
 
 ## 5. 统计指标
 
-- **曲目**：演唱次数、演唱过的场数、首唱日、最后演唱日、距上次演唱已经过了几场有演出的活动、按月和按年的次数、演唱率（有演出的场数中唱了这首歌的比例）
+- **曲目**：演唱次数（含同一活动不同舞台的重复）、演唱过的舞台数、演唱过的活动数、首唱日、最后演唱日、距上次演唱已经过了几场有演出的活动、按月和按年的次数、演唱率（有演出的场数中唱了这首歌的比例）
 - **活动**：歌单、首唱曲、曲数
 - **成员**：出演场数、演唱次数
 - **矩阵**：横轴是活动，纵轴是曲目（相当于原表格的 セットリスト 视图）

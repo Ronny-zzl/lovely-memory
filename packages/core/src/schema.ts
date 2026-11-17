@@ -140,21 +140,51 @@ export type Overrides = z.infer<typeof Overrides>;
 
 // ---------- Setlists (artists/<id>/setlists/<eventId>.yaml, hand-written) ----------
 
+/**
+ * 1 曲分。曲名だけなら文字列で書ける。
+ * 初披露かどうかは記録せず、集計時に「最初に歌われた公演」として算出する。
+ */
 export const SetlistItem = z.union([
   z.string(),
   z.object({
     song: z.string(),
-    debut: z.boolean().optional(),
+    /** 一部メンバーのみで歌唱した場合（member id） */
     members: z.array(slug).optional(),
+    encore: z.boolean().optional(),
+    /** short ver. / メドレー など */
     note: z.string().optional(),
   }),
 ]);
 export type SetlistItem = z.infer<typeof SetlistItem>;
 
-export const Setlist = z.object({
-  event: z.number().int(),
-  source: z.string().url().optional(),
-  note: z.string().optional(),
+export const SetlistStage = z.object({
+  /** 対バン・フェスで同一イベント内に複数ステージがある場合のステージ名 */
+  name: z.string().optional(),
+  /** このステージの出演メンバー（イベント全体と異なる場合のみ） */
+  members: z.array(slug).optional(),
   items: z.array(SetlistItem),
 });
+export type SetlistStage = z.infer<typeof SetlistStage>;
+
+/** ステージが 1 つなら items を直接、複数なら stages に書く */
+export const Setlist = z
+  .object({
+    event: z.number().int(),
+    source: z.string().url().optional(),
+    note: z.string().optional(),
+    items: z.array(SetlistItem).optional(),
+    stages: z.array(SetlistStage).optional(),
+  })
+  .refine((s) => (s.items === undefined) !== (s.stages === undefined), {
+    message: "items と stages のどちらか一方だけを書いてください",
+  });
 export type Setlist = z.infer<typeof Setlist>;
+
+/** items / stages の書き分けを吸収して常にステージ配列で返す */
+export function setlistStages(s: Setlist): SetlistStage[] {
+  return s.stages ?? [{ items: s.items ?? [] }];
+}
+
+export function itemSong(item: SetlistItem): string {
+  return typeof item === "string" ? item : item.song;
+}

@@ -2,9 +2,16 @@ name: Sync events
 
 on:
   schedule:
-    # 毎日 05:00 JST
+    # 毎日 05:00 JST: 直近 30 日以内と今後のイベントのみ
     - cron: "0 20 * * *"
+    # 毎月 2 日 04:00 JST (1 日 19:00 UTC): 全件取り直し（後から登録・修正されたイベントの拾い漏れ対策）
+    - cron: "0 19 1 * *"
   workflow_dispatch:
+    inputs:
+      full:
+        description: "全件取り直す"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -30,7 +37,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Sync from eventernote
-        run: pnpm -s lm sync all | tee sync.log
+        env:
+          FULL: ${{ github.event.schedule == '0 19 1 * *' || inputs.full == true }}
+        run: pnpm -s lm sync all $([ "$FULL" = "true" ] && echo --full) | tee sync.log
 
       - name: Commit changes
         run: |
