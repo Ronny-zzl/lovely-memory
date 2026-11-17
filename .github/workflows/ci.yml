@@ -19,3 +19,6 @@ jobs:
       - run: pnpm test
       - name: Validate data
         run: pnpm -s lm validate all
+      # 依存関係の更新（Renovate の自動マージ）でビルドが壊れないことも確認する
+      - name: Build
+        run: pnpm build
