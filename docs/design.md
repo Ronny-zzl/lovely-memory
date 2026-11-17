@@ -191,4 +191,5 @@ lovely-memory/
 - 旧的 hash 链接（`/#/...`，GitHub Pages 时代）在加载时转换为普通路径。
 - Issue 本文・回复中的网站链接来自仓库变量 `SITE_URL`。
 - 分享卡片（OGP）：`apps/web/plugins/site-meta.ts` 在构建时写入 meta 标签，`og:image` 等绝对 URL 也取自 `SITE_URL`（`deploy.yml` 的构建步骤传入）。图片 `apps/web/public/og.png` 由 `tools/og/og.html` 生成：`tools/og/render.sh`（用本地 Google Chrome 截图，字体是 Google Fonts 的 M PLUS Rounded 1c）。
+- 添加到主屏幕（PWA）：`apps/web/public/manifest.webmanifest` + 图标 `apps/web/public/icons/`（由 `tools/icons/icon.html` 经 `tools/icons/render.sh` 生成，512px 兼作 maskable，图案在中央安全区内）。iOS 用 `apple-touch-icon`（180px）。目前没有 Service Worker（不支持离线）。
 - 曲・公演页面的分享卡片：部署时 `pnpm lm og-pages all` 在构建结果里为每个页面生成 `<path>.html`（只替换 title・description・og:*，应用本体相同）和 `og/<path>.png`（`packages/cli/src/og/cards.ts` 的 HTML 用 Chrome 截图，`playwright-core` + 系统 Chrome）。Cloudflare Pages 对 `/a/b` 返回 `a/b.html`（不加末尾斜杠），其他路径仍回退到 `index.html`。列表页（楽曲・公演・傾向・メンバー）只换标题和说明，图片用全站通用的。此步骤失败也不影响部署（`continue-on-error`）。

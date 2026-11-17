@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- ホーム画面用アイコン（正方形・全面塗り）。render.sh で apps/web/public/icons/ に書き出す。
+     Android のマスカブルアイコンは円などに切り抜かれるので、絵柄は中央 60% に収める -->
+<html><head><meta charset="utf-8"><style>
+  * { margin: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; }
+  body {
+    position: relative;
+    background: linear-gradient(120deg, #fff1c9 0%, #ffd29a 28%, #f3a074 44%, #a8628f 52%, #4f4088 62%, #2a2966 80%, #1b1f4d 100%);
+  }
+  .stars { position: absolute; inset: 0; background:
+    radial-gradient(circle at 70% 24%, #fff 0 0.5vw, transparent 0.9vw),
+    radial-gradient(circle at 84% 70%, #fffbe6 0 0.6vw, transparent 1vw),
+    radial-gradient(circle at 62% 80%, #fff 0 0.4vw, transparent 0.8vw); opacity: .9; }
+  svg { position: absolute; }
+  .sun { left: 19vw; top: 33vw; width: 34vw; height: 34vw; color: #f39a1e; filter: drop-shadow(0 0 3vw rgb(255 190 80 / .9)); }
+  .moon { left: 51vw; top: 36vw; width: 30vw; height: 30vw; color: #ffe39a; filter: drop-shadow(0 0 2.5vw rgb(255 236 170 / .6)); }
+</style></head><body>
+  <div class="stars"></div>
+  <svg class="sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.4" fill="currentColor"/><g stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><line x1="8" y1="1" x2="8" y2="2.8"/><line x1="8" y1="13.2" x2="8" y2="15"/><line x1="1" y1="8" x2="2.8" y2="8"/><line x1="13.2" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.3" y2="4.3"/><line x1="11.7" y1="11.7" x2="12.95" y2="12.95"/><line x1="3.05" y1="12.95" x2="4.3" y2="11.7"/><line x1="11.7" y1="4.3" x2="12.95" y2="3.05"/></g></svg>
+  <svg class="moon" viewBox="0 0 16 16"><path d="M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z" fill="currentColor"/></svg>
+</body></html>
