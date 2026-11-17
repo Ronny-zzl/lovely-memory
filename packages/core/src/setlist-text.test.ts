@@ -81,6 +81,37 @@ describe("parseSetlistText", () => {
     ]);
   });
 
+  it("keeps text after a stage header as the stage note", () => {
+    const stages = parseSetlistText(
+      "「ラブリィフェリス」発売記念イベント セトリ⭐️\n\n【1部】もえちゃん考案セトリ❤️\n\nM1_ もしも\n\n【2部】\n\nM1_ オトワ",
+    );
+    expect(stages.map((s) => [s.name, s.note])).toEqual([
+      ["1部", "もえちゃん考案セトリ❤️"],
+      ["2部", undefined],
+    ]);
+  });
+
+  it("reads an unnumbered list of titles", () => {
+    const text = `☀️単独公演「LOVEが目印♡」 セトリ🌙
+
+LOVEが目印(新曲)
+Oh!MAMA!GOD?
+<MC>
+はなうら NIGHT!
+-EN-
+スプらっしゃい！
+
+ #太陽月夜`;
+    const stages = parseSetlistText(text);
+    expect(stages).toHaveLength(1);
+    expect(stages[0]!.items.map((i) => [i.title, i.encore])).toEqual([
+      ["LOVEが目印", false],
+      ["Oh!MAMA!GOD?", false],
+      ["はなうら NIGHT!", false],
+      ["スプらっしゃい！", true],
+    ]);
+  });
+
   it("recognizes encore lines without restarting the stage", () => {
     const stages = parseSetlistText("M1_ もしも\nM2_ オトワ\nEN_ スプらっしゃい！\nEN2_ トランジション");
     expect(stages).toHaveLength(1);

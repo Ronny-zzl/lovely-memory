@@ -59,6 +59,28 @@ describe("extractPosts", () => {
     expect(posts[0]!.stages[0]!.items.map((i) => i.title)).toEqual(["もしも", "オトワ", "トランジション", "スプらっしゃい！"]);
   });
 
+  it("accepts unnumbered lists only when the post announces a setlist", () => {
+    const posts = extractPosts([
+      tw("u1", "2026-11-08T22:49", "☀️単独公演 セトリ🌙\n\nもしも\nオトワ\n\n#太陽月夜"),
+      tw("u2", "2026-11-08T23:00", "デジタルシングル配信開始！\nラブリィフェリス\n作詞・作曲・編曲：夢魅たぴ"),
+    ]);
+    expect(posts.map((p) => [p.id, p.stages[0]!.items.map((i) => i.title)])).toEqual([["u1", ["もしも", "オトワ"]]]);
+  });
+
+  it("requires unnumbered lists to be mostly known songs when a song lookup is given", () => {
+    const known = new Set(["もしも", "オトワ", "トランジション"]);
+    const isKnownSong = (i: { title: string }) => known.has(i.title);
+    const posts = extractPosts(
+      [
+        tw("k1", "2026-11-08T22:49", "単独公演 セトリ\nもしも\nオトワ\nトランジション"),
+        tw("k2", "2026-10-17T11:34", "本日の #太陽月夜 🎤\nリリイベ セトリ投票受付中\n会場: タワーレコード新宿\n13:00〜\nもしも"),
+        tw("k3", "2026-11-09T22:00", "セトリ\nもしも\nオトワ"),
+      ],
+      { isKnownSong },
+    );
+    expect(posts.map((p) => p.id)).toEqual(["k1"]);
+  });
+
   it("splits a post that lists several parts", () => {
     const posts = extractPosts([tw("5", "2026-10-18T18:00", "【1部】\nM1_ もしも\n【2部】\nM1_ オトワ\nM2_ トランジション")]);
     expect(posts.map((p) => [p.part, p.stages[0]!.items.length])).toEqual([
@@ -85,6 +107,25 @@ describe("matchPosts", () => {
 
   it("uses discriminating hashtags when several events have started", () => {
     expect(match([tw("c", "2026-10-04T21:00", "#太陽月夜 #クロフェス2026 セトリ\nM1_ もしも")])).toEqual([["c", 2]]);
+  });
+
+  it("uses the post header against event titles, ignoring the group name", () => {
+    const r = matchPosts(
+      extractPosts([tw("i", "2026-11-08T22:26", "TAIBAN LIVE「日進月歩」vol.16 セトリ⭐️\n\nM1_ もしも\n\n#太陽月夜")]),
+      events,
+      {},
+      ["太陽と踊れ月夜に唄え"],
+    );
+    expect(r[0]).toMatchObject({ kind: "matched", event: { id: 20 } });
+  });
+
+  it("splits parts whose header has trailing text", () => {
+    const text = "発売記念イベント セトリ⭐️\n【1部】もえちゃん考案セトリ❤️\nM1_ もしも\n【2部】\nM1_ オトワ";
+    expect(match([tw("j", "2026-10-18T20:24", text)])).toEqual([
+      ["j", 10],
+      ["j", 11],
+    ]);
+    expect(extractPosts([tw("j", "2026-10-18T20:24", text)])[0]!.stages[0]!.note).toBe("もえちゃん考案セトリ❤️");
   });
 
   it("reports ambiguity when nothing discriminates", () => {

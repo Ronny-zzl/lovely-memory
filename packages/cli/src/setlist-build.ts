@@ -71,6 +71,7 @@ export function buildSetlist(
 
   const stages: SetlistStage[] = parsed.map((s) => ({
     ...(s.name && { name: s.name }),
+    ...(s.note && { note: s.note }),
     items: s.items.map(resolveItem),
   }));
   if (unknown.length) return { unknown, warnings, songsChanged };
@@ -78,6 +79,8 @@ export function buildSetlist(
   const setlist = Setlist.parse({
     event: opts.eventId,
     ...(opts.source && { source: opts.source }),
+    // ステージが 1 つならステージの補足はセトリ全体の note にする
+    ...(stages.length === 1 && stages[0]!.note && { note: stages[0]!.note }),
     ...(stages.length === 1 ? { items: stages[0]!.items } : { stages }),
   });
   return { setlist, unknown, warnings, songsChanged };

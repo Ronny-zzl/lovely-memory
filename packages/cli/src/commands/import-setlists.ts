@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { resolveEvents } from "@lovely-memory/core";
+import { findSong, resolveEvents } from "@lovely-memory/core";
 import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, writeJson } from "../repo.ts";
 import { buildSetlist, countSongs, setlistPath, writeSetlist } from "../setlist-build.ts";
 import { extractPosts, matchPosts, toJst, type CollectedTweet, type SetlistPost } from "../tweet-match.ts";
@@ -37,8 +37,8 @@ export async function importSetlists(artistId: string, opts: Record<string, unkn
   const events = resolveEvents(await loadEvents(artistId), await loadOverrides(artistId), artist);
   const dryRun = !!opts["dry-run"];
 
-  const posts = extractPosts(tweets);
-  const results = matchPosts(posts, events, manual);
+  const posts = extractPosts(tweets, { isKnownSong: (item) => findSong(songs, item) !== undefined });
+  const results = matchPosts(posts, events, manual, [artist.name]);
 
   const written: string[] = [];
   const exists: string[] = [];

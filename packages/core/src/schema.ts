@@ -165,6 +165,7 @@ export const SetlistStage = z.object({
   name: z.string().optional(),
   /** このステージの出演メンバー（イベント全体と異なる場合のみ） */
   members: z.array(slug).optional(),
+  note: z.string().optional(),
   items: z.array(SetlistItem),
 });
 export type SetlistStage = z.infer<typeof SetlistStage>;

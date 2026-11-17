@@ -1,4 +1,11 @@
-import { normalizeTitle, parseSetlistText, type ParsedStage, type ResolvedEvent } from "@lovely-memory/core";
+import {
+  hasNumberedItems,
+  looksLikeSetlistAnnouncement,
+  normalizeTitle,
+  parseSetlistText,
+  type ParsedStage,
+  type ResolvedEvent,
+} from "@lovely-memory/core";
 
 /** tools/x-setlist-collector.js が出力する 1 ポスト */
 export type CollectedTweet = {
@@ -57,16 +64,26 @@ export function partNumber(s: string): number | undefined {
 
 /**
  * 収集したポストからセトリ告知を取り出す。
- * - 曲行（M1_ …）が無いポストは除外
+ * - 曲行（M1_ …）が無いポストは除外（ただし「セトリ」見出しがあれば曲名だけの列挙として読む）
  * - 続きのポスト（直前のポストの最終曲番号 +1 から始まり、20 分以内）は結合する
  * - 1 ポストに【1部】【2部】のように複数部が載っている場合は部ごとに分割する
  */
-export function extractPosts(tweets: CollectedTweet[]): SetlistPost[] {
+export type ExtractOptions = {
+  /**
+   * 曲名が songs.json にあるか。曲番号の無い告知（曲名の列挙）は、3 行以上かつ 8 割以上が
+   * 既知の曲名である場合だけセトリとみなす（「本日の #太陽月夜」等の告知を除外するため）。
+   * 省略時は曲番号の無い告知をすべて受け入れる。
+   */
+  isKnownSong?: (item: { label: string; title: string }) => boolean;
+};
+
+export function extractPosts(tweets: CollectedTweet[], opts: ExtractOptions = {}): SetlistPost[] {
   const sorted = [...tweets].sort((a, b) => a.time.localeCompare(b.time));
   const groups: CollectedTweet[][] = [];
   for (const t of sorted) {
     const nums = mNumbers(t.text);
-    if (nums.length === 0) continue;
+    // 曲番号の無い告知は「セトリ」等の見出しがある場合のみ（リリース告知の収録曲一覧などを除外）
+    if (!hasNumberedItems(t.text) && !looksLikeSetlistAnnouncement(t.text)) continue;
     const prev = groups.at(-1);
     const prevLast = prev ? mNumbers(prev.at(-1)!.text).at(-1) : undefined;
     const withinMinutes =
@@ -79,6 +96,12 @@ export function extractPosts(tweets: CollectedTweet[]): SetlistPost[] {
   for (const g of groups) {
     const text = g.map((t) => t.text).join("\n");
     const stages = parseSetlistText(text);
+    if (stages.length === 0) continue;
+    if (!hasNumberedItems(text) && opts.isKnownSong) {
+      const items = stages.flatMap((st) => st.items);
+      const known = items.filter(opts.isKnownSong).length;
+      if (items.length < 3 || known / items.length < 0.8) continue;
+    }
     const base = {
       id: g[0]!.id,
       url: g[0]!.url,
@@ -89,7 +112,7 @@ export function extractPosts(tweets: CollectedTweet[]): SetlistPost[] {
     };
     const parts = stages.map((s) => (s.name ? partNumber(s.name) : undefined));
     if (stages.length > 1 && parts.every((p) => p !== undefined)) {
-      stages.forEach((s, i) => posts.push({ ...base, stages: [{ items: s.items }], part: parts[i] }));
+      stages.forEach((s, i) => posts.push({ ...base, stages: [{ items: s.items, note: s.note }], part: parts[i] }));
     } else {
       posts.push({ ...base, stages });
     }
@@ -120,6 +143,32 @@ function hashtags(text: string): string[] {
   return [...text.normalize("NFKC").matchAll(/#([^\s#]+)/g)].map((m) => normalizeTitle(m[1]!)).filter((t) => t.length >= 2);
 }
 
+/** 告知文の冒頭（最初の曲行より前、ハッシュタグ除く） */
+function headerText(text: string): string {
+  const lines: string[] = [];
+  for (const l of text.split("\n")) {
+    if (/^\s*M\s*\d/i.test(l)) break;
+    lines.push(l.replace(/#[^\s#]+/g, ""));
+  }
+  return lines.join(" ");
+}
+
+/** 最長共通部分文字列の長さ */
+function commonLength(a: string, b: string): number {
+  let best = 0;
+  const prev = new Array<number>(b.length + 1).fill(0);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = 0;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = prev[j]!;
+      prev[j] = a[i - 1] === b[j - 1] ? diag + 1 : 0;
+      if (prev[j]! > best) best = prev[j]!;
+      diag = tmp;
+    }
+  }
+  return best;
+}
+
 function prevDate(date: string): string {
   const d = new Date(`${date}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() - 1);
@@ -134,7 +183,11 @@ export function matchPosts(
   posts: SetlistPost[],
   events: ResolvedEvent[],
   manual: Record<string, number | "skip"> = {},
+  /** 照合時に無視する語（グループ名など、どのイベント名にも入っているもの） */
+  ignoreWords: string[] = [],
 ): MatchResult[] {
+  const ignore = ignoreWords.map(normalizeTitle).filter(Boolean);
+  const strip = (s: string) => ignore.reduce((acc, w) => acc.replaceAll(w, ""), normalizeTitle(s));
   const live = events.filter((e) => e.type !== "tokuten");
   const assigned = new Set<number>();
   const results: MatchResult[] = [];
@@ -178,6 +231,15 @@ export function matchPosts(
       const best = Math.max(...candidates.map(score));
       const top = candidates.filter((e) => score(e) === best);
       if (best > 0 && top.length < candidates.length) (candidates = top), (reason += " + ハッシュタグ");
+    }
+
+    // 4) 告知文冒頭とイベント名の最長共通部分（3 文字以上で、単独トップのときだけ採用）
+    if (candidates.length > 1) {
+      const head = strip(headerText(post.text));
+      const scored = candidates.map((e) => ({ e, n: commonLength(head, strip(e.title)) }));
+      const best = Math.max(...scored.map((s) => s.n));
+      const top = scored.filter((s) => s.n === best);
+      if (best >= 3 && top.length === 1) (candidates = [top[0]!.e]), (reason += " + 告知文の見出し");
     }
 
     if (candidates.length === 1) {
