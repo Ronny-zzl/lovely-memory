@@ -40,11 +40,11 @@ const ZONES = [
 
 const NEIGHBOR_SIZE = 3;
 
-function NeighborList({ title, items, pick, extra }: { title: string; items: Transition[]; pick: (t: Transition) => Song; extra?: string }) {
+function NeighborList({ title, items, pick }: { title: string; items: Transition[]; pick: (t: Transition) => Song }) {
   return (
     <div className="neighbor-col">
       <h4 className="neighbor-heading">{title}</h4>
-      {items.length === 0 && !extra ? (
+      {items.length === 0 ? (
         <p className="muted small">—</p>
       ) : (
         <ul className="neighbor-list">
@@ -56,7 +56,6 @@ function NeighborList({ title, items, pick, extra }: { title: string; items: Tra
               <span className="rank-count">{t.count}回</span>
             </li>
           ))}
-          {extra && <li className="muted small">{extra}</li>}
         </ul>
       )}
     </div>
@@ -291,8 +290,8 @@ export function SongDetailPage() {
                 {position.encore > 0 && ` ・ アンコール ${position.encore} 回`}
               </p>
               <div className="neighbors">
-                <NeighborList title="前に歌われた曲" items={near.before} pick={(t) => t.from} extra={position.opener > 0 ? `1 曲目 ${position.opener}回` : undefined} />
-                <NeighborList title="次に歌われた曲" items={near.after} pick={(t) => t.to} extra={position.closer > 0 ? `ラスト ${position.closer}回` : undefined} />
+                <NeighborList title="前に歌われた曲" items={near.before} pick={(t) => t.from} />
+                <NeighborList title="次に歌われた曲" items={near.after} pick={(t) => t.to} />
               </div>
             </section>
           )}
