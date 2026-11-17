@@ -8,10 +8,10 @@ export function ShareButtons({ text, hashtags = [] }: { text: string; hashtags?:
   const [copied, setCopied] = useState(false);
   // 共有するのは正式ドメインのパス（クエリ・ハッシュは付けない）
   const url = location.origin + location.pathname;
+  // hashtags・url パラメータだと並び順を選べないので、本文・ハッシュタグ・URL を改行区切りで 1 つの本文にする
+  const tags = hashtags.map((h) => `#${h}`).join(" ");
   const intent = new URL("https://x.com/intent/post");
-  intent.searchParams.set("text", text);
-  intent.searchParams.set("url", url);
-  if (hashtags.length) intent.searchParams.set("hashtags", hashtags.join(","));
+  intent.searchParams.set("text", [text, tags, url].filter(Boolean).join("\n"));
 
   const canShare = typeof navigator.share === "function";
   const share = () => navigator.share({ title: document.title, text, url }).catch(() => {});

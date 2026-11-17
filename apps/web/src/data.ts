@@ -52,7 +52,14 @@ const cache = new Map<string, Promise<ArtistData>>();
 export function loadArtistData(artist: ArtistConfig): Promise<ArtistData> {
   let p = cache.get(artist.id);
   if (!p) {
-    p = load(artist);
+    const promise = load(artist);
+    // 読み込み済みの印を付けておくと、React の use() が待たずに値を返す
+    // （付けないと、解決済みでも一度「読み込み中」を出し、React の仕様で最低 300ms 表示し続ける）
+    promise.then(
+      (value) => Object.assign(promise, { status: "fulfilled", value }),
+      (reason) => Object.assign(promise, { status: "rejected", reason }),
+    );
+    p = promise;
     cache.set(artist.id, p);
   }
   return p;

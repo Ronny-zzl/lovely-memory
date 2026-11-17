@@ -22,3 +22,6 @@ jobs:
       # 依存関係の更新（Renovate の自動マージ）でビルドが壊れないことも確認する
       - name: Build
         run: pnpm build
+      # 全ページを Chrome で開き、表示・エラーが無いことを確認（Renovate の自動マージで画面が壊れないように）
+      - name: Smoke test
+        run: pnpm smoke

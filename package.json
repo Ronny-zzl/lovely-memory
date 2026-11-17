@@ -12,7 +12,8 @@
     "build": "pnpm --filter @lovely-memory/web build",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
-    "lm": "node packages/cli/src/index.ts"
+    "lm": "node packages/cli/src/index.ts",
+    "smoke": "pnpm --filter @lovely-memory/web smoke"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

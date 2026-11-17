@@ -9,6 +9,7 @@ import { MembersPage } from "./pages/MembersPage.tsx";
 import { SongDetailPage } from "./pages/SongDetailPage.tsx";
 import { SongStatsPage } from "./pages/SongStatsPage.tsx";
 import { TrendsPage } from "./pages/TrendsPage.tsx";
+import { findArtist, loadArtistData } from "./data.ts";
 import "./styles.css";
 
 // 以前の hash ルーティング（/#/artist/...）のリンクを通常のパスに置き換える
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
   },
   { path: "*", element: <Navigate to="/" replace /> },
 ]);
+
+// URL のアーティストのデータを描画前に読み込んでおく（数ミリ秒で終わる）。
+// 描画中に読み込むと「読み込み中」が一瞬出て、React の仕様で最低 300ms 表示が遅れる
+const initialArtist = findArtist(location.pathname.split("/")[1]);
+if (initialArtist) await loadArtistData(initialArtist).catch(() => {});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
