@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
-import { neighbors, positionRole, type Song, type Transition } from "@lovely-memory/core/runtime";
+import { neighbors, positionRole, STREAK_MIN, type Song, type Transition } from "@lovely-memory/core/runtime";
+import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText, todayJst } from "../format.ts";
@@ -63,7 +64,7 @@ function NeighborList({ title, items, pick, extra }: { title: string; items: Tra
 }
 
 export function SongDetailPage() {
-  const { artist, allStats, patterns } = useArtistData();
+  const { artist, allStats, patterns, milestones } = useArtistData();
   const songId = useParams().songId;
   const stats = allStats.songs.find((s) => s.song.id === songId);
 
@@ -92,6 +93,9 @@ export function SongDetailPage() {
   const role = position && positionRole(position);
   const zoned = position ? position.zones.early + position.zones.middle + position.zones.late : 0;
   const near = neighbors(patterns, song.id);
+  const record = milestones.songs.get(song.id);
+  const songMilestones = milestones.achieved.filter((m) => "song" in m && m.song.id === song.id).reverse();
+  const eventTitle = new Map(allStats.events.map((e) => [e.event.id, displayTitle(e.event.title, artist.name)]));
 
   const history = [...stats.performances].reverse();
   // カバー曲は歌唱回数が少なく間隔も長いので、歌唱率・出現パターン等は出さない
@@ -226,6 +230,43 @@ export function SongDetailPage() {
                   />
                 ))}
               </div>
+            </section>
+          )}
+
+          {!isCover && record && (
+            <section className="song-section">
+              <h3 className="section-heading">記録</h3>
+              <ul className="record-facts">
+                {record.currentStreak >= STREAK_MIN && (
+                  <li>
+                    <span aria-hidden="true">🔥</span> いま <strong>{record.currentStreak} 公演連続</strong>で歌唱中
+                  </li>
+                )}
+                {record.longestStreak >= 2 && record.longestStreak > record.currentStreak && (
+                  <li>
+                    最長 <strong>{record.longestStreak} 公演連続</strong>
+                    <span className="muted small">（〜{formatDate(record.longestStreakEnd!.date)}）</span>
+                  </li>
+                )}
+                <li>
+                  あと <strong>{record.nextCount - stats.count} 回</strong>で通算 {record.nextCount} 回目
+                </li>
+              </ul>
+              {songMilestones.length > 0 && (
+                <ul className="milestone-list">
+                  {songMilestones.map((m, i) => (
+                    <li key={i}>
+                      <span className="event-date event-date-full">{formatDate(m.date)}</span>
+                      <MilestoneBadge m={m} artistId={artist.id} showSong={false} />
+                      {m.eventId && (
+                        <Link to={`/${artist.id}/events/${m.eventId}`} className="muted small milestone-event">
+                          {eventTitle.get(m.eventId)}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
 

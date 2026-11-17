@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router";
 import { isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
+import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
@@ -8,7 +9,7 @@ import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "
 import { useArtistData } from "./ArtistLayout.tsx";
 
 export function EventDetailPage() {
-  const { artist, events, allStats } = useArtistData();
+  const { artist, events, allStats, milestones } = useArtistData();
   const id = Number(useParams().eventId);
   const event = events.find((e) => e.id === id);
 
@@ -32,6 +33,8 @@ export function EventDetailPage() {
   const times = [event.open && `開場 ${event.open}`, event.start && `開演 ${event.start}`].filter(Boolean).join(" / ");
   const enUrl = eventernoteUrl(event.id);
   const multiStage = (setlist?.stages.length ?? 0) > 1;
+  // この公演で達成した節目（グループの記録を先に）
+  const reached = milestones.achieved.filter((m) => m.eventId === id).sort((a, b) => Number("song" in a) - Number("song" in b));
 
   return (
     <article className="event-detail">
@@ -68,6 +71,17 @@ export function EventDetailPage() {
           hashtags={artist.shareHashtags}
         />
       </header>
+
+      {reached.length > 0 && (
+        <section className="event-milestones">
+          <h3 className="section-heading">この公演の記録</h3>
+          <div className="milestones">
+            {reached.map((m, i) => (
+              <MilestoneBadge key={i} m={m} artistId={artist.id} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {setlist ? (
         <section className="setlist">

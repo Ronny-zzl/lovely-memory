@@ -1,15 +1,19 @@
 import {
+  computeMilestones,
   computePatterns,
+  isLiveEvent,
   computeStats,
   resolveEvents,
   type ArtistConfig,
   type ResolvedEvent,
   type Setlist,
+  type Milestones,
   type Patterns,
   type Song,
   type Stats,
 } from "@lovely-memory/core/runtime";
 import { artists as configs, loaders } from "virtual:lovely-memory/artists";
+import { todayJst } from "./format.ts";
 
 /*
  * artists/<id>/ 以下のデータ。検証・既定値の補完はビルド時（plugins/artists-data.ts）に済んでいる。
@@ -35,6 +39,8 @@ export type ArtistData = {
   allStats: Stats;
   /** 全イベントの曲順の傾向（1 曲目・ラスト・つながり） */
   patterns: Patterns;
+  /** 記録の節目（読み込んだ日の時点） */
+  milestones: Milestones;
 };
 
 async function load(artist: ArtistConfig): Promise<ArtistData> {
@@ -43,7 +49,8 @@ async function load(artist: ArtistConfig): Promise<ArtistData> {
   const { songs, events: rawEvents, overrides, setlists } = (await loader()).default;
   const events = resolveEvents(rawEvents, overrides, artist);
   const allStats = computeStats({ songs, events, setlists });
-  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events) };
+  const milestones = computeMilestones({ stats: allStats, liveEvents: events.filter(isLiveEvent), since: artist.since, today: todayJst() });
+  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events), milestones };
 }
 
 const cache = new Map<string, Promise<ArtistData>>();

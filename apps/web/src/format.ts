@@ -8,6 +8,7 @@ export {
   formatDayWithWeekday,
   formatPercent,
   LIVE_EVENT_TYPES,
+  milestoneText,
   POSITION_ROLE_LABEL,
   tieupLabels,
   tieupText,

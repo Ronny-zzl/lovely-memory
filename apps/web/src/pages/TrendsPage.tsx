@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import type { Song, SongPosition } from "@lovely-memory/core/runtime";
+import { MilestonesSection } from "../components/MilestonesSection.tsx";
 import { formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
@@ -50,6 +51,8 @@ export function TrendsPage() {
       <p className="muted small">
         セトリのある {patterns.stages} ステージの本編（アンコール・コラボステージを除く）の曲順から集計。割合は本編でその曲が歌われた回数に対するもの。
       </p>
+
+      <MilestonesSection />
 
       <div className="trend-grid">
         <PositionRanking title="1 曲目" positions={patterns.positions} pick={(p) => p.opener} />

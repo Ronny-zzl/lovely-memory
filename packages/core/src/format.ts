@@ -63,3 +63,21 @@ export const tieupText = (t: Tieup) => `${TIEUP_TYPE_LABEL[t.type]}『${t.work}�
 export const tieupLabels = (tieups: Tieup[]) => [...new Set(tieups.map((t) => TIEUP_TYPE_LABEL[t.type]))];
 
 export const POSITION_ROLE_LABEL = { opener: "1曲目定番", closer: "ラスト定番" } as const;
+
+/** 達成した節目の短い表記（曲名は含まない） */
+export function milestoneText(m: import("./milestones.ts").Milestone): string {
+  switch (m.kind) {
+    case "song-count":
+      return `通算 ${m.count} 回目`;
+    case "song-streak":
+      return `${m.streak} 公演連続`;
+    case "song-return":
+      return `${m.gap} 公演ぶり`;
+    case "event-count":
+      return `通算 ${m.count} 公演目`;
+    case "total-songs":
+      return `通算 ${m.count} 曲目`;
+    case "debut-days":
+      return m.years ? `デビュー ${m.years} 周年` : `デビュー ${m.days} 日`;
+  }
+}
