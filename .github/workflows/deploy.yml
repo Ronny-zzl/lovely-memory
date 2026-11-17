@@ -33,6 +33,9 @@ jobs:
         run: pnpm -s lm validate all
       - name: Build
         run: pnpm build
+        env:
+          # OGP（og:image など）の絶対 URL に使う
+          SITE_URL: ${{ vars.SITE_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: site
