@@ -6,6 +6,7 @@ import { importOfficial } from "./commands/import-official.ts";
 import { importSetlists } from "./commands/import-setlists.ts";
 import { importWikipedia } from "./commands/import-wikipedia.ts";
 import { listEvents } from "./commands/list-events.ts";
+import { ogPages } from "./commands/og-pages.ts";
 import { openSetlistIssues } from "./commands/open-setlist-issues.ts";
 import { sync } from "./commands/sync.ts";
 import { validate } from "./commands/validate.ts";
@@ -41,6 +42,11 @@ commands:
                      --era <eraId>  新規追加曲の era を固定（省略時は発売日から判定）
                      --file <path>  ローカルの wikitext を使う
                      --dry-run
+  og-pages           ビルド結果にページごとの共有カード（<path>.html と og/…png）を追加（artistId に all 可）
+                     SITE_URL 環境変数が必要。画像はローカルの Google Chrome で描画
+                     --dist <dir>     ビルド結果（既定 apps/web/dist）
+                     --skip-images    HTML だけ作る
+                     --only <文字列>  画像をパスに含むものだけ描画（確認用）
   add-song           曲を 1 曲追加（カバー曲・未発売曲など）
                      --title <曲名>  (必須)
                      --cover <原曲アーティスト>
@@ -75,6 +81,9 @@ const { positionals, values } = parseArgs({
     issue: { type: "string" },
     out: { type: "string" },
     "catch-up-days": { type: "string" },
+    dist: { type: "string" },
+    "skip-images": { type: "boolean" },
+    only: { type: "string" },
   },
 });
 const [command, artistId] = positionals;
@@ -93,6 +102,7 @@ const commands: Record<string, Command> = {
   "add-song": addSong,
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,
+  "og-pages": ogPages,
 };
 
 const run = command ? commands[command] : undefined;

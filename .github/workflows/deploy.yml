@@ -38,6 +38,12 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           # このホストで開かれたら SITE_URL のドメインへ移動する
           PAGES_HOST: ${{ vars.CLOUDFLARE_PROJECT }}.pages.dev
+      # 曲・公演ページごとの共有カード（HTML と画像）。失敗してもサイト共通のカードのままデプロイする
+      - name: Share cards
+        continue-on-error: true
+        run: pnpm -s lm og-pages all
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
       - uses: actions/upload-artifact@v4
         with:
           name: site
