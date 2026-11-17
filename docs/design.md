@@ -168,7 +168,7 @@ lovely-memory/
 │     ├─ events.json      活动（自动同步生成，不手改）
 │     ├─ overrides.json   活动修正（手写）
 │     └─ setlists/<eventId>.yaml
-└─ .github/workflows/  sync.yml（每日，遍历所有有 eventernote 配置的艺人）, deploy.yml（GitHub Pages）
+└─ .github/workflows/  sync.yml（每日，遍历所有有 eventernote 配置的艺人）, deploy.yml（Cloudflare Pages）
 ```
 
 - **浏览器端不带 zod**：`apps/web/plugins/artists-data.ts` 在构建时读取 `artists/`，用 zod 校验并补默认值后，以虚拟模块提供（每个艺人 1 个 chunk）。网页只从 `@lovely-memory/core/runtime`（不含 zod 的入口）导入。数据有误时构建失败。
@@ -182,3 +182,10 @@ lovely-memory/
 - eventernote 486948「太陽と踊れ月夜に唄え Second Season Debut LIVE～ふたつの空の下で～」
 - 2026-09-04，harevutai，開場 18:30，開演 19:00
 - 全 16 首，其中新曲 3 首：未来絵 Go Around!!、LOVEが目印、ラブリィフェリス
+
+## 部署
+
+- **Cloudflare Pages**，项目名 `lovely-memory` → https://lovely-memory.pages.dev/ 。选择理由：网址不含个人账号名；将来可用 Pages Functions / D1 / KV 扩展（用户系统等）。
+- GitHub Actions 构建后用 wrangler 上传（`deploy.yml`）。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
+- 资源用相对路径（`base: "./"`），配合 hash 路由，放在任何路径下都能运行。
+- Issue 本文・回复中的网站链接来自仓库变量 `SITE_URL`。

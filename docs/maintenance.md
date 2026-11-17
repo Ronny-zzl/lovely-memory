@@ -7,7 +7,7 @@
 | 每天 05:00 JST | 从 eventernote 同步活动（开演 30 天以内与未来的活动） | `sync.yml` |
 | 每月 2 日 04:00 JST | 全量同步 | `sync.yml` |
 | 同步之后 | 为**当天**的每场演出开一个「[セトリ] …」Issue（指派给仓库所有者；过去 7 天内漏开的也会补开） | `sync.yml` |
-| 同步・歌单导入・push 之后 | 部署到 GitHub Pages | `deploy.yml` |
+| 同步・歌单导入・push 之后 | 部署到 Cloudflare Pages（https://lovely-memory.pages.dev/） | `deploy.yml` |
 
 ## 录入歌单
 

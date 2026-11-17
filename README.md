@@ -2,7 +2,7 @@
 
 **太陽と踊れ月夜に唄え（Second Season）** のライブのセットリストを記録・集計する、非公式のファンサイトです。
 
-👉 **https://ronny-zzl.github.io/lovely-memory/**
+👉 **https://lovely-memory.pages.dev/**
 
 サイト名は 2期曲「ラブリィフェリス」から。
 

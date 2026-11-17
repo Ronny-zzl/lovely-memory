@@ -11,11 +11,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: true
 
 jobs:
@@ -33,27 +31,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Validate data
         run: pnpm -s lm validate all
-      # アセットは相対パスなので、同じビルドをどの配信先でも使える
       - name: Build
         run: pnpm build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: apps/web/dist
       - uses: actions/upload-artifact@v4
         with:
           name: site
           path: apps/web/dist
 
-  github-pages:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-
+  # Cloudflare Pages（https://lovely-memory.pages.dev/）へデプロイ
   # リポジトリ変数 CLOUDFLARE_PROJECT と、シークレット CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が必要
   cloudflare:
     needs: build
@@ -79,13 +64,11 @@ jobs:
         run: |
           api() { curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4$1"; }
           echo "token length: ${#CLOUDFLARE_API_TOKEN}, account id length: ${#CLOUDFLARE_ACCOUNT_ID}"
-          echo "--- user token verify";    api /user/tokens/verify | jq -c '{success, status: .result.status, errors: [.errors[]?.message]}'
-          echo "--- account token verify"; api "/accounts/$CLOUDFLARE_ACCOUNT_ID/tokens/verify" | jq -c '{success, status: .result.status, errors: [.errors[]?.message]}'
-          echo "--- account access";       api "/accounts/$CLOUDFLARE_ACCOUNT_ID" | jq -c '{success, errors: [.errors[]?.message]}'
+          echo "--- token verify";   api /user/tokens/verify | jq -c '{success, status: .result.status, errors: [.errors[]?.message]}'
           # アカウント ID 自体は公開ログに出さず、一致するかだけを出す
           echo "--- accounts visible to the token"
           api "/accounts" | jq -c --arg id "$CLOUDFLARE_ACCOUNT_ID" '{count: (.result | length?), account_id_matches: ([.result[]?.id] | index($id) != null)}'
-          echo "--- pages projects";       api "/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" | jq -c '{success, count: (.result | length?), errors: [.errors[]?.message]}'
+          echo "--- pages projects"; api "/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" | jq -c '{success, count: (.result | length?), errors: [.errors[]?.message]}'
       # wrangler-action は新しい npm で npx が止まるため、wrangler を直接使う
       - name: Create Pages project (first time only)
         run: |
