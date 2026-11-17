@@ -6,7 +6,7 @@
     "node": ">=24"
   },
   "type": "module",
-  "packageManager": "pnpm@12.18.0",
+  "packageManager": "pnpm@12.21.0",
   "scripts": {
     "dev": "pnpm --filter @lovely-memory/web dev",
     "build": "pnpm --filter @lovely-memory/web build",
