@@ -54,6 +54,8 @@ export const ArtistConfig = z.object({
   /** 表示上の既定値。曲の era / unit がこれと同じならバッジを出さない（大多数の曲に同じ印が並ぶのを避ける） */
   defaultEra: slug.optional(),
   defaultUnit: slug.optional(),
+  /** 共有ボタン（X）で付けるハッシュタグ（# は付けない） */
+  shareHashtags: z.array(z.string()).default([]),
   sources: z.object({
     eventernote: z
       .object({

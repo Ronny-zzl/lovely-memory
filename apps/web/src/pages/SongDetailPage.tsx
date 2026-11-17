@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
 import { neighbors, positionRole, type Song, type Transition } from "@lovely-memory/core/runtime";
+import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText, todayJst } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
@@ -164,6 +165,14 @@ export function SongDetailPage() {
           </p>
         )}
         {song.note && <p className="small">{song.note}</p>}
+        <ShareButtons
+          text={
+            stats.count === 0 || song.cover
+              ? `「${song.title}」の歌唱記録（${artist.name}）`
+              : `「${song.title}」の歌唱率 ${formatPercent(stats.rate)}（${stats.events}/${stats.eligibleEvents} 公演）・歌唱 ${stats.count} 回（${artist.name}）`
+          }
+          hashtags={artist.shareHashtags}
+        />
       </header>
 
       {stats.count === 0 ? (

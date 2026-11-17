@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router";
 import { isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
+import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
@@ -58,6 +59,10 @@ export function EventDetailPage() {
           )}
         </p>
         {event.note && <p className="small">{event.note}</p>}
+        <ShareButtons
+          text={`${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」${setlist ? "のセトリ" : ""}（${artist.name}）`}
+          hashtags={artist.shareHashtags}
+        />
       </header>
 
       {setlist ? (
