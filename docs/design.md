@@ -81,7 +81,7 @@ type Event = {
   venue?: { id: number; name: string };
   open?: string; start?: string; end?: string;
   performers: number[];  // eventernote 的 actor id
-  type: EventType;       // 先根据标题关键词推断，再用 overrides 修正
+  types: EventType[];    // 可多个（如 单独公演+Free Live）。按 eventTypeRules 推断（命中的全部），overrides 的 types 整体替换
 };
 
 // artists/<id>/setlists/<eventId>.yaml（由 `pnpm lm add-setlist` 从推文生成）
@@ -129,7 +129,7 @@ type SetlistItem = string | {
 - **成员**：出演场数、演唱次数
 - **矩阵**：横轴是活动，纵轴是曲目（相当于原表格的 セットリスト 视图）
 
-计算对象只限有歌单的活动。`tokuten` 类型和还没录入歌单的活动不计入分母。
+计算对象只限有歌单的活动；按类型筛选时，活动的任一类型被选中即计入。演唱率的分母为该曲**首唱以后**（含首唱）的活动数。
 
 ## 6. 目录结构（pnpm monorepo）
 

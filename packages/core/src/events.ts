@@ -1,7 +1,8 @@
 import type { ArtistConfig, Event, EventType, Overrides } from "./schema.ts";
 
 export type ResolvedEvent = Event & {
-  type: EventType;
+  /** イベント種別（1 つ以上）。例: 単独公演かつフリーライブ */
+  types: EventType[];
   /** 出演メンバー（member id） */
   members: string[];
   /**
@@ -14,11 +15,15 @@ export type ResolvedEvent = Event & {
   note?: string;
 };
 
-export function inferEventType(title: string, artist: ArtistConfig): EventType {
-  for (const rule of artist.eventTypeRules) {
-    if (new RegExp(rule.pattern, "i").test(title)) return rule.type;
-  }
-  return artist.defaultEventType;
+/** タイトルにマッチしたルールの種別をすべて返す（ルール順・重複なし）。無ければ defaultEventType */
+export function inferEventTypes(title: string, artist: ArtistConfig): EventType[] {
+  const types = artist.eventTypeRules.filter((r) => new RegExp(r.pattern, "i").test(title)).map((r) => r.type);
+  return types.length ? [...new Set(types)] : [artist.defaultEventType];
+}
+
+/** ライブを伴うイベントか（特典会のみのイベントはセトリが存在しない） */
+export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
+  return e.types.some((t) => t !== "tokuten");
 }
 
 /**
@@ -31,14 +36,14 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
   );
   const allMembers = artist.members.map((m) => m.id);
 
-  const merged: Array<Event & { type?: EventType }> = [...events, ...overrides.extraEvents];
+  const merged: Array<Event & { types?: EventType[] }> = [...events, ...overrides.extraEvents];
   const out: ResolvedEvent[] = [];
 
   for (const base of merged) {
     const ov = overrides.events[String(base.id)] ?? {};
     if (ov.hidden) continue;
-    const { type: ovType, members: ovMembers, hidden: _h, note, ...fields } = ov;
-    const ev = { ...base, ...fields } as Event & { type?: EventType };
+    const { types: ovTypes, members: ovMembers, hidden: _h, note, ...fields } = ov;
+    const ev = { ...base, ...fields } as Event & { types?: EventType[] };
 
     if (artist.since && ev.date < artist.since) continue;
     if (artist.until && ev.date > artist.until) continue;
@@ -56,7 +61,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
 
     out.push({
       ...ev,
-      type: ovType ?? ev.type ?? inferEventType(ev.title, artist),
+      types: ovTypes ?? ev.types ?? inferEventTypes(ev.title, artist),
       members,
       membersSource,
       note,

@@ -1,6 +1,8 @@
 import { Link, useParams } from "react-router";
+import { isLiveEvent } from "@lovely-memory/core";
 import { MemberDots } from "../components/MemberDots.tsx";
-import { displayTitle, EVENT_TYPE_LABEL, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
+import { TypeBadges } from "../components/TypeBadges.tsx";
+import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 export function EventDetailPage() {
@@ -18,7 +20,7 @@ export function EventDetailPage() {
 
   const setlist = allStats.events.find((e) => e.event.id === id);
   // 前後の公演（特典会を除く）
-  const live = events.filter((e) => e.type !== "tokuten");
+  const live = events.filter(isLiveEvent);
   const idx = live.findIndex((e) => e.id === id);
   const prev = idx > 0 ? live[idx - 1] : undefined;
   const next = idx >= 0 && idx < live.length - 1 ? live[idx + 1] : undefined;
@@ -42,7 +44,7 @@ export function EventDetailPage() {
         </p>
         <h2 className="event-detail-title">{event.title}</h2>
         <p className="event-detail-meta">
-          <span className={`type-badge type-${event.type}`}>{EVENT_TYPE_LABEL[event.type]}</span>
+          <TypeBadges types={event.types} />
           {event.venue && <span>{event.venue.name}</span>}
         </p>
         <p className="event-detail-members">
@@ -98,7 +100,7 @@ export function EventDetailPage() {
         </section>
       ) : (
         <p className="muted empty-setlist">
-          {event.type === "tokuten" ? "ライブの無いイベントです" : "セトリはまだ登録されていません"}
+          {!isLiveEvent(event) ? "ライブの無いイベントです" : "セトリはまだ登録されていません"}
         </p>
       )}
 

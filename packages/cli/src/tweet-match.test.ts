@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import type { ResolvedEvent } from "@lovely-memory/core";
 import { extractPosts, matchPosts, partNumber, toJst, type CollectedTweet } from "./tweet-match.ts";
 
-const ev = (id: number, date: string, start: string, title: string, type: ResolvedEvent["type"] = "external"): ResolvedEvent => ({
+const ev = (id: number, date: string, start: string, title: string, type: ResolvedEvent["types"][number] = "external"): ResolvedEvent => ({
   id,
   date,
   start,
   title,
-  type,
+  types: [type],
   performers: [],
   members: [],
   membersSource: "assumed",

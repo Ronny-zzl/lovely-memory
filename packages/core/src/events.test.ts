@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { inferEventType, resolveEvents } from "./events.ts";
+import { inferEventTypes, isLiveEvent, resolveEvents } from "./events.ts";
 import { ArtistConfig, Overrides, type Event } from "./schema.ts";
 
 const artist = ArtistConfig.parse({
@@ -27,12 +27,18 @@ const ev = (id: number, date: string, title: string, performers: number[] = [], 
   start,
 });
 
-describe("inferEventType", () => {
-  it("uses the first matching rule, else default", () => {
-    expect(inferEventType("着物チェキ会", artist)).toBe("tokuten");
-    expect(inferEventType("TAIBAN LIVE「日進月歩」vol.16", artist)).toBe("taiban");
-    expect(inferEventType("Second Season Debut LIVE", artist)).toBe("oneman");
-    expect(inferEventType("IDOLGROW vol.30", artist)).toBe("external");
+describe("inferEventTypes", () => {
+  it("collects every matching rule, else the default", () => {
+    expect(inferEventTypes("着物チェキ会", artist)).toEqual(["tokuten"]);
+    expect(inferEventTypes("TAIBAN LIVE「日進月歩」vol.16", artist)).toEqual(["taiban"]);
+    expect(inferEventTypes("Second Season Debut LIVE", artist)).toEqual(["oneman"]);
+    expect(inferEventTypes("IDOLGROW vol.30", artist)).toEqual(["external"]);
+    expect(inferEventTypes("単独公演 日進月歩SP", artist)).toEqual(["taiban", "oneman"]);
+  });
+
+  it("treats tokuten-only events as non-live", () => {
+    expect(isLiveEvent({ types: ["tokuten"] })).toBe(false);
+    expect(isLiveEvent({ types: ["release", "tokuten"] })).toBe(true);
   });
 });
 
@@ -55,22 +61,28 @@ describe("resolveEvents", () => {
     expect(r.find((e) => e.id === 4)).toMatchObject({ members: ["a", "b"], membersSource: "assumed" });
   });
 
+  it("keeps eventernote performers when an override only changes other fields", () => {
+    const ov = Overrides.parse({ events: { "2": { types: ["free"] } } });
+    const r = resolveEvents(events, ov, artist);
+    expect(r.find((e) => e.id === 2)).toMatchObject({ types: ["free"], members: ["a"], membersSource: "eventernote" });
+  });
+
   it("applies overrides and extra events", () => {
     const ov = Overrides.parse({
       events: {
-        "4": { type: "free", members: ["b"], title: "修正後タイトル" },
+        "4": { types: ["free", "release"], members: ["b"], title: "修正後タイトル" },
         "3": { hidden: true },
       },
-      extraEvents: [{ id: -1, date: "2026-10-01", title: "手動追加", type: "oneman" }],
+      extraEvents: [{ id: -1, date: "2026-10-01", title: "手動追加", types: ["oneman"] }],
     });
     const r = resolveEvents(events, ov, artist);
     expect(r.map((e) => e.id)).toEqual([-1, 2, 4]);
     expect(r.find((e) => e.id === 4)).toMatchObject({
-      type: "free",
+      types: ["free", "release"],
       members: ["b"],
       membersSource: "override",
       title: "修正後タイトル",
     });
-    expect(r.find((e) => e.id === -1)!.type).toBe("oneman");
+    expect(r.find((e) => e.id === -1)!.types).toEqual(["oneman"]);
   });
 });

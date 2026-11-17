@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { parseSetlistText, resolveEvents, type ResolvedEvent } from "@lovely-memory/core";
+import { isLiveEvent, parseSetlistText, resolveEvents, type ResolvedEvent } from "@lovely-memory/core";
 import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, writeJson } from "../repo.ts";
 import { buildSetlist, countSongs, setlistPath, writeSetlist } from "../setlist-build.ts";
 
@@ -19,7 +19,7 @@ function pickEvent(events: ResolvedEvent[], opts: Record<string, unknown>): Reso
     return e;
   }
   if (typeof opts.date === "string") {
-    const candidates = events.filter((e) => e.date === opts.date && e.type !== "tokuten");
+    const candidates = events.filter((e) => e.date === opts.date && isLiveEvent(e));
     if (candidates.length === 1) return candidates[0]!;
     const list = candidates.map((e) => `  --event ${e.id}  ${e.start ?? "--:--"} ${e.title}`).join("\n");
     throw new Error(

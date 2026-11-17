@@ -1,5 +1,6 @@
 import {
   hasNumberedItems,
+  isLiveEvent,
   looksLikeSetlistAnnouncement,
   normalizeTitle,
   parseSetlistText,
@@ -188,7 +189,7 @@ export function matchPosts(
 ): MatchResult[] {
   const ignore = ignoreWords.map(normalizeTitle).filter(Boolean);
   const strip = (s: string) => ignore.reduce((acc, w) => acc.replaceAll(w, ""), normalizeTitle(s));
-  const live = events.filter((e) => e.type !== "tokuten");
+  const live = events.filter(isLiveEvent);
   const assigned = new Set<number>();
   const results: MatchResult[] = [];
 

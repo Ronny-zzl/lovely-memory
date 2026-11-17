@@ -66,7 +66,10 @@ export const ArtistConfig = z.object({
       })
       .optional(),
   }),
-  /** タイトルにマッチした最初のルールでイベント種別を推定する。どれにも当たらなければ defaultEventType */
+  /**
+   * イベント種別の推定ルール。タイトルにマッチしたルールの種別をすべて付ける（形式・料金・目的は両立しうるため）。
+   * どれにも当たらなければ defaultEventType
+   */
   eventTypeRules: z.array(z.object({ pattern: z.string(), type: EventType })).default([]),
   defaultEventType: EventType.default("external"),
 });
@@ -125,7 +128,11 @@ export const EventList = z.array(Event);
 export const EventOverride = Event.partial()
   .omit({ id: true })
   .extend({
-    type: EventType.optional(),
+    // Event の performers は default([]) を持つため、partial() でも未指定時に [] が入り、
+    // eventernote の出演者を空で上書きしてしまう。ここでは default なしで定義し直す
+    performers: z.array(z.number().int()).optional(),
+    /** イベント種別（複数可）。自動推定の結果を丸ごと置き換える */
+    types: z.array(EventType).min(1).optional(),
     /** 出演メンバー（member id）。eventernote の情報より優先 */
     members: z.array(slug).optional(),
     /** true なら一覧から除外 */
@@ -137,7 +144,7 @@ export type EventOverride = z.infer<typeof EventOverride>;
 export const Overrides = z.object({
   events: z.record(z.string(), EventOverride).default({}),
   /** eventernote に載っていないイベントを手動で追加 */
-  extraEvents: z.array(Event.extend({ type: EventType.optional() })).default([]),
+  extraEvents: z.array(Event.extend({ types: z.array(EventType).min(1).optional() })).default([]),
 });
 export type Overrides = z.infer<typeof Overrides>;
 

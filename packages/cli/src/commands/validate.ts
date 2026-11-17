@@ -1,5 +1,5 @@
 import { readdir } from "node:fs/promises";
-import { findSong, normalizeTitle, resolveEvents, Setlist, setlistStages } from "@lovely-memory/core";
+import { findSong, isLiveEvent, normalizeTitle, resolveEvents, Setlist, setlistStages } from "@lovely-memory/core";
 import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs } from "../repo.ts";
 import { jstDateDaysAgo } from "./sync.ts";
 
@@ -57,7 +57,7 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
     if (f.file.replace(/\.ya?ml$/, "") !== String(sl.event)) err(`setlists/${f.file}: ファイル名と event (${sl.event}) が一致しない`);
     const ev = eventById.get(sl.event);
     if (!ev) err(`setlists/${f.file}: event ${sl.event} が見つからない（events.json / overrides / since を確認）`);
-    else if (ev.type === "tokuten") warns.push(`setlists/${f.file}: 種別 tokuten のイベントにセトリがある`);
+    else if (!isLiveEvent(ev)) warns.push(`setlists/${f.file}: 特典会のみのイベントにセトリがある`);
 
     for (const [si, stage] of setlistStages(sl).entries()) {
       for (const m of stage.members ?? []) if (!memberIds.has(m)) err(`setlists/${f.file}: stage ${si} の member "${m}" が不明`);
@@ -75,7 +75,7 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
 
   // 未入力の終了済みイベント（情報のみ）
   const today = jstDateDaysAgo(0);
-  const missing = events.filter((e) => e.date < today && e.type !== "tokuten" && !withSetlist.has(e.id));
+  const missing = events.filter((e) => e.date < today && isLiveEvent(e) && !withSetlist.has(e.id));
 
   for (const w of warns) console.warn(`[${artistId}] warning: ${w}`);
   for (const e of errors) console.error(`[${artistId}] error: ${e}`);
@@ -84,7 +84,7 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
       `未入力の終了済みイベント ${missing.length}` +
       (errors.length ? ` — ${errors.length} error(s)` : " — OK"),
   );
-  if (showMissing) for (const e of missing) console.log(`  ${e.date} ${String(e.id).padStart(6)} ${e.type.padEnd(8)} ${e.title}`);
+  if (showMissing) for (const e of missing) console.log(`  ${e.date} ${String(e.id).padStart(6)} ${e.types.join("+").padEnd(14)} ${e.title}`);
   return errors.length;
 }
 

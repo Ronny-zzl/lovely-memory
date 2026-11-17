@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import type { EventType, ResolvedEvent } from "@lovely-memory/core";
+import { isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core";
 import { MemberDots } from "../components/MemberDots.tsx";
+import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
@@ -14,7 +15,7 @@ export function EventsPage() {
   const [params, setParams] = useSearchParams();
 
   const setlistByEvent = useMemo(() => new Map(allStats.events.map((e) => [e.event.id, e])), [allStats]);
-  const presentTypes = ALL_TYPES.filter((t) => events.some((e) => e.type === t));
+  const presentTypes = ALL_TYPES.filter((t) => events.some((e) => e.types.includes(t)));
   const selected = new Set<EventType>(
     params.get("types")
       ? (params.get("types")!.split(",") as EventType[])
@@ -37,7 +38,8 @@ export function EventsPage() {
   };
 
   const today = todayJst();
-  const visible = events.filter((e) => selected.has(e.type));
+  // 種別のどれか 1 つでも選ばれていれば表示
+  const visible = events.filter((e) => e.types.some((t) => selected.has(t)));
   const upcoming = visible.filter((e) => e.date >= today && !setlistByEvent.has(e.id));
   const past = visible.filter((e) => !upcoming.includes(e)).reverse();
 
@@ -58,7 +60,7 @@ export function EventsPage() {
           <span className="event-date">{formatDayWithWeekday(e.date)}</span>
           <span className="event-main">
             <span className="event-title">
-              <span className={`type-badge type-${e.type}`}>{EVENT_TYPE_LABEL[e.type]}</span>
+              <TypeBadges types={e.types} />
               {displayTitle(e.title, artist.name)}
             </span>
             <span className="event-meta">
@@ -68,7 +70,7 @@ export function EventsPage() {
                   {entries.length} 曲{sl.stages.length > 1 && `（${sl.stages.length} ステージ）`}
                 </span>
               ) : (
-                e.type !== "tokuten" && <span className="muted">{e.date >= today ? "開催予定" : "セトリ未登録"}</span>
+                isLiveEvent(e) && <span className="muted">{e.date >= today ? "開催予定" : "セトリ未登録"}</span>
               )}
               {debuts > 0 && <span className="debut-count">初披露 {debuts}</span>}
             </span>

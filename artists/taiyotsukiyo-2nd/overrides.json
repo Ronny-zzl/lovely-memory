@@ -1,4 +1,11 @@
 {
-  "events": {},
+  "events": {
+    "486948": { "types": ["oneman", "free"] },
+    "495959": { "types": ["oneman", "free"] },
+    "495778": { "types": ["free", "release"] },
+    "495779": { "types": ["free", "release"] },
+    "496575": { "types": ["free", "release"] },
+    "496576": { "types": ["free", "release"] }
+  },
   "extraEvents": []
 }

@@ -6,12 +6,12 @@ import { computeStats } from "./stats.ts";
 const song = (id: string, title: string) => Song.parse({ id, title });
 const songs = [song("s1", "A"), song("s2", "B"), song("s3", "C"), song("s4", "D")];
 
-const ev = (id: number, date: string, type: ResolvedEvent["type"] = "oneman"): ResolvedEvent => ({
+const ev = (id: number, date: string, type: ResolvedEvent["types"][number] = "oneman"): ResolvedEvent => ({
   id,
   date,
   title: `E${id}`,
   performers: [],
-  type,
+  types: [type],
   members: ["x", "y"],
   membersSource: "assumed",
 });
@@ -61,7 +61,7 @@ describe("computeStats", () => {
   });
 
   it("applies the event filter before computing", () => {
-    const onlyOneman = computeStats({ songs, events, setlists, filter: (e) => e.type === "oneman" });
+    const onlyOneman = computeStats({ songs, events, setlists, filter: (e) => e.types.includes("oneman") });
     expect(onlyOneman.events.map((e) => e.event.id)).toEqual([1]);
     expect(onlyOneman.songs.find((s) => s.song.id === "s1")).toMatchObject({ count: 1, rate: 1 });
   });

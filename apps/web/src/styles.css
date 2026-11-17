@@ -366,7 +366,7 @@ a {
 
 .stats-table td.rate {
   position: relative;
-  min-width: 6em;
+  min-width: 8.5em;
 }
 .stats-table td.rate .bar {
   position: absolute;
@@ -378,6 +378,14 @@ a {
 }
 .stats-table td.rate .rate-text {
   position: relative;
+}
+.rate-frac {
+  display: inline-block;
+  min-width: 3.4em;
+  margin-left: 6px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: right;
 }
 
 .unplayed td {
