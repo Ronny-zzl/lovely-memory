@@ -12,8 +12,12 @@ import {
 import { artistPath } from "./repo.ts";
 import { nextSongId } from "./songs-merge.ts";
 
-/** 告知文の末尾タグのうち、記録しないもの（初披露は集計で算出するため） */
-const IGNORED_TAGS = /^(新曲|初披露|new)$/i;
+/**
+ * 告知文の末尾タグのうち、記録しないもの。
+ * - 新曲・初披露：集計で算出する
+ * - 撮影可（動画撮影可能曲・撮影OK など）：告知に書かれたり書かれなかったりで記録として揃わない
+ */
+export const IGNORED_TAGS = /^(新曲|初披露|new|.*撮影.*(可|OK|ok|ＯＫ).*)$/i;
 
 export type BuildResult = {
   /** unknown が空のときだけ存在する */
