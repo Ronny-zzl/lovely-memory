@@ -1,5 +1,6 @@
 import {
   ArtistConfig,
+  computeStats,
   EventList,
   Overrides,
   resolveEvents,
@@ -7,6 +8,7 @@ import {
   SongList,
   type ResolvedEvent,
   type Song,
+  type Stats,
 } from "@lovely-memory/core";
 
 /*
@@ -37,6 +39,11 @@ export type ArtistData = {
   /** overrides・種別判定適用済み、日付昇順 */
   events: ResolvedEvent[];
   setlists: Setlist[];
+  /**
+   * 全イベントを対象にした集計。初披露の判定はこれを基準にする
+   * （絞り込み後の集計で判定すると、フィルタによって初披露が変わってしまうため）
+   */
+  allStats: Stats;
 };
 
 async function loadOne(
@@ -62,7 +69,7 @@ async function load(artist: ArtistConfig): Promise<ArtistData> {
   const songs = SongList.parse(songsRaw ?? []);
   const events = resolveEvents(EventList.parse(eventsRaw ?? []), Overrides.parse(overridesRaw ?? {}), artist);
   const setlists = setlistsRaw.map((s) => Setlist.parse(s));
-  return { artist, songs, events, setlists };
+  return { artist, songs, events, setlists, allStats: computeStats({ songs, events, setlists }) };
 }
 
 const cache = new Map<string, Promise<ArtistData>>();

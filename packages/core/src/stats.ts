@@ -29,7 +29,8 @@ export type SetlistEntry = {
 export type EventSetlist = {
   event: ResolvedEvent;
   source?: string;
-  stages: Array<{ name?: string; members: string[]; entries: SetlistEntry[] }>;
+  note?: string;
+  stages: Array<{ name?: string; note?: string; members: string[]; entries: SetlistEntry[] }>;
 };
 
 export type SongStats = {
@@ -114,9 +115,9 @@ export function computeStats({ songs, events, setlists, filter }: StatsInput): S
           debut,
         });
       });
-      return { name: stage.name, members: stageMembers, entries };
+      return { name: stage.name, note: stage.note, members: stageMembers, entries };
     });
-    return { event, source: setlist.source, stages };
+    return { event, source: setlist.source, note: setlist.note, stages };
   });
 
   const eventIndex = new Map(targets.map((e, i) => [e.id, i]));

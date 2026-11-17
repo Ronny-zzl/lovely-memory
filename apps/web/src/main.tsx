@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import { createHashRouter, Navigate, RouterProvider } from "react-router";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
 import { ArtistList } from "./pages/ArtistList.tsx";
+import { EventDetailPage } from "./pages/EventDetailPage.tsx";
+import { EventsPage } from "./pages/EventsPage.tsx";
 import { SongStatsPage } from "./pages/SongStatsPage.tsx";
 import "./styles.css";
 
@@ -15,6 +17,8 @@ const router = createHashRouter([
     children: [
       { index: true, element: <Navigate to="songs" replace /> },
       { path: "songs", element: <SongStatsPage /> },
+      { path: "events", element: <EventsPage /> },
+      { path: "events/:eventId", element: <EventDetailPage /> },
     ],
   },
   { path: "*", element: <Navigate to="/" replace /> },
