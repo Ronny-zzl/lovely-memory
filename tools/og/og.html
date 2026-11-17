@@ -48,9 +48,12 @@
   }
   .group { font-size: 30px; font-weight: 800; color: #4a3f7a; letter-spacing: 0.04em; }
   .group small { font-size: 22px; font-weight: 500; color: #8a7fa8; margin-left: 10px; letter-spacing: 0.02em; }
+  /* background-clip: text のグラデーションは要素の箱の中にしか塗られないので、
+     箱を文字の幅に合わせ（inline-block）、カードからはみ出さない大きさにする */
   h1 {
+    display: inline-block;
     margin-top: 10px;
-    font-size: 96px; font-weight: 800; line-height: 1.2; letter-spacing: 0.02em; white-space: nowrap;
+    font-size: 90px; font-weight: 800; line-height: 1.2; letter-spacing: 0.02em; white-space: nowrap;
     background: linear-gradient(90deg, #e98a1f 0%, #d9658a 50%, #4b3f9a 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
