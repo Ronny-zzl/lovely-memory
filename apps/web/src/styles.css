@@ -154,8 +154,16 @@ a {
   display: flex;
   gap: 4px;
   border-bottom: 1px solid var(--border);
+  /* 狭い画面で入りきらないときは横にスクロール（文字を縦に折り返さない） */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 .tabs a {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 8px 14px;
   text-decoration: none;
   color: var(--muted);
@@ -1237,40 +1245,180 @@ a.item-title:hover {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 4px 12px;
-  border: 1px solid var(--border);
+  min-height: 34px;
+  min-width: 4.6em;
+  padding: 0 12px 0 10px;
+  border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
   border-radius: 999px;
-  background: var(--surface);
+  background: transparent;
   color: var(--muted);
   font: inherit;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
 }
 .attend-toggle svg {
   width: 14px;
   height: 14px;
 }
-.attend-toggle.on {
+.attend-toggle:hover {
+  border-style: solid;
   border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.attend-toggle:active {
+  transform: scale(0.94);
+}
+.attend-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.attend-toggle.on {
+  border: 1.5px solid var(--accent);
   background: var(--accent);
   color: #fff;
 }
-.attend-toggle.compact {
-  padding: 5px;
+.attend-toggle.on:hover {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+  border-color: color-mix(in srgb, var(--accent) 85%, #000);
+  color: #fff;
 }
-/* 一覧の行：リンクの右にボタンを並べる（リンクの中にボタンは入れない） */
+.attend-toggle.pop {
+  animation: attend-pop 0.32s ease-out;
+}
+@keyframes attend-pop {
+  0% { transform: scale(0.9); }
+  55% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .attend-toggle,
+  .attend-toggle.pop {
+    transition: none;
+    animation: none;
+  }
+}
+/* 一覧の行：リンクの右にボタンを並べる（リンクの中にボタンは入れない）。ホバーは行全体に */
 .event-list li.with-toggle {
   display: flex;
   align-items: center;
+  transition: background-color 0.15s;
+}
+.event-list li.with-toggle:hover {
+  background: var(--row-hover);
 }
 .event-list li.with-toggle .event-row {
   flex: 1;
   min-width: 0;
 }
+.event-list li.with-toggle .event-row:hover {
+  background: transparent;
+}
 .event-list li.with-toggle .attend-toggle {
   margin-right: 12px;
+}
+.event-year {
+  display: block;
+  font-size: 0.75em;
+  line-height: 1.2;
+}
+.attend-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+.attend-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+.attend-hint p {
+  flex: 1;
+  margin: 0;
+}
+.attend-hint a {
+  color: var(--accent-2);
+}
+.attend-hint-sample {
+  display: inline-block;
+  margin: 0 3px;
+  padding: 0 8px;
+  border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--muted);
+  background: var(--surface);
+}
+.attend-hint-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.attend-hint-close:hover {
+  background: color-mix(in srgb, var(--muted) 15%, transparent);
+}
+.attend-hint.compact {
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-color: var(--border);
+  background: var(--surface);
+}
+.attend-hint.compact a {
+  margin-left: auto;
+}
+@media (max-width: 640px) {
+  .tabs a {
+    padding: 8px 10px;
+  }
+  /* 一覧の行ではボタンを丸いアイコンだけにして、公演名の幅を確保する */
+  .event-list li.with-toggle .attend-toggle {
+    width: 36px;
+    min-width: 0;
+    height: 36px;
+    padding: 0;
+    margin-right: 10px;
+  }
+  .event-list li.with-toggle .attend-toggle .attend-label {
+    display: none;
+  }
+  /* メンバーの色は公演名の下に回して、公演名の幅を広く取る */
+  .event-list li.with-toggle .event-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 8px;
+  }
+  .event-list li.with-toggle .event-row .member-dots {
+    grid-column: 2;
+    margin-top: 4px;
+  }
+}
+.attend-hint-check {
+  color: var(--accent);
+  font-weight: 700;
 }
 .detail-actions {
   margin-top: 12px;

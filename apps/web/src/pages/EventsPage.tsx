@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
 import { eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
+import { AttendanceHint } from "../components/AttendanceHint.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
@@ -78,7 +79,7 @@ export function EventsPage() {
           </span>
           <MemberDots artist={artist} present={e.members} />
         </Link>
-        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} date={e.date} compact />}
+        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} date={e.date} />}
       </li>
     );
   };
@@ -93,6 +94,8 @@ export function EventsPage() {
           </label>
         ))}
       </fieldset>
+
+      <AttendanceHint artistId={artist.id} eventIds={events.filter(isLiveEvent).map((e) => e.id)} />
 
       {upcoming.length > 0 && (
         <details className="upcoming">

@@ -61,7 +61,7 @@ export function EventDetailPage() {
         </p>
         {event.note && <p className="small">{event.note}</p>}
         <div className="detail-actions">
-          {isLiveEvent(event) && <AttendanceToggle eventId={event.id} date={event.date} />}
+          {isLiveEvent(event) && <AttendanceToggle eventId={event.id} date={event.date} variant="detail" />}
         </div>
         <ShareButtons
           text={`${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」${setlist ? "のセトリ" : ""}（${artist.name}）`}

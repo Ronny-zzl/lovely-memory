@@ -118,15 +118,16 @@ export function AttendancePage() {
   const row = (e: ResolvedEvent) => (
     <li key={e.id} className="with-toggle">
       <Link to={`/${artist.id}/events/${e.id}`} className="event-row">
-        <span className="event-date event-date-full">
-          {e.date.slice(0, 4)}.{formatDayWithWeekday(e.date)}
+        <span className="event-date">
+          <span className="event-year">{e.date.slice(0, 4)}</span>
+          {formatDayWithWeekday(e.date)}
         </span>
         <span className="event-main">
           <span className="event-title">{displayTitle(e.title, artist.name)}</span>
           {e.venue && <span className="event-meta">{e.venue.name}</span>}
         </span>
       </Link>
-      <AttendanceToggle eventId={e.id} date={e.date} compact />
+      <AttendanceToggle eventId={e.id} date={e.date} />
     </li>
   );
 
@@ -161,7 +162,7 @@ export function AttendancePage() {
 
       {past.length === 0 && planned.length === 0 ? (
         <p className="muted empty-setlist">
-          まだ参戦記録がありません。eventernote から読み込むか、<Link to={`/${artist.id}/events`}>公演一覧</Link>の「＋」で印を付けてください。
+          まだ参戦記録がありません。eventernote から読み込むか、<Link to={`/${artist.id}/events`}>公演一覧</Link>の「＋ 参戦」で印を付けてください。
         </p>
       ) : (
         <>
