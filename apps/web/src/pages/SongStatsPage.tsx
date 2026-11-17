@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
 import { computeStats, eventHasType, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core/runtime";
 import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, todayJst } from "../format.ts";
+import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 type SortKey = "title" | "count" | "events" | "rate" | "first" | "last" | "daysSince";
@@ -200,7 +201,7 @@ export function SongStatsPage() {
   const eraOptions = artist.eras.filter((e) => songs.some((s) => s.era === e.id && !s.cover));
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
   const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
-  const unitLabel = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u.label]));
+  const unitById = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u]));
 
   const toggleType = (t: EventType) => {
     const next = new Set(selectedTypes);
@@ -324,7 +325,7 @@ export function SongStatsPage() {
                     {s.song.era && eraLabel.has(s.song.era) && (
                       <span className={`badge era-${s.song.era}`}>{eraLabel.get(s.song.era)}</span>
                     )}
-                    {s.song.unit && unitLabel.has(s.song.unit) && <span className="unit">{unitLabel.get(s.song.unit)}</span>}
+                    {s.song.unit && unitById.has(s.song.unit) && <UnitTag unit={unitById.get(s.song.unit)!} />}
                   </span>
                 </td>
                 {columns.map((c) => (

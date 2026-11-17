@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router";
 import type { Song } from "@lovely-memory/core/runtime";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, todayJst } from "../format.ts";
+import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 const RELEASE_KIND: Record<NonNullable<Song["release"]>["kind"], string> = {
@@ -73,7 +74,7 @@ export function SongDetailPage() {
         <h2 className="song-detail-title">
           {song.title}
           {era && <span className={`badge era-${era.id}`}>{era.label}</span>}
-          {unit && <span className="unit">{unit.label}</span>}
+          {unit && <UnitTag unit={unit} />}
         </h2>
         {song.cover && (
           <p className="small">
