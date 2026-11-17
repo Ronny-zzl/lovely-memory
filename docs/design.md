@@ -12,11 +12,12 @@
 
 | 数据 | 来源 | 方式 |
 |---|---|---|
-| 活动（日期・标题・场馆・时间・出演者） | eventernote | GitHub Actions 每日同步，直接 commit 到 main |
+| 活动（日期・标题・场馆・时间・出演者） | eventernote | `pnpm lm sync all`，GitHub Actions 每日 05:00 JST 同步并直接 commit 到 main |
 | 活动修正（漏登、改错、活动类型） | 人工 | `artists/<id>/overrides.json`，优先级高于同步结果 |
 | 歌单 | 官方 X（Twitter）发布的推文 | 人工粘贴推文 → 脚本解析成 yaml |
-| 曲目列表 | ja.wikipedia（仅限一期） | 一次性导入，之后人工维护（维基没有更新二期的信息） |
-| 曲目制作人员 | 歌单推文中的「作詞・作曲・編曲」 | 解析歌单时自动补全 |
+| 曲目列表・制作人员 | 官网 Discography | `pnpm lm import-official`，官网为准（覆盖） |
+| 曲目列表（补充） | ja.wikipedia | `pnpm lm import-wikipedia`，只补空字段（维基没有更新二期的信息） |
+| 翻唱曲・未发行曲 | 人工 | `pnpm lm add-song --title … [--cover 原唱]` |
 
 ### eventernote 抓取说明（实测，2026-11-17）
 
@@ -32,6 +33,16 @@
 - 礼貌规则：每天 1 次，每次请求间隔 ≥3 秒。从新到旧翻页，遇到早于 2026-09-04 的活动就停止。日常运行通常只需要 3～4 页。
 - 1部・2部在 eventernote 上本来就是两场独立的活动。
 - robots.txt 只禁止 `/users/notice` 和 `/users/timeline`。
+
+### 官网适配器
+
+官网的 HTML 结构因艺人而异，所以以适配器形式实现：`packages/cli/src/sources/official/<adapter>.ts`，在 `artist.json` 的 `sources.official.adapter` 中指定。新艺人只需新增一个适配器（实现 `DiscographyAdapter`）。
+
+### 曲目合并规则
+
+- 用 `normalizeTitle` 照合曲名（含 `aliases`）。
+- 收录作品取发售日最早的。
+- era 由 `artist.json` 的 `eras[].since` 按发售日自动判定（翻唱曲用 `add-song --cover` 时默认为 `cover`）。
 
 ## 3. 数据模型
 

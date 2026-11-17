@@ -2,10 +2,16 @@ import { parseArgs } from "node:util";
 import { addSong } from "./commands/add-song";
 import { importOfficial } from "./commands/import-official";
 import { importWikipedia } from "./commands/import-wikipedia";
+import { listEvents } from "./commands/list-events";
+import { sync } from "./commands/sync";
 
 const USAGE = `usage: pnpm lm <command> <artistId> [options]
 
 commands:
+  sync               eventernote から events.json を更新（artistId に all で全アーティスト）
+                     --dry-run
+  list-events        種別・出演メンバー判定後のイベント一覧を表示
+                     --type <eventType>
   import-official    公式サイトのディスコグラフィから songs.json を更新（公式の値を優先）
                      --dry-run      書き込まずに結果を表示
   import-wikipedia   Wikipedia のディスコグラフィから songs.json を補完（空き項目のみ）
@@ -33,12 +39,15 @@ const { positionals, values } = parseArgs({
     credits: { type: "string" },
     alias: { type: "string", multiple: true },
     note: { type: "string" },
+    type: { type: "string" },
   },
 });
 const [command, artistId] = positionals;
 
 type Command = (id: string, opts: Record<string, any>) => Promise<void>;
 const commands: Record<string, Command> = {
+  sync,
+  "list-events": listEvents,
   "import-official": importOfficial,
   "import-wikipedia": importWikipedia,
   "add-song": addSong,
