@@ -41,6 +41,11 @@ const router = createBrowserRouter([
 const initialArtist = findArtist(location.pathname.split("/")[1]);
 if (initialArtist) await loadArtistData(initialArtist).catch(() => {});
 
+// オフライン対応（ネットワーク優先。sw.js はビルド時に生成されるので本番ビルドのみ）
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {});
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={router} />

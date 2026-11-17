@@ -57,6 +57,27 @@ try {
   const page = await browser.newPage();
 
   await visit(page, "/", ".artist-list");
+
+  // ホーム画面用アイコン：manifest と apple-touch-icon の画像が、宣言どおりの大きさで読み込めること
+  const icons: Array<{ src: string; sizes: string }> = await page.evaluate(async () => {
+    const manifest = await (await fetch("/manifest.webmanifest")).json();
+    const apple = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
+    return [...manifest.icons, ...(apple ? [{ src: new URL(apple.href).pathname, sizes: "180x180" }] : [])];
+  });
+  for (const icon of icons) {
+    const size = await page.evaluate(
+      (src) =>
+        new Promise<string>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(`${img.naturalWidth}x${img.naturalHeight}`);
+          img.onerror = () => resolve("読み込み失敗");
+          img.src = src;
+        }),
+      icon.src,
+    );
+    checked++;
+    if (size !== icon.sizes) failures.push(`${icon.src}: ${icon.sizes} のはずが ${size}`);
+  }
   const artists = await hrefs(page, ".artist-list a");
   if (artists.length === 0) failures.push("/: アーティストが 1 件も表示されていない");
 
@@ -83,6 +104,30 @@ try {
         new URL(p.url()).pathname === songs[0] ? undefined : `hash リンクが ${songs[0]} に置き換わらない（${p.url()}）`,
       );
     }
+  }
+
+  // オフライン：一度開いて Service Worker が有効になった後、ネットワークを切っても
+  // まだ開いていないページを含めて表示できること
+  const offline = await browser.newContext();
+  try {
+    const p = await offline.newPage();
+    await p.goto(base + "/", { waitUntil: "load" });
+    await p.evaluate(() => navigator.serviceWorker.ready.then(() => undefined));
+    const artist = (await hrefs(p, ".artist-list a"))[0];
+    await offline.setOffline(true);
+    if (artist) {
+      for (const [path, selector] of [
+        [`${artist}/trends`, ".trend-grid"],
+        [`${artist}/songs`, ".stats-table tbody tr"],
+        [`${artist}/members`, ".member-cards li"],
+      ] as const) {
+        const before = failures.length;
+        await visit(p, path, selector);
+        if (failures.length > before) failures[failures.length - 1] = `[オフライン] ${failures.at(-1)}`;
+      }
+    }
+  } finally {
+    await offline.close();
   }
 } finally {
   await browser.close();
