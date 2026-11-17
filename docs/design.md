@@ -185,7 +185,7 @@ lovely-memory/
 
 ## 部署
 
-- **Cloudflare Pages**，项目名 `lovely-memory`，域名 **https://lovely-memory.moe/**（Porkbun 注册，nameserver 指向 Cloudflare）。`www.` 和 `lovely-memory.pages.dev` 在页面加载时跳转到正式域名（`site-meta.ts`；预览部署 `<hash>.lovely-memory.pages.dev` 不跳转）。选择理由：网址不含个人账号名；将来可用 Pages Functions / D1 / KV 扩展（用户系统等）。
+- **Cloudflare Pages**，项目名 `lovely-memory`，域名 **https://lovely-memory.moe/**（Porkbun 注册，nameserver 指向 Cloudflare）。`www.` 和 `lovely-memory.pages.dev` 由 Cloudflare 后台的规则 301 跳转到正式域名（`www`：域名的 Redirect Rule；`pages.dev`：账户的 Bulk Redirects，不含子域名，所以预览部署 `<hash>.lovely-memory.pages.dev` 不跳转）。页面里也有同样的跳转脚本作为后备（`site-meta.ts`），旧的 `/#/...` 链接也由页面转换。选择理由：网址不含个人账号名；将来可用 Pages Functions / D1 / KV 扩展（用户系统等）。
 - GitHub Actions 构建后用 wrangler 上传（`deploy.yml`）。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
 - 普通路径路由（`createBrowserRouter`）。Cloudflare Pages 在没有 `404.html` 时，对不存在的路径返回 `index.html`（SPA 回退），所以直接打开或刷新 `/<artist>/songs/...` 也能显示。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。
 - 旧的 hash 链接（`/#/...`，GitHub Pages 时代）在加载时转换为普通路径。
