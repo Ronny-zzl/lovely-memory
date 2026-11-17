@@ -3,9 +3,9 @@ name: Deploy
 on:
   push:
     branches: [main]
-  # 同期ワークフローの commit は GITHUB_TOKEN によるもので push イベントを発火しないため、完了を受けてデプロイする
+  # 同期・セトリ取り込みワークフローの commit は GITHUB_TOKEN によるもので push イベントを発火しないため、完了を受けてデプロイする
   workflow_run:
-    workflows: ["Sync events"]
+    workflows: ["Sync events", "Import setlist"]
     types: [completed]
   workflow_dispatch:
 

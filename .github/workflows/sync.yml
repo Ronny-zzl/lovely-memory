@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: sync-events
@@ -53,4 +54,15 @@ jobs:
             grep -E '^\[[^]]+\] [+~-] ' sync.log || true
           } > commit-msg.txt
           git commit -F commit-msg.txt
-          git push
+          # セトリ取り込みワークフローと同時に push した場合に備えて、rebase して数回試す
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
+
+      # 当日のライブ（と取りこぼした直近 7 日分）にセトリ入力用 Issue を作る
+      - name: Open setlist issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: pnpm -s lm open-setlist-issues all

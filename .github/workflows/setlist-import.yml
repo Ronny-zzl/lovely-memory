@@ -1,0 +1,88 @@
+name: Import setlist
+
+# セトリ入力用 Issue（open-setlist-issues が作成）へのコメントを取り込む
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  # 同じ Issue への連続コメントは順番に処理する
+  group: import-setlist-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    # 公開リポジトリで誰でもコメントできるため、setlist ラベルの Issue に所有者が書いたコメントだけを処理する
+    if: >-
+      !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'setlist') &&
+      github.event.comment.author_association == 'OWNER'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      # Node のバージョンは mise.toml で管理
+      - uses: jdx/mise-action@v2
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+
+      - name: Import comment
+        id: import
+        env:
+          # 本文はシェルに展開せず、環境変数経由でファイルに書く（コマンドインジェクション対策）
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          printf '%s' "$ISSUE_BODY" > "$RUNNER_TEMP/issue.md"
+          printf '%s' "$COMMENT_BODY" > "$RUNNER_TEMP/comment.txt"
+          pnpm -s lm import-comment --issue "$RUNNER_TEMP/issue.md" --file "$RUNNER_TEMP/comment.txt" --out "$RUNNER_TEMP/reply.md"
+
+      - name: Validate
+        if: steps.import.outputs.status == 'success'
+        run: pnpm -s lm validate all
+
+      - name: Commit
+        if: steps.import.outputs.status == 'success'
+        env:
+          TITLE: ${{ github.event.issue.title }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artists
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "Setlist: ${TITLE#\[セトリ\] }" -m "From #${NUMBER}"
+          # 同期ワークフローと同時に push した場合に備えて、rebase して数回試す
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
+
+      - name: Reply
+        if: steps.import.outputs.status == 'success' || steps.import.outputs.status == 'skip' || steps.import.outputs.status == 'error'
+        run: gh issue comment "$NUMBER" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/reply.md"
+
+      - name: Close
+        if: steps.import.outputs.status == 'success' || steps.import.outputs.status == 'skip'
+        env:
+          REASON: ${{ steps.import.outputs.status == 'skip' && 'not planned' || 'completed' }}
+        run: gh issue close "$NUMBER" --repo "$GITHUB_REPOSITORY" --reason "$REASON" || true
+
+      - name: Report failure
+        if: failure()
+        run: >-
+          gh issue comment "$NUMBER" --repo "$GITHUB_REPOSITORY"
+          --body "⚠️ 取り込み処理が失敗しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
