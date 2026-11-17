@@ -65,6 +65,11 @@ describe("parseEventList", () => {
     expect(e.performers).toEqual([]);
   });
 
+  it("strips the placeholder venue prefix", () => {
+    const html = HTML.replace(">秋葉原駅周辺<", ">!_東京都内各所 (サーキットイベント等)<");
+    expect(parseEventList(html).events[1]!.venue?.name).toBe("東京都内各所 (サーキットイベント等)");
+  });
+
   it("detects the last page", () => {
     expect(parseEventList(HTML.replace(/<li class=next>.*?<\/li>/, "")).hasNext).toBe(false);
   });

@@ -33,7 +33,9 @@ export function parseEventList(html: string): ListPage {
     if (!id || !date) return;
 
     const placeLink = $li.find(".event .place a").first();
-    const venueName = placeLink.text().trim();
+    // イベンターノートでは「!_東京都内各所 (サーキットイベント等)」のように、
+    // 特定の会場ではない仮の会場名に「!_」が付いている
+    const venueName = placeLink.text().trim().replace(/^!_/, "");
     const timeText = $li.find(".event .place .s").text();
     const performers = $li
       .find(".actor li a")
