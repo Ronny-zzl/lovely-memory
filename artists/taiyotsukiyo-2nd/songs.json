@@ -1,0 +1,595 @@
+[
+  {
+    "id": "s001",
+    "title": "JUNK GAME POP",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "あっちむいてベイベー！",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s002",
+    "title": "けんけん Party Time!",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "あっちむいてベイベー！",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s003",
+    "title": "Red-Stella",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "あっちむいてベイベー！",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s004",
+    "title": "あっちむいてベイベー！",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "あっちむいてベイベー！",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s005",
+    "title": "colorless",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "幾望",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s006",
+    "title": "対戦ありがとうございました",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "幾望",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s007",
+    "title": "ネイビープール",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "幾望",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s008",
+    "title": "幾望",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-08-02",
+      "title": "幾望",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s009",
+    "title": "あした天気にならないで",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-09-13",
+      "title": "あした天気にならないで",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "mekakushe",
+      "music": "mekakushe",
+      "arrangement": "Tomggg"
+    }
+  },
+  {
+    "id": "s010",
+    "title": "リアルモンスター",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-10-04",
+      "title": "リアルモンスター",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "jon-YAKITORY",
+      "music": "jon-YAKITORY",
+      "arrangement": "jon-YAKITORY"
+    }
+  },
+  {
+    "id": "s011",
+    "title": "はなうらNIGHT!",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-10-25",
+      "title": "はなうらNIGHT!",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "佐々木喫茶",
+      "music": "佐々木喫茶",
+      "arrangement": "佐々木喫茶"
+    }
+  },
+  {
+    "id": "s012",
+    "title": "集団ヒステリック",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-11-15",
+      "title": "集団ヒステリック",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "四市田雲豹",
+      "music": "四市田雲豹",
+      "arrangement": "四市田雲豹"
+    }
+  },
+  {
+    "id": "s013",
+    "title": "推しクラまんじゅう",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2023-12-06",
+      "title": "推しクラまんじゅう",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "前山田健一",
+      "music": "前山田健一",
+      "arrangement": "藤原燈太"
+    }
+  },
+  {
+    "id": "s014",
+    "title": "ワタシアラート",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2023-12-27",
+      "title": "ワタシアラート",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "RIRIKO",
+      "music": "RIRIKO",
+      "arrangement": "広川恵一"
+    }
+  },
+  {
+    "id": "s015",
+    "title": "オトワ",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-01-31",
+      "title": "オトワ",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "渡辺 翔",
+      "music": "渡辺 翔",
+      "arrangement": "eba"
+    }
+  },
+  {
+    "id": "s016",
+    "title": "だれかさんがころんだ",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-01-31",
+      "title": "オトワ",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "菊池 諒",
+      "music": "yuigot",
+      "arrangement": "yuigot"
+    }
+  },
+  {
+    "id": "s017",
+    "title": "スプらっしゃい！",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-01-31",
+      "title": "オトワ",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "林直大",
+      "music": "林直大",
+      "arrangement": "林直大"
+    }
+  },
+  {
+    "id": "s018",
+    "title": "この惑星のさだめ",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-03-03",
+      "title": "この惑星のさだめ",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "Akki",
+      "music": "Akki",
+      "arrangement": "Akki"
+    }
+  },
+  {
+    "id": "s019",
+    "title": "あぃまい大作戦",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-04-08",
+      "title": "あぃまい大作戦",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "カジ",
+      "music": "カジ",
+      "arrangement": "tonerico"
+    }
+  },
+  {
+    "id": "s020",
+    "title": "ワンライフ・カーニバル",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-05-05",
+      "title": "ワンライフ・カーニバル",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "赤飯",
+      "music": "アントニオ・ヴィヴァルディ、ジャック・オッフェンバック、T4K、酒井亮輔、赤飯",
+      "arrangement": "T4K、酒井亮輔、赤飯"
+    }
+  },
+  {
+    "id": "s021",
+    "title": "プロデューサンライズ",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "君宛て紙ヒコーキ",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s022",
+    "title": "お願い！インベーダー",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "君宛て紙ヒコーキ",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s023",
+    "title": "GO！サニーカート",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "君宛て紙ヒコーキ",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s024",
+    "title": "君宛て紙ヒコーキ",
+    "era": "1st",
+    "unit": "taiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "君宛て紙ヒコーキ",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s025",
+    "title": "ムーンマップ",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "愛 make CRAZY world",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s026",
+    "title": "宣言前夜",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "愛 make CRAZY world",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s027",
+    "title": "Nocturne,Nosferatu",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "愛 make CRAZY world",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s028",
+    "title": "愛 make CRAZY world",
+    "era": "1st",
+    "unit": "tsukiyo",
+    "release": {
+      "date": "2024-07-03",
+      "title": "愛 make CRAZY world",
+      "kind": "ep"
+    }
+  },
+  {
+    "id": "s029",
+    "title": "プラスティック・ショーケース",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-10-23",
+      "title": "プラスティック・ショーケース",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "やしきん(F.M.F)",
+      "music": "やしきん(F.M.F)",
+      "arrangement": "やしきん(F.M.F)"
+    }
+  },
+  {
+    "id": "s030",
+    "title": "ワンダーランド☆トレジャーツアー★",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-10-23",
+      "title": "プラスティック・ショーケース",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "やしきん(F.M.F)",
+      "music": "yuigot、ウ山あまね",
+      "arrangement": "yuigot、ウ山あまね"
+    }
+  },
+  {
+    "id": "s031",
+    "title": "トランジション",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2024-10-23",
+      "title": "プラスティック・ショーケース",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "ぼっちぼろまる",
+      "music": "ぼっちぼろまる",
+      "arrangement": "瀬名航(SOVA)"
+    }
+  },
+  {
+    "id": "s032",
+    "title": "Oh!MAMA!GOD?",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2025-05-28",
+      "title": "トキメキいちもんめ！",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "佐々木喫茶",
+      "music": "佐々木喫茶",
+      "arrangement": "佐々木喫茶"
+    }
+  },
+  {
+    "id": "s033",
+    "title": "アンディセンバー",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2025-05-28",
+      "title": "トキメキいちもんめ！",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "Mumei",
+      "music": "Mumei",
+      "arrangement": "Mumei"
+    }
+  },
+  {
+    "id": "s034",
+    "title": "トキメキいちもんめ！",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2025-05-28",
+      "title": "トキメキいちもんめ！",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "カジ",
+      "music": "カジ",
+      "arrangement": "tonerico"
+    }
+  },
+  {
+    "id": "s035",
+    "title": "もしも",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2025-09-03",
+      "title": "もしも",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "Akki",
+      "music": "Akki",
+      "arrangement": "Akki"
+    }
+  },
+  {
+    "id": "s036",
+    "title": "NON理論",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2025-09-03",
+      "title": "もしも",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "渡邊亜希子",
+      "music": "ラムシーニ",
+      "arrangement": "ラムシーニ"
+    }
+  },
+  {
+    "id": "s037",
+    "title": "CRAZY LONELY SUMMER",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2025-09-03",
+      "title": "もしも",
+      "kind": "single"
+    },
+    "credits": {
+      "lyrics": "だてぃが",
+      "music": "だてぃが",
+      "arrangement": "藤代佑太郎"
+    }
+  },
+  {
+    "id": "s038",
+    "title": "Paralyze",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2026-01-14",
+      "title": "Paralyze",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "天ヶ瀬なつ、萩龍一",
+      "music": "萩龍一",
+      "arrangement": "萩龍一"
+    }
+  },
+  {
+    "id": "s039",
+    "title": "Live in Hope",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2026-02-11",
+      "title": "Live in Hope",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "三葉海緒、夢魅たぴ",
+      "music": "夢魅たぴ",
+      "arrangement": "夢魅たぴ"
+    }
+  },
+  {
+    "id": "s040",
+    "title": "ライブアンドシーク",
+    "era": "1st",
+    "unit": "all",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ライブアンドシーク",
+      "kind": "digital"
+    },
+    "credits": {
+      "lyrics": "Medansy",
+      "music": "Medansy",
+      "arrangement": "Medansy"
+    }
+  },
+  {
+    "id": "s041",
+    "title": "未来絵 Go Around!!",
+    "era": "2nd",
+    "unit": "all",
+    "credits": {
+      "lyrics": "カジ",
+      "music": "カジ",
+      "arrangement": "tonerico"
+    }
+  },
+  {
+    "id": "s042",
+    "title": "LOVEが目印",
+    "era": "2nd",
+    "unit": "all",
+    "credits": {
+      "lyrics": "海野水玉",
+      "music": "萩龍一",
+      "arrangement": "萩龍一"
+    }
+  },
+  {
+    "id": "s043",
+    "title": "ラブリィフェリス",
+    "era": "2nd",
+    "unit": "all",
+    "credits": {
+      "lyrics": "夢魅たぴ",
+      "music": "夢魅たぴ",
+      "arrangement": "夢魅たぴ"
+    }
+  }
+]

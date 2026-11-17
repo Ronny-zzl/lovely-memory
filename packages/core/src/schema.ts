@@ -45,6 +45,13 @@ export const ArtistConfig = z.object({
         actorId: z.number().int(),
       })
       .optional(),
+    /** 楽曲リストの初期インポート元（ディスコグラフィ節を解析） */
+    wikipedia: z
+      .object({
+        lang: z.string().default("ja"),
+        title: z.string(),
+      })
+      .optional(),
   }),
   /** タイトルにマッチした最初のルールでイベント種別を推定する。どれにも当たらなければ defaultEventType */
   eventTypeRules: z.array(z.object({ pattern: z.string(), type: EventType })).default([]),

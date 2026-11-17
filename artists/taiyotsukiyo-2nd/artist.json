@@ -21,7 +21,8 @@
     { "id": "tsukiyo", "label": "月夜に唄え" }
   ],
   "sources": {
-    "eventernote": { "actorId": 72524 }
+    "eventernote": { "actorId": 72524 },
+    "wikipedia": { "lang": "ja", "title": "太陽と踊れ月夜に唄え" }
   },
   "eventTypeRules": [
     { "pattern": "チェキ会|特典会", "type": "tokuten" },
