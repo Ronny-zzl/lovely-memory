@@ -36,12 +36,14 @@ jobs:
         env:
           # OGP（og:image など）の絶対 URL に使う
           SITE_URL: ${{ vars.SITE_URL }}
+          # このホストで開かれたら SITE_URL のドメインへ移動する
+          PAGES_HOST: ${{ vars.CLOUDFLARE_PROJECT }}.pages.dev
       - uses: actions/upload-artifact@v4
         with:
           name: site
           path: apps/web/dist
 
-  # Cloudflare Pages（https://lovely-memory.pages.dev/）へデプロイ
+  # Cloudflare Pages（https://lovely-memory.moe/）へデプロイ
   # リポジトリ変数 CLOUDFLARE_PROJECT と、シークレット CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が必要
   cloudflare:
     needs: build
