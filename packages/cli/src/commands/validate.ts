@@ -46,6 +46,8 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
 
   // setlists
   const withSetlist = new Set<number>();
+  // 出典（source）は任意項目。無いものは情報として数えるだけ
+  const noSource: string[] = [];
   for (const f of await loadSetlistFiles(artistId)) {
     const parsed = Setlist.safeParse(f.raw);
     if (!parsed.success) {
@@ -54,6 +56,7 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
     }
     const sl = parsed.data;
     withSetlist.add(sl.event);
+    if (!sl.source) noSource.push(f.file);
     if (f.file.replace(/\.ya?ml$/, "") !== String(sl.event)) err(`setlists/${f.file}: ファイル名と event (${sl.event}) が一致しない`);
     const ev = eventById.get(sl.event);
     if (!ev) err(`setlists/${f.file}: event ${sl.event} が見つからない（events.json / overrides / since を確認）`);
@@ -81,10 +84,13 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
   for (const e of errors) console.error(`[${artistId}] error: ${e}`);
   console.log(
     `[${artistId}] songs ${songs.length}, events ${events.length}, setlists ${withSetlist.size}, ` +
-      `未入力の終了済みイベント ${missing.length}` +
+      `未入力の終了済みイベント ${missing.length}, 出典なしのセトリ ${noSource.length}` +
       (errors.length ? ` — ${errors.length} error(s)` : " — OK"),
   );
-  if (showMissing) for (const e of missing) console.log(`  ${e.date} ${String(e.id).padStart(6)} ${e.types.join("+").padEnd(14)} ${e.title}`);
+  if (showMissing) {
+    for (const e of missing) console.log(`  未入力 ${e.date} ${String(e.id).padStart(6)} ${e.types.join("+").padEnd(14)} ${e.title}`);
+    for (const f of noSource) console.log(`  出典なし setlists/${f}`);
+  }
   return errors.length;
 }
 

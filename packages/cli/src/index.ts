@@ -34,7 +34,7 @@ commands:
   import-comment     Issue コメントのセトリ告知を取り込む（GitHub Actions 用、artistId 不要）
                      --issue <Issue本文> --file <コメント> --out <返信本文の出力先>
   validate           データ全体の整合性チェック（artistId に all 可）
-                     --missing      セトリ未入力の終了済みイベントを一覧表示
+                     --missing      セトリ未入力の終了済みイベントと、出典（source）の無いセトリを一覧表示
   import-official    公式サイトのディスコグラフィから songs.json を更新（公式の値を優先）
                      --dry-run      書き込まずに結果を表示
   import-wikipedia   Wikipedia のディスコグラフィから songs.json を補完（空き項目のみ）
