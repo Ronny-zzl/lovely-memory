@@ -212,6 +212,9 @@ importers:
       '@lovely-memory/eventernote':
         specifier: workspace:*
         version: link:../eventernote
+      cheerio:
+        specifier: ^1.2.0
+        version: 1.2.0
 
   packages/core:
     dependencies:

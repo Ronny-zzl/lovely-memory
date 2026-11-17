@@ -12,8 +12,9 @@
     { "id": "orino", "name": "夜凪織乃",   "colorName": "紫",             "color": "#8E5CC8", "eventernoteId": 94956 }
   ],
   "eras": [
-    { "id": "1st", "label": "1期曲" },
-    { "id": "2nd", "label": "2期曲" }
+    { "id": "1st", "label": "1期曲", "since": "2023-01-01" },
+    { "id": "2nd", "label": "2期曲", "since": "2026-09-04" },
+    { "id": "cover", "label": "カバー曲" }
   ],
   "units": [
     { "id": "all",     "label": "太陽と踊れ月夜に唄え" },
@@ -22,6 +23,7 @@
   ],
   "sources": {
     "eventernote": { "actorId": 72524 },
+    "official": { "adapter": "taiyotsukiyo", "url": "https://taiyotsukiyo.com/discography/" },
     "wikipedia": { "lang": "ja", "title": "太陽と踊れ月夜に唄え" }
   },
   "eventTypeRules": [

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@lovely-memory/core": "workspace:*",
-    "@lovely-memory/eventernote": "workspace:*"
+    "@lovely-memory/eventernote": "workspace:*",
+    "cheerio": "^1.2.0"
   }
 }

@@ -35,14 +35,24 @@ export const ArtistConfig = z.object({
   since: isoDate.optional(),
   until: isoDate.optional(),
   members: z.array(Member),
-  /** 楽曲の系統（例: 1期曲 / 2期曲）。songs.json の era はこの id を参照する */
-  eras: z.array(z.object({ id: slug, label: z.string() })).default([]),
+  /**
+   * 楽曲の系統（例: 1期曲 / 2期曲 / カバー）。songs.json の era はこの id を参照する。
+   * since を持つ era はインポート時の自動判定に使う（発売日が since 以降で最も新しいもの）。
+   */
+  eras: z.array(z.object({ id: slug, label: z.string(), since: isoDate.optional() })).default([]),
   /** 楽曲のオリジナル歌唱ユニット */
   units: z.array(z.object({ id: slug, label: z.string() })).default([]),
   sources: z.object({
     eventernote: z
       .object({
         actorId: z.number().int(),
+      })
+      .optional(),
+    /** 公式サイトのディスコグラフィ。adapter は packages/cli/src/sources/ 以下の実装名 */
+    official: z
+      .object({
+        adapter: z.string(),
+        url: z.string().url(),
       })
       .optional(),
     /** 楽曲リストの初期インポート元（ディスコグラフィ節を解析） */
@@ -79,9 +89,13 @@ export const Song = z.object({
       date: isoDate,
       title: z.string(),
       kind: z.enum(["ep", "single", "digital", "album", "other"]),
+      url: z.string().url().optional(),
     })
     .optional(),
   credits: Credits.optional(),
+  /** カバー曲の場合の原曲情報 */
+  cover: z.object({ artist: z.string(), title: z.string().optional() }).optional(),
+  note: z.string().optional(),
 });
 export type Song = z.infer<typeof Song>;
 export const SongList = z.array(Song);

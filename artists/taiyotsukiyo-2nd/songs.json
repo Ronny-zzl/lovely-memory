@@ -7,7 +7,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "あっちむいてベイベー！",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/acchimuitebaby/"
+    },
+    "credits": {
+      "lyrics": "渡辺翔",
+      "music": "渡辺翔",
+      "arrangement": "ヤマモトショウ"
     }
   },
   {
@@ -18,7 +24,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "あっちむいてベイベー！",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/acchimuitebaby/"
+    },
+    "credits": {
+      "lyrics": "やしきん（F.M.F）",
+      "music": "やしきん（F.M.F）",
+      "arrangement": "やしきん（F.M.F）"
     }
   },
   {
@@ -29,7 +41,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "あっちむいてベイベー！",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/acchimuitebaby/"
+    },
+    "credits": {
+      "lyrics": "かわいあこ、星銀乃丈",
+      "music": "星銀乃丈",
+      "arrangement": "星銀乃丈"
     }
   },
   {
@@ -40,7 +58,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "あっちむいてベイベー！",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/acchimuitebaby/"
+    },
+    "credits": {
+      "lyrics": "Akki",
+      "music": "Akki",
+      "arrangement": "Akki"
     }
   },
   {
@@ -51,7 +75,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "幾望",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/kibou/"
+    },
+    "credits": {
+      "lyrics": "中村瑛彦",
+      "music": "中村瑛彦",
+      "arrangement": "中村瑛彦"
     }
   },
   {
@@ -62,7 +92,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "幾望",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/kibou/"
+    },
+    "credits": {
+      "lyrics": "Mumei",
+      "music": "Mumei",
+      "arrangement": "Mumei"
     }
   },
   {
@@ -73,7 +109,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "幾望",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/kibou/"
+    },
+    "credits": {
+      "lyrics": "やぎぬまかな",
+      "music": "石濱翔（MONACA）",
+      "arrangement": "石濱翔（MONACA）"
     }
   },
   {
@@ -84,7 +126,13 @@
     "release": {
       "date": "2023-08-02",
       "title": "幾望",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/kibou/"
+    },
+    "credits": {
+      "lyrics": "RIRIKO",
+      "music": "RIRIKO",
+      "arrangement": "石原剛志"
     }
   },
   {
@@ -95,7 +143,8 @@
     "release": {
       "date": "2023-09-13",
       "title": "あした天気にならないで",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/ashitatenkininaranaide/"
     },
     "credits": {
       "lyrics": "mekakushe",
@@ -111,7 +160,8 @@
     "release": {
       "date": "2023-10-04",
       "title": "リアルモンスター",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/realmonster/"
     },
     "credits": {
       "lyrics": "jon-YAKITORY",
@@ -127,7 +177,8 @@
     "release": {
       "date": "2023-10-25",
       "title": "はなうらNIGHT!",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/hanauranight/"
     },
     "credits": {
       "lyrics": "佐々木喫茶",
@@ -143,7 +194,8 @@
     "release": {
       "date": "2023-11-15",
       "title": "集団ヒステリック",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/shudan-hysteric/"
     },
     "credits": {
       "lyrics": "四市田雲豹",
@@ -159,7 +211,8 @@
     "release": {
       "date": "2023-12-06",
       "title": "推しクラまんじゅう",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/oshikuramanju/"
     },
     "credits": {
       "lyrics": "前山田健一",
@@ -175,7 +228,8 @@
     "release": {
       "date": "2023-12-27",
       "title": "ワタシアラート",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/watashialert/"
     },
     "credits": {
       "lyrics": "RIRIKO",
@@ -191,7 +245,8 @@
     "release": {
       "date": "2024-01-31",
       "title": "オトワ",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/otowa/"
     },
     "credits": {
       "lyrics": "渡辺 翔",
@@ -207,7 +262,8 @@
     "release": {
       "date": "2024-01-31",
       "title": "オトワ",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/otowa/"
     },
     "credits": {
       "lyrics": "菊池 諒",
@@ -223,7 +279,8 @@
     "release": {
       "date": "2024-01-31",
       "title": "オトワ",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/otowa/"
     },
     "credits": {
       "lyrics": "林直大",
@@ -239,7 +296,8 @@
     "release": {
       "date": "2024-03-03",
       "title": "この惑星のさだめ",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/konohoshinosadame/"
     },
     "credits": {
       "lyrics": "Akki",
@@ -255,7 +313,8 @@
     "release": {
       "date": "2024-04-08",
       "title": "あぃまい大作戦",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/aimaidaisakusen/"
     },
     "credits": {
       "lyrics": "カジ",
@@ -271,7 +330,8 @@
     "release": {
       "date": "2024-05-05",
       "title": "ワンライフ・カーニバル",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/onelife_carnival/"
     },
     "credits": {
       "lyrics": "赤飯",
@@ -287,7 +347,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "君宛て紙ヒコーキ",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/kimiatehikouki/"
+    },
+    "credits": {
+      "lyrics": "Medansy",
+      "music": "Medansy",
+      "arrangement": "Medansy"
     }
   },
   {
@@ -298,7 +364,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "君宛て紙ヒコーキ",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/kimiatehikouki/"
+    },
+    "credits": {
+      "lyrics": "ヒゲドライバー",
+      "music": "ヒゲドライバー",
+      "arrangement": "ヒゲドライバー"
     }
   },
   {
@@ -309,7 +381,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "君宛て紙ヒコーキ",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/kimiatehikouki/"
+    },
+    "credits": {
+      "lyrics": "やぎぬまかな",
+      "music": "滝澤俊輔(TRYTONELABO)",
+      "arrangement": "滝澤俊輔(TRYTONELABO)"
     }
   },
   {
@@ -320,7 +398,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "君宛て紙ヒコーキ",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/taiyo/kimiatehikouki/"
+    },
+    "credits": {
+      "lyrics": "じゃすみん",
+      "music": "パリで食べたカマボコ",
+      "arrangement": "パリで食べたカマボコ"
     }
   },
   {
@@ -331,7 +415,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "愛 make CRAZY world",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/i-make-crazy-world/"
+    },
+    "credits": {
+      "lyrics": "磯野涼(TRIFRONTIER)",
+      "music": "磯野涼(TRIFRONTIER)",
+      "arrangement": "磯野涼(TRIFRONTIER)"
     }
   },
   {
@@ -342,7 +432,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "愛 make CRAZY world",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/i-make-crazy-world/"
+    },
+    "credits": {
+      "lyrics": "中村彼方",
+      "music": "XIΛN // Kentoshan",
+      "arrangement": "XIΛN // Kentoshan"
     }
   },
   {
@@ -353,7 +449,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "愛 make CRAZY world",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/i-make-crazy-world/"
+    },
+    "credits": {
+      "lyrics": "Len",
+      "music": "Len",
+      "arrangement": "四市田雲豹、Len"
     }
   },
   {
@@ -364,7 +466,13 @@
     "release": {
       "date": "2024-07-03",
       "title": "愛 make CRAZY world",
-      "kind": "ep"
+      "kind": "ep",
+      "url": "https://taiyotsukiyo.com/discography/tsukiyo/i-make-crazy-world/"
+    },
+    "credits": {
+      "lyrics": "だてぃが",
+      "music": "堀江晶太",
+      "arrangement": "堀江晶太"
     }
   },
   {
@@ -375,7 +483,8 @@
     "release": {
       "date": "2024-10-23",
       "title": "プラスティック・ショーケース",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/plastic-showcase/"
     },
     "credits": {
       "lyrics": "やしきん(F.M.F)",
@@ -391,7 +500,8 @@
     "release": {
       "date": "2024-10-23",
       "title": "プラスティック・ショーケース",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/plastic-showcase/"
     },
     "credits": {
       "lyrics": "やしきん(F.M.F)",
@@ -407,7 +517,8 @@
     "release": {
       "date": "2024-10-23",
       "title": "プラスティック・ショーケース",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/plastic-showcase/"
     },
     "credits": {
       "lyrics": "ぼっちぼろまる",
@@ -423,7 +534,8 @@
     "release": {
       "date": "2025-05-28",
       "title": "トキメキいちもんめ！",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/tokimeki-ichimonme/"
     },
     "credits": {
       "lyrics": "佐々木喫茶",
@@ -439,7 +551,8 @@
     "release": {
       "date": "2025-05-28",
       "title": "トキメキいちもんめ！",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/tokimeki-ichimonme/"
     },
     "credits": {
       "lyrics": "Mumei",
@@ -455,7 +568,8 @@
     "release": {
       "date": "2025-05-28",
       "title": "トキメキいちもんめ！",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/tokimeki-ichimonme/"
     },
     "credits": {
       "lyrics": "カジ",
@@ -471,7 +585,8 @@
     "release": {
       "date": "2025-09-03",
       "title": "もしも",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/moshimo/"
     },
     "credits": {
       "lyrics": "Akki",
@@ -487,7 +602,8 @@
     "release": {
       "date": "2025-09-03",
       "title": "もしも",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/moshimo/"
     },
     "credits": {
       "lyrics": "渡邊亜希子",
@@ -503,7 +619,8 @@
     "release": {
       "date": "2025-09-03",
       "title": "もしも",
-      "kind": "single"
+      "kind": "single",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/moshimo/"
     },
     "credits": {
       "lyrics": "だてぃが",
@@ -519,7 +636,8 @@
     "release": {
       "date": "2026-01-14",
       "title": "Paralyze",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/paralyze/"
     },
     "credits": {
       "lyrics": "天ヶ瀬なつ、萩龍一",
@@ -535,7 +653,8 @@
     "release": {
       "date": "2026-02-11",
       "title": "Live in Hope",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/live-in-hope/"
     },
     "credits": {
       "lyrics": "三葉海緒、夢魅たぴ",
@@ -551,7 +670,8 @@
     "release": {
       "date": "2026-03-18",
       "title": "ライブアンドシーク",
-      "kind": "digital"
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/liveandseek/"
     },
     "credits": {
       "lyrics": "Medansy",
@@ -568,6 +688,12 @@
       "lyrics": "カジ",
       "music": "カジ",
       "arrangement": "tonerico"
+    },
+    "release": {
+      "date": "2026-10-17",
+      "title": "ラブリィフェリス",
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/%e3%83%a9%e3%83%96%e3%83%aa%e3%82%a3%e3%83%95%e3%82%a7%e3%83%aa%e3%82%b9/"
     }
   },
   {
@@ -579,6 +705,12 @@
       "lyrics": "海野水玉",
       "music": "萩龍一",
       "arrangement": "萩龍一"
+    },
+    "release": {
+      "date": "2026-10-17",
+      "title": "ラブリィフェリス",
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/%e3%83%a9%e3%83%96%e3%83%aa%e3%82%a3%e3%83%95%e3%82%a7%e3%83%aa%e3%82%b9/"
     }
   },
   {
@@ -590,6 +722,12 @@
       "lyrics": "夢魅たぴ",
       "music": "夢魅たぴ",
       "arrangement": "夢魅たぴ"
+    },
+    "release": {
+      "date": "2026-10-17",
+      "title": "ラブリィフェリス",
+      "kind": "digital",
+      "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/%e3%83%a9%e3%83%96%e3%83%aa%e3%82%a3%e3%83%95%e3%82%a7%e3%83%aa%e3%82%b9/"
     }
   }
 ]
