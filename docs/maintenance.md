@@ -39,6 +39,10 @@ pbpaste | pnpm lm add-setlist taiyotsukiyo-2nd --date 2026-11-18 --source <推�
 # 翻唱曲・未发行曲
 pnpm lm add-song taiyotsukiyo-2nd --title "曲名" --cover "原唱"
 
+# 动画主题曲等合作信息：在 songs.json 对应的曲目里加 tieups（列表上显示「アニメ」等标签）
+#   "tieups": [{ "type": "anime", "work": "作品名", "role": "オープニングテーマ", "url": "官网" }]
+#   type: anime / drama / movie / game / cm / other
+
 # 数据检查（也列出还没有歌单的已结束活动）
 pnpm lm validate all --missing
 ```

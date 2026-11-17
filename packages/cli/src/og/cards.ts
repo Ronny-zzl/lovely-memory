@@ -8,6 +8,9 @@ import {
   formatDate,
   formatDayWithWeekday,
   formatPercent,
+  POSITION_ROLE_LABEL,
+  tieupLabels,
+  tieupText,
   type ArtistConfig,
   type EventSetlist,
   type ResolvedEvent,
@@ -62,6 +65,7 @@ body {
 .badge.era-2nd { background: #fde4cc; color: #9a4a0b; }
 .badge.era-cover { background: #e3f1e6; color: #2f6b3d; }
 .badge.role { background: #fbead8; color: #d4741c; }
+.badge.tieup { background: #fde3ee; color: #b0306a; }
 .badge.type { background: #efedf5; color: #5b5470; }
 .unit { display: inline-flex; align-items: center; gap: 6px; font-size: 22px; font-weight: 800; padding: 3px 16px 3px 10px; border-radius: 999px; }
 .unit svg { width: 24px; height: 24px; }
@@ -134,7 +138,8 @@ export function songCard(artist: ArtistConfig, s: SongStats, position: SongPosit
       (unit.motif
         ? `<span class="unit unit-${unit.motif}">${unit.motif === "sun" ? SUN : MOON}${esc(unit.label)}</span>`
         : `<span class="badge">${esc(unit.label)}</span>`),
-    role && `<span class="badge role">${role === "closer" ? "ラスト定番" : "1曲目定番"}</span>`,
+    ...tieupLabels(song.tieups).map((l) => `<span class="badge tieup">${esc(l)}</span>`),
+    role && `<span class="badge role">${POSITION_ROLE_LABEL[role]}</span>`,
   ].filter(Boolean);
 
   const stat = (v: string, l: string, cls = "") => `<div class="stat"><div class="v ${cls}">${v}</div><div class="l">${l}</div></div>`;
@@ -152,6 +157,7 @@ export function songCard(artist: ArtistConfig, s: SongStats, position: SongPosit
       stat(formatDate(s.last!.date), "最終", "date"),
     ];
   }
+  const tieupNote = song.tieups.length ? `<p class="note">${song.tieups.map((t) => esc(tieupText(t))).join(" ・ ")}</p>` : "";
   const note = song.cover
     ? `<p class="note">カバー曲 ・ 原曲: ${esc(song.cover.artist)}${song.cover.title ? `「${esc(song.cover.title)}」` : ""}</p>`
     : position && position.count > 0 && !role
@@ -162,7 +168,7 @@ export function songCard(artist: ArtistConfig, s: SongStats, position: SongPosit
     `${groupLine(artist)}
 <div class="song-title fit" data-min="40">${esc(song.title)}</div>
 <div class="badges">${badges.join("")}</div>
-${note}
+${tieupNote}${note}
 ${s.count === 0 ? `<p class="empty">まだ歌われていません</p>` : `<div class="stats" style="--cols:${stats.length}">${stats.join("")}</div>`}`,
     host,
   );

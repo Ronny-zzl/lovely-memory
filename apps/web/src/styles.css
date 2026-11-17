@@ -28,6 +28,8 @@
   --moon-fg: #f6efd2;
   --moon-icon: #ffe39a;
   --moon-border: #23285a;
+  --tieup-bg: #fde3ee;
+  --tieup-fg: #b0306a;
   color-scheme: light;
 }
 
@@ -54,6 +56,8 @@
     --sun-icon: #ffb341;
     --sun-border: #6e4a18;
     --moon-border: #4b4f8f;
+    --tieup-bg: #45202f;
+    --tieup-fg: #f6a3c6;
     color-scheme: dark;
   }
 }
@@ -1105,6 +1109,10 @@ a.item-title:hover {
   font-size: 0.8rem;
   color: var(--muted);
   font-weight: 600;
+}
+.badge.tieup {
+  background: var(--tieup-bg);
+  color: var(--tieup-fg);
 }
 .badge.role {
   background: var(--accent-soft);

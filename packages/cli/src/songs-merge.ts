@@ -54,6 +54,7 @@ export function mergeTracks(songs: Song[], tracks: ImportedTrack[], opts: MergeO
         id: nextSongId(songs),
         title: t.title,
         aliases: [],
+        tieups: [],
         era: opts.era ?? eraForDate(opts.artist, t.release.date),
         unit: t.unit,
         release: t.release,

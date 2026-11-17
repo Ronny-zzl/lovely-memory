@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router";
 import { neighbors, positionRole, type Song, type Transition } from "@lovely-memory/core/runtime";
 import { TypeBadges } from "../components/TypeBadges.tsx";
-import { daysBetween, displayTitle, formatDate, formatPercent, todayJst } from "../format.ts";
+import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText, todayJst } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 
@@ -107,8 +107,24 @@ export function SongDetailPage() {
           {song.title}
           {era && <span className={`badge era-${era.id}`}>{era.label}</span>}
           {unit && <UnitTag unit={unit} />}
-          {role && <span className="badge role">{role === "closer" ? "ラスト定番" : "1曲目定番"}</span>}
+          {tieupLabels(song.tieups).map((l) => (
+            <span key={l} className="badge tieup">
+              {l}
+            </span>
+          ))}
+          {role && <span className="badge role">{POSITION_ROLE_LABEL[role]}</span>}
         </h2>
+        {song.tieups.map((t) => (
+          <p key={`${t.type}-${t.work}`} className="small tieup-line">
+            {t.url ? (
+              <a href={t.url} target="_blank" rel="noopener noreferrer">
+                {tieupText(t)}
+              </a>
+            ) : (
+              tieupText(t)
+            )}
+          </p>
+        ))}
         {song.cover && (
           <p className="small">
             カバー曲 ・ 原曲: {song.cover.artist}

@@ -1,5 +1,5 @@
 /* 表示用の書式（ブラウザ・CLI〔OGP 生成〕で共通） */
-import type { EventType } from "./schema.ts";
+import type { EventType, Tieup } from "./schema.ts";
 
 export const EVENT_TYPE_LABEL: Record<EventType, string> = {
   oneman: "単独公演",
@@ -46,3 +46,20 @@ export function daysBetween(from: string, to: string): number {
   };
   return Math.round((t(to) - t(from)) / 86_400_000);
 }
+
+export const TIEUP_TYPE_LABEL: Record<Tieup["type"], string> = {
+  anime: "アニメ",
+  drama: "ドラマ",
+  movie: "映画",
+  game: "ゲーム",
+  cm: "CM",
+  other: "タイアップ",
+};
+
+/** 例: アニメ『Turkey!』エンディングテーマ */
+export const tieupText = (t: Tieup) => `${TIEUP_TYPE_LABEL[t.type]}『${t.work}』${t.role ?? ""}`;
+
+/** 曲の一覧に付ける印（種類ごとに 1 つ） */
+export const tieupLabels = (tieups: Tieup[]) => [...new Set(tieups.map((t) => TIEUP_TYPE_LABEL[t.type]))];
+
+export const POSITION_ROLE_LABEL = { opener: "1曲目定番", closer: "ラスト定番" } as const;

@@ -126,9 +126,23 @@ export const Song = z.object({
         .optional(),
     })
     .optional(),
+  /** アニメ主題歌などのタイアップ */
+  tieups: z
+    .array(
+      z.object({
+        type: z.enum(["anime", "drama", "movie", "game", "cm", "other"]),
+        /** 作品名（例: 愚かな天使は悪魔と踊る） */
+        work: z.string(),
+        /** 使われ方（例: オープニングテーマ） */
+        role: z.string().optional(),
+        url: z.string().url().optional(),
+      }),
+    )
+    .default([]),
   note: z.string().optional(),
 });
 export type Song = z.infer<typeof Song>;
+export type Tieup = Song["tieups"][number];
 export const SongList = z.array(Song);
 
 // ---------- Events (artists/<id>/events.json, generated) ----------

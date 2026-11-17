@@ -252,7 +252,15 @@
       "lyrics": "渡辺 翔",
       "music": "渡辺 翔",
       "arrangement": "eba"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "愚かな天使は悪魔と踊る",
+        "role": "オープニングテーマ",
+        "url": "https://kanaten-anime.com/"
+      }
+    ]
   },
   {
     "id": "s016",
@@ -490,7 +498,15 @@
       "lyrics": "やしきん(F.M.F)",
       "music": "やしきん(F.M.F)",
       "arrangement": "やしきん(F.M.F)"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "凍牌〜裏レート麻雀闘牌録〜",
+        "role": "エンディングテーマ",
+        "url": "https://tohai-anime.com/music/ed/"
+      }
+    ]
   },
   {
     "id": "s030",
@@ -592,7 +608,15 @@
       "lyrics": "Akki",
       "music": "Akki",
       "arrangement": "Akki"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "Turkey!",
+        "role": "エンディングテーマ",
+        "url": "https://turkey-project.com/"
+      }
+    ]
   },
   {
     "id": "s036",

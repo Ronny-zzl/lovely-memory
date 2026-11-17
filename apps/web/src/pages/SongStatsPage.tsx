@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { computeStats, eventHasType, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core/runtime";
-import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, todayJst } from "../format.ts";
+import { computeStats, eventHasType, positionRole, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core/runtime";
+import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, POSITION_ROLE_LABEL, tieupLabels, todayJst } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 
@@ -99,7 +99,7 @@ function sortValue(s: SongStats, key: SortKey, today: string): string | number |
 }
 
 export function SongStatsPage() {
-  const { artist, songs, events, setlists, allStats } = useArtistData();
+  const { artist, songs, events, setlists, allStats, patterns } = useArtistData();
   const [params, setParams] = useSearchParams();
   const today = todayJst();
 
@@ -202,6 +202,11 @@ export function SongStatsPage() {
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
   const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
   const unitById = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u]));
+  // 「ラスト定番」などは全公演の曲順から判定する（絞り込みに左右されない）
+  const roles = new Map(patterns.positions.flatMap((p) => {
+    const r = positionRole(p);
+    return r ? [[p.song.id, r] as const] : [];
+  }));
 
   const toggleType = (t: EventType) => {
     const next = new Set(selectedTypes);
@@ -326,6 +331,12 @@ export function SongStatsPage() {
                       <span className={`badge era-${s.song.era}`}>{eraLabel.get(s.song.era)}</span>
                     )}
                     {s.song.unit && unitById.has(s.song.unit) && <UnitTag unit={unitById.get(s.song.unit)!} />}
+                    {tieupLabels(s.song.tieups).map((l) => (
+                      <span key={l} className="badge tieup">
+                        {l}
+                      </span>
+                    ))}
+                    {roles.has(s.song.id) && <span className="badge role">{POSITION_ROLE_LABEL[roles.get(s.song.id)!]}</span>}
                   </span>
                 </td>
                 {columns.map((c) => (
