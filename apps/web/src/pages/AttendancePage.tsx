@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { isLiveEvent, type ResolvedEvent, type Song } from "@lovely-memory/core/runtime";
 import { fetchEventernote, useAttendance } from "../attendance.ts";
 import { AttendanceBackup } from "../components/AttendanceBackup.tsx";
+import { AttendanceShare } from "../components/AttendanceShare.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { artists } from "../data.ts";
 import { displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst } from "../format.ts";
@@ -160,6 +161,30 @@ export function AttendancePage() {
           <span className="stat-label">参戦予定</span>
         </div>
       </div>
+
+      {past.length > 0 && (
+        <div className="attend-share">
+          <AttendanceShare
+            card={{
+              artistName: artist.name,
+              subtitle: artist.subtitle,
+              date: today,
+              attended: past.length,
+              held,
+              heardSongs: heard.length,
+              sungSongs: sung,
+              performances: total,
+              topSongs: heard.slice(0, 3).map((h) => ({ title: h.song.title, count: h.count })),
+              notHeard: notHeard.length,
+              firstDate: past[0]?.date,
+              host: location.host,
+            }}
+            postText={`${artist.name} 参戦記録\n参戦 ${past.length} 公演・生で聴いた曲 ${heard.length}/${sung}・のべ ${total} 曲`}
+            hashtags={artist.shareHashtags}
+            fileName={`lovely-memory-参戦記録-${today.replaceAll("-", "")}.png`}
+          />
+        </div>
+      )}
 
       {past.length === 0 && planned.length === 0 ? (
         <p className="muted empty-setlist">
