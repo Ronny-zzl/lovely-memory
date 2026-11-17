@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router";
 import { isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
+import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
@@ -59,6 +60,9 @@ export function EventDetailPage() {
           )}
         </p>
         {event.note && <p className="small">{event.note}</p>}
+        <div className="detail-actions">
+          {isLiveEvent(event) && <AttendanceToggle eventId={event.id} date={event.date} />}
+        </div>
         <ShareButtons
           text={`${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」${setlist ? "のセトリ" : ""}（${artist.name}）`}
           hashtags={artist.shareHashtags}

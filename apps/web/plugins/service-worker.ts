@@ -107,6 +107,8 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  // API（eventernote の読み込みなど）はその都度サーバーへ。キャッシュもしない
+  if (url.pathname.startsWith("/api/")) return;
   // 共有カードの画像はページ表示に使わないのでキャッシュしない
   if (url.pathname.startsWith("/og/") || url.pathname === "/og.png") return;
   if (request.mode === "navigate") {

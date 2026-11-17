@@ -4,6 +4,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
+import { AttendancePage } from "./pages/AttendancePage.tsx";
 import { ArtistList } from "./pages/ArtistList.tsx";
 import { EventDetailPage } from "./pages/EventDetailPage.tsx";
 import { EventsPage } from "./pages/EventsPage.tsx";
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { path: "events/:eventId", element: <EventDetailPage /> },
       { path: "trends", element: <TrendsPage /> },
       { path: "members", element: <MembersPage /> },
+      { path: "attendance", element: <AttendancePage /> },
     ],
   },
   { path: "*", element: <Navigate to="/" replace /> },

@@ -1231,3 +1231,82 @@ a.item-title:hover {
   vertical-align: -0.15em;
   color: var(--accent-2);
 }
+
+/* 参戦記録 */
+.attend-toggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.attend-toggle svg {
+  width: 14px;
+  height: 14px;
+}
+.attend-toggle.on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.attend-toggle.compact {
+  padding: 5px;
+}
+/* 一覧の行：リンクの右にボタンを並べる（リンクの中にボタンは入れない） */
+.event-list li.with-toggle {
+  display: flex;
+  align-items: center;
+}
+.event-list li.with-toggle .event-row {
+  flex: 1;
+  min-width: 0;
+}
+.event-list li.with-toggle .attend-toggle {
+  margin-right: 12px;
+}
+.detail-actions {
+  margin-top: 12px;
+}
+.attend-source {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.attend-form {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+.attend-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+}
+.attend-actions {
+  display: inline-flex;
+  gap: 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.error {
+  color: #d23c3c;
+}
+.share-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

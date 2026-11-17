@@ -92,6 +92,7 @@ try {
     const events = await hrefs(page, ".event-list a.event-row");
     await visit(page, `${artist}/trends`, ".trend-grid");
     await visit(page, `${artist}/members`, ".member-cards li");
+    await visit(page, `${artist}/attendance`, ".attend-source");
 
     for (const path of songs) await visit(page, path, ".song-detail-title");
     for (const path of events) await visit(page, path, ".event-detail-title");

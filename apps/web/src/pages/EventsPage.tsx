@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
 import { eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
+import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday, todayJst } from "../format.ts";
@@ -55,7 +56,7 @@ export function EventsPage() {
     const entries = sl?.stages.flatMap((s) => s.entries) ?? [];
     const debuts = entries.filter((x) => x.debut).length;
     return (
-      <li key={e.id}>
+      <li key={e.id} className="with-toggle">
         <Link to={String(e.id)} className="event-row">
           <span className="event-date">{formatDayWithWeekday(e.date)}</span>
           <span className="event-main">
@@ -77,6 +78,7 @@ export function EventsPage() {
           </span>
           <MemberDots artist={artist} present={e.members} />
         </Link>
+        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} date={e.date} compact />}
       </li>
     );
   };

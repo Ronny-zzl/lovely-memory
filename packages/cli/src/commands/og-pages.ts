@@ -77,6 +77,7 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     ["events", "公演", `${name}の公演一覧とセットリスト（${stats.events.length} 公演）。`],
     ["trends", "傾向", `${name}のセトリの傾向。1 曲目・ラストになりやすい曲、定番の流れ、よく続けて歌われる曲。`],
     ["members", "メンバー", `${name}のメンバーごとの出演率と欠席した公演。`],
+    ["attendance", "参戦記録", `${name}の参戦記録。参戦した公演と、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`],
   ];
   for (const [path, label, description] of sections) {
     const p = path ? `${artist.id}/${path}` : artist.id;
