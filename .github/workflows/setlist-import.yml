@@ -27,12 +27,12 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       NUMBER: ${{ github.event.issue.number }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: main
       # Node のバージョンは mise.toml で管理
-      - uses: jdx/mise-action@v2
-      - uses: pnpm/action-setup@v4
+      - uses: jdx/mise-action@v5
+      - uses: pnpm/action-setup@v6
       - run: pnpm install --frozen-lockfile
 
       - name: Import comment
