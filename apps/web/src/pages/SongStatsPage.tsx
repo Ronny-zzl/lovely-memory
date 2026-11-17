@@ -158,6 +158,8 @@ export function SongStatsPage() {
     const nq = normalizeTitle(q);
     const filtered = stats.songs.filter(
       (s) =>
+        // カバー曲は歌唱回数が少なく間隔も長いので、統計表ではなく下の「カバー曲」欄に出す
+        !s.song.cover &&
         (includeCollab || !collabOnly.has(s.song.id)) &&
         (!era || s.song.era === era) &&
         (!unit || s.song.unit === unit) &&
@@ -184,8 +186,14 @@ export function SongStatsPage() {
     ...COLUMNS_BEFORE,
   ];
 
-  const played = stats.songs.filter((s) => s.count > 0).length;
-  const songTotal = includeCollab ? songs.length : songs.filter((s) => !collabOnly.has(s.id)).length;
+  const played = stats.songs.filter((s) => !s.song.cover && s.count > 0).length;
+  const songTotal = songs.filter((s) => !s.cover && (includeCollab || !collabOnly.has(s.id))).length;
+  // カバー曲は全公演の記録を表示する（上の絞り込みとは独立）。最近歌われた順
+  const covers = allStats.songs
+    .filter((s) => s.song.cover)
+    .sort((a, b) => (b.last?.date ?? "").localeCompare(a.last?.date ?? ""));
+  // カバー曲だけの区分は選択肢に出さない
+  const eraOptions = artist.eras.filter((e) => songs.some((s) => s.era === e.id && !s.cover));
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
   const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
   const unitLabel = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u.label]));
@@ -243,7 +251,7 @@ export function SongStatsPage() {
         <div className="filter-row">
           <select value={era} onChange={(e) => update({ era: e.target.value })} aria-label="区分">
             <option value="">すべての区分</option>
-            {artist.eras.map((e) => (
+            {eraOptions.map((e) => (
               <option key={e.id} value={e.id}>
                 {e.label}
               </option>
@@ -325,6 +333,39 @@ export function SongStatsPage() {
           </tbody>
         </table>
       </div>
+      {covers.length > 0 && (
+        <section className="covers">
+          <h3 className="section-heading">
+            カバー曲<span className="muted small"> {covers.length} 曲（全公演の記録）</span>
+          </h3>
+          <ul className="cover-list">
+            {covers.map((s) => (
+              <li key={s.song.id}>
+                <span className="cover-head">
+                  <Link to={s.song.id} className="song-title">
+                    {s.song.title}
+                  </Link>
+                  <span className="muted small">原曲: {s.song.cover!.artist}</span>
+                </span>
+                <span className="cover-dates">
+                  {s.performances.length === 0 && <span className="muted small">未披露</span>}
+                  {s.performances.map((p) => (
+                    <Link
+                      key={`${p.eventId}-${p.stageIndex}-${p.position}`}
+                      to={`/${artist.id}/events/${p.eventId}`}
+                      className="date-chip"
+                    >
+                      {formatDate(p.date)}
+                      {p.collab && <span className="badge collab">コラボ</span>}
+                    </Link>
+                  ))}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <p className="muted small note">
         集計対象はセトリを登録済みの公演のみ（{stats.events.length} / {events.filter(isLiveEvent).length} 公演）。
         「歌唱率」は初披露以降の公演のうち歌唱した割合、「前回から」は最後に歌われてから今日までの日数。

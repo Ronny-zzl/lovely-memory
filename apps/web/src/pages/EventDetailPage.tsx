@@ -87,6 +87,7 @@ export function EventDetailPage() {
                           初披露
                         </span>
                       )}
+                      {e.song.cover && <span className="item-note">カバー（原曲: {e.song.cover.artist}）</span>}
                       {e.note && <span className="item-note">{e.note}</span>}
                       {e.with && <span className="item-with">with {e.with.join("・")}</span>}
                       {partial && (

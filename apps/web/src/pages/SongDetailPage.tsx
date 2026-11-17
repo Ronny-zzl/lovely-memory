@@ -60,8 +60,8 @@ export function SongDetailPage() {
   const encores = stats.performances.filter((p) => p.encore).length;
 
   const history = [...stats.performances].reverse();
-  // コラボステージでしか歌われていない曲は、グループとしての歌唱率に意味が無い
-  const collabOnly = stats.performances.every((p) => p.collab);
+  // カバー曲は歌唱回数が少なく間隔も長いので、歌唱率・出現パターン等は出さない
+  const isCover = !!song.cover;
 
   return (
     <article className="song-detail">
@@ -120,30 +120,23 @@ export function SongDetailPage() {
         <p className="muted empty-setlist">記録上、まだ歌われていません。</p>
       ) : (
         <>
-          <div className="summary summary-4">
+          <div className={isCover ? "summary" : "summary summary-4"}>
             <div className="stat">
               <span className="stat-value">{stats.count}</span>
               <span className="stat-label">歌唱回数</span>
             </div>
-            <div className="stat">
-              {collabOnly ? (
-                <>
-                  <span className="stat-value stat-date">コラボのみ</span>
-                  <span className="stat-label">グループでの歌唱なし</span>
-                </>
-              ) : (
-                <>
-                  <span className="stat-value">
-                    {formatPercent(stats.rate)}
-                    <span className="stat-total">
-                      {" "}
-                      {stats.events}/{stats.eligibleEvents}
-                    </span>
+            {!isCover && (
+              <div className="stat">
+                <span className="stat-value">
+                  {formatPercent(stats.rate)}
+                  <span className="stat-total">
+                    {" "}
+                    {stats.events}/{stats.eligibleEvents}
                   </span>
-                  <span className="stat-label">歌唱率（初披露以降）</span>
-                </>
-              )}
-            </div>
+                </span>
+                <span className="stat-label">歌唱率（初披露以降）</span>
+              </div>
+            )}
             <div className="stat">
               <span className="stat-value stat-date">{formatDate(stats.first!.date)}</span>
               <Link to={`/${artist.id}/events/${stats.first!.eventId}`} className="stat-label stat-link">
@@ -158,25 +151,27 @@ export function SongDetailPage() {
             </div>
           </div>
 
-          <section className="song-section">
-            <h3 className="section-heading">
-              出現パターン<span className="muted small"> 初披露以降 {sinceDebut.length} 公演（古い順）</span>
-            </h3>
-            <div className="pattern" role="list">
-              {sinceDebut.map(({ event }) => (
-                <Link
-                  key={event.id}
-                  role="listitem"
-                  to={`/${artist.id}/events/${event.id}`}
-                  className={sungIn.has(event.id) ? "cell sung" : "cell"}
-                  title={`${formatDate(event.date)} ${event.title}${sungIn.has(event.id) ? "" : "（歌唱なし）"}`}
-                />
-              ))}
-            </div>
-            <p className="small muted position-stats">
-              1 曲目 {openers} 回 ・ ラスト {closers} 回{encores > 0 && ` ・ アンコール ${encores} 回`}
-            </p>
-          </section>
+          {!isCover && (
+            <section className="song-section">
+              <h3 className="section-heading">
+                出現パターン<span className="muted small"> 初披露以降 {sinceDebut.length} 公演（古い順）</span>
+              </h3>
+              <div className="pattern" role="list">
+                {sinceDebut.map(({ event }) => (
+                  <Link
+                    key={event.id}
+                    role="listitem"
+                    to={`/${artist.id}/events/${event.id}`}
+                    className={sungIn.has(event.id) ? "cell sung" : "cell"}
+                    title={`${formatDate(event.date)} ${event.title}${sungIn.has(event.id) ? "" : "（歌唱なし）"}`}
+                  />
+                ))}
+              </div>
+              <p className="small muted position-stats">
+                1 曲目 {openers} 回 ・ ラスト {closers} 回{encores > 0 && ` ・ アンコール ${encores} 回`}
+              </p>
+            </section>
+          )}
 
           <section className="song-section">
             <h3 className="section-heading">歌唱履歴</h3>

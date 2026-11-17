@@ -865,3 +865,55 @@ a.item-title:hover {
   color: var(--muted);
   white-space: normal;
 }
+
+/* ---------- covers ---------- */
+
+.covers {
+  margin-top: 24px;
+}
+.cover-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.cover-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 10px 12px;
+}
+.cover-list li + li {
+  border-top: 1px solid var(--border);
+}
+.cover-head {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+.cover-dates {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.date-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+.date-chip:hover {
+  border-color: var(--accent);
+}
+.date-chip .badge.collab {
+  margin-left: 6px;
+}
