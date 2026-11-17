@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeTitle, parseCredits } from "./text";
+import { normalizeTitle, parseCredits } from "./text.ts";
 
 describe("normalizeTitle", () => {
   it("absorbs width, case, spaces and decorative symbols", () => {

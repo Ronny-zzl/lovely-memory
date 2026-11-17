@@ -1,7 +1,7 @@
-import { artistPath, loadArtist, loadSongs, sleep, USER_AGENT, writeJson } from "../repo";
-import { adapters } from "../sources/official";
-import { mergeTracks, type ImportedTrack } from "../songs-merge";
-import { reportSongs } from "./report";
+import { artistPath, loadArtist, loadSongs, sleep, USER_AGENT, writeJson } from "../repo.ts";
+import { adapters } from "../sources/official/index.ts";
+import { mergeTracks, type ImportedTrack } from "../songs-merge.ts";
+import { reportSongs } from "./report.ts";
 
 const INTERVAL_MS = 2000;
 

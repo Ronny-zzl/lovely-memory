@@ -1,6 +1,6 @@
 import { normalizeTitle, parseCredits, Song } from "@lovely-memory/core";
-import { artistPath, loadArtist, loadSongs, writeJson } from "../repo";
-import { nextSongId, songIndex } from "../songs-merge";
+import { artistPath, loadArtist, loadSongs, writeJson } from "../repo.ts";
+import { nextSongId, songIndex } from "../songs-merge.ts";
 
 /**
  * カバー曲・未発売曲などを 1 曲追加する。

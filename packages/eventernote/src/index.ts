@@ -1,2 +1,2 @@
-export { parseEventList, type ListPage } from "./parse";
-export { fetchActorEvents, actorEventsUrl, BASE_URL, type FetchOptions } from "./fetch";
+export { parseEventList, type ListPage } from "./parse.ts";
+export { fetchActorEvents, actorEventsUrl, BASE_URL, type FetchOptions } from "./fetch.ts";

@@ -1,7 +1,7 @@
 import { readdir } from "node:fs/promises";
 import type { Event } from "@lovely-memory/core";
 import { fetchActorEvents } from "@lovely-memory/eventernote";
-import { ARTISTS_DIR, artistPath, loadArtist, loadEvents, USER_AGENT, writeJson } from "../repo";
+import { ARTISTS_DIR, artistPath, loadArtist, loadEvents, USER_AGENT, writeJson } from "../repo.ts";
 
 /** 開催日からこの日数を過ぎたイベントは確定扱いとし、再取得しない */
 const DEFAULT_FROZEN_DAYS = 30;

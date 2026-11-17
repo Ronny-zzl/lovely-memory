@@ -1,7 +1,7 @@
 import { readdir } from "node:fs/promises";
 import { findSong, normalizeTitle, resolveEvents, Setlist, setlistStages } from "@lovely-memory/core";
-import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs } from "../repo";
-import { jstDateDaysAgo } from "./sync";
+import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs } from "../repo.ts";
+import { jstDateDaysAgo } from "./sync.ts";
 
 async function validateOne(artistId: string, showMissing: boolean): Promise<number> {
   const errors: string[] = [];

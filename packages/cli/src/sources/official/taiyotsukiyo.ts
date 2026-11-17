@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio";
 import { parseCredits } from "@lovely-memory/core";
-import type { DiscographyAdapter, OfficialTrack } from "./types";
-import type { ReleaseKind } from "../../wikipedia";
+import type { DiscographyAdapter, OfficialTrack } from "./types.ts";
+import type { ReleaseKind } from "../../wikipedia.ts";
 
 const INSTRUMENTAL = /[(（]\s*(instrumental|off\s*vocal|inst\.?)\s*[)）]/i;
 

@@ -1,5 +1,5 @@
 import type { Event } from "@lovely-memory/core";
-import { parseEventList } from "./parse";
+import { parseEventList } from "./parse.ts";
 
 export const BASE_URL = "https://www.eventernote.com";
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEventList } from "./parse";
+import { parseEventList } from "./parse.ts";
 
 // 2026-11 時点の実際の HTML を縮約（閉じタグの崩れ <span ...>...</p> も実物どおり）
 const HTML = `

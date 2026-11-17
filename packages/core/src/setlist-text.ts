@@ -1,5 +1,5 @@
-import { normalizeTitle, parseCredits, type CreditRoles } from "./text";
-import type { Song } from "./schema";
+import { normalizeTitle, parseCredits, type CreditRoles } from "./text.ts";
+import type { Song } from "./schema.ts";
 
 export type ParsedItem = {
   /** 告知文での曲名表記（タグを除去する前） */

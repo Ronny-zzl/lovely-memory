@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseSetlistText, splitTags } from "./setlist-text";
+import { parseSetlistText, splitTags } from "./setlist-text.ts";
 
 const DEBUT = `【☀️セットリスト🌙】
 太陽と踊れ月夜に唄え

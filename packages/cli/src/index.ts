@@ -1,11 +1,11 @@
 import { parseArgs } from "node:util";
-import { addSetlist } from "./commands/add-setlist";
-import { addSong } from "./commands/add-song";
-import { importOfficial } from "./commands/import-official";
-import { importWikipedia } from "./commands/import-wikipedia";
-import { listEvents } from "./commands/list-events";
-import { sync } from "./commands/sync";
-import { validate } from "./commands/validate";
+import { addSetlist } from "./commands/add-setlist.ts";
+import { addSong } from "./commands/add-song.ts";
+import { importOfficial } from "./commands/import-official.ts";
+import { importWikipedia } from "./commands/import-wikipedia.ts";
+import { listEvents } from "./commands/list-events.ts";
+import { sync } from "./commands/sync.ts";
+import { validate } from "./commands/validate.ts";
 
 const USAGE = `usage: pnpm lm <command> <artistId> [options]
 

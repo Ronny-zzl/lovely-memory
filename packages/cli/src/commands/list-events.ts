@@ -1,5 +1,5 @@
 import { resolveEvents } from "@lovely-memory/core";
-import { loadArtist, loadEvents, loadOverrides } from "../repo";
+import { loadArtist, loadEvents, loadOverrides } from "../repo.ts";
 
 /**
  * overrides とルールを適用した後のイベント一覧を表示する（種別判定の確認用）。

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseIndex, parseRelease } from "./taiyotsukiyo";
+import { parseIndex, parseRelease } from "./taiyotsukiyo.ts";
 
 // 公式サイトの実際の構造を縮約したもの（2026-11 時点）
 const RELEASE_HTML = `

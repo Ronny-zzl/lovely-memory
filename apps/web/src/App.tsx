@@ -1,4 +1,4 @@
-import { artists } from "./data";
+import { artists } from "./data.ts";
 
 export function App() {
   return (

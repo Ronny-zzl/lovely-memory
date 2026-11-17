@@ -1,4 +1,4 @@
-import type { ArtistConfig, Event, EventType, Overrides } from "./schema";
+import type { ArtistConfig, Event, EventType, Overrides } from "./schema.ts";
 
 export type ResolvedEvent = Event & {
   type: EventType;

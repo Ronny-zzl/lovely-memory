@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { inferEventType, resolveEvents } from "./events";
-import { ArtistConfig, Overrides, type Event } from "./schema";
+import { inferEventType, resolveEvents } from "./events.ts";
+import { ArtistConfig, Overrides, type Event } from "./schema.ts";
 
 const artist = ArtistConfig.parse({
   id: "test",

@@ -11,8 +11,8 @@ import {
   type SetlistStage,
   type Song,
 } from "@lovely-memory/core";
-import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, writeJson } from "../repo";
-import { nextSongId } from "../songs-merge";
+import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, writeJson } from "../repo.ts";
+import { nextSongId } from "../songs-merge.ts";
 
 /** 告知文の末尾タグのうち、記録しないもの（初披露は集計で算出するため） */
 const IGNORED_TAGS = /^(新曲|初披露|new)$/i;

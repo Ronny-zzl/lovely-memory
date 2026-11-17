@@ -153,7 +153,8 @@ lovely-memory/
 └─ .github/workflows/  sync.yml（每日，遍历所有有 eventernote 配置的艺人）, deploy.yml（GitHub Pages）
 ```
 
-- 内部包直接导出 TS 源码（`exports: ./src/index.ts`），无需单独构建；Node 侧用 tsx 运行。
+- 内部包直接导出 TS 源码（`exports: ./src/index.ts`），无需构建。Node（≥24）直接运行 .ts（type stripping），不使用 tsx。
+- 因此相对 import 必须带扩展名（`./schema.ts`），且只能使用可擦除的 TS 语法（tsconfig: `NodeNext` + `allowImportingTsExtensions` + `erasableSyntaxOnly` 在 typecheck 时强制）。
 - 同一组合的不同期视为不同的 artist（通过 `since`/`until` 区分），共享 eventernote actor ID 也没问题。
 - CLI 用法：`pnpm lm <command> <artistId>`。
 

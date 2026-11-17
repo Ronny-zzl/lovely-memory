@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
-import { artistPath, loadArtist, loadSongs, USER_AGENT, writeJson } from "../repo";
-import { mergeTracks, type ImportedTrack } from "../songs-merge";
-import { parseDiscography } from "../wikipedia";
-import { reportSongs } from "./report";
+import { artistPath, loadArtist, loadSongs, USER_AGENT, writeJson } from "../repo.ts";
+import { mergeTracks, type ImportedTrack } from "../songs-merge.ts";
+import { parseDiscography } from "../wikipedia.ts";
+import { reportSongs } from "./report.ts";
 
 async function fetchWikitext(lang: string, title: string): Promise<string> {
   const url = `https://${lang}.wikipedia.org/w/index.php?title=${encodeURIComponent(title)}&action=raw`;
