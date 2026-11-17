@@ -82,6 +82,9 @@ jobs:
           echo "--- user token verify";    api /user/tokens/verify | jq -c '{success, status: .result.status, errors: [.errors[]?.message]}'
           echo "--- account token verify"; api "/accounts/$CLOUDFLARE_ACCOUNT_ID/tokens/verify" | jq -c '{success, status: .result.status, errors: [.errors[]?.message]}'
           echo "--- account access";       api "/accounts/$CLOUDFLARE_ACCOUNT_ID" | jq -c '{success, errors: [.errors[]?.message]}'
+          # アカウント ID 自体は公開ログに出さず、一致するかだけを出す
+          echo "--- accounts visible to the token"
+          api "/accounts" | jq -c --arg id "$CLOUDFLARE_ACCOUNT_ID" '{count: (.result | length?), account_id_matches: ([.result[]?.id] | index($id) != null)}'
           echo "--- pages projects";       api "/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" | jq -c '{success, count: (.result | length?), errors: [.errors[]?.message]}'
       # wrangler-action は新しい npm で npx が止まるため、wrangler を直接使う
       - name: Create Pages project (first time only)
