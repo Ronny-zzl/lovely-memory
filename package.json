@@ -1,0 +1,19 @@
+{
+  "name": "lovely-memory",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "dev": "pnpm --filter @lovely-memory/web dev",
+    "build": "pnpm --filter @lovely-memory/web build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "lm": "tsx packages/cli/src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

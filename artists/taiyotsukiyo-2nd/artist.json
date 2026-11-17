@@ -1,0 +1,34 @@
+{
+  "id": "taiyotsukiyo-2nd",
+  "name": "太陽と踊れ月夜に唄え",
+  "subtitle": "Second Season",
+  "since": "2026-09-04",
+  "members": [
+    { "id": "anne",  "name": "甘乃あんね", "colorName": "ベビーピンク",   "color": "#F5B5C8", "eventernoteId": 94952 },
+    { "id": "hana",  "name": "日南波那",   "colorName": "青",             "color": "#2F6FDB", "eventernoteId": 77864 },
+    { "id": "mei",   "name": "陽宮萌衣",   "colorName": "赤",             "color": "#E53935", "eventernoteId": 94953 },
+    { "id": "myu",   "name": "水瀬みゅう", "colorName": "水色",           "color": "#5CC8F0", "eventernoteId": 94954 },
+    { "id": "yui",   "name": "雅結葵",     "colorName": "ライトグリーン", "color": "#8BD67A", "eventernoteId": 94955 },
+    { "id": "orino", "name": "夜凪織乃",   "colorName": "紫",             "color": "#8E5CC8", "eventernoteId": 94956 }
+  ],
+  "eras": [
+    { "id": "1st", "label": "1期曲" },
+    { "id": "2nd", "label": "2期曲" }
+  ],
+  "units": [
+    { "id": "all",     "label": "太陽と踊れ月夜に唄え" },
+    { "id": "taiyo",   "label": "太陽と踊れ" },
+    { "id": "tsukiyo", "label": "月夜に唄え" }
+  ],
+  "sources": {
+    "eventernote": { "actorId": 72524 }
+  },
+  "eventTypeRules": [
+    { "pattern": "チェキ会|特典会", "type": "tokuten" },
+    { "pattern": "発売記念イベント|リリースイベント|リリイベ", "type": "release" },
+    { "pattern": "フリーライブ|フリーミニライブ|FREE LIVE", "type": "free" },
+    { "pattern": "日進月歩", "type": "taiban" },
+    { "pattern": "単独公演|Debut LIVE|大感謝祭|生誕祭|ワンマン", "type": "oneman" }
+  ],
+  "defaultEventType": "external"
+}
