@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { isLiveEvent } from "@lovely-memory/core/runtime";
+import { birthdayMembers, isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
@@ -34,6 +34,7 @@ export function EventDetailPage() {
   const enUrl = eventernoteUrl(event.id);
   const multiStage = (setlist?.stages.length ?? 0) > 1;
   // この公演で達成した節目（グループの記録を先に）
+  const birthdays = birthdayMembers(artist.members, event.date);
   const reached = milestones.achieved.filter((m) => m.eventId === id).sort((a, b) => Number("song" in a) - Number("song" in b));
 
   return (
@@ -72,10 +73,17 @@ export function EventDetailPage() {
         />
       </header>
 
-      {reached.length > 0 && (
+      {(reached.length > 0 || birthdays.length > 0) && (
         <section className="event-milestones">
           <h3 className="section-heading">この公演の記録</h3>
           <div className="milestones">
+            {birthdays.map((m) => (
+              <span key={m.id} className="milestone milestone-birthday">
+                <span className="milestone-icon" aria-hidden="true">🎂</span>
+                <span className="dot" style={{ background: m.color }} />
+                {m.name}の誕生日
+              </span>
+            ))}
             {reached.map((m, i) => (
               <MilestoneBadge key={i} m={m} artistId={artist.id} />
             ))}

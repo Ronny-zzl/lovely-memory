@@ -23,6 +23,8 @@ export const Member = z.object({
   colorName: z.string().optional(),
   color: hexColor,
   eventernoteId: z.number().int().optional(),
+  /** 生年月日（公式プロフィール）。表示は月日と、次の誕生日までの日数 */
+  birthday: isoDate.optional(),
 });
 export type Member = z.infer<typeof Member>;
 

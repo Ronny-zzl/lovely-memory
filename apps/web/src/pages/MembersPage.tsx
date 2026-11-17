@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
-import { computeMemberStats, isLiveEvent } from "@lovely-memory/core/runtime";
-import { displayTitle, formatDate, formatPercent, todayJst } from "../format.ts";
+import { computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
+import { birthdayCountdown, displayTitle, formatDate, formatMonthDay, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 export function MembersPage() {
@@ -13,8 +13,18 @@ export function MembersPage() {
   );
   const assumed = events.filter((e) => isLiveEvent(e) && e.date <= today && e.membersSource === "assumed").length;
 
+  const soonest = upcomingBirthdays(artist.members, today)[0];
+
   return (
     <section className="members">
+      {soonest && (
+        <p className="next-birthday">
+          <span aria-hidden="true">🎂</span> 次の誕生日：
+          <span className="dot" style={{ background: soonest.member.color }} />
+          <strong>{soonest.member.name}</strong> {formatMonthDay(soonest.date)}
+          <span className={soonest.days === 0 ? "birthday-today" : "muted"}>（{birthdayCountdown(soonest.days)}）</span>
+        </p>
+      )}
       <ul className="member-cards">
         {members.map((s) => (
           <li key={s.member.id} className="member-card" style={{ "--member": s.member.color } as React.CSSProperties}>
@@ -23,6 +33,17 @@ export function MembersPage() {
               {s.member.name}
               {s.member.colorName && <span className="muted small">{s.member.colorName}</span>}
             </h2>
+            {(() => {
+              const b = nextBirthday(s.member, today);
+              return (
+                b && (
+                  <p className={`member-birthday${b.days === 0 ? " birthday-today" : ""}`}>
+                    <span aria-hidden="true">🎂</span> {formatMonthDay(b.date)}
+                    <span className="muted">（{birthdayCountdown(b.days)}）</span>
+                  </p>
+                )
+              );
+            })()}
 
             <dl className="member-figures">
               <div>

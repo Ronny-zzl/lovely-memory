@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import { isLiveEvent, upcomingMilestones, type Milestone, type UpcomingMilestone } from "@lovely-memory/core/runtime";
-import { daysBetween, displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst } from "../format.ts";
+import { isLiveEvent, upcomingBirthdays, upcomingMilestones, type Milestone, type UpcomingMilestone } from "@lovely-memory/core/runtime";
+import { birthdayCountdown, daysBetween, displayTitle, formatDate, formatDayWithWeekday, formatMonthDay, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 import { MilestoneBadge } from "./MilestoneBadge.tsx";
 
@@ -106,14 +106,27 @@ export function MilestonesSection() {
   const recent = milestones.achieved.filter((m) => m.date >= cut);
   const older = milestones.achieved.filter((m) => m.date < cut);
   const titles = new Map(events.map((e) => [e.id, e.title]));
+  const birthdays = upcomingBirthdays(artist.members, today).filter((b) => b.days <= 45);
 
   return (
     <section className="song-section milestones-section">
       <h3 className="section-heading">マイルストーン</h3>
-      {upcoming.length > 0 && (
+      {(upcoming.length > 0 || birthdays.length > 0) && (
         <div className="trend-card">
           <h4 className="neighbor-heading">もうすぐ</h4>
           <ul className="upcoming-list">
+            {birthdays.map((b) => (
+              <li key={b.member.id}>
+                <span>
+                  <span aria-hidden="true">🎂 </span>
+                  <span className="dot" style={{ background: b.member.color }} />
+                  <strong>{b.member.name}</strong>の誕生日
+                </span>
+                <span className="muted small">
+                  {formatMonthDay(b.date)}（{birthdayCountdown(b.days)}）
+                </span>
+              </li>
+            ))}
             {upcoming.map((u, i) => (
               <li key={i}>
                 <Upcoming u={u} artistId={artist.id} artistName={artist.name} />

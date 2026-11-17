@@ -81,3 +81,9 @@ export function milestoneText(m: import("./milestones.ts").Milestone): string {
       return m.years ? `デビュー ${m.years} 周年` : `デビュー ${m.days} 日`;
   }
 }
+
+/** "2007-02-25" → "2月25日" */
+export const formatMonthDay = (iso: string) => `${Number(iso.slice(5, 7))}月${Number(iso.slice(8, 10))}日`;
+
+/** 誕生日までの日数の表記 */
+export const birthdayCountdown = (days: number) => (days === 0 ? "今日が誕生日！" : days === 1 ? "明日" : `あと ${days} 日`);

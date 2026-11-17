@@ -6,6 +6,8 @@ export {
   eventernoteUrl,
   formatDate,
   formatDayWithWeekday,
+  formatMonthDay,
+  birthdayCountdown,
   formatPercent,
   LIVE_EVENT_TYPES,
   milestoneText,
