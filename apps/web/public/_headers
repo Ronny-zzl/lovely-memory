@@ -1,0 +1,8 @@
+# Cloudflare Pages のレスポンスヘッダー
+# Service Worker はデプロイ後すぐに更新を検出できるよう毎回確認させる
+/sw.js
+  Cache-Control: no-cache
+
+# ファイル名に内容のハッシュが入っているので、変わることがない
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
