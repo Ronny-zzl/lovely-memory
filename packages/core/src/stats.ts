@@ -41,7 +41,12 @@ export type SongStats = {
   stages: number;
   /** 歌唱イベント数 */
   events: number;
-  /** 歌唱率 = events / 集計対象イベント数 */
+  /** 初披露以降の集計対象イベント数（初披露の公演を含む）。未披露なら 0 */
+  eligibleEvents: number;
+  /**
+   * 歌唱率 = events / eligibleEvents。
+   * 分母を初披露以降に限ることで、後から披露された曲が不利にならないようにする
+   */
   rate: number;
   first?: { eventId: number; date: string };
   last?: { eventId: number; date: string };
@@ -131,12 +136,14 @@ export function computeStats({ songs, events, setlists, filter }: StatsInput): S
     for (const p of performances) byYear[p.date.slice(0, 4)] = (byYear[p.date.slice(0, 4)] ?? 0) + 1;
     const first = performances[0];
     const last = performances.at(-1);
+    const eligibleEvents = first ? total - eventIndex.get(first.eventId)! : 0;
     return {
       song,
       count: performances.length,
       stages: stageKeys.size,
       events: eventIds.size,
-      rate: total ? eventIds.size / total : 0,
+      eligibleEvents,
+      rate: eligibleEvents ? eventIds.size / eligibleEvents : 0,
       first: first && { eventId: first.eventId, date: first.date },
       last: last && { eventId: last.eventId, date: last.date },
       sinceLast: last ? total - 1 - eventIndex.get(last.eventId)! : null,

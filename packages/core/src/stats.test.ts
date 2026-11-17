@@ -34,9 +34,13 @@ describe("computeStats", () => {
     expect(by("s3")).toMatchObject({ count: 1, stages: 1, events: 1 });
   });
 
-  it("uses events with setlists as the denominator", () => {
+  it("uses events with setlists since the debut as the denominator", () => {
     expect(stats.events.map((e) => e.event.id)).toEqual([1, 2, 4]);
+    expect(by("s1")).toMatchObject({ events: 2, eligibleEvents: 3 });
     expect(by("s1").rate).toBeCloseTo(2 / 3);
+    // C は e2 で初披露 → 分母は e2, e4 の 2 公演
+    expect(by("s3")).toMatchObject({ events: 1, eligibleEvents: 2, rate: 0.5 });
+    expect(by("s4")).toMatchObject({ eligibleEvents: 0, rate: 0 });
     expect(stats.totalStages).toBe(4);
     expect(stats.totalPerformances).toBe(6);
   });

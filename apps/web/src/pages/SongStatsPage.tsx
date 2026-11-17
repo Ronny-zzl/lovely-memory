@@ -39,12 +39,12 @@ const COLUMNS_BEFORE: Column[] = [
     label: "歌唱率",
     numeric: true,
     className: "rate",
-    title: "歌唱した公演数 ÷ 集計対象の公演数",
+    title: "初披露以降の公演のうち歌唱した割合",
     cell: (s) => (
-      <>
+      <span title={s.count > 0 ? `${s.events} / ${s.eligibleEvents} 公演` : undefined}>
         <span className="bar" style={{ "--rate": s.rate } as React.CSSProperties} />
         <span className="rate-text">{s.count > 0 ? formatPercent(s.rate) : "–"}</span>
-      </>
+      </span>
     ),
   },
   {
@@ -277,7 +277,7 @@ export function SongStatsPage() {
       </div>
       <p className="muted small note">
         集計対象はセトリを登録済みの公演のみ（{stats.events.length} / {events.filter((e) => e.type !== "tokuten").length} 公演）。
-        「前回から」は最後に歌われてから今日までの日数。
+        「歌唱率」は初披露以降の公演のうち歌唱した割合、「前回から」は最後に歌われてから今日までの日数。
       </p>
     </section>
   );
