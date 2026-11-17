@@ -2,13 +2,12 @@ import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
 import type { EventType, ResolvedEvent } from "@lovely-memory/core";
 import { MemberDots } from "../components/MemberDots.tsx";
-import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday } from "../format.ts";
+import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 const ALL_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
 const DEFAULT_HIDDEN: EventType[] = ["tokuten"];
 
-const todayJst = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
 
 export function EventsPage() {
   const { artist, events, allStats } = useArtistData();

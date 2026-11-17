@@ -1,24 +1,81 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router";
 import { computeStats, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core";
-import { EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES } from "../format.ts";
+import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
-type SortKey = "title" | "count" | "stages" | "events" | "rate" | "first" | "last" | "sinceLast";
+type SortKey = "title" | "count" | "events" | "rate" | "first" | "last" | "daysSince";
 
-const COLUMNS: Array<{ key: SortKey; label: string; numeric?: boolean; className?: string; title?: string }> = [
-  { key: "title", label: "曲名" },
-  { key: "count", label: "回数", numeric: true, title: "歌唱回数（同一公演の別ステージも数える）" },
-  { key: "stages", label: "ステージ", numeric: true, className: "hide-sm", title: "歌唱したステージ数" },
-  { key: "events", label: "公演", numeric: true, title: "歌唱した公演数" },
-  { key: "rate", label: "歌唱率", numeric: true, title: "歌唱した公演数 ÷ 集計対象の公演数" },
-  { key: "first", label: "初披露", className: "hide-sm", title: "記録上で最初に歌われた日" },
-  { key: "last", label: "最終", title: "最後に歌われた日" },
-  { key: "sinceLast", label: "空白", numeric: true, title: "最後に歌われてから、何公演歌われていないか" },
+type Column = {
+  key: SortKey;
+  label: string;
+  numeric?: boolean;
+  className?: string;
+  title?: string;
+  cell: (s: SongStats, today: string) => React.ReactNode;
+};
+
+/** 最後に歌われてからの日数（未披露は null） */
+const daysSince = (s: SongStats, today: string) => (s.last ? daysBetween(s.last.date, today) : null);
+
+const COUNT: Column = {
+  key: "count",
+  label: "回数",
+  numeric: true,
+  title: "歌唱回数（同一公演で 2 回歌えば 2 回）",
+  cell: (s) => s.count,
+};
+const EVENTS: Column = {
+  key: "events",
+  label: "公演",
+  numeric: true,
+  title: "歌唱した公演数",
+  cell: (s) => s.events,
+};
+
+const COLUMNS_BEFORE: Column[] = [
+  {
+    key: "rate",
+    label: "歌唱率",
+    numeric: true,
+    className: "rate",
+    title: "歌唱した公演数 ÷ 集計対象の公演数",
+    cell: (s) => (
+      <>
+        <span className="bar" style={{ "--rate": s.rate } as React.CSSProperties} />
+        <span className="rate-text">{s.count > 0 ? formatPercent(s.rate) : "–"}</span>
+      </>
+    ),
+  },
+  {
+    key: "first",
+    label: "初披露",
+    className: "date hide-sm",
+    title: "記録上で最初に歌われた日",
+    cell: (s) => (s.first ? formatDate(s.first.date) : "未披露"),
+  },
+  {
+    key: "last",
+    label: "最終",
+    // スマホでは「前回から」と内容が重なるので省く
+    className: "date hide-sm",
+    title: "最後に歌われた日",
+    cell: (s) => (s.last ? formatDate(s.last.date) : "–"),
+  },
+  {
+    key: "daysSince",
+    label: "前回から",
+    numeric: true,
+    title: "最後に歌われてから今日までの日数",
+    cell: (s, today) => {
+      const d = daysSince(s, today);
+      return d === null ? "–" : `${d}日`;
+    },
+  },
 ];
 
 /** 並び替えに使う値。未披露曲は null（並び順に関わらず末尾に置く） */
-function sortValue(s: SongStats, key: SortKey): string | number | null {
+function sortValue(s: SongStats, key: SortKey, today: string): string | number | null {
   switch (key) {
     case "title":
       return s.song.title;
@@ -26,8 +83,8 @@ function sortValue(s: SongStats, key: SortKey): string | number | null {
       return s.first?.date ?? null;
     case "last":
       return s.last?.date ?? null;
-    case "sinceLast":
-      return s.sinceLast;
+    case "daysSince":
+      return daysSince(s, today);
     default:
       return s.count === 0 ? null : s[key];
   }
@@ -36,6 +93,7 @@ function sortValue(s: SongStats, key: SortKey): string | number | null {
 export function SongStatsPage() {
   const { artist, songs, events, setlists } = useArtistData();
   const [params, setParams] = useSearchParams();
+  const today = todayJst();
 
   const presentTypes = useMemo(() => {
     const withSetlist = new Set(setlists.map((s) => s.event));
@@ -77,8 +135,8 @@ export function SongStatsPage() {
         (!nq || [s.song.title, ...s.song.aliases].some((t) => normalizeTitle(t).includes(nq))),
     );
     return filtered.sort((a, b) => {
-      const va = sortValue(a, sortKey);
-      const vb = sortValue(b, sortKey);
+      const va = sortValue(a, sortKey, today);
+      const vb = sortValue(b, sortKey, today);
       if (va === null || vb === null) {
         if (va !== vb) return va === null ? 1 : -1;
       } else {
@@ -88,7 +146,14 @@ export function SongStatsPage() {
       // 同値の場合: 回数の多い順 → 発売日順
       return b.count - a.count || (a.song.release?.date ?? "9").localeCompare(b.song.release?.date ?? "9");
     });
-  }, [stats, era, unit, q, sortKey, desc]);
+  }, [stats, era, unit, q, sortKey, desc, today]);
+
+  // 同じ公演で 2 回歌われた曲が無いうちは「回数」と「公演」が常に一致するので、公演列は出さない
+  const columns: Column[] = [
+    COUNT,
+    ...(stats.songs.some((s) => s.count !== s.events) ? [EVENTS] : []),
+    ...COLUMNS_BEFORE,
+  ];
 
   const played = stats.songs.filter((s) => s.count > 0).length;
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
@@ -112,10 +177,6 @@ export function SongStatsPage() {
         <div className="stat">
           <span className="stat-value">{stats.events.length}</span>
           <span className="stat-label">公演</span>
-        </div>
-        <div className="stat">
-          <span className="stat-value">{stats.totalStages}</span>
-          <span className="stat-label">ステージ</span>
         </div>
         <div className="stat">
           <span className="stat-value">{stats.totalPerformances}</span>
@@ -170,7 +231,13 @@ export function SongStatsPage() {
           <thead>
             <tr>
               <th className="rank">#</th>
-              {COLUMNS.map((c) => (
+              <th title="曲名">
+                <button type="button" onClick={() => setSort("title")}>
+                  曲名
+                  <span className="sort-mark">{sortKey === "title" ? (desc ? "▼" : "▲") : ""}</span>
+                </button>
+              </th>
+              {columns.map((c) => (
                 <th
                   key={c.key}
                   className={[c.numeric && "num", c.className].filter(Boolean).join(" ")}
@@ -198,16 +265,11 @@ export function SongStatsPage() {
                     {s.song.unit && unitLabel.has(s.song.unit) && <span className="unit">{unitLabel.get(s.song.unit)}</span>}
                   </span>
                 </td>
-                <td className="num">{s.count}</td>
-                <td className="num hide-sm">{s.stages}</td>
-                <td className="num">{s.events}</td>
-                <td className="num rate">
-                  <span className="bar" style={{ "--rate": s.rate } as React.CSSProperties} />
-                  <span className="rate-text">{s.count > 0 ? formatPercent(s.rate) : "–"}</span>
-                </td>
-                <td className="date hide-sm">{s.first ? formatDate(s.first.date) : "未披露"}</td>
-                <td className="date">{s.last ? formatDate(s.last.date) : "–"}</td>
-                <td className="num">{s.sinceLast ?? "–"}</td>
+                {columns.map((c) => (
+                  <td key={c.key} className={[c.numeric && "num", c.className].filter(Boolean).join(" ")}>
+                    {c.cell(s, today)}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
@@ -215,7 +277,7 @@ export function SongStatsPage() {
       </div>
       <p className="muted small note">
         集計対象はセトリを登録済みの公演のみ（{stats.events.length} / {events.filter((e) => e.type !== "tokuten").length} 公演）。
-        「空白」は最後に歌われてから続いた公演数。
+        「前回から」は最後に歌われてから今日までの日数。
       </p>
     </section>
   );

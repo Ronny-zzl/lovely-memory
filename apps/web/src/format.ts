@@ -33,3 +33,15 @@ export function displayTitle(title: string, artistName: string): string {
 
 export const eventernoteUrl = (eventId: number) =>
   eventId > 0 ? `https://www.eventernote.com/events/${eventId}` : undefined;
+
+/** Asia/Tokyo での今日（YYYY-MM-DD） */
+export const todayJst = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
+
+/** from から to までの日数（どちらも YYYY-MM-DD） */
+export function daysBetween(from: string, to: string): number {
+  const t = (iso: string) => {
+    const [y, m, d] = iso.split("-").map(Number) as [number, number, number];
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((t(to) - t(from)) / 86_400_000);
+}
