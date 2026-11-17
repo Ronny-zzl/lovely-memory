@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createHashRouter, Navigate, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
 import { ArtistList } from "./pages/ArtistList.tsx";
 import { EventDetailPage } from "./pages/EventDetailPage.tsx";
@@ -10,8 +10,13 @@ import { SongDetailPage } from "./pages/SongDetailPage.tsx";
 import { SongStatsPage } from "./pages/SongStatsPage.tsx";
 import "./styles.css";
 
-// GitHub Pages は SPA のフォールバックが無いので hash ルーティングを使う
-const router = createHashRouter([
+// 以前の hash ルーティング（/#/artist/...）のリンクを通常のパスに置き換える
+if (location.hash.startsWith("#/")) {
+  history.replaceState(null, "", location.hash.slice(1));
+}
+
+// Cloudflare Pages は存在しないパスに index.html を返す（SPA フォールバック）ので、通常のパスでルーティングする
+const router = createBrowserRouter([
   { path: "/", element: <ArtistList /> },
   {
     path: "/:artistId",

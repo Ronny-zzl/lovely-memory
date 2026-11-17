@@ -187,5 +187,6 @@ lovely-memory/
 
 - **Cloudflare Pages**，项目名 `lovely-memory` → https://lovely-memory.pages.dev/ 。选择理由：网址不含个人账号名；将来可用 Pages Functions / D1 / KV 扩展（用户系统等）。
 - GitHub Actions 构建后用 wrangler 上传（`deploy.yml`）。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
-- 资源用相对路径（`base: "./"`），配合 hash 路由，放在任何路径下都能运行。
+- 普通路径路由（`createBrowserRouter`）。Cloudflare Pages 在没有 `404.html` 时，对不存在的路径返回 `index.html`（SPA 回退），所以直接打开或刷新 `/<artist>/songs/...` 也能显示。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。
+- 旧的 hash 链接（`/#/...`，GitHub Pages 时代）在加载时转换为普通路径。
 - Issue 本文・回复中的网站链接来自仓库变量 `SITE_URL`。

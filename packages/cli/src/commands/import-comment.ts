@@ -90,7 +90,7 @@ export async function importComment(_target: string | undefined, opts: Record<st
   if (result.songsChanged) await writeJson(artistPath(target.artistId, "songs.json"), songs);
 
   const site = siteUrl();
-  const page = site ? `${site}#/${target.artistId}/events/${event.id}` : undefined;
+  const page = site ? `${site}${target.artistId}/events/${event.id}` : undefined;
   return finish(
     "success",
     [
