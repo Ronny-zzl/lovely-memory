@@ -91,9 +91,9 @@ export function SongStatsPage() {
   }, [stats, era, unit, q, sortKey, desc]);
 
   const played = stats.songs.filter((s) => s.count > 0).length;
-  const eraLabel = new Map(artist.eras.map((e) => [e.id, e.label]));
-  // グループ名と同じユニット（全体曲）は表示しても情報にならないので省く
-  const unitLabel = new Map(artist.units.filter((u) => u.label !== artist.name).map((u) => [u.id, u.label]));
+  // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
+  const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
+  const unitLabel = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u.label]));
 
   const toggleType = (t: EventType) => {
     const next = new Set(selectedTypes);
@@ -192,7 +192,9 @@ export function SongStatsPage() {
                 <td className="title">
                   <span className="song-title">{s.song.title}</span>
                   <span className="song-meta">
-                    {s.song.era && <span className={`badge era-${s.song.era}`}>{eraLabel.get(s.song.era)}</span>}
+                    {s.song.era && eraLabel.has(s.song.era) && (
+                      <span className={`badge era-${s.song.era}`}>{eraLabel.get(s.song.era)}</span>
+                    )}
                     {s.song.unit && unitLabel.has(s.song.unit) && <span className="unit">{unitLabel.get(s.song.unit)}</span>}
                   </span>
                 </td>

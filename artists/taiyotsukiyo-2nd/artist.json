@@ -21,6 +21,8 @@
     { "id": "taiyo",   "label": "太陽と踊れ" },
     { "id": "tsukiyo", "label": "月夜に唄え" }
   ],
+  "defaultEra": "1st",
+  "defaultUnit": "all",
   "sources": {
     "eventernote": { "actorId": 72524 },
     "official": { "adapter": "taiyotsukiyo", "url": "https://taiyotsukiyo.com/discography/" },

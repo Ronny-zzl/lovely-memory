@@ -13,6 +13,9 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
   const eraIds = new Set(artist.eras.map((e) => e.id));
   const unitIds = new Set(artist.units.map((u) => u.id));
 
+  if (artist.defaultEra && !eraIds.has(artist.defaultEra)) err(`artist.json: defaultEra "${artist.defaultEra}" が eras にない`);
+  if (artist.defaultUnit && !unitIds.has(artist.defaultUnit)) err(`artist.json: defaultUnit "${artist.defaultUnit}" が units にない`);
+
   // songs
   const songs = await loadSongs(artistId);
   const seenIds = new Set<string>();
