@@ -59,22 +59,28 @@ jobs:
     needs: build
     if: vars.CLOUDFLARE_PROJECT != ''
     runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PROJECT: ${{ vars.CLOUDFLARE_PROJECT }}
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: site
           path: dist
-      # 初回だけプロジェクトを作る（既にあればエラーになるが無視する）
-      - name: Create Pages project
-        continue-on-error: true
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages project create ${{ vars.CLOUDFLARE_PROJECT }} --production-branch=main
+      - name: Check secrets
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID のシークレットが設定されていません"
+            exit 1
+          fi
+      # wrangler-action は新しい npm で npx が止まるため、wrangler を直接使う
+      - name: Create Pages project (first time only)
+        run: |
+          if npx --yes wrangler@4 pages project list 2>/dev/null | grep -qw "$PROJECT"; then
+            echo "project $PROJECT exists"
+          else
+            npx --yes wrangler@4 pages project create "$PROJECT" --production-branch=main
+          fi
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=main --commit-dirty=true
+        run: npx --yes wrangler@4 pages deploy dist --project-name="$PROJECT" --branch=main --commit-dirty=true
