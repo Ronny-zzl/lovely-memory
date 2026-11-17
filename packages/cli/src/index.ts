@@ -2,6 +2,7 @@ import { parseArgs } from "node:util";
 import { addSetlist } from "./commands/add-setlist.ts";
 import { addSong } from "./commands/add-song.ts";
 import { importOfficial } from "./commands/import-official.ts";
+import { importSetlists } from "./commands/import-setlists.ts";
 import { importWikipedia } from "./commands/import-wikipedia.ts";
 import { listEvents } from "./commands/list-events.ts";
 import { sync } from "./commands/sync.ts";
@@ -22,6 +23,10 @@ commands:
                      --source <ポストURL>  --file <path>
                      --add-unknown  songs.json に無い曲を自動追加
                      --force        既存ファイルを上書き
+  import-setlists    tools/x-setlist-collector.js で集めたポスト（JSON）からセトリを一括登録
+                     --file <tweets.json>  (必須)
+                     --map <map.json>      手動の対応表（既定: tweets.json と同じ場所の setlist-map.json）
+                     --dry-run --add-unknown --force
   validate           データ全体の整合性チェック（artistId に all 可）
                      --missing      セトリ未入力の終了済みイベントを一覧表示
   import-official    公式サイトのディスコグラフィから songs.json を更新（公式の値を優先）
@@ -60,6 +65,7 @@ const { positionals, values } = parseArgs({
     "add-unknown": { type: "boolean" },
     force: { type: "boolean" },
     missing: { type: "boolean" },
+    map: { type: "string" },
   },
 });
 const [command, artistId] = positionals;
@@ -69,6 +75,7 @@ const commands: Record<string, Command> = {
   sync,
   "list-events": listEvents,
   "add-setlist": addSetlist,
+  "import-setlists": importSetlists,
   validate,
   "import-official": importOfficial,
   "import-wikipedia": importWikipedia,

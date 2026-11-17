@@ -3,3 +3,7 @@ dist/
 .DS_Store
 *.log
 .vite/
+
+# X から収集したポスト（tools/x-setlist-collector.js）と対応表
+tweets-*.json
+setlist-map.json
