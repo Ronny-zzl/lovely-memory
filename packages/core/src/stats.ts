@@ -15,6 +15,9 @@ export type Performance = {
   members: string[];
   /** 記録上の初披露（この曲が最初に現れた歌唱） */
   debut: boolean;
+  /** コラボステージでの歌唱 */
+  collab: boolean;
+  with?: string[];
 };
 
 export type SetlistEntry = {
@@ -24,13 +27,14 @@ export type SetlistEntry = {
   note?: string;
   members: string[];
   debut: boolean;
+  with?: string[];
 };
 
 export type EventSetlist = {
   event: ResolvedEvent;
   source?: string;
   note?: string;
-  stages: Array<{ name?: string; note?: string; members: string[]; entries: SetlistEntry[] }>;
+  stages: Array<{ name?: string; note?: string; collab: boolean; members: string[]; entries: SetlistEntry[] }>;
 };
 
 export type SongStats = {
@@ -75,9 +79,11 @@ export type StatsInput = {
   setlists: Setlist[];
   /** 集計対象を絞り込む（イベント種別など） */
   filter?: (e: ResolvedEvent) => boolean;
+  /** コラボステージを含めるか（既定 true）。false ならそのステージは無いものとして扱う */
+  includeCollab?: boolean;
 };
 
-export function computeStats({ songs, events, setlists, filter }: StatsInput): Stats {
+export function computeStats({ songs, events, setlists, filter, includeCollab = true }: StatsInput): Stats {
   const setlistByEvent = new Map(setlists.map((s) => [s.event, s]));
   const unresolved: Stats["unresolved"] = [];
   const debuted = new Set<string>();
@@ -86,7 +92,10 @@ export function computeStats({ songs, events, setlists, filter }: StatsInput): S
   const targets = events.filter((e) => setlistByEvent.has(e.id) && (!filter || filter(e)));
   const eventSetlists: EventSetlist[] = targets.map((event) => {
     const setlist = setlistByEvent.get(event.id)!;
-    const stages = setlistStages(setlist).map((stage, stageIndex) => {
+    // stageIndex は除外後の並びでの位置（EventSetlist.stages の添字と一致させる）
+    const kept = setlistStages(setlist).filter((st) => includeCollab || !st.collab);
+    const stages = kept.map((stage, stageIndex) => {
+      const collab = stage.collab ?? false;
       const stageMembers = stage.members ?? event.members;
       const entries: SetlistEntry[] = [];
       stage.items.forEach((item, i) => {
@@ -106,6 +115,7 @@ export function computeStats({ songs, events, setlists, filter }: StatsInput): S
           note: obj?.note,
           members: obj?.members ?? stageMembers,
           debut,
+          with: obj?.with,
         };
         entries.push(entry);
         perfBySong.get(song.id)!.push({
@@ -118,9 +128,11 @@ export function computeStats({ songs, events, setlists, filter }: StatsInput): S
           note: entry.note,
           members: entry.members,
           debut,
+          collab,
+          with: entry.with,
         });
       });
-      return { name: stage.name, note: stage.note, members: stageMembers, entries };
+      return { name: stage.name, note: stage.note, collab, members: stageMembers, entries };
     });
     return { event, source: setlist.source, note: setlist.note, stages };
   });

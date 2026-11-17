@@ -842,3 +842,26 @@ a.item-title:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ---------- collab ---------- */
+
+.badge.collab {
+  margin-left: 8px;
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+  font-size: 0.7rem;
+  vertical-align: 0.1em;
+}
+.item-with {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.chip-option {
+  border-style: dashed;
+}
+.stats-table td.empty-row {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--muted);
+  white-space: normal;
+}

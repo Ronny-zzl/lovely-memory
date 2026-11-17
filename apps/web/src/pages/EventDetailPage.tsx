@@ -67,6 +67,7 @@ export function EventDetailPage() {
               {(multiStage || stage.name) && (
                 <h3 className="stage-name">
                   {stage.name ?? `ステージ ${si + 1}`}
+                  {stage.collab && <span className="badge collab">コラボ</span>}
                   {stage.note && <span className="stage-note">{stage.note}</span>}
                 </h3>
               )}
@@ -87,6 +88,7 @@ export function EventDetailPage() {
                         </span>
                       )}
                       {e.note && <span className="item-note">{e.note}</span>}
+                      {e.with && <span className="item-with">with {e.with.join("・")}</span>}
                       {partial && (
                         <span className="item-members" title={e.members.map((m) => memberName.get(m)).join("・")}>
                           <MemberDots artist={artist} present={e.members} />

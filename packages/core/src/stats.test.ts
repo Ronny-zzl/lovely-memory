@@ -60,6 +60,29 @@ describe("computeStats", () => {
     expect(by("s2").byYear).toEqual({ "2026": 1, "2027": 1 });
   });
 
+  it("can leave collab stages out", () => {
+    const withCollab = [
+      ...setlists.filter((s) => s.event !== 4),
+      Setlist.parse({
+        event: 4,
+        stages: [
+          { items: ["B"] },
+          { name: "コラボ", collab: true, items: [{ song: "D", members: ["x"], with: ["他グループの誰か"] }] },
+        ],
+      }),
+    ];
+    const all = computeStats({ songs, events, setlists: withCollab });
+    expect(all.songs.find((s) => s.song.id === "s4")).toMatchObject({ count: 1 });
+    expect(all.songs.find((s) => s.song.id === "s4")!.performances[0]).toMatchObject({
+      collab: true,
+      members: ["x"],
+      with: ["他グループの誰か"],
+    });
+    const noCollab = computeStats({ songs, events, setlists: withCollab, includeCollab: false });
+    expect(noCollab.songs.find((s) => s.song.id === "s4")).toMatchObject({ count: 0 });
+    expect(noCollab.events.find((e) => e.event.id === 4)!.stages).toHaveLength(1);
+  });
+
   it("applies the event filter before computing", () => {
     const onlyOneman = computeStats({ songs, events, setlists, filter: (e) => e.types.includes("oneman") });
     expect(onlyOneman.events.map((e) => e.event.id)).toEqual([1]);

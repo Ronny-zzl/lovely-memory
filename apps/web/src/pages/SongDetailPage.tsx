@@ -60,6 +60,8 @@ export function SongDetailPage() {
   const encores = stats.performances.filter((p) => p.encore).length;
 
   const history = [...stats.performances].reverse();
+  // コラボステージでしか歌われていない曲は、グループとしての歌唱率に意味が無い
+  const collabOnly = stats.performances.every((p) => p.collab);
 
   return (
     <article className="song-detail">
@@ -75,8 +77,22 @@ export function SongDetailPage() {
         </h2>
         {song.cover && (
           <p className="small">
-            カバー曲（原曲: {song.cover.artist}
-            {song.cover.title && `「${song.cover.title}」`}）
+            カバー曲 ・ 原曲: {song.cover.artist}
+            {song.cover.title && `「${song.cover.title}」`}
+            {song.cover.release && (
+              <span className="muted">
+                {" "}
+                （
+                {song.cover.release.url ? (
+                  <a href={song.cover.release.url} target="_blank" rel="noopener noreferrer">
+                    {song.cover.release.title ? `「${song.cover.release.title}」` : "配信"}
+                  </a>
+                ) : (
+                  song.cover.release.title && `「${song.cover.release.title}」`
+                )}{" "}
+                {formatDate(song.cover.release.date)}）
+              </span>
+            )}
           </p>
         )}
         {formatCredits(song.credits).map((line) => (
@@ -110,14 +126,23 @@ export function SongDetailPage() {
               <span className="stat-label">歌唱回数</span>
             </div>
             <div className="stat">
-              <span className="stat-value">
-                {formatPercent(stats.rate)}
-                <span className="stat-total">
-                  {" "}
-                  {stats.events}/{stats.eligibleEvents}
-                </span>
-              </span>
-              <span className="stat-label">歌唱率（初披露以降）</span>
+              {collabOnly ? (
+                <>
+                  <span className="stat-value stat-date">コラボのみ</span>
+                  <span className="stat-label">グループでの歌唱なし</span>
+                </>
+              ) : (
+                <>
+                  <span className="stat-value">
+                    {formatPercent(stats.rate)}
+                    <span className="stat-total">
+                      {" "}
+                      {stats.events}/{stats.eligibleEvents}
+                    </span>
+                  </span>
+                  <span className="stat-label">歌唱率（初披露以降）</span>
+                </>
+              )}
             </div>
             <div className="stat">
               <span className="stat-value stat-date">{formatDate(stats.first!.date)}</span>
@@ -169,7 +194,9 @@ export function SongDetailPage() {
                           {displayTitle(es.event.title, artist.name)}
                         </span>
                         <span className="event-meta">
+                          {p.collab && <span className="badge collab">コラボ</span>}
                           {p.stageName && <span>{p.stageName}</span>}
+                          {p.with && <span>with {p.with.join("・")}</span>}
                           {p.note && <span>{p.note}</span>}
                           {p.debut && <span className="debut-count">初披露</span>}
                         </span>

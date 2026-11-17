@@ -2,10 +2,22 @@
 
 event: 490206
 source: https://x.com/taiyototsukiyo/status/2109615306037710945
-items:
-  - ライブアンドシーク
-  - アンディセンバー
-  - もしも
-  - はなうらNIGHT!
-  - ラブリィフェリス
-  - スプらっしゃい！
+stages:
+  - name: duo MUSIC EXCHANGE
+    items:
+      - ライブアンドシーク
+      - アンディセンバー
+      - もしも
+      - はなうらNIGHT!
+      - ラブリィフェリス
+      - スプらっしゃい！
+  # 主催（さとりモンスター）企画のコラボステージ。17:10-17:30
+  - name: Spotify O-Crest
+    collab: true
+    items:
+      - song: 英雄讃歌
+        members: [hana]
+        with: [アルティメットミキ, 清野宮あんな, 天ヶ瀬なつ, 轟姫める]
+      - song: 神話級ハッピーエンド
+        members: [mei]
+        with: [平野未季, たべる子, ゴコノコトコ]

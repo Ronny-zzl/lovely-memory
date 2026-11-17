@@ -107,8 +107,16 @@ export const Song = z.object({
     })
     .optional(),
   credits: Credits.optional(),
-  /** カバー曲の場合の原曲情報 */
-  cover: z.object({ artist: z.string(), title: z.string().optional() }).optional(),
+  /** カバー曲の場合の原曲情報（release は原曲の収録作品。この曲自身の release とは別） */
+  cover: z
+    .object({
+      artist: z.string(),
+      title: z.string().optional(),
+      release: z
+        .object({ date: isoDate, title: z.string().optional(), url: z.string().url().optional() })
+        .optional(),
+    })
+    .optional(),
   note: z.string().optional(),
 });
 export type Song = z.infer<typeof Song>;
@@ -171,6 +179,8 @@ export const SetlistItem = z.union([
     encore: z.boolean().optional(),
     /** short ver. / メドレー など */
     note: z.string().optional(),
+    /** 一緒に歌った他グループの出演者（コラボステージなど） */
+    with: z.array(z.string()).optional(),
   }),
 ]);
 export type SetlistItem = z.infer<typeof SetlistItem>;
@@ -181,6 +191,11 @@ export const SetlistStage = z.object({
   /** このステージの出演メンバー（イベント全体と異なる場合のみ） */
   members: z.array(slug).optional(),
   note: z.string().optional(),
+  /**
+   * 他グループとのコラボステージ（グループとしての出演ではない）。
+   * 楽曲統計ではオプションで除外でき、メンバー統計には含める
+   */
+  collab: z.boolean().optional(),
   items: z.array(SetlistItem),
 });
 export type SetlistStage = z.infer<typeof SetlistStage>;

@@ -684,16 +684,16 @@
     "title": "未来絵 Go Around!!",
     "era": "2nd",
     "unit": "all",
-    "credits": {
-      "lyrics": "カジ",
-      "music": "カジ",
-      "arrangement": "tonerico"
-    },
     "release": {
       "date": "2026-10-17",
       "title": "ラブリィフェリス",
       "kind": "digital",
       "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/%e3%83%a9%e3%83%96%e3%83%aa%e3%82%a3%e3%83%95%e3%82%a7%e3%83%aa%e3%82%b9/"
+    },
+    "credits": {
+      "lyrics": "カジ",
+      "music": "カジ",
+      "arrangement": "tonerico"
     }
   },
   {
@@ -701,16 +701,16 @@
     "title": "LOVEが目印",
     "era": "2nd",
     "unit": "all",
-    "credits": {
-      "lyrics": "海野水玉",
-      "music": "萩龍一",
-      "arrangement": "萩龍一"
-    },
     "release": {
       "date": "2026-10-17",
       "title": "ラブリィフェリス",
       "kind": "digital",
       "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/%e3%83%a9%e3%83%96%e3%83%aa%e3%82%a3%e3%83%95%e3%82%a7%e3%83%aa%e3%82%b9/"
+    },
+    "credits": {
+      "lyrics": "海野水玉",
+      "music": "萩龍一",
+      "arrangement": "萩龍一"
     }
   },
   {
@@ -718,16 +718,51 @@
     "title": "ラブリィフェリス",
     "era": "2nd",
     "unit": "all",
-    "credits": {
-      "lyrics": "夢魅たぴ",
-      "music": "夢魅たぴ",
-      "arrangement": "夢魅たぴ"
-    },
     "release": {
       "date": "2026-10-17",
       "title": "ラブリィフェリス",
       "kind": "digital",
       "url": "https://taiyotsukiyo.com/discography/taiyotsukiyo/%e3%83%a9%e3%83%96%e3%83%aa%e3%82%a3%e3%83%95%e3%82%a7%e3%83%aa%e3%82%b9/"
+    },
+    "credits": {
+      "lyrics": "夢魅たぴ",
+      "music": "夢魅たぴ",
+      "arrangement": "夢魅たぴ"
+    }
+  },
+  {
+    "id": "s044",
+    "title": "英雄讃歌",
+    "era": "cover",
+    "credits": {
+      "lyrics": "三島想平",
+      "music": "三島想平",
+      "arrangement": "三島想平・竹内亮太郎"
+    },
+    "cover": {
+      "artist": "さとりモンスター",
+      "release": {
+        "date": "2019-05-20",
+        "url": "https://satorimonster.bandcamp.com/track/--8"
+      }
+    }
+  },
+  {
+    "id": "s045",
+    "title": "神話級ハッピーエンド",
+    "era": "cover",
+    "credits": {
+      "lyrics": "竹内亮太郎",
+      "music": "リッチー鎗ヶ崎",
+      "arrangement": "竹内亮太郎"
+    },
+    "cover": {
+      "artist": "さとりモンスター",
+      "release": {
+        "date": "2022-12-07",
+        "title": "神話級ハッピーエンド",
+        "url": "https://music.apple.com/jp/album/mythological-happy-end-single/1657308877"
+      }
     }
   }
 ]

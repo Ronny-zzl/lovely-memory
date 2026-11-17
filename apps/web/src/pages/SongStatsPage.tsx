@@ -98,7 +98,7 @@ function sortValue(s: SongStats, key: SortKey, today: string): string | number |
 }
 
 export function SongStatsPage() {
-  const { artist, songs, events, setlists } = useArtistData();
+  const { artist, songs, events, setlists, allStats } = useArtistData();
   const [params, setParams] = useSearchParams();
   const today = todayJst();
 
@@ -114,6 +114,19 @@ export function SongStatsPage() {
   const unit = params.get("unit") ?? "";
   const q = params.get("q") ?? "";
   const sortKey = (params.get("sort") as SortKey) ?? "rate";
+  // コラボステージ（他グループ主催の企画など）は既定で集計しない
+  const includeCollab = params.get("collab") === "1";
+  const hasCollab = setlists.some((s) => s.stages?.some((st) => st.collab));
+  // コラボステージでしか歌われていない曲（除外時は一覧からも外す）
+  const collabOnly = useMemo(
+    () =>
+      new Set(
+        allStats.songs
+          .filter((s) => s.count > 0 && s.performances.every((p) => p.collab))
+          .map((s) => s.song.id),
+      ),
+    [allStats],
+  );
   const desc = (params.get("dir") ?? (sortKey === "title" ? "asc" : "desc")) === "desc";
 
   const update = (patch: Record<string, string | null>) =>
@@ -129,15 +142,23 @@ export function SongStatsPage() {
   const typesKey = [...selectedTypes].sort().join(",");
   const stats = useMemo(
     // 選ばれた種別のどれかに該当すれば集計対象（主催対バンは「対バン・フェス」にも該当）
-    () => computeStats({ songs, events, setlists, filter: (e) => [...selectedTypes].some((t) => eventHasType(e, t)) }),
+    () =>
+      computeStats({
+        songs,
+        events,
+        setlists,
+        includeCollab,
+        filter: (e) => [...selectedTypes].some((t) => eventHasType(e, t)),
+      }),
     // selectedTypes は毎回作り直されるので、内容を表す typesKey で再計算を判定する
-    [songs, events, setlists, typesKey],
+    [songs, events, setlists, typesKey, includeCollab],
   );
 
   const rows = useMemo(() => {
     const nq = normalizeTitle(q);
     const filtered = stats.songs.filter(
       (s) =>
+        (includeCollab || !collabOnly.has(s.song.id)) &&
         (!era || s.song.era === era) &&
         (!unit || s.song.unit === unit) &&
         (!nq || [s.song.title, ...s.song.aliases].some((t) => normalizeTitle(t).includes(nq))),
@@ -154,7 +175,7 @@ export function SongStatsPage() {
       // 同値の場合: 回数の多い順 → 発売日順
       return b.count - a.count || (a.song.release?.date ?? "9").localeCompare(b.song.release?.date ?? "9");
     });
-  }, [stats, era, unit, q, sortKey, desc, today]);
+  }, [stats, era, unit, q, sortKey, desc, today, includeCollab, collabOnly]);
 
   // 同じ公演で 2 回歌われた曲が無いうちは「回数」と「公演」が常に一致するので、公演列は出さない
   const columns: Column[] = [
@@ -164,6 +185,7 @@ export function SongStatsPage() {
   ];
 
   const played = stats.songs.filter((s) => s.count > 0).length;
+  const songTotal = includeCollab ? songs.length : songs.filter((s) => !collabOnly.has(s.id)).length;
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
   const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
   const unitLabel = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u.label]));
@@ -193,7 +215,7 @@ export function SongStatsPage() {
         <div className="stat">
           <span className="stat-value">
             {played}
-            <span className="stat-total"> / {songs.length}</span>
+            <span className="stat-total"> / {songTotal}</span>
           </span>
           <span className="stat-label">披露曲</span>
         </div>
@@ -207,6 +229,16 @@ export function SongStatsPage() {
               {EVENT_TYPE_LABEL[t]}
             </label>
           ))}
+          {hasCollab && (
+            <label className="chip chip-option" title="他グループとのコラボステージでの歌唱も集計に含める">
+              <input
+                type="checkbox"
+                checked={includeCollab}
+                onChange={() => update({ collab: includeCollab ? null : "1" })}
+              />
+              コラボステージを含む
+            </label>
+          )}
         </fieldset>
         <div className="filter-row">
           <select value={era} onChange={(e) => update({ era: e.target.value })} aria-label="区分">
@@ -261,6 +293,14 @@ export function SongStatsPage() {
             </tr>
           </thead>
           <tbody>
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={columns.length + 2} className="empty-row">
+                  該当する曲がありません
+                  {!includeCollab && collabOnly.size > 0 && "（コラボステージのみの曲は「コラボステージを含む」で表示）"}
+                </td>
+              </tr>
+            )}
             {rows.map((s, i) => (
               <tr key={s.song.id} className={s.count === 0 ? "unplayed" : undefined}>
                 <td className="rank">{s.count > 0 ? i + 1 : "–"}</td>
