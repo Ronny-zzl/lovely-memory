@@ -1,5 +1,5 @@
 /*
- * lovely-memory: X セトリ告知コレクター
+ * ラブリィメモリー: X セトリ告知コレクター
  *
  * ログイン済みのブラウザで x.com を開き、開発者ツールのコンソールにこのファイルの中身を貼り付けて実行する。
  * （Chrome で初回に貼り付けが拒否されたら、表示に従って「allow pasting」と入力してから貼り直す）
@@ -163,7 +163,7 @@
     panel.replaceChildren();
 
     const h = document.createElement("div");
-    h.innerHTML = `<b>lovely-memory コレクター</b> <span style="color:#666">@${HANDLE}</span><br>
+    h.innerHTML = `<b>ラブリィメモリー コレクター</b> <span style="color:#666">@${HANDLE}</span><br>
       収集 <b>${all.length}</b> 件（曲行あり ${withSongs}）／ 本文が切れている <b style="color:${truncated.length ? "#c00" : "#080"}">${truncated.length}</b> 件`;
     panel.append(h);
 
@@ -221,5 +221,5 @@
 
   window.__lovelyMemoryCollector = { show: () => document.body.contains(panel) || document.body.appendChild(panel), data };
   render();
-  console.log(`[lovely-memory] collector started. ${data.size} posts restored from localStorage.`);
+  console.log(`[ラブリィメモリー] collector started. ${data.size} posts restored from localStorage.`);
 })();

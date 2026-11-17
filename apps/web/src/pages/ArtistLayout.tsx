@@ -11,7 +11,7 @@ export function ArtistLayout() {
     <div className="page">
       <header className="site-header">
         <Link to="/" className="breadcrumb">
-          lovely-memory
+          ラブリィメモリー
         </Link>
         <h1 className="site-title">
           {artist.name}

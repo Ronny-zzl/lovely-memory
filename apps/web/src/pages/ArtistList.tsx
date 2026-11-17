@@ -6,7 +6,7 @@ export function ArtistList() {
   return (
     <div className="page">
       <header className="site-header">
-        <h1 className="site-title">lovely-memory</h1>
+        <h1 className="site-title">ラブリィメモリー</h1>
         <p className="muted">ライブのセットリストを記録・集計する</p>
       </header>
       <ul className="artist-list">
