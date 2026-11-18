@@ -253,3 +253,153 @@
   color: var(--accent-text);
   background: var(--row-hover);
 }
+
+/* ---- スマホ：絞り込みは畳んで、表ではなく 1 曲 2 段の一覧にする（横スクロールさせない） ---- */
+
+.filter-panel {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.filter-panel summary {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-panel summary .muted {
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.filter-panel[open] summary {
+  margin-bottom: 10px;
+}
+
+.filter-panel .filter-row {
+  margin-top: 10px;
+}
+
+.sort-control {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.sort-dir {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--text-md);
+  cursor: pointer;
+}
+
+.song-rows-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.song-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.song-row {
+  display: grid;
+  grid-template-columns: 1.6em minmax(0, 1fr) auto;
+  column-gap: 10px;
+
+  /* 番号・曲名・数字の 1 行目をそろえる */
+  align-items: baseline;
+  padding: 8px 12px;
+}
+
+.song-row + .song-row {
+  border-top: 1px solid var(--border);
+}
+
+.song-row-rank {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.song-row-main {
+  min-width: 0;
+}
+
+.song-row-title {
+  display: block;
+  line-height: 1.5;
+}
+
+.song-row-title .song-title {
+  margin-right: 6px;
+}
+
+.song-row-title .song-meta {
+  vertical-align: 1px;
+}
+
+/* 歌唱率：曲名の下の細い線（背景が 100%） */
+.song-row-bar {
+  display: block;
+  height: 4px;
+  margin-top: 4px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(to right, var(--bar) calc(var(--rate) * 100%), var(--row-hover) 0);
+}
+
+.song-row-figures {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.song-row-value {
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+.song-row-sub {
+  color: var(--muted);
+  font-size: var(--text-2xs);
+}
+
+.song-row.unplayed .song-row-value {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-weight: 400;
+}
+
+.song-rows-wrap .empty-row {
+  margin: 0;
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.song-rows-toggle {
+  border-top: 1px solid var(--border);
+}
+
+.song-rows-toggle button {
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
