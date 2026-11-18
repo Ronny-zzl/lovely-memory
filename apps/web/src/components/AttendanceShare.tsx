@@ -34,8 +34,6 @@ export function AttendanceShare({ card, postText, hashtags, fileName }: { card: 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    setBlob(undefined);
-    setCopied(false);
     void loadCardFont(cardChars(card)).then(() => {
       if (cancelled || !canvasRef.current) return;
       drawAttendanceCard(canvasRef.current, card);
@@ -50,7 +48,7 @@ export function AttendanceShare({ card, postText, hashtags, fileName }: { card: 
     return () => {
       cancelled = true;
     };
-  }, [open, JSON.stringify(card)]);
+  }, [open, card]);
 
   const url = location.origin + location.pathname;
   const text = [postText, hashtags.map((h) => `#${h}`).join(" "), url].filter(Boolean).join("\n");
@@ -84,6 +82,9 @@ export function AttendanceShare({ card, postText, hashtags, fileName }: { card: 
         type="button"
         className="share-button"
         onClick={() => {
+          // 前回の画像は内容が古いかもしれないので、描き直すまで出さない
+          setBlob(undefined);
+          setCopied(false);
           setOpen(true);
           dialogRef.current?.showModal();
         }}
@@ -112,7 +113,7 @@ export function AttendanceShare({ card, postText, hashtags, fileName }: { card: 
               </button>
             )}
             {canCopy && !shareFirst && (
-              <button type="button" className="share-button" onClick={copy} disabled={!blob}>
+              <button type="button" className="share-button" onClick={() => void copy()} disabled={!blob}>
                 {copied ? "✓ コピー済み" : "画像をコピー"}
               </button>
             )}

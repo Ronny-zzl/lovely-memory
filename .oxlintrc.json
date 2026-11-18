@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react", "promise", "import", "vitest"],
+  "categories": { "correctness": "error" },
+  "rules": {
+    // React Hooks
+    "react/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    // React Compiler 向けの規則（このプロジェクトでは React Compiler を使っていない）
+    "react/preserve-manual-memoization": "off",
+
+    // Promise の扱い（型情報を使う）。イベントハンドラーに渡すときは `() => void f()` と明示する
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "promise/no-multiple-resolved": "error",
+
+    // コメントの中の全角スペースは、実際のデータの表記の例として書いている
+    "no-irregular-whitespace": ["error", { "skipComments": true }],
+    // vitest は expect(value, message) で失敗時のメッセージを付けられる
+    "vitest/valid-expect": ["error", { "maxArgs": 2 }],
+    // vi.fn(実装) は実装から型が決まる
+    "vitest/require-mock-type-parameters": "off"
+  },
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", ".wrangler/**"]
+}

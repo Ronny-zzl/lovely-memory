@@ -108,8 +108,10 @@ export function SongStatsPage() {
     return LIVE_EVENT_TYPES.filter((t) => events.some((e) => eventHasType(e, t) && withSetlist.has(e.id)));
   }, [events, setlists]);
 
-  const selectedTypes = new Set<EventType>(
-    params.get("types") ? (params.get("types")!.split(",") as EventType[]) : presentTypes,
+  const typesParam = params.get("types");
+  const selectedTypes = useMemo(
+    () => new Set<EventType>(typesParam ? (typesParam.split(",") as EventType[]) : presentTypes),
+    [typesParam, presentTypes],
   );
   const era = params.get("era") ?? "";
   const unit = params.get("unit") ?? "";
@@ -134,13 +136,15 @@ export function SongStatsPage() {
     setParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        for (const [k, v] of Object.entries(patch)) v === null || v === "" ? next.delete(k) : next.set(k, v);
+        for (const [k, v] of Object.entries(patch)) {
+          if (v === null || v === "") next.delete(k);
+          else next.set(k, v);
+        }
         return next;
       },
       { replace: true },
     );
 
-  const typesKey = [...selectedTypes].sort().join(",");
   const stats = useMemo(
     // 選ばれた種別のどれかに該当すれば集計対象（主催対バンは「対バン・フェス」にも該当）
     () =>
@@ -151,8 +155,7 @@ export function SongStatsPage() {
         includeCollab,
         filter: (e) => [...selectedTypes].some((t) => eventHasType(e, t)),
       }),
-    // selectedTypes は毎回作り直されるので、内容を表す typesKey で再計算を判定する
-    [songs, events, setlists, typesKey, includeCollab],
+    [songs, events, setlists, selectedTypes, includeCollab],
   );
 
   const rows = useMemo(() => {
@@ -210,7 +213,8 @@ export function SongStatsPage() {
 
   const toggleType = (t: EventType) => {
     const next = new Set(selectedTypes);
-    next.has(t) ? next.delete(t) : next.add(t);
+    if (next.has(t)) next.delete(t);
+    else next.add(t);
     update({ types: next.size === presentTypes.length ? null : [...next].join(",") || "none" });
   };
 

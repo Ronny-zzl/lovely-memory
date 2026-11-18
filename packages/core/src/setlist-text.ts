@@ -22,7 +22,7 @@ export type ParsedStage = {
 // M1_ / M1 / M01. / EN_ / EN1_ / Encore: など
 const ITEM_LINE = /^(M|EN|EC|ENCORE|アンコール)\s*(\d*)\s*[_＿.．:：\-ー\s)）]\s*(.+)$/i;
 // 【1部】や【1部】もえちゃん考案セトリ❤️ のように、見出しの後ろに補足が続くこともある
-const STAGE_HEADER = /^[【\[［](.+?)[】\]］]\s*(.*)$/;
+const STAGE_HEADER = /^[【[［](.+?)[】\]］]\s*(.*)$/;
 const TRAILING_TAG = /\s*[(（]([^()（）]+)[)）]\s*$/;
 const CREDIT_LINE = /作詞|作曲|編曲/;
 
@@ -105,7 +105,7 @@ export function parseSetlistText(text: string): ParsedStage[] {
 }
 
 const ANNOUNCE_LINE = /セトリ|セットリスト|set\s*list/i;
-const MC_LINE = /^[<＜(（［\[].{0,10}[>＞)）］\]]$/;
+const MC_LINE = /^[<＜(（［[].{0,10}[>＞)）］\]]$/;
 const ENCORE_LINE = /^[-－―—~〜\s]*(EN|ENCORE|アンコール)[-－―—~〜\s]*$/i;
 
 /**

@@ -19,7 +19,10 @@ export async function addSong(artistId: string, opts: Record<string, unknown>) {
   const dup = songIndex(songs).get(normalizeTitle(title));
   if (dup) throw new Error(`既に登録されています: ${dup.id} ${dup.title}`);
 
-  const str = (k: string) => (typeof opts[k] === "string" ? (opts[k] as string) : undefined);
+  const str = (k: string) => {
+    const v = opts[k];
+    return typeof v === "string" ? v : undefined;
+  };
   const cover = str("cover");
   const era = str("era") ?? (cover && artist.eras.some((e) => e.id === "cover") ? "cover" : undefined);
   const unit = str("unit");

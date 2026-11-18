@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { isLiveEvent, type ResolvedEvent, type Song } from "@lovely-memory/core/runtime";
+import type { AttendanceCardData } from "../attendance-card.ts";
 import { fetchEventernote, useAttendance } from "../attendance.ts";
 import { AttendanceBackup } from "../components/AttendanceBackup.tsx";
 import { AttendanceShare } from "../components/AttendanceShare.tsx";
@@ -10,7 +11,10 @@ import { displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst
 import { useArtistData } from "./ArtistLayout.tsx";
 
 // 全アーティストのうち一番古い活動開始日から読み込む（eventernote の連携はサイト全体で 1 つ）
-const SINCE = artists.map((a) => a.since).sort()[0] ?? "2000-01-01";
+const SINCE =
+  artists
+    .flatMap((a) => (a.since ? [a.since] : []))
+    .sort((a, b) => a.localeCompare(b))[0] ?? "2000-01-01";
 
 function EventernoteSection() {
   const attendance = useAttendance();
@@ -42,7 +46,7 @@ function EventernoteSection() {
           の参加イベントを読み込み済み
           <span className="muted">（{new Date(link.syncedAt).toLocaleString("ja-JP", { dateStyle: "short", timeStyle: "short" })}）</span>
           <span className="attend-actions">
-            <button type="button" className="share-button" disabled={busy} onClick={() => load(link.user)}>
+            <button type="button" className="share-button" disabled={busy} onClick={() => void load(link.user)}>
               {busy ? "読み込み中…" : "再読み込み"}
             </button>
             <button type="button" className="share-button" disabled={busy} onClick={() => attendance.setEventernote(undefined)}>
@@ -89,10 +93,10 @@ export function AttendancePage() {
   const attendance = useAttendance();
   const today = todayJst();
 
-  const live = events.filter(isLiveEvent);
-  const attended = live.filter((e) => attendance.isAttended(e.id));
-  const past = attended.filter(isHeld);
-  const planned = attended.filter((e) => !isHeld(e));
+  const live = useMemo(() => events.filter(isLiveEvent), [events]);
+  // 記録が変わったときだけ作り直す（下の集計やシェア画像の再計算をそれに合わせる）
+  const past = useMemo(() => live.filter((e) => attendance.isAttended(e.id) && isHeld(e)), [live, attendance, isHeld]);
+  const planned = live.filter((e) => attendance.isAttended(e.id) && !isHeld(e));
   const held = live.filter(isHeld).length;
 
   const { heard, notHeard, total } = useMemo(() => {
@@ -114,9 +118,27 @@ export function AttendancePage() {
     // 披露されたことのある曲のうち、まだ聴いていないもの（歌唱率の高い順＝次に聴けそうな順）
     const notHeard = allStats.songs.filter((s) => s.count > 0 && !bySong.has(s.song.id)).sort((a, b) => b.rate - a.rate);
     return { heard, notHeard, total };
-  }, [past.map((e) => e.id).join(","), allStats]);
+  }, [past, allStats]);
 
   const sung = allStats.songs.filter((s) => s.count > 0).length;
+  // シェア画像の中身（変わったときだけ描き直す）
+  const card = useMemo<AttendanceCardData>(
+    () => ({
+      artistName: artist.name,
+      subtitle: artist.subtitle,
+      date: today,
+      attended: past.length,
+      held,
+      heardSongs: heard.length,
+      sungSongs: sung,
+      performances: total,
+      topSongs: heard.slice(0, 3).map((h) => ({ title: h.song.title, count: h.count })),
+      notHeard: notHeard.length,
+      firstDate: past[0]?.date,
+      host: location.host,
+    }),
+    [artist, today, past, held, heard, sung, total, notHeard],
+  );
   const row = (e: ResolvedEvent) => (
     <li key={e.id} className="with-toggle">
       <Link to={`/${artist.id}/events/${e.id}`} className="event-row">
@@ -165,20 +187,7 @@ export function AttendancePage() {
       {past.length > 0 && (
         <div className="attend-share">
           <AttendanceShare
-            card={{
-              artistName: artist.name,
-              subtitle: artist.subtitle,
-              date: today,
-              attended: past.length,
-              held,
-              heardSongs: heard.length,
-              sungSongs: sung,
-              performances: total,
-              topSongs: heard.slice(0, 3).map((h) => ({ title: h.song.title, count: h.count })),
-              notHeard: notHeard.length,
-              firstDate: past[0]?.date,
-              host: location.host,
-            }}
+            card={card}
             postText={`${artist.name} 参戦記録\n参戦 ${past.length} 公演・生で聴いた曲 ${heard.length}/${sung}・のべ ${total} 曲`}
             hashtags={artist.shareHashtags}
             fileName={`lovely-memory-参戦記録-${today.replaceAll("-", "")}.png`}

@@ -26,13 +26,15 @@ export function EventsPage() {
 
   const toggle = (t: EventType) => {
     const next = new Set(selected);
-    next.has(t) ? next.delete(t) : next.add(t);
+    if (next.has(t)) next.delete(t);
+    else next.add(t);
     const isDefault =
       presentTypes.every((x) => next.has(x) === !DEFAULT_HIDDEN.includes(x));
     setParams(
       (prev) => {
         const p = new URLSearchParams(prev);
-        isDefault ? p.delete("types") : p.set("types", [...next].join(",") || "none");
+        if (isDefault) p.delete("types");
+        else p.set("types", [...next].join(",") || "none");
         return p;
       },
       { replace: true },

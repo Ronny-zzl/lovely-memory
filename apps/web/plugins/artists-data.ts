@@ -26,7 +26,7 @@ function parseFile<T>(path: string, parse: (raw: unknown) => T, raw: unknown): T
   try {
     return parse(raw);
   } catch (e) {
-    throw new Error(`${path.slice(path.indexOf("artists/"))}: ${e instanceof Error ? e.message : e}`);
+    throw new Error(`${path.slice(path.indexOf("artists/"))}: ${e instanceof Error ? e.message : String(e)}`);
   }
 }
 

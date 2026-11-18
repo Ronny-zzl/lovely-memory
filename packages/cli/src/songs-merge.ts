@@ -90,7 +90,10 @@ export function mergeTracks(songs: Song[], tracks: ImportedTrack[], opts: MergeO
     }
     if (!existing.era) {
       const era = opts.era ?? eraForDate(opts.artist, t.release.date);
-      if (era) (existing.era = era), change("era", undefined, era);
+      if (era) {
+        existing.era = era;
+        change("era", undefined, era);
+      }
     }
     for (const [k, v] of Object.entries(t.credits) as [keyof CreditRoles, string][]) {
       const cur = existing.credits?.[k];

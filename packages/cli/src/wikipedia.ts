@@ -89,7 +89,7 @@ export function parseDiscography(wikitext: string, unitLabels: string[]): Parsed
       kind = kindFromHeading(heading[1]!) ?? kind;
       continue;
     }
-    if (/^\|-/.test(line) || /^\|\}/.test(line)) {
+    if (line.startsWith("|-") || line.startsWith("|}")) {
       flushRow();
       continue;
     }

@@ -157,7 +157,7 @@ function headerText(text: string): string {
 /** 最長共通部分文字列の長さ */
 function commonLength(a: string, b: string): number {
   let best = 0;
-  const prev = new Array<number>(b.length + 1).fill(0);
+  const prev = Array.from<number>({ length: b.length + 1 }).fill(0);
   for (let i = 1; i <= a.length; i++) {
     let diag = 0;
     for (let j = 1; j <= b.length; j++) {
@@ -222,7 +222,10 @@ export function matchPosts(
     // 2) 部の指定
     if (post.part !== undefined && candidates.length > 1) {
       const byPart = candidates.filter((e) => partNumber(e.title) === post.part);
-      if (byPart.length) (candidates = byPart), (reason += ` + ${post.part}部`);
+      if (byPart.length) {
+        candidates = byPart;
+        reason += ` + ${post.part}部`;
+      }
     }
 
     // 3) ハッシュタグがイベント名に含まれるか（全候補に当てはまるタグは判別に使わない）
@@ -231,7 +234,10 @@ export function matchPosts(
       const score = (e: ResolvedEvent) => tags.filter((t) => normalizeTitle(e.title).includes(t)).length;
       const best = Math.max(...candidates.map(score));
       const top = candidates.filter((e) => score(e) === best);
-      if (best > 0 && top.length < candidates.length) (candidates = top), (reason += " + ハッシュタグ");
+      if (best > 0 && top.length < candidates.length) {
+        candidates = top;
+        reason += " + ハッシュタグ";
+      }
     }
 
     // 4) 告知文冒頭とイベント名の最長共通部分（3 文字以上で、単独トップのときだけ採用）
@@ -240,7 +246,10 @@ export function matchPosts(
       const scored = candidates.map((e) => ({ e, n: commonLength(head, strip(e.title)) }));
       const best = Math.max(...scored.map((s) => s.n));
       const top = scored.filter((s) => s.n === best);
-      if (best >= 3 && top.length === 1) (candidates = [top[0]!.e]), (reason += " + 告知文の見出し");
+      if (best >= 3 && top.length === 1) {
+        candidates = [top[0]!.e];
+        reason += " + 告知文の見出し";
+      }
     }
 
     if (candidates.length === 1) {

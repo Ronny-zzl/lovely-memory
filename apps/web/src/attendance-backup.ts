@@ -99,6 +99,9 @@ export function applyBackup(current: AttendanceData, incoming: AttendanceData, m
 /** 記録に含まれる公演の数（手の印 ＋ eventernote、手で外したものを除く） */
 export function countAttended(data: AttendanceData): number {
   const ids = new Set(data.eventernote?.ids ?? []);
-  for (const [k, v] of Object.entries(data.manual)) v ? ids.add(Number(k)) : ids.delete(Number(k));
+  for (const [k, v] of Object.entries(data.manual)) {
+    if (v) ids.add(Number(k));
+    else ids.delete(Number(k));
+  }
   return ids.size;
 }

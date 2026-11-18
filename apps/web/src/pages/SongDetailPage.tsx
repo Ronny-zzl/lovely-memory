@@ -27,7 +27,8 @@ function formatCredits(c: Song["credits"]): string[] {
   for (const [role, name] of roles) {
     if (!name) continue;
     const g = groups.find((x) => x.name === name);
-    g ? g.roles.push(role) : groups.push({ roles: [role], name });
+    if (g) g.roles.push(role);
+    else groups.push({ roles: [role], name });
   }
   return groups.map((g) => `${g.roles.join("・")}：${g.name}`);
 }

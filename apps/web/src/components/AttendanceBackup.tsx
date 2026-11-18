@@ -66,7 +66,7 @@ export function AttendanceBackup() {
       <div className="backup-block">
         <h4 className="neighbor-heading">書き出す</h4>
         <div className="backup-actions">
-          <button type="button" className="share-button" onClick={copyCode} disabled={empty}>
+          <button type="button" className="share-button" onClick={() => void copyCode()} disabled={empty}>
             {copied ? "コピーしました" : "引き継ぎコードをコピー"}
           </button>
           <button type="button" className="share-button" onClick={saveFile} disabled={empty}>
@@ -106,10 +106,13 @@ export function AttendanceBackup() {
             type="file"
             accept="application/json,.json,.txt"
             hidden
-            onChange={async (e) => {
+            onChange={(e) => {
               const file = e.target.files?.[0];
               e.target.value = "";
-              if (file) read(await file.text());
+              // 選んだ後にファイルが消された・読み取りを許可されていない、などで読めないこともある
+              if (file) {
+                file.text().then(read, () => setMessage({ kind: "error", text: "ファイルを読み込めませんでした" }));
+              }
             }}
           />
         </div>

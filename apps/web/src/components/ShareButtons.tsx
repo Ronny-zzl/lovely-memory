@@ -36,11 +36,11 @@ export function ShareButtons({ text, hashtags = [] }: { text: string; hashtags?:
         </svg>
         ポスト
       </a>
-      <button type="button" className="share-button" onClick={copy}>
+      <button type="button" className="share-button" onClick={() => void copy()}>
         {copied ? "コピーしました" : "リンクをコピー"}
       </button>
       {canShare && (
-        <button type="button" className="share-button" onClick={share}>
+        <button type="button" className="share-button" onClick={() => void share()}>
           共有
         </button>
       )}

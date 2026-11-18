@@ -113,6 +113,6 @@ if (!run || (!artistId && !NO_ARTIST.has(command!))) {
 try {
   await run(artistId!, values);
 } catch (e) {
-  console.error(`error: ${e instanceof Error ? e.message : e}`);
+  console.error(`error: ${e instanceof Error ? e.message : String(e)}`);
   process.exit(1);
 }
