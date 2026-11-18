@@ -5,11 +5,11 @@
   align-items: flex-start;
   gap: 8px;
   margin: 0 0 16px;
-  padding: 10px 12px 10px 14px;
+  padding: 10px 12px 10px 16px;
   border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--accent-soft);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   line-height: 1.7;
 }
 
@@ -24,11 +24,11 @@
 
 .attend-hint-sample {
   display: inline-block;
-  margin: 0 3px;
+  margin: 0 4px;
   padding: 0 8px;
   border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
-  border-radius: 999px;
-  font-size: 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
   font-weight: 700;
   line-height: 1.6;
   color: var(--muted);
@@ -43,7 +43,7 @@
   border-radius: 50%;
   background: transparent;
   color: var(--muted);
-  font-size: 1.1rem;
+  font-size: var(--text-base);
   line-height: 1;
   cursor: pointer;
 }

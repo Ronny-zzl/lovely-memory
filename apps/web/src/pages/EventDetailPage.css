@@ -11,7 +11,7 @@
 
 .event-detail-title {
   margin: 4px 0 8px;
-  font-size: 1.3rem;
+  font-size: var(--text-lg);
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
@@ -28,19 +28,19 @@
 .setlist {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 8px 16px 12px;
 }
 
 .stage-name {
   margin: 12px 0 4px;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   color: var(--accent-text);
 }
 
 .stage-note {
   margin-left: 8px;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 400;
   color: var(--muted);
 }
@@ -56,7 +56,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 8px;
-  padding: 7px 0;
+  padding: 8px 0;
   border-bottom: 1px dashed var(--border);
 }
 
@@ -67,7 +67,7 @@
 .item-no {
   width: 2.6em;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
 }
 
@@ -81,7 +81,7 @@
 }
 
 .item-note {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -120,7 +120,7 @@
 }
 
 .nav-title {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,7 +128,7 @@
 }
 
 .item-with {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 

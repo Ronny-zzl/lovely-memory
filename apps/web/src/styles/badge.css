@@ -2,7 +2,7 @@
 
 .badge {
   padding: 0 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   background: var(--badge-1st);
   color: var(--badge-1st-fg);
@@ -19,16 +19,16 @@
 }
 
 .badge.debut {
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.7rem;
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
+  font-size: var(--text-2xs);
 }
 
 .badge.collab {
   margin-left: 8px;
   background: var(--badge-1st);
   color: var(--badge-1st-fg);
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   vertical-align: 0.1em;
 }
 
@@ -46,10 +46,10 @@
   display: inline-block;
   margin-left: 6px;
   padding: 0 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--badge-1st);
   color: var(--badge-1st-fg);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   line-height: 1.6;
 }

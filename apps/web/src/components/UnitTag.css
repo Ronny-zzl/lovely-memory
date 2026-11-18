@@ -7,9 +7,9 @@
 .unit-tag {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 0 7px 0 5px;
-  border-radius: 999px;
+  gap: 4px;
+  padding: 0 8px 0 6px;
+  border-radius: var(--radius-pill);
   border: 1px solid transparent;
   font-weight: 600;
   white-space: nowrap;

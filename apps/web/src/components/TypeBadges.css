@@ -4,8 +4,8 @@
   display: inline-block;
   margin-right: 6px;
   padding: 0 6px;
-  border-radius: 4px;
-  font-size: 0.72rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
   font-weight: 600;
   vertical-align: 0.1em;
   white-space: nowrap;
@@ -14,8 +14,8 @@
 }
 
 .type-oneman {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
 }
 
 .type-taiban {

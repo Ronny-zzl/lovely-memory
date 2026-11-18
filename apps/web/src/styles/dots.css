@@ -5,12 +5,12 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+  box-shadow: var(--shadow-dot);
 }
 
 .member-dots {
   display: inline-flex;
-  gap: 3px;
+  gap: 4px;
   margin-top: 6px;
   flex-shrink: 0;
 }

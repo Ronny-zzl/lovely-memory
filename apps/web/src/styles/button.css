@@ -4,13 +4,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
+  padding: 6px 16px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--fg);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -38,11 +38,11 @@
 }
 
 .share-button.primary {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
+  border-color: var(--accent-fill);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
 }
 
 .share-button.primary:hover {
-  background: color-mix(in srgb, var(--accent) 85%, #000);
+  background: var(--accent-fill-hover);
 }

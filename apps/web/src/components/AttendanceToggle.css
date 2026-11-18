@@ -10,11 +10,11 @@
   min-width: 4.6em;
   padding: 0 12px 0 10px;
   border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
@@ -44,15 +44,15 @@
 }
 
 .attend-toggle.on {
-  border: 1.5px solid var(--accent);
-  background: var(--accent);
-  color: #fff;
+  border: 1.5px solid var(--accent-fill);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
 }
 
 .attend-toggle.on:hover {
-  background: color-mix(in srgb, var(--accent) 85%, #000);
-  border-color: color-mix(in srgb, var(--accent) 85%, #000);
-  color: #fff;
+  background: var(--accent-fill-hover);
+  border-color: var(--accent-fill-hover);
+  color: var(--on-accent-fill);
 }
 
 .attend-toggle.pop {

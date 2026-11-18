@@ -6,7 +6,7 @@
 
 .month-heading {
   margin: 24px 0 8px;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .upcoming summary {

@@ -8,22 +8,11 @@
 }
 
 .share-buttons .share-x {
-  background: #0f1419;
-  border-color: #0f1419;
-  color: #fff;
+  background: var(--x-bg);
+  border-color: var(--x-bg);
+  color: var(--x-fg);
 }
 
 .share-buttons .share-x:hover {
-  background: #272c30;
-}
-
-@media (prefers-color-scheme: dark) {
-  .share-buttons .share-x {
-    background: #eff3f4;
-    border-color: #eff3f4;
-    color: #0f1419;
-  }
-  .share-buttons .share-x:hover {
-    background: #d7dbdc;
-  }
+  background: var(--x-bg-hover);
 }

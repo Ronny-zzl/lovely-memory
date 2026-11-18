@@ -10,11 +10,11 @@
 }
 
 .member-card {
-  padding: 14px 16px;
+  padding: 16px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-top: 4px solid var(--member);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 }
 
 .member-name {
@@ -22,7 +22,7 @@
   align-items: center;
   gap: 8px;
   margin: 0 0 10px;
-  font-size: 1.05rem;
+  font-size: var(--text-base);
 }
 
 .member-name .dot {
@@ -38,14 +38,14 @@
 }
 
 .member-figures dt {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .member-figures dd {
   margin: 0;
   white-space: nowrap;
-  font-size: 1.3rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -53,7 +53,7 @@
 .member-bar {
   height: 6px;
   margin: 10px 0 4px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   background: var(--border);
   overflow: hidden;
 }
@@ -69,13 +69,13 @@
   padding: 8px 0 0;
   list-style: none;
   border-top: 1px dashed var(--border);
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
 }
 
 .absence-list a {
   display: flex;
   gap: 10px;
-  padding: 3px 0;
+  padding: 4px 0;
   text-decoration: none;
 }
 
@@ -101,15 +101,15 @@
   align-items: center;
   gap: 4px 6px;
   margin: 0 0 16px;
-  padding: 8px 14px;
+  padding: 8px 16px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--surface);
 }
 
 .member-birthday {
   margin: 2px 0 6px;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .birthday-today {

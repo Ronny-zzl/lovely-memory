@@ -15,7 +15,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 4px 12px;
-  padding: 5px 0;
+  padding: 6px 0;
 }
 
 .upcoming-list li + li {

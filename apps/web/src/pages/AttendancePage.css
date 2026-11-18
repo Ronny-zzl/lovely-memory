@@ -8,9 +8,9 @@
 
 .attend-source {
   margin-bottom: 20px;
-  padding: 14px 16px;
+  padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--surface);
 }
 
@@ -25,7 +25,7 @@
   min-width: 0;
   padding: 6px 12px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--bg);
   color: var(--fg);
   font: inherit;

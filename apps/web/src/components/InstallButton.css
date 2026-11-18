@@ -10,14 +10,14 @@
 .install-button {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 4px 12px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--fg);
   font: inherit;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
 }
@@ -36,12 +36,12 @@
   top: calc(100% + 8px);
   right: 0;
   width: min(280px, calc(100vw - 32px));
-  padding: 12px 14px;
+  padding: 12px 16px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
-  font-size: 0.85rem;
+  box-shadow: var(--shadow-popover);
+  font-size: var(--text-sm);
   line-height: 1.6;
 }
 

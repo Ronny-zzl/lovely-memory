@@ -8,8 +8,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family:
-    system-ui,
+  font-family: system-ui,
     -apple-system,
     "Hiragino Sans",
     "Noto Sans JP",
@@ -33,7 +32,7 @@ a {
 }
 
 .small {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .note {
@@ -41,7 +40,7 @@ a {
 }
 
 .back-link {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--muted);
   text-decoration: none;
 }
@@ -71,15 +70,15 @@ a.item-title:hover {
 
 .section-heading {
   margin: 0 0 8px;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .error {
-  color: #d23c3c;
+  color: var(--error);
 }
 
 .ok {
-  color: #2f8a4b;
+  color: var(--ok);
 }
 
 /* 画面には出さず、読み上げ・検索エンジン向けにだけ置く（見出しの階層を保つためなど） */

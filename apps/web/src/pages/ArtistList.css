@@ -15,7 +15,7 @@
   padding: 16px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   text-decoration: none;
   transition: border-color 0.15s;
 }
@@ -26,11 +26,11 @@
 
 .artist-card-name {
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: var(--text-base);
 }
 
 .artist-card-sub {
   color: var(--accent-text);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 600;
 }
