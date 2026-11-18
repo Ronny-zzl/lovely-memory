@@ -233,6 +233,7 @@ export function SongStatsPage() {
 
   return (
     <section className="song-stats">
+      <h2 className="visually-hidden">楽曲ごとの歌唱記録</h2>
       <div className="summary">
         <div className="stat">
           <span className="stat-value">{stats.events.length}</span>

@@ -154,6 +154,7 @@ export function AttendancePage() {
 
   return (
     <div className="attendance">
+      <h2 className="visually-hidden">参戦記録</h2>
       <EventernoteSection />
 
       <div className="summary summary-4">
