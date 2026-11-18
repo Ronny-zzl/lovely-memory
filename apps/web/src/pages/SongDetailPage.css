@@ -54,9 +54,10 @@
   display: flex;
 }
 
+/* 指で押せる大きさ：20px ＋ 間隔 4px で、隣のマスと 24px 以上離れる（WCAG 2.2 の target size） */
 .pattern .cell {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-sm);
   background: var(--border);
 }
