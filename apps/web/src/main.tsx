@@ -1,9 +1,11 @@
 // ホーム画面への追加のイベントを、描画前から待ち受ける
 import "./install.ts";
+import { installErrorReporting, reportError } from "./error-report.ts";
 import { type ComponentType, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider, type RouteObject } from "react-router";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
+import { RouteError } from "./pages/RouteError.tsx";
 import { findArtist, loadArtistData } from "./data.ts";
 // サイト全体で使う見た目（ページ・部品ごとのものは、それぞれの .tsx の隣の .css）
 import "./styles/tokens.css";
@@ -16,6 +18,9 @@ import "./styles/badge.css";
 import "./styles/event-list.css";
 import "./styles/lists.css";
 import "./styles/button.css";
+
+// 起きたエラーをサイトに送る（読み込みの途中で起きたものも拾えるよう、最初に）
+installErrorReporting();
 
 // 以前の hash ルーティング（/#/artist/...）のリンクを通常のパスに置き換える
 if (location.hash.startsWith("#/")) {
@@ -30,19 +35,26 @@ const page = (load: () => Promise<ComponentType>): Pick<RouteObject, "lazy"> => 
 
 // Cloudflare Pages は存在しないパスに index.html を返す（SPA フォールバック）ので、通常のパスでルーティングする
 const router = createBrowserRouter([
-  { path: "/", ...page(() => import("./pages/ArtistList.tsx").then((m) => m.ArtistList)) },
+  { path: "/", ...page(() => import("./pages/ArtistList.tsx").then((m) => m.ArtistList)), errorElement: <RouteError /> },
   {
     path: "/:artistId",
     element: <ArtistLayout />,
+    errorElement: <RouteError />,
     children: [
-      { index: true, element: <Navigate to="songs" replace /> },
-      { path: "songs", ...page(() => import("./pages/SongStatsPage.tsx").then((m) => m.SongStatsPage)) },
-      { path: "songs/:songId", ...page(() => import("./pages/SongDetailPage.tsx").then((m) => m.SongDetailPage)) },
-      { path: "events", ...page(() => import("./pages/EventsPage.tsx").then((m) => m.EventsPage)) },
-      { path: "events/:eventId", ...page(() => import("./pages/EventDetailPage.tsx").then((m) => m.EventDetailPage)) },
-      { path: "trends", ...page(() => import("./pages/TrendsPage.tsx").then((m) => m.TrendsPage)) },
-      { path: "members", ...page(() => import("./pages/MembersPage.tsx").then((m) => m.MembersPage)) },
-      { path: "attendance", ...page(() => import("./pages/AttendancePage.tsx").then((m) => m.AttendancePage)) },
+      {
+        // ページでエラーが起きても、ヘッダー（タブ）は残して中身だけエラーの表示にする
+        errorElement: <RouteError />,
+        children: [
+          { index: true, element: <Navigate to="songs" replace /> },
+          { path: "songs", ...page(() => import("./pages/SongStatsPage.tsx").then((m) => m.SongStatsPage)) },
+          { path: "songs/:songId", ...page(() => import("./pages/SongDetailPage.tsx").then((m) => m.SongDetailPage)) },
+          { path: "events", ...page(() => import("./pages/EventsPage.tsx").then((m) => m.EventsPage)) },
+          { path: "events/:eventId", ...page(() => import("./pages/EventDetailPage.tsx").then((m) => m.EventDetailPage)) },
+          { path: "trends", ...page(() => import("./pages/TrendsPage.tsx").then((m) => m.TrendsPage)) },
+          { path: "members", ...page(() => import("./pages/MembersPage.tsx").then((m) => m.MembersPage)) },
+          { path: "attendance", ...page(() => import("./pages/AttendancePage.tsx").then((m) => m.AttendancePage)) },
+        ],
+      },
     ],
   },
   { path: "*", element: <Navigate to="/" replace /> },
@@ -69,7 +81,10 @@ if (import.meta.env.PROD && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {});
 }
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById("root")!, {
+  onUncaughtError: (error) => reportError("render", error),
+  onCaughtError: (error) => reportError("render", error),
+}).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>,

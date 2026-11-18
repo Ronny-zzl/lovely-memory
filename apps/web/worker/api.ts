@@ -3,6 +3,10 @@
  * 開発時・プレビュー時は Vite のミドルウェアから同じ関数を呼ぶ（plugins/api-dev.ts）。
  */
 import { AttendedError, fetchAttended, USERNAME_PATTERN } from "@lovely-memory/eventernote/attended";
+import { receiveError, type D1 } from "./errors.ts";
+
+/** Pages のバインディング（wrangler.toml）。開発時・プレビュー（vite）には無い */
+export type ApiEnv = { DB?: D1 };
 
 const USER_AGENT = "Mozilla/5.0 (compatible; lovely-memory-bot/0.1; setlist statistics)";
 /** 同じユーザーを短時間に何度も読みに行かないよう、結果をこの秒数だけキャッシュする */
@@ -43,9 +47,12 @@ async function eventernoteAttended(request: Request, user: string): Promise<Resp
 }
 
 /** /api/* を処理する。該当しなければ undefined */
-export async function handleApi(request: Request): Promise<Response | undefined> {
+export async function handleApi(request: Request, env: ApiEnv = {}): Promise<Response | undefined> {
   const url = new URL(request.url);
   if (!url.pathname.startsWith("/api/")) return undefined;
+  if (url.pathname === "/api/errors") {
+    return request.method === "POST" ? receiveError(request, env.DB) : json({ error: "method not allowed" }, 405);
+  }
   if (request.method !== "GET") return json({ error: "method not allowed" }, 405);
   const m = url.pathname.match(/^\/api\/eventernote\/([^/]+)\/?$/);
   if (m) return eventernoteAttended(request, decodeURIComponent(m[1]!));

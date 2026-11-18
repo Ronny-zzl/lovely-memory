@@ -6,7 +6,13 @@ import { handleApi } from "../worker/api.ts";
 export function apiDev(): Plugin {
   const handle = async (req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void) => {
     if (!req.url?.startsWith("/api/")) return next();
-    const response = await handleApi(new Request(new URL(req.url, `http://${req.headers.host ?? "localhost"}`), { method: req.method }));
+    const url = new URL(req.url, `http://${req.headers.host ?? "localhost"}`);
+    const headers = new Headers();
+    for (const [k, v] of Object.entries(req.headers)) if (typeof v === "string") headers.set(k, v);
+    const chunks: Buffer[] = [];
+    if (req.method === "POST") for await (const c of req) chunks.push(c as Buffer);
+    const body = chunks.length ? Buffer.concat(chunks) : undefined;
+    const response = await handleApi(new Request(url, { method: req.method, headers, body }));
     if (!response) return next();
     res.statusCode = response.status;
     response.headers.forEach((v, k) => res.setHeader(k, v));

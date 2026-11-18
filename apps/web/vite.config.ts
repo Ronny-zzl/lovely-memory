@@ -9,5 +9,7 @@ import { siteMeta } from "./plugins/site-meta.ts";
 // 通常のパスでルーティングするため、アセットは絶対パス（サイトはドメインのルートに置く）
 export default defineConfig({
   base: "/",
+  // エラーの記録に、どのビルドで起きたかを残す（GitHub Actions ではコミット）
+  define: { __BUILD__: JSON.stringify(process.env.GITHUB_SHA?.slice(0, 7) ?? "local") },
   plugins: [react(), artistsData(), apiDev(), siteMeta(), preloadRoute(), serviceWorker()],
 });

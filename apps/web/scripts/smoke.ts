@@ -55,6 +55,11 @@ const hrefs = (page: Page, selector: string) =>
 
 try {
   const page = await browser.newPage();
+  // 普通に見て回る間は、エラーの報告（/api/errors）が 1 件も送られないこと
+  const reported: string[] = [];
+  page.on("request", (r) => {
+    if (r.method() === "POST" && new URL(r.url()).pathname === "/api/errors") reported.push(r.postData() ?? "");
+  });
 
   await visit(page, "/", ".artist-list");
 
@@ -105,6 +110,28 @@ try {
         new URL(p.url()).pathname === songs[0] ? undefined : `hash リンクが ${songs[0]} に置き換わらない（${p.url()}）`,
       );
     }
+  }
+
+  checked++;
+  if (reported.length) failures.push(`エラーの報告が送られた（${reported.length} 件）\n    ${reported.join("\n    ")}`);
+
+  // ページのコードを読み込めないとき：エラーの画面が出て、報告が送られること
+  const broken = await browser.newContext();
+  try {
+    const p = await broken.newPage();
+    await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => route.abort());
+    const report = p.waitForRequest((r) => r.method() === "POST" && new URL(r.url()).pathname === "/api/errors", { timeout: 10_000 });
+    await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
+    try {
+      await p.waitForSelector(".route-error", { timeout: 10_000 });
+      const body = JSON.parse((await report).postData() ?? "{}") as { kind?: string; path?: string };
+      if (body.kind !== "render" || !body.path?.endsWith("/songs")) failures.push(`エラーの報告の中身がおかしい: ${JSON.stringify(body)}`);
+    } catch (e) {
+      failures.push(`ページのコードを読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+    }
+    checked++;
+  } finally {
+    await broken.close();
   }
 
   // オフライン：一度開いて Service Worker が有効になった後、ネットワークを切っても

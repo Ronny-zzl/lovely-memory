@@ -50,4 +50,10 @@ pnpm lm add-song taiyotsukiyo-2nd --title "曲名" --cover "原唱"
 
 # 数据检查（也列出还没有歌单的已结束活动）
 pnpm lm validate all --missing
+
+# 线上浏览器报的错误（同一错误合并，按次数排序；需要 wrangler login）
+pnpm lm errors all --days 7
+
+# 改了 D1 的表结构：在 apps/web/migrations/ 加一个新的 .sql，然后
+pnpm --filter @lovely-memory/web exec wrangler d1 migrations apply lovely-memory --remote
 ```

@@ -1,0 +1,12 @@
+# Cloudflare Pages（lovely-memory）の設定。wrangler pages deploy はこのファイルを使い、ダッシュボードでは編集できなくなる
+# （ここが正。カスタムドメイン・リダイレクトのルールなど、ここに無い設定はダッシュボード側のまま）
+name = "lovely-memory"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-11-01"
+
+# ブラウザで起きたエラーの記録（/api/errors）。中身は pnpm lm errors で見る
+[[d1_databases]]
+binding = "DB"
+database_name = "lovely-memory"
+database_id = "9cd3f5ff-b1cc-46d0-a001-41e645777558"
+migrations_dir = "migrations"

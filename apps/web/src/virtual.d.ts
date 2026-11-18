@@ -7,3 +7,6 @@ declare module "virtual:lovely-memory/artists" {
   export const artists: ArtistConfig[];
   export const loaders: Record<string, () => Promise<{ default: RawArtistData }>>;
 }
+
+/** どのビルドか（デプロイ時はコミットの先頭 7 文字。vite.config.ts の define） */
+declare const __BUILD__: string;

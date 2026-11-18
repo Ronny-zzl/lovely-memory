@@ -1,6 +1,7 @@
 import { parseArgs } from "node:util";
 import { addSetlist } from "./commands/add-setlist.ts";
 import { addSong } from "./commands/add-song.ts";
+import { errors } from "./commands/errors.ts";
 import { importComment } from "./commands/import-comment.ts";
 import { importOfficial } from "./commands/import-official.ts";
 import { importSetlists } from "./commands/import-setlists.ts";
@@ -54,6 +55,9 @@ commands:
                      --credits "作詞：A　作曲・編曲：B"
                      --alias <別表記>  (複数可)
                      --note <メモ>
+  errors             ブラウザで起きたエラー（/api/errors の記録）を、同じものをまとめて表示（artistId は all）
+                     wrangler login 済みの Cloudflare アカウントから読む
+                     --days <n>       直近何日分か（既定 7）
 `;
 
 const { positionals, values } = parseArgs({
@@ -84,6 +88,7 @@ const { positionals, values } = parseArgs({
     dist: { type: "string" },
     "skip-images": { type: "boolean" },
     only: { type: "string" },
+    days: { type: "string" },
   },
 });
 const [command, artistId] = positionals;
@@ -103,6 +108,7 @@ const commands: Record<string, Command> = {
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,
   "og-pages": ogPages,
+  errors,
 };
 
 const run = command ? commands[command] : undefined;

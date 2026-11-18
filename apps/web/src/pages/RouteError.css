@@ -1,0 +1,19 @@
+/* RouteError の見た目 */
+
+.route-error {
+  margin: 24px 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.route-error p {
+  margin: 0 0 8px;
+}
+
+.route-error-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
