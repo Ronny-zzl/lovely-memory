@@ -1,17 +1,9 @@
 // ホーム画面への追加のイベントを、描画前から待ち受ける
 import "./install.ts";
-import { StrictMode } from "react";
+import { type ComponentType, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider, type RouteObject } from "react-router";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
-import { AttendancePage } from "./pages/AttendancePage.tsx";
-import { ArtistList } from "./pages/ArtistList.tsx";
-import { EventDetailPage } from "./pages/EventDetailPage.tsx";
-import { EventsPage } from "./pages/EventsPage.tsx";
-import { MembersPage } from "./pages/MembersPage.tsx";
-import { SongDetailPage } from "./pages/SongDetailPage.tsx";
-import { SongStatsPage } from "./pages/SongStatsPage.tsx";
-import { TrendsPage } from "./pages/TrendsPage.tsx";
 import { findArtist, loadArtistData } from "./data.ts";
 import "./styles.css";
 
@@ -20,21 +12,27 @@ if (location.hash.startsWith("#/")) {
   history.replaceState(null, "", location.hash.slice(1));
 }
 
+// 各ページのコードは開いたときに読み込む（最初に読み込む量を減らす）。
+// 移動先のページの読み込みが終わるまで今のページを表示したままにするので、「読み込み中」は出ない
+const page = (load: () => Promise<ComponentType>): Pick<RouteObject, "lazy"> => ({
+  lazy: async () => ({ Component: await load() }),
+});
+
 // Cloudflare Pages は存在しないパスに index.html を返す（SPA フォールバック）ので、通常のパスでルーティングする
 const router = createBrowserRouter([
-  { path: "/", element: <ArtistList /> },
+  { path: "/", ...page(() => import("./pages/ArtistList.tsx").then((m) => m.ArtistList)) },
   {
     path: "/:artistId",
     element: <ArtistLayout />,
     children: [
       { index: true, element: <Navigate to="songs" replace /> },
-      { path: "songs", element: <SongStatsPage /> },
-      { path: "songs/:songId", element: <SongDetailPage /> },
-      { path: "events", element: <EventsPage /> },
-      { path: "events/:eventId", element: <EventDetailPage /> },
-      { path: "trends", element: <TrendsPage /> },
-      { path: "members", element: <MembersPage /> },
-      { path: "attendance", element: <AttendancePage /> },
+      { path: "songs", ...page(() => import("./pages/SongStatsPage.tsx").then((m) => m.SongStatsPage)) },
+      { path: "songs/:songId", ...page(() => import("./pages/SongDetailPage.tsx").then((m) => m.SongDetailPage)) },
+      { path: "events", ...page(() => import("./pages/EventsPage.tsx").then((m) => m.EventsPage)) },
+      { path: "events/:eventId", ...page(() => import("./pages/EventDetailPage.tsx").then((m) => m.EventDetailPage)) },
+      { path: "trends", ...page(() => import("./pages/TrendsPage.tsx").then((m) => m.TrendsPage)) },
+      { path: "members", ...page(() => import("./pages/MembersPage.tsx").then((m) => m.MembersPage)) },
+      { path: "attendance", ...page(() => import("./pages/AttendancePage.tsx").then((m) => m.AttendancePage)) },
     ],
   },
   { path: "*", element: <Navigate to="/" replace /> },
@@ -44,6 +42,17 @@ const router = createBrowserRouter([
 // 描画中に読み込むと「読み込み中」が一瞬出て、React の仕様で最低 300ms 表示が遅れる
 const initialArtist = findArtist(location.pathname.split("/")[1]);
 if (initialArtist) await loadArtistData(initialArtist).catch(() => {});
+
+// 最初のページのコードも描画前に読み込んでおく（読み込み終わるまで画面が空にならないように）
+await new Promise<void>((resolve) => {
+  if (router.state.initialized) return resolve();
+  const unsubscribe = router.subscribe((state) => {
+    if (state.initialized) {
+      unsubscribe();
+      resolve();
+    }
+  });
+});
 
 // オフライン対応（ネットワーク優先。sw.js はビルド時に生成されるので本番ビルドのみ）
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
