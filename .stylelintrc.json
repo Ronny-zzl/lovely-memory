@@ -1,0 +1,36 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "ignoreFiles": ["**/dist/**", "**/node_modules/**", "tools/**"],
+  "rules": {
+    "property-no-vendor-prefix": [true, { "ignoreProperties": ["-webkit-text-size-adjust", "-webkit-background-clip"] }],
+    "no-descending-specificity": null,
+    "declaration-no-important": true,
+    "selector-max-id": 0,
+
+    "color-no-hex": [true, { "message": "色は tokens.css の変数を使う" }],
+    "color-named": ["never", { "message": "色は tokens.css の変数を使う" }],
+    "function-disallowed-list": [["rgb", "rgba", "hsl", "hsla"], { "message": "色は tokens.css の変数を使う" }],
+    "declaration-property-value-allowed-list": [
+      {
+        "font-size": ["/^var\\(--text-[a-z0-9]+\\)$/", "/^[0-9.]+em$/", "inherit"],
+        "border-radius": ["/^(0|50%|var\\(--radius-[a-z]+\\))( (0|var\\(--radius-[a-z]+\\))){0,3}$/"],
+        "box-shadow": ["none", "/^var\\(--shadow-[a-z]+\\)$/"],
+        "/^(margin|padding)(-(top|right|bottom|left|inline|block)(-(start|end))?)?$/": [
+          "/^((0|auto|-?(1|2|4|6|8|10|12|16|20|24|32|64)px|-?[0-9.]+(em|rem))( |$)){1,4}$/"
+        ],
+        "/^(row-|column-)?gap$/": ["/^((0|2|4|6|8|10|12|16|20|24|32)px( |$)){1,2}$/"]
+      },
+      { "message": "tokens.css の文字の大きさ・角の丸み・影の変数、または余白の刻み（0・2・4・6・8・10・12・16・20・24・32・64px）を使う" }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/styles/tokens.css"],
+      "rules": {
+        "color-no-hex": null,
+        "function-disallowed-list": null,
+        "declaration-property-value-allowed-list": null
+      }
+    }
+  ]
+}

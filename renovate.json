@@ -39,6 +39,11 @@
       "description": "oxc（oxlint・oxlint-tsgolint・oxfmt）は同時に上げる",
       "matchPackageNames": ["oxlint", "oxlint-tsgolint", "oxfmt"],
       "groupName": "oxc"
+    },
+    {
+      "description": "stylelint と共有設定は同時に上げる",
+      "matchPackageNames": ["stylelint", "stylelint-config-standard"],
+      "groupName": "stylelint"
     }
   ]
 }

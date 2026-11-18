@@ -188,6 +188,11 @@ lovely-memory/
 - **Cloudflare Pages**，项目名 `lovely-memory`，域名 **https://lovely-memory.moe/**（Porkbun 注册，nameserver 指向 Cloudflare）。`www.` 和 `lovely-memory.pages.dev` 由 Cloudflare 后台的规则 301 跳转到正式域名（`www`：域名的 Redirect Rule；`pages.dev`：账户的 Bulk Redirects，不含子域名，所以预览部署 `<hash>.lovely-memory.pages.dev` 不跳转）。页面里也有同样的跳转脚本作为后备（`site-meta.ts`），旧的 `/#/...` 链接也由页面转换。选择理由：网址不含个人账号名；将来可用 Pages Functions / D1 / KV 扩展（用户系统等）。
 - GitHub Actions 在类型检查・测试・数据检查・构建・冒烟测试全部通过后，用 wrangler 上传（`deploy.yml`）。wrangler 是 `apps/web` 的 devDependency，版本由 lockfile 固定、Renovate 更新（不用 `npx wrangler@4`）。`ci.yml` 只在 PR 上运行。
 - 代码检查：`pnpm lint`（oxlint，带类型信息的规则由 oxlint-tsgolint 提供，配置在 `.oxlintrc.json`），`pnpm format`（oxfmt，宽 140；`artists/` 数据、Markdown、CSS、HTML 不格式化，配置在 `.oxfmtrc.json`）。CI 和 deploy 都会检查这两项。异步的事件处理函数写成 `onClick={() => void f()}`。
+- CSS：
+  - `apps/web/src/styles/`：全站共用（`tokens.css` 的变量・`base.css`・头部 `layout.css`・多个页面共用的部件），由 `main.tsx` 统一引入。
+  - 只属于某个页面或组件的样式放在它的 `.tsx` 旁边（如 `pages/SongStatsPage.css`），由该 `.tsx` 引入；Vite 会按懒加载的页面拆分 CSS，`preload-route` 插件会把当前页面的 CSS 也提前插入。
+  - 颜色・字号・圆角・阴影只能用 `tokens.css` 里的变量；间距只用 0・2・4・6・8・10・12・16・20・24・32・64px。由 stylelint（`.stylelintrc.json`，`pnpm lint` 的一部分）检查。
+  - 改动不应改变外观时，用 `pnpm visual shoot <目录>` 在改动前后各截一次图，再用 `pnpm visual compare <前> <后> <差异目录>` 逐像素比较（12 个页面 × 浅色/深色 × 手机/桌面）。
 - 页面代码按路由懒加载（`main.tsx` 的 `lazy`）；首次打开时先加载当前页面的代码再渲染，切换页面时在新页面加载完成之前保持显示旧页面。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
 - 普通路径路由（`createBrowserRouter`）。Cloudflare Pages 在没有 `404.html` 时，对不存在的路径返回 `index.html`（SPA 回退），所以直接打开或刷新 `/<artist>/songs/...` 也能显示。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。
 - 旧的 hash 链接（`/#/...`，GitHub Pages 时代）在加载时转换为普通路径。
