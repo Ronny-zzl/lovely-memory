@@ -40,7 +40,7 @@ export function InstallButton() {
         <div className="install-help" role="dialog" aria-label="ホーム画面に追加する方法">
           <p>
             画面の
-            <svg viewBox="0 0 16 16" aria-label="共有" className="share-icon">
+            <svg viewBox="0 0 16 16" role="img" aria-label="共有" className="share-icon">
               <path
                 d="M8 1.5v8.5M5 4.5 8 1.5l3 3M4.5 7H3.5v7.5h9V7h-1"
                 fill="none"

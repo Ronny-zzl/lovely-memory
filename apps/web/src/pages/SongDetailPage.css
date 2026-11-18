@@ -44,6 +44,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 1 マスずつ li に入れる（a に role="listitem" は付けられないため）。a が大きさを持てるよう li も flex に */
+.pattern li {
+  display: flex;
 }
 
 .pattern .cell {

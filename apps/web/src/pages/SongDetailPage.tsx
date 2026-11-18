@@ -219,17 +219,21 @@ export function SongDetailPage() {
               <h3 className="section-heading">
                 出現パターン<span className="muted small"> 初披露以降 {sinceDebut.length} 公演（古い順）</span>
               </h3>
-              <div className="pattern" role="list">
-                {sinceDebut.map(({ event }) => (
-                  <Link
-                    key={event.id}
-                    role="listitem"
-                    to={`/${artist.id}/events/${event.id}`}
-                    className={sungIn.has(event.id) ? "cell sung" : "cell"}
-                    title={`${formatDate(event.date)} ${event.title}${sungIn.has(event.id) ? "" : "（歌唱なし）"}`}
-                  />
-                ))}
-              </div>
+              <ol className="pattern">
+                {sinceDebut.map(({ event }) => {
+                  const label = `${formatDate(event.date)} ${event.title}${sungIn.has(event.id) ? "" : "（歌唱なし）"}`;
+                  return (
+                    <li key={event.id}>
+                      <Link
+                        to={`/${artist.id}/events/${event.id}`}
+                        className={sungIn.has(event.id) ? "cell sung" : "cell"}
+                        title={label}
+                        aria-label={label}
+                      />
+                    </li>
+                  );
+                })}
+              </ol>
             </section>
           )}
 

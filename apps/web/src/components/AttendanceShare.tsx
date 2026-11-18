@@ -114,7 +114,7 @@ export function AttendanceShare({
         <div className="share-dialog-body">
           <h3 className="section-heading">参戦記録をシェア</h3>
           <div className="share-preview">
-            <canvas ref={canvasRef} aria-label="参戦記録のシェア画像" />
+            <canvas ref={canvasRef} role="img" aria-label="参戦記録のシェア画像" />
             {!blob && <p className="muted small share-loading">画像を作っています…</p>}
           </div>
           <div className="backup-actions">

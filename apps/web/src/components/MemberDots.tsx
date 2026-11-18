@@ -7,6 +7,7 @@ export function MemberDots({ artist, present }: { artist: ArtistConfig; present:
   return (
     <span
       className="member-dots"
+      role="img"
       title={absent.length ? `欠席: ${absent.join("・")}` : "全員出演"}
       aria-label={absent.length ? `欠席: ${absent.join("・")}` : "全員出演"}
     >
