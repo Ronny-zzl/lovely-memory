@@ -1,9 +1,9 @@
 name: CI
 
+# main への push は Deploy ワークフローが同じ検査をしてからデプロイするので、ここでは PR（Renovate など）だけを見る
 on:
-  push:
-    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   check:

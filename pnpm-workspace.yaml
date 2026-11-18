@@ -3,3 +3,5 @@ packages:
   - apps/*
 allowBuilds:
   esbuild: true
+  # wrangler の依存。バイナリは別パッケージ（@cloudflare/workerd-*）で入るので、インストール時のスクリプトは不要
+  workerd: false
