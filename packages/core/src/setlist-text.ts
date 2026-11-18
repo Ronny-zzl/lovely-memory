@@ -19,8 +19,17 @@ export type ParsedStage = {
   items: ParsedItem[];
 };
 
-// M1_ / M1 / M01. / EN_ / EN1_ / Encore: など
-const ITEM_LINE = /^(M|EN|EC|ENCORE|アンコール)\s*(\d*)\s*[_＿.．:：\-ー\s)）]\s*(.+)$/i;
+// M1_ / M1 / M01. / EN_ / EN1_ / Encore: / WEN_（W アンコール）など
+const ITEM_LINE = /^(M|W?\s*EN|EC|W?\s*ENCORE|[WＷ]?\s*アンコール|ダブルアンコール)\s*(\d*)\s*[_＿.．:：\-ー\s)）]\s*(.+)$/i;
+// 曲行のように見えるが ITEM_LINE に合わない行（例: XX1_ 曲名）。黙って捨てずに曲として拾い、照合で気付けるようにする
+const ITEM_LIKE_LINE = /^[A-Za-zＡ-Ｚａ-ｚ]{1,8}\s*\d*\s*[_＿]\s*\S/;
+// 単独の行で書かれたアンコールの区切り（アンコール / -EN- / 【アンコール】 / 🎵ENCORE🎵 / Wアンコール など）
+const ENCORE_WORD = /^(W|Ｗ|ダブル)?(EN|ENCORE|アンコール)$/i;
+
+/** アンコールの区切り行か（記号・括弧・絵文字を除いて「アンコール」「EN」などだけが残る行） */
+export function isEncoreMarker(line: string): boolean {
+  return ENCORE_WORD.test(line.replace(/[^\p{L}\p{N}]/gu, ""));
+}
 // 【1部】や【1部】もえちゃん考案セトリ❤️ のように、見出しの後ろに補足が続くこともある
 const STAGE_HEADER = /^[【[［](.+?)[】\]］]\s*(.*)$/;
 const TRAILING_TAG = /\s*[(（]([^()（）]+)[)）]\s*$/;
@@ -42,6 +51,7 @@ export function splitTags(label: string): { title: string; tags: string[] } {
  *
  * - `M1_ 曲名` 形式の行を 1 曲とみなし、直後の「作詞・作曲…」行をその曲のクレジットとする
  * - 番号が M1 に戻ったら新しいステージ。ステージ名は直前の【…】見出し
+ * - EN_ / EN1_ などの行と、「アンコール」「-EN-」「【アンコール】」などの区切り行より後（同じステージ内）はアンコール
  * - ステージが 1 つだけの場合は名前を付けない（冒頭の【セットリスト】などを拾わないため）
  * - それ以外の行（イベント名・ハッシュタグ等）は無視
  * - 曲番号が 1 つも無い場合は、曲名を 1 行ずつ並べた形式として読む（parseUnnumbered）
@@ -52,11 +62,20 @@ export function parseSetlistText(text: string): ParsedStage[] {
   let pendingNote: string | undefined;
   let current: ParsedStage | undefined;
   let lastItem: (ParsedItem & { creditText: string[] }) | undefined;
+  // 区切り行（アンコール / -EN- など）を見た後か。次のステージが始まったら戻す
+  let afterEncoreMarker = false;
   const all: Array<ParsedItem & { creditText: string[] }> = [];
 
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) continue;
+
+    // 【アンコール】も見出しの形だが、ステージ名ではなくアンコールの区切り
+    if (isEncoreMarker(line)) {
+      afterEncoreMarker = true;
+      lastItem = undefined;
+      continue;
+    }
 
     const header = line.match(STAGE_HEADER);
     if (header) {
@@ -66,18 +85,20 @@ export function parseSetlistText(text: string): ParsedStage[] {
       continue;
     }
 
-    const m = line.match(ITEM_LINE);
+    const m = line.match(ITEM_LINE) ?? (current && ITEM_LIKE_LINE.test(line) ? [line, "?", "", line] : null);
     if (m) {
       const kind = m[1]!.toUpperCase();
       const num = m[2] ? Number(m[2]) : undefined;
-      const encore = kind !== "M";
-      const startsNew = !current || (!encore && num === 1 && current.items.length > 0);
+      const marked = kind !== "M" && kind !== "?";
+      const startsNew = !current || (kind === "M" && num === 1 && current.items.length > 0);
       if (startsNew) {
         current = { name: pendingHeader, ...(pendingNote && { note: pendingNote }), items: [] };
         stages.push(current);
         pendingHeader = undefined;
         pendingNote = undefined;
+        afterEncoreMarker = false;
       }
+      const encore = marked || afterEncoreMarker;
       const label = m[3]!.trim();
       const item = { label, ...splitTags(label), encore, credits: {}, creditText: [] as string[] };
       current!.items.push(item);
@@ -106,7 +127,6 @@ export function parseSetlistText(text: string): ParsedStage[] {
 
 const ANNOUNCE_LINE = /セトリ|セットリスト|set\s*list/i;
 const MC_LINE = /^[<＜(（［[].{0,10}[>＞)）］\]]$/;
-const ENCORE_LINE = /^[-－―—~〜\s]*(EN|ENCORE|アンコール)[-－―—~〜\s]*$/i;
 
 /**
  * 曲番号の無い告知文を解析する（「曲名」を 1 行ずつ並べた形式）。
@@ -118,12 +138,12 @@ function parseUnnumbered(text: string): ParsedStage[] {
   let encore = false;
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
-    if (!line || line.startsWith("#") || ANNOUNCE_LINE.test(line) || MC_LINE.test(line)) continue;
-    if (CREDIT_LINE.test(line) || STAGE_HEADER.test(line)) continue;
-    if (ENCORE_LINE.test(line)) {
+    if (!line || line.startsWith("#")) continue;
+    if (isEncoreMarker(line)) {
       encore = true;
       continue;
     }
+    if (ANNOUNCE_LINE.test(line) || MC_LINE.test(line) || CREDIT_LINE.test(line) || STAGE_HEADER.test(line)) continue;
     const label = line.replace(/\s+#\S+/g, "").trim();
     items.push({ label, ...splitTags(label), encore, credits: {} });
   }

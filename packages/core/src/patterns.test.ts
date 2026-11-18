@@ -18,7 +18,7 @@ const ev = (id: number): ResolvedEvent => ({
 });
 
 const setlists = [
-  Setlist.parse({ event: 1, items: ["A", "B", "C", "D", { song: "E", encore: true }] }),
+  Setlist.parse({ event: 1, items: ["A", "B", "C", "D", { song: "E", encore: true }, { song: "A", encore: true }] }),
   Setlist.parse({ event: 2, items: ["F", "B", "C", "D"] }),
   Setlist.parse({ event: 3, items: ["A", "B", "C", "D"] }),
   // コラボステージは対象外
@@ -54,6 +54,12 @@ describe("computePatterns", () => {
     expect(patterns.transitions[0]).toBe(bc);
     // 本編ラスト → アンコール（D → E）は数えない
     expect(patterns.transitions.some((t) => t.from.title === "D")).toBe(false);
+  });
+
+  it("counts transitions within the encore", () => {
+    const ea = patterns.transitions.find((t) => t.from.title === "E" && t.to.title === "A")!;
+    expect(ea).toMatchObject({ count: 1, fromCount: 2 });
+    expect(at("A")).toMatchObject({ count: 2, opener: 2, encore: 1 });
   });
 
   it("finds maximal recurring chains", () => {

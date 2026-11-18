@@ -5,7 +5,8 @@ import type { EventSetlist } from "./stats.ts";
  * セトリの曲順から読み取れる傾向。
  * - コラボステージ（他グループの企画）は対象外
  * - 「本編」はアンコール以外の曲。1 曲目・ラスト・前半/中盤/後半は本編の中での位置で判定する
- * - つながり（A → B）は同じステージの本編で連続した 2 曲。本編ラスト → アンコールは数えない
+ * - つながり（A → B）・決まった流れは、同じステージの本編どうし・アンコールどうしで連続した曲。
+ *   本編ラスト → アンコール 1 曲目は数えない
  */
 
 export type Zone = "early" | "middle" | "late";
@@ -25,7 +26,7 @@ export type Transition = {
   from: Song;
   to: Song;
   count: number;
-  /** from が本編で次の曲を持った回数（from がラストでなかった回数） */
+  /** from に次の曲があった回数（本編ラスト・アンコールの最後でなかった回数） */
   fromCount: number;
 };
 
@@ -46,9 +47,10 @@ export type Patterns = {
 
 type Stage = Song[];
 
-function mainStages(events: EventSetlist[]): Stage[] {
+/** コラボ以外のステージを、本編とアンコールに分けた曲の並び */
+function blocks(events: EventSetlist[], encore: boolean): Stage[] {
   return events
-    .flatMap((e) => e.stages.filter((s) => !s.collab).map((s) => s.entries.filter((x) => !x.encore).map((x) => x.song)))
+    .flatMap((e) => e.stages.filter((s) => !s.collab).map((s) => s.entries.filter((x) => x.encore === encore).map((x) => x.song)))
     .filter((s) => s.length > 0);
 }
 
@@ -60,7 +62,9 @@ export function zoneOf(index: number, length: number): Zone | undefined {
 
 export function computePatterns(events: EventSetlist[], options: { minChainCount?: number; minChainLength?: number } = {}): Patterns {
   const { minChainCount = 3, minChainLength = 3 } = options;
-  const stages = mainStages(events);
+  const stages = blocks(events, false);
+  // つながり・流れは本編とアンコールのそれぞれの中で数える
+  const runs = [...stages, ...blocks(events, true)];
 
   const positions = new Map<string, SongPosition>();
   const pos = (song: Song) => {
@@ -82,7 +86,7 @@ export function computePatterns(events: EventSetlist[], options: { minChainCount
 
   const pairs = new Map<string, Transition>();
   const hasNext = new Map<string, number>();
-  for (const stage of stages) {
+  for (const stage of runs) {
     for (let i = 0; i + 1 < stage.length; i++) {
       const from = stage[i]!;
       const to = stage[i + 1]!;
@@ -101,7 +105,7 @@ export function computePatterns(events: EventSetlist[], options: { minChainCount
     stages: stages.length,
     positions: [...positions.values()],
     transitions,
-    chains: findChains(stages, minChainCount, minChainLength),
+    chains: findChains(runs, minChainCount, minChainLength),
   };
 }
 

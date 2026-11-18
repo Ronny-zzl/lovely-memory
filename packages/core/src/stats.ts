@@ -11,6 +11,8 @@ export type Performance = {
   stageName?: string;
   /** ステージ内の曲順（1 始まり） */
   position: number;
+  /** 表示用の番号（M3 / EN / EN1 …） */
+  no: string;
   encore: boolean;
   note?: string;
   members: string[];
@@ -24,6 +26,8 @@ export type Performance = {
 export type SetlistEntry = {
   song: Song;
   position: number;
+  /** 表示用の番号（M3 / EN / EN1 …） */
+  no: string;
   encore: boolean;
   note?: string;
   members: string[];
@@ -99,20 +103,26 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
       const collab = stage.collab ?? false;
       const stageMembers = stage.members ?? event.members;
       const entries: SetlistEntry[] = [];
+      const encores = stage.items.filter((item) => typeof item !== "string" && item.encore).length;
+      let encoreNo = 0;
       stage.items.forEach((item, i) => {
+        const obj = typeof item === "string" ? undefined : item;
+        const encore = obj?.encore ?? false;
+        // アンコールが 1 曲だけなら EN、複数なら EN1・EN2…
+        const no = encore ? (encores > 1 ? `EN${++encoreNo}` : "EN") : `M${i + 1}`;
         const title = itemSong(item);
         const song = findSong(songs, { label: title, title });
         if (!song) {
           unresolved.push({ eventId: event.id, title });
           return;
         }
-        const obj = typeof item === "string" ? undefined : item;
         const debut = !debuted.has(song.id);
         debuted.add(song.id);
         const entry: SetlistEntry = {
           song,
           position: i + 1,
-          encore: obj?.encore ?? false,
+          no,
+          encore,
           note: obj?.note,
           members: obj?.members ?? stageMembers,
           debut,
@@ -125,6 +135,7 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
           stageIndex,
           stageName: stage.name,
           position: entry.position,
+          no,
           encore: entry.encore,
           note: entry.note,
           members: entry.members,

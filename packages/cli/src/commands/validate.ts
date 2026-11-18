@@ -69,6 +69,10 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
 
     for (const [si, stage] of setlistStages(sl).entries()) {
       for (const m of stage.members ?? []) if (!memberIds.has(m)) err(`setlists/${f.file}: stage ${si} の member "${m}" が不明`);
+      const firstEncore = stage.items.findIndex((item) => typeof item !== "string" && item.encore);
+      if (firstEncore >= 0 && stage.items.slice(firstEncore).some((item) => typeof item === "string" || !item.encore)) {
+        err(`setlists/${f.file}: stage ${si} でアンコールの後に本編の曲がある`);
+      }
       for (const item of stage.items) {
         const title = typeof item === "string" ? item : item.song;
         const song = findSong(songs, { label: title, title });

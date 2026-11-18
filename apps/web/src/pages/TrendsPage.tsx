@@ -52,8 +52,8 @@ export function TrendsPage() {
     <div className="trends">
       <h2 className="visually-hidden">セトリの傾向</h2>
       <p className="muted small">
-        セトリのある {patterns.stages}{" "}
-        ステージの本編（アンコール・コラボステージを除く）の曲順から集計。割合は本編でその曲が歌われた回数に対するもの。
+        セトリのある {patterns.stages} ステージ（コラボステージを除く）から集計。1
+        曲目・ラストは本編（アンコールを除く）での位置で、割合は本編でその曲が歌われた回数に対するもの。つながりは本編どうし・アンコールどうしで続いた曲。
       </p>
 
       <MilestonesSection />

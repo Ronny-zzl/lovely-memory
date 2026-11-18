@@ -200,7 +200,7 @@ export function eventCard(artist: ArtistConfig, event: ResolvedEvent, setlist: E
     for (const e of st.entries) {
       total++;
       lines.push(
-        `<li><span class="no">${e.encore ? "EN" : `M${e.position}`}</span>${esc(e.song.title)}${e.debut && markDebut ? `<span class="debut">初披露</span>` : ""}</li>`,
+        `<li><span class="no">${e.no}</span>${esc(e.song.title)}${e.debut && markDebut ? `<span class="debut">初披露</span>` : ""}</li>`,
       );
     }
   }

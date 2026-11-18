@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router";
+import { Fragment } from "react";
 import { birthdayMembers, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
@@ -111,33 +112,41 @@ export function EventDetailPage() {
                   {stage.note && <span className="stage-note">{stage.note}</span>}
                 </h3>
               )}
-              <ol className="setlist-items">
-                {stage.entries.map((e, i) => {
-                  // 公演の出演メンバーと違う場合だけ（ユニット曲・一部メンバー曲など）表示する
-                  const partial = e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
-                  return (
-                    <li key={i} className={e.encore ? "encore" : undefined}>
-                      <span className="item-no">{e.encore ? "EN" : `M${e.position}`}</span>
-                      <Link to={`/${artist.id}/songs/${e.song.id}`} className="item-title">
-                        {e.song.title}
-                      </Link>
-                      {e.debut && (
-                        <span className="badge debut" title="記録上の初披露">
-                          初披露
-                        </span>
-                      )}
-                      {e.song.cover && <span className="item-note">カバー（原曲: {e.song.cover.artist}）</span>}
-                      {e.note && <span className="item-note">{e.note}</span>}
-                      {e.with && <span className="item-with">with {e.with.join("・")}</span>}
-                      {partial && (
-                        <span className="item-members" title={e.members.map((m) => memberName.get(m)).join("・")}>
-                          <MemberDots artist={artist} present={e.members} />
-                        </span>
-                      )}
-                    </li>
-                  );
-                })}
-              </ol>
+              {[stage.entries.filter((e) => !e.encore), stage.entries.filter((e) => e.encore)].map(
+                (entries, part) =>
+                  entries.length > 0 && (
+                    <Fragment key={part}>
+                      {part === 1 && <h4 className="encore-heading">アンコール</h4>}
+                      <ol className="setlist-items">
+                        {entries.map((e) => {
+                          // 公演の出演メンバーと違う場合だけ（ユニット曲・一部メンバー曲など）表示する
+                          const partial = e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
+                          return (
+                            <li key={e.position} className={e.encore ? "encore" : undefined}>
+                              <span className="item-no">{e.no}</span>
+                              <Link to={`/${artist.id}/songs/${e.song.id}`} className="item-title">
+                                {e.song.title}
+                              </Link>
+                              {e.debut && (
+                                <span className="badge debut" title="記録上の初披露">
+                                  初披露
+                                </span>
+                              )}
+                              {e.song.cover && <span className="item-note">カバー（原曲: {e.song.cover.artist}）</span>}
+                              {e.note && <span className="item-note">{e.note}</span>}
+                              {e.with && <span className="item-with">with {e.with.join("・")}</span>}
+                              {partial && (
+                                <span className="item-members" title={e.members.map((m) => memberName.get(m)).join("・")}>
+                                  <MemberDots artist={artist} present={e.members} />
+                                </span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </Fragment>
+                  ),
+              )}
             </div>
           ))}
           {setlist.note && <p className="setlist-note small">{setlist.note}</p>}

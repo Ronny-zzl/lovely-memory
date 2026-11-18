@@ -122,4 +122,39 @@ Oh!MAMA!GOD?
       ["トランジション", true],
     ]);
   });
+
+  const encoreFlags = (text: string) =>
+    parseSetlistText(text).map((st) => [st.name, st.items.map((i) => `${i.title}${i.encore ? "(EN)" : ""}`)]);
+
+  it.each(["アンコール", "-EN-", "【アンコール】", "ENCORE", "🎵アンコール🎵", "Wアンコール"])(
+    "treats a standalone %s line as the encore start in numbered setlists",
+    (marker) => {
+      expect(encoreFlags(`M1_ もしも\nM2_ オトワ\n${marker}\nM3_ スプらっしゃい！`)).toEqual([
+        [undefined, ["もしも", "オトワ", "スプらっしゃい！(EN)"]],
+      ]);
+    },
+  );
+
+  it("resets the encore at the next stage and keeps 【アンコール】 out of stage names", () => {
+    expect(encoreFlags("【1部】\nM1_ もしも\n【アンコール】\nM2_ オトワ\n【2部】\nM1_ スプらっしゃい！")).toEqual([
+      ["1部", ["もしも", "オトワ(EN)"]],
+      ["2部", ["スプらっしゃい！"]],
+    ]);
+  });
+
+  it("reads W encore lines", () => {
+    expect(encoreFlags("M1_ もしも\nEN1_ オトワ\nWEN_ スプらっしゃい！")).toEqual([
+      [undefined, ["もしも", "オトワ(EN)", "スプらっしゃい！(EN)"]],
+    ]);
+  });
+
+  it("keeps unknown numbered-looking lines as items instead of dropping them", () => {
+    expect(encoreFlags("M1_ もしも\nXX1_ オトワ")).toEqual([[undefined, ["もしも", "XX1_ オトワ"]]]);
+  });
+
+  it.each(["【アンコール】", "🎵アンコール🎵", "ENCORE"])("treats %s as the encore start in unnumbered setlists", (marker) => {
+    expect(encoreFlags(`セトリ\nもしも\nオトワ\n${marker}\nスプらっしゃい！`)).toEqual([
+      [undefined, ["もしも", "オトワ", "スプらっしゃい！(EN)"]],
+    ]);
+  });
 });

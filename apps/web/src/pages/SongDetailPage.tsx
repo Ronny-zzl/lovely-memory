@@ -324,7 +324,7 @@ export function SongDetailPage() {
                         </span>
                       </span>
                       <span className="position" title={`${size} 曲中 ${p.position} 曲目`}>
-                        {p.encore ? "EN" : `M${p.position}`}
+                        {p.no}
                         <span className="muted"> / {size}</span>
                       </span>
                     </Link>
