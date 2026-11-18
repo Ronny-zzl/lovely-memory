@@ -12,7 +12,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lm": "node packages/cli/src/index.ts",
-    "smoke": "pnpm --filter @lovely-memory/web smoke"
+    "smoke": "pnpm --filter @lovely-memory/web smoke",
+    "visual": "pnpm --filter @lovely-memory/web visual"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
