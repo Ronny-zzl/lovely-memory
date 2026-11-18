@@ -15,12 +15,26 @@ const DESCRIPTION =
  * og:image・og:url は絶対 URL が必要なので、環境変数 SITE_URL（デプロイ時はリポジトリ変数）から作る。
  * 未設定のとき（ローカル開発など）はその 2 つを省く。
  */
+function siteUrl(): string | undefined {
+  const raw = process.env.SITE_URL?.trim();
+  return raw ? (raw.endsWith("/") ? raw : `${raw}/`) : undefined;
+}
+
 export function siteMeta(): Plugin {
   return {
     name: "lovely-memory:site-meta",
+    // robots.txt が無いと SPA のフォールバックで index.html が返り、クローラーが HTML を robots.txt として読んでしまう。
+    // sitemap.xml（デプロイ時に og-pages が書く）は絶対 URL で示す必要があるので、SITE_URL があるときだけ載せる
+    generateBundle() {
+      const site = siteUrl();
+      this.emitFile({
+        type: "asset",
+        fileName: "robots.txt",
+        source: ["User-agent: *", "Allow: /", ...(site ? ["", `Sitemap: ${site}sitemap.xml`] : []), ""].join("\n"),
+      });
+    },
     transformIndexHtml() {
-      const raw = process.env.SITE_URL?.trim();
-      const site = raw ? (raw.endsWith("/") ? raw : `${raw}/`) : undefined;
+      const site = siteUrl();
       const tags: [string, string, string][] = [
         ["name", "description", DESCRIPTION],
         ["property", "og:type", "website"],

@@ -15,7 +15,7 @@ import {
   type ArtistConfig,
 } from "@lovely-memory/core";
 import { eventCard, songCard } from "../og/cards.ts";
-import { pageHtml, type PageMeta } from "../og/meta.ts";
+import { pageHtml, sitemap, type PageMeta } from "../og/meta.ts";
 import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs, REPO_ROOT, siteUrl } from "../repo.ts";
 
 const SITE_NAME = "ラブリィメモリー";
@@ -52,6 +52,9 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
     await writeFile(file, pageHtml(base, p.meta));
   }
   console.log(`pages: ${pages.length}`);
+
+  // 検索エンジン向けの全ページ一覧（robots.txt から参照。画像の生成より先に書き、そちらが失敗しても残るようにする）
+  await writeFile(join(dist, "sitemap.xml"), sitemap([site, ...pages.map((p) => p.meta.url)]));
 
   if (opts["skip-images"]) return;
   const targets = opts.only ? cards.filter((c) => c.file.includes(opts.only!)) : cards;

@@ -34,3 +34,15 @@ export function pageHtml(base: string, m: PageMeta): string {
   }
   return html;
 }
+
+/** 検索エンジン向けのページ一覧（sitemap.xml） */
+export function sitemap(urls: string[]): string {
+  const xml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+    ...urls.map((u) => `  <url><loc>${xml(u)}</loc></url>`),
+    `</urlset>`,
+    "",
+  ].join("\n");
+}

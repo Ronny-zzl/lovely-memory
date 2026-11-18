@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pageHtml } from "./meta.ts";
+import { pageHtml, sitemap } from "./meta.ts";
 
 const BASE = `<!doctype html><html><head>
     <title>ラブリィメモリー</title>
@@ -34,5 +34,14 @@ describe("pageHtml", () => {
     const html = pageHtml(BASE, { title: "T", description: "D", url: "https://example.com/a" });
     expect(html).toContain(`<meta property="og:image" content="https://example.com/og.png">`);
     expect(html).toContain(`<meta property="og:type" content="website">`);
+  });
+});
+
+describe("sitemap", () => {
+  it("URL を並べ、XML の特殊文字をエスケープする", () => {
+    const xml = sitemap(["https://example.com/", "https://example.com/a?x=1&y=2"]);
+    expect(xml).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+    expect(xml).toContain("<url><loc>https://example.com/</loc></url>");
+    expect(xml).toContain("<loc>https://example.com/a?x=1&amp;y=2</loc>");
   });
 });
