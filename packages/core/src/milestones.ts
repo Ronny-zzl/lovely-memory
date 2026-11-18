@@ -1,4 +1,4 @@
-import type { ResolvedEvent } from "./events.ts";
+import type { HeldCheck, ResolvedEvent } from "./events.ts";
 import type { Song } from "./schema.ts";
 import type { Stats } from "./stats.ts";
 
@@ -74,10 +74,13 @@ export function computeMilestones({
   liveEvents,
   since,
   today,
+  held: isHeld,
 }: {
   stats: Stats;
-  /** ライブ（特典会を除く）、日付昇順。開催済みかどうかは today で判断する */
+  /** ライブ（特典会を除く）、日付昇順 */
   liveEvents: ResolvedEvent[];
+  /** 開催済みかどうか（heldCheck） */
+  held: HeldCheck;
   /** デビュー日（無ければ日数の節目は出さない） */
   since?: string;
   today: string;
@@ -121,7 +124,7 @@ export function computeMilestones({
   }
 
   // 通算公演数（開催済みのライブ）
-  const held = liveEvents.filter((e) => e.date <= today);
+  const held = liveEvents.filter(isHeld);
   held.forEach((e, i) => {
     if (isEventCountMilestone(i + 1)) achieved.push({ kind: "event-count", date: e.date, eventId: e.id, count: i + 1 });
   });
@@ -174,12 +177,14 @@ export function upcomingMilestones({
   liveEvents,
   since,
   today,
+  held,
   maxRemaining = 2,
   withinDays = 45,
 }: {
   milestones: Milestones;
   stats: Stats;
   liveEvents: ResolvedEvent[];
+  held: HeldCheck;
   since?: string;
   today: string;
   maxRemaining?: number;
@@ -204,7 +209,7 @@ export function upcomingMilestones({
     return ra - rb || ("rate" in b ? b.rate : 0) - ("rate" in a ? a.rate : 0);
   });
 
-  const next = liveEvents.find((e) => e.date > today);
+  const next = liveEvents.find((e) => !held(e));
   if (next && isEventCountMilestone(milestones.eventCount + 1)) out.push({ kind: "event-count", count: milestones.eventCount + 1, event: next });
 
   const nextTotal = nextAfter(milestones.totalSongs, isTotalSongsMilestone);

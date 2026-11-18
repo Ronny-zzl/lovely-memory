@@ -85,15 +85,15 @@ function EventernoteSection() {
 type Heard = { song: Song; count: number; first: { eventId: number; date: string } };
 
 export function AttendancePage() {
-  const { artist, events, allStats } = useArtistData();
+  const { artist, events, allStats, isHeld } = useArtistData();
   const attendance = useAttendance();
   const today = todayJst();
 
   const live = events.filter(isLiveEvent);
   const attended = live.filter((e) => attendance.isAttended(e.id));
-  const past = attended.filter((e) => e.date <= today);
-  const planned = attended.filter((e) => e.date > today);
-  const held = live.filter((e) => e.date <= today).length;
+  const past = attended.filter(isHeld);
+  const planned = attended.filter((e) => !isHeld(e));
+  const held = live.filter(isHeld).length;
 
   const { heard, notHeard, total } = useMemo(() => {
     const ids = new Set(past.map((e) => e.id));
@@ -129,7 +129,7 @@ export function AttendancePage() {
           {e.venue && <span className="event-meta">{e.venue.name}</span>}
         </span>
       </Link>
-      <AttendanceToggle eventId={e.id} date={e.date} />
+      <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />
     </li>
   );
 

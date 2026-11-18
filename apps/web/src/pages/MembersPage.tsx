@@ -5,13 +5,13 @@ import { birthdayCountdown, displayTitle, formatDate, formatMonthDay, formatPerc
 import { useArtistData } from "./ArtistLayout.tsx";
 
 export function MembersPage() {
-  const { artist, events, allStats } = useArtistData();
+  const { artist, events, allStats, isHeld } = useArtistData();
   const today = todayJst();
   const members = useMemo(
-    () => computeMemberStats({ artist, events, stats: allStats, until: today }),
-    [artist, events, allStats, today],
+    () => computeMemberStats({ artist, events, stats: allStats, held: isHeld }),
+    [artist, events, allStats, isHeld],
   );
-  const assumed = events.filter((e) => isLiveEvent(e) && e.date <= today && e.membersSource === "assumed").length;
+  const assumed = events.filter((e) => isLiveEvent(e) && isHeld(e) && e.membersSource === "assumed").length;
 
   const soonest = upcomingBirthdays(artist.members, today)[0];
 

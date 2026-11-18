@@ -5,11 +5,11 @@ import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
-import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday, todayJst } from "../format.ts";
+import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 export function EventDetailPage() {
-  const { artist, events, allStats, milestones } = useArtistData();
+  const { artist, events, allStats, milestones, isHeld } = useArtistData();
   const id = Number(useParams().eventId);
   const event = events.find((e) => e.id === id);
 
@@ -35,7 +35,7 @@ export function EventDetailPage() {
   const multiStage = (setlist?.stages.length ?? 0) > 1;
   // この公演で達成した節目（グループの記録を先に）
   const birthdays = birthdayMembers(artist.members, event.date);
-  const costume = eventCostume(artist, event, todayJst());
+  const costume = eventCostume(artist, event, isHeld(event));
   const reached = milestones.achieved.filter((m) => m.eventId === id).sort((a, b) => Number("song" in a) - Number("song" in b));
 
   return (
@@ -71,7 +71,7 @@ export function EventDetailPage() {
         )}
         {event.note && <p className="small">{event.note}</p>}
         <div className="detail-actions">
-          {isLiveEvent(event) && <AttendanceToggle eventId={event.id} date={event.date} variant="detail" />}
+          {isLiveEvent(event) && <AttendanceToggle eventId={event.id} upcoming={!isHeld(event)} variant="detail" />}
         </div>
         <ShareButtons
           text={`${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」${setlist ? "のセトリ" : ""}（${artist.name}）`}

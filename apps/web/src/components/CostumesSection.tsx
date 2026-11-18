@@ -1,12 +1,12 @@
 import { Link } from "react-router";
 import { costumeStats } from "@lovely-memory/core/runtime";
-import { formatDate, todayJst } from "../format.ts";
+import { formatDate } from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 
 /** 傾向タブの「衣装」：衣装ごとの公演数と、最初・最後に着た公演 */
 export function CostumesSection() {
-  const { artist, events } = useArtistData();
-  const stats = costumeStats(artist, events, todayJst());
+  const { artist, events, isHeld } = useArtistData();
+  const stats = costumeStats(artist, events, isHeld);
   if (stats.length === 0) return null;
   const link = (e: { id: number; date: string }) => (
     <Link to={`/${artist.id}/events/${e.id}`} className="muted small">

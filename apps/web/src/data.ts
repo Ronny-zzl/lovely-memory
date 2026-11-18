@@ -1,7 +1,9 @@
 import {
   computeMilestones,
   computePatterns,
+  heldCheck,
   isLiveEvent,
+  type HeldCheck,
   computeStats,
   resolveEvents,
   type ArtistConfig,
@@ -41,6 +43,8 @@ export type ArtistData = {
   patterns: Patterns;
   /** 記録の節目（読み込んだ日の時点） */
   milestones: Milestones;
+  /** 開催済みか（前日以前、または当日でセトリ登録済み）。当日でもセトリが無ければ開催予定 */
+  isHeld: HeldCheck;
 };
 
 async function load(artist: ArtistConfig): Promise<ArtistData> {
@@ -49,8 +53,10 @@ async function load(artist: ArtistConfig): Promise<ArtistData> {
   const { songs, events: rawEvents, overrides, setlists } = (await loader()).default;
   const events = resolveEvents(rawEvents, overrides, artist);
   const allStats = computeStats({ songs, events, setlists });
-  const milestones = computeMilestones({ stats: allStats, liveEvents: events.filter(isLiveEvent), since: artist.since, today: todayJst() });
-  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events), milestones };
+  const today = todayJst();
+  const isHeld = heldCheck(today, setlists.map((s) => s.event));
+  const milestones = computeMilestones({ stats: allStats, liveEvents: events.filter(isLiveEvent), since: artist.since, today, held: isHeld });
+  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events), milestones, isHeld };
 }
 
 const cache = new Map<string, Promise<ArtistData>>();

@@ -1,4 +1,4 @@
-import { isLiveEvent, type ResolvedEvent } from "./events.ts";
+import { isLiveEvent, type HeldCheck, type ResolvedEvent } from "./events.ts";
 import type { ArtistConfig, Member } from "./schema.ts";
 import type { Stats } from "./stats.ts";
 
@@ -22,20 +22,20 @@ export type MemberStatsInput = {
   events: ResolvedEvent[];
   /** computeStats の結果（歌唱数の集計に使う） */
   stats: Stats;
-  /** この日までに開催された公演を対象にする（YYYY-MM-DD、当日を含む） */
-  until: string;
+  /** 開催済みの公演だけを対象にする（heldCheck） */
+  held: HeldCheck;
 };
 
 /**
  * メンバーごとの出演・欠席・歌唱数。
  * 出演メンバーの情報が無い公演（membersSource: "assumed"）は全員出演として数える。
  */
-export function computeMemberStats({ artist, events, stats, until }: MemberStatsInput): MemberStats[] {
-  const held = events.filter((e) => isLiveEvent(e) && e.date <= until);
+export function computeMemberStats({ artist, events, stats, held: isHeld }: MemberStatsInput): MemberStats[] {
+  const held = events.filter((e) => isLiveEvent(e) && isHeld(e));
 
   const performances = new Map<string, number>();
   for (const es of stats.events) {
-    if (es.event.date > until) continue;
+    if (!isHeld(es.event)) continue;
     for (const stage of es.stages) {
       for (const entry of stage.entries) {
         for (const m of entry.members) performances.set(m, (performances.get(m) ?? 0) + 1);

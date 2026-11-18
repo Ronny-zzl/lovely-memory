@@ -93,25 +93,37 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
   );
 }
 
+/** 公演が開催済みかどうか */
+export type HeldCheck = (e: Pick<ResolvedEvent, "id" | "date">) => boolean;
+
+/**
+ * 開催済みとみなす公演：前日以前、または当日でセトリが登録済みのもの。
+ * 当日でもセトリが無ければまだ「開催予定」（公演一覧の「今後の公演」と同じ基準）
+ */
+export function heldCheck(today: string, setlistEventIds: Iterable<number>): HeldCheck {
+  const withSetlist = new Set(setlistEventIds);
+  return (e) => e.date < today || (e.date === today && withSetlist.has(e.id));
+}
+
 export type Costume = ArtistConfig["costumes"][number];
 
 /**
  * 公演の衣装。overrides での指定があればそれ、無ければその日までに始まった通常衣装のうち最新のもの。
- * まだ開催していない公演・ライブでないものは分からないので undefined
+ * まだ開催していない公演（held=false）・ライブでないものは分からないので undefined
  */
-export function eventCostume(artist: ArtistConfig, event: ResolvedEvent, today: string): Costume | undefined {
+export function eventCostume(artist: ArtistConfig, event: ResolvedEvent, held: boolean): Costume | undefined {
   if (event.costume) return artist.costumes.find((c) => c.id === event.costume);
-  if (event.date > today || !isLiveEvent(event)) return undefined;
+  if (!held || !isLiveEvent(event)) return undefined;
   return artist.costumes
     .filter((c) => !c.special && c.since && c.since <= event.date)
     .sort((a, b) => b.since!.localeCompare(a.since!))[0];
 }
 
 /** 衣装ごとの着用回数と、最初・最後の公演（着用回数の多い順） */
-export function costumeStats(artist: ArtistConfig, events: ResolvedEvent[], today: string) {
+export function costumeStats(artist: ArtistConfig, events: ResolvedEvent[], held: HeldCheck) {
   const by = new Map<string, { costume: Costume; events: ResolvedEvent[] }>();
   for (const e of events) {
-    const c = eventCostume(artist, e, today);
+    const c = eventCostume(artist, e, held(e));
     if (!c) continue;
     const s = by.get(c.id) ?? { costume: c, events: [] };
     s.events.push(e);

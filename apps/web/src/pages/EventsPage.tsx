@@ -5,7 +5,7 @@ import { AttendanceHint } from "../components/AttendanceHint.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
-import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday, todayJst } from "../format.ts";
+import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 const ALL_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
@@ -13,7 +13,7 @@ const DEFAULT_HIDDEN: EventType[] = ["tokuten"];
 
 
 export function EventsPage() {
-  const { artist, events, allStats } = useArtistData();
+  const { artist, events, allStats, isHeld } = useArtistData();
   const [params, setParams] = useSearchParams();
 
   const setlistByEvent = useMemo(() => new Map(allStats.events.map((e) => [e.event.id, e])), [allStats]);
@@ -39,10 +39,9 @@ export function EventsPage() {
     );
   };
 
-  const today = todayJst();
   // 選ばれた種別のどれかに該当すれば表示（主催対バンは「対バン・フェス」にも該当）
   const visible = events.filter((e) => [...selected].some((t) => eventHasType(e, t)));
-  const upcoming = visible.filter((e) => e.date >= today && !setlistByEvent.has(e.id));
+  const upcoming = visible.filter((e) => !isHeld(e));
   const past = visible.filter((e) => !upcoming.includes(e)).reverse();
 
   // 月ごとにまとめる（新しい順）
@@ -56,7 +55,7 @@ export function EventsPage() {
     const sl = setlistByEvent.get(e.id);
     const entries = sl?.stages.flatMap((s) => s.entries) ?? [];
     const debuts = entries.filter((x) => x.debut).length;
-    const costume = eventCostume(artist, e, today);
+    const costume = eventCostume(artist, e, isHeld(e));
     return (
       <li key={e.id} className="with-toggle">
         <Link to={String(e.id)} className="event-row">
@@ -73,7 +72,7 @@ export function EventsPage() {
                   {entries.length} 曲{sl.stages.length > 1 && `（${sl.stages.length} ステージ）`}
                 </span>
               ) : (
-                isLiveEvent(e) && <span className="muted">{e.date >= today ? "開催予定" : "セトリ未登録"}</span>
+                isLiveEvent(e) && <span className="muted">{isHeld(e) ? "セトリ未登録" : "開催予定"}</span>
               )}
               {debuts > 0 && <span className="debut-count">初披露 {debuts}</span>}
               {costume?.special && <span className="costume-badge">{costume.name}</span>}
@@ -81,7 +80,7 @@ export function EventsPage() {
           </span>
           <MemberDots artist={artist} present={e.members} />
         </Link>
-        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} date={e.date} />}
+        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />}
       </li>
     );
   };

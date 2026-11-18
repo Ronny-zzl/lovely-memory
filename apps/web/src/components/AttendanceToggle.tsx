@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useAttendance } from "../attendance.ts";
-import { todayJst } from "../format.ts";
 
 /**
  * 公演の「参戦」印のボタン。開催前の公演は「予定」。
  * variant="row" は一覧の行の右端、"detail" は公演ページ（説明文付き）。
  */
-export function AttendanceToggle({ eventId, date, variant = "row" }: { eventId: number; date: string; variant?: "row" | "detail" }) {
+export function AttendanceToggle({ eventId, upcoming, variant = "row" }: { eventId: number; upcoming: boolean; variant?: "row" | "detail" }) {
   const attendance = useAttendance();
   const [pop, setPop] = useState(false);
   const on = attendance.isAttended(eventId);
-  const future = date > todayJst();
+  // 開催予定（当日でもセトリ未登録なら予定）は「参戦予定」
+  const future = upcoming;
   const word = future ? "予定" : "参戦";
   const fromEventernote = attendance.source(eventId) === "eventernote";
   const action = on ? `${word}の印を外す` : future ? "参戦予定にする" : "参戦した公演に印を付ける";

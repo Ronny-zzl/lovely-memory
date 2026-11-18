@@ -1,3 +1,4 @@
+import { heldCheck } from "./events.ts";
 import { describe, expect, it } from "vitest";
 import type { ResolvedEvent } from "./events.ts";
 import { computeMemberStats } from "./members.ts";
@@ -39,7 +40,7 @@ const setlists = [
 
 describe("computeMemberStats", () => {
   const stats = computeStats({ songs, events, setlists });
-  const [a, b] = computeMemberStats({ artist, events, stats, until: "2026-11-17" });
+  const [a, b] = computeMemberStats({ artist, events, stats, held: heldCheck("2026-11-18", setlists.map((s) => s.event)) });
 
   it("counts appearances over held live events only", () => {
     expect(a).toMatchObject({ appearances: 2, total: 3 });

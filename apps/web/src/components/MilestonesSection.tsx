@@ -97,10 +97,10 @@ function History({ items, artistId, artistName, titles }: { items: Milestone[]; 
 
 /** 傾向タブの「マイルストーン」：これから達成しそうなもの・最近達成したもの・これまでの記録 */
 export function MilestonesSection() {
-  const { artist, events, allStats, milestones } = useArtistData();
+  const { artist, events, allStats, milestones, isHeld } = useArtistData();
   const today = todayJst();
   const live = events.filter(isLiveEvent);
-  const upcoming = upcomingMilestones({ milestones, stats: allStats, liveEvents: live, since: artist.since, today });
+  const upcoming = upcomingMilestones({ milestones, stats: allStats, liveEvents: live, since: artist.since, today, held: isHeld });
   const dates = [...new Set(milestones.achieved.map((m) => m.date))];
   const cut = dates.at(-RECENT_DATES) ?? "";
   const recent = milestones.achieved.filter((m) => m.date >= cut);

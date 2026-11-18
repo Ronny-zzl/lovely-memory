@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ResolvedEvent } from "./events.ts";
+import { heldCheck, type ResolvedEvent } from "./events.ts";
 import { computeMilestones, debutDayMilestones, isSongCountMilestone, upcomingMilestones } from "./milestones.ts";
 import { Setlist, Song } from "./schema.ts";
 import { computeStats } from "./stats.ts";
@@ -15,7 +15,8 @@ const setlists = events.map((e, i) =>
 );
 const stats = computeStats({ songs, events, setlists });
 const today = day(11);
-const m = computeMilestones({ stats, liveEvents: events, since: day(0), today });
+const held = heldCheck(day(12), setlists.map((s) => s.event));
+const m = computeMilestones({ stats, liveEvents: events, since: day(0), today, held });
 const of = (kind: string) => m.achieved.filter((x) => x.kind === kind);
 
 describe("computeMilestones", () => {
@@ -57,7 +58,7 @@ describe("computeMilestones", () => {
 describe("upcomingMilestones", () => {
   it("lists what the next event could bring", () => {
     const next = { ...ev(12), date: day(12) };
-    const up = upcomingMilestones({ milestones: m, stats, liveEvents: [...events, next], since: day(0), today, maxRemaining: 8 });
+    const up = upcomingMilestones({ milestones: m, stats, liveEvents: [...events, next], since: day(0), today, held, maxRemaining: 8 });
     // 残り回数の少ない順、同じなら歌唱率の高い順（A は毎回歌われているので B より先）
     expect(up.filter((u) => u.kind === "song-count").map((u) => u.kind === "song-count" && [u.song.title, u.remaining])).toEqual([
       ["C", 5],
@@ -67,15 +68,17 @@ describe("upcomingMilestones", () => {
     // A は次も歌えば 13 連続（節目ではない）
     expect(up.some((u) => u.kind === "song-streak")).toBe(false);
     // 既定（あと 2 回以内）では何も出ない
-    expect(upcomingMilestones({ milestones: m, stats, liveEvents: [...events, next], since: day(0), today }).filter((u) => u.kind === "song-count")).toEqual([]);
+    expect(upcomingMilestones({ milestones: m, stats, liveEvents: [...events, next], since: day(0), today, held }).filter((u) => u.kind === "song-count")).toEqual([]);
   });
 
   it("flags the next event when it is a round number", () => {
     const more = Array.from({ length: 13 }, (_, i) => ev(12 + i));
     const all = [...events, ...more];
-    const held = computeMilestones({ stats, liveEvents: all, since: day(0), today: day(23) });
-    expect(held.eventCount).toBe(24);
-    const up = upcomingMilestones({ milestones: held, stats, liveEvents: all, since: day(0), today: day(23) });
+    // 当日（day 24）の公演はセトリが無いので、まだ開催予定
+    const held24 = heldCheck(day(24), setlists.map((s) => s.event));
+    const ms = computeMilestones({ stats, liveEvents: all, since: day(0), today: day(24), held: (e) => e.date < day(24) || held24(e) });
+    expect(ms.eventCount).toBe(24);
+    const up = upcomingMilestones({ milestones: ms, stats, liveEvents: all, since: day(0), today: day(24), held: held24 });
     expect(up.find((u) => u.kind === "event-count")).toMatchObject({ count: 25, event: { id: 1024 } });
   });
 });
