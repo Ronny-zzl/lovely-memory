@@ -1,4 +1,5 @@
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
+import "./UnitTag.css";
 
 type Unit = ArtistConfig["units"][number];
 

@@ -1,0 +1,150 @@
+/* EventDetailPage の見た目 */
+
+.event-detail-header {
+  margin: 12px 0 20px;
+}
+
+.event-detail-date {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.event-detail-title {
+  margin: 4px 0 8px;
+  font-size: 1.3rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.event-detail-meta,
+.event-detail-members {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 4px 0;
+}
+
+.setlist {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 16px 12px;
+}
+
+.stage-name {
+  margin: 12px 0 4px;
+  font-size: 0.95rem;
+  color: var(--accent-text);
+}
+
+.stage-note {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.setlist-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setlist-items li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.setlist-items li:last-child {
+  border-bottom: 0;
+}
+
+.item-no {
+  width: 2.6em;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.setlist-items li.encore .item-no {
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.item-title {
+  font-weight: 600;
+}
+
+.item-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.setlist-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.event-links {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.event-links a {
+  color: var(--accent-2);
+}
+
+.event-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  font-variant-numeric: tabular-nums;
+}
+
+.event-nav a {
+  display: flex;
+  flex-direction: column;
+  max-width: 48%;
+  color: var(--accent-2);
+  text-decoration: none;
+}
+
+.event-nav .nav-next {
+  text-align: right;
+}
+
+.nav-title {
+  font-size: 0.75rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-with {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.detail-actions {
+  margin-top: 12px;
+}
+
+.event-milestones {
+  margin: 4px 0 20px;
+}
+
+.event-costume {
+  margin: 4px 0;
+}
+
+.event-costume.special {
+  font-weight: 700;
+  color: var(--accent-text);
+}

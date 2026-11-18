@@ -10,6 +10,7 @@ type OutputChunk = Rollup.OutputChunk;
  * index.js を読み込んで実行してから要求されるので、そのままだと読み込みが 1 段遅れる。
  * ビルド結果からそれぞれのチャンク（と、その先で必要になるチャンク）を調べ、
  * URL に合うものを <link rel="modulepreload"> で先に要求する小さなスクリプトを index.html に入れる。
+ * ページの CSS も同じく <link rel="stylesheet"> で先に入れる（Vite は同じ href の link があれば読み込み直さない）。
  */
 
 /** pages/ のファイル名 → main.tsx のルート。パスの判定はスクリプトの PAGE_OF と揃える */
@@ -25,7 +26,10 @@ const PAGES = [
 ];
 const ARTIST_MODULE = /virtual:lovely-memory\/artist\/([^/?]+)$/;
 
-/** 入口（index.js）とそのまま読み込まれるチャンクは Vite が既に modulepreload しているので除く */
+/**
+ * チャンクと、その先で読み込まれるチャンク・CSS のファイル名。
+ * 入口（index.js）とそのまま読み込まれるもの（already）は、index.html に既に入っているので除く
+ */
 function filesFor(chunk: OutputChunk, bundle: OutputBundle, already: Set<string>): string[] {
   const out = new Set<string>();
   const visit = (c: OutputChunk) => {
@@ -35,6 +39,8 @@ function filesFor(chunk: OutputChunk, bundle: OutputBundle, already: Set<string>
       const next = bundle[f];
       if (next?.type === "chunk") visit(next);
     }
+    // CSS は依存先の後に自分の分（Vite が読み込む順と同じ。ページの CSS が部品の CSS より後に来る）
+    for (const css of c.viteMetadata?.importedCss ?? []) if (!already.has(css)) out.add(css);
   };
   visit(chunk);
   return [...out];
@@ -73,7 +79,7 @@ var s=location.pathname.split("/").filter(Boolean);
 var PAGE_OF={songs:s[2]?"SongDetailPage":"SongStatsPage",events:s[2]?"EventDetailPage":"EventsPage",trends:"TrendsPage",members:"MembersPage",attendance:"AttendancePage"};
 var page=s.length===0?"ArtistList":s.length===1?"SongStatsPage":PAGE_OF[s[1]];
 var files=[].concat((page&&P[page])||[],(s[0]&&A[s[0]])||[]);
-files.forEach(function(f){var l=document.createElement("link");l.rel="modulepreload";l.href="/"+f;document.head.appendChild(l);});
+files.forEach(function(f){var l=document.createElement("link");l.rel=f.slice(-4)===".css"?"stylesheet":"modulepreload";l.href="/"+f;document.head.appendChild(l);});
 })();`;
         return [{ tag: "script", children: script, injectTo: "head" }];
       },

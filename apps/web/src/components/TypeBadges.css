@@ -1,0 +1,40 @@
+/* TypeBadges の見た目 */
+
+.type-badge {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  vertical-align: 0.1em;
+  white-space: nowrap;
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+}
+
+.type-oneman {
+  background: var(--accent);
+  color: #fff;
+}
+
+.type-taiban {
+  background: var(--badge-2nd);
+  color: var(--badge-2nd-fg);
+}
+
+.type-release {
+  background: var(--badge-cover);
+  color: var(--badge-cover-fg);
+}
+
+.type-free {
+  background: var(--accent-soft);
+  color: var(--badge-2nd-fg);
+}
+
+.type-tokuten {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}

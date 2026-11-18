@@ -21,6 +21,7 @@ import {
 } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./SongStatsPage.css";
 
 type SortKey = "title" | "count" | "events" | "rate" | "first" | "last" | "daysSince";
 

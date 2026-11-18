@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { costumeStats } from "@lovely-memory/core/runtime";
 import { formatDate } from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
+import "./CostumesSection.css";
 
 /** 傾向タブの「衣装」：衣装ごとの公演数と、最初・最後に着た公演 */
 export function CostumesSection() {

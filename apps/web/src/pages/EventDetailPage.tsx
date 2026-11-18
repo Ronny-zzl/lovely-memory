@@ -7,6 +7,7 @@ import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./EventDetailPage.css";
 
 export function EventDetailPage() {
   const { artist, events, allStats, milestones, isHeld } = useArtistData();

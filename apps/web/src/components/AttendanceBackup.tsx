@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { applyBackup, BackupError, countAttended, parseBackup, toBackup, toCode, type AttendanceData } from "../attendance-backup.ts";
 import { useAttendance } from "../attendance.ts";
+import "./AttendanceBackup.css";
 
 /** 参戦記録のバックアップ（ファイル）と、別の端末への引き継ぎ（コード） */
 export function AttendanceBackup() {

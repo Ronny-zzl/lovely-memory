@@ -6,6 +6,7 @@ import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText, todayJst } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./SongDetailPage.css";
 
 const RELEASE_KIND: Record<NonNullable<Song["release"]>["kind"], string> = {
   ep: "EP",

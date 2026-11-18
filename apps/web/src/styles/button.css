@@ -1,0 +1,48 @@
+/* 丸いボタン */
+
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.share-button:hover {
+  background: var(--row-hover);
+}
+
+.share-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.share-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.share-button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.share-button.primary:hover {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+}

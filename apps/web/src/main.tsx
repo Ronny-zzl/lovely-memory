@@ -5,7 +5,17 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider, type RouteObject } from "react-router";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
 import { findArtist, loadArtistData } from "./data.ts";
-import "./styles.css";
+// サイト全体で使う見た目（ページ・部品ごとのものは、それぞれの .tsx の隣の .css）
+import "./styles/tokens.css";
+import "./styles/base.css";
+import "./styles/layout.css";
+import "./styles/dots.css";
+import "./styles/stats.css";
+import "./styles/chips.css";
+import "./styles/badge.css";
+import "./styles/event-list.css";
+import "./styles/lists.css";
+import "./styles/button.css";
 
 // 以前の hash ルーティング（/#/artist/...）のリンクを通常のパスに置き換える
 if (location.hash.startsWith("#/")) {

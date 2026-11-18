@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAttendance } from "../attendance.ts";
+import "./AttendanceToggle.css";
 
 /**
  * 公演の「参戦」印のボタン。開催前の公演は「予定」。

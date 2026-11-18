@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { useAttendance } from "../attendance.ts";
+import "./AttendanceHint.css";
 
 const DISMISS_KEY = "lovely-memory:attendance-hint-dismissed";
 

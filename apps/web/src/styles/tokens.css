@@ -1,0 +1,68 @@
+/* 色などの値（ライト／ダーク）。色は直接書かず、ここの変数を使う */
+
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --fg: #1d1b22;
+  --muted: #5f5b69;
+  --border: #e6e2da;
+  --accent: #e0832b; /* 太陽 */
+  --accent-2: #3d4b8f; /* 月夜 */
+  --accent-soft: #fbead8;
+  /* 文字に使う太陽の色（--accent のままでは明るい背景の上で読みにくい。WCAG AA の 4.5:1 以上） */
+  --accent-text: #9c4f10;
+  --bar: #f3c08f;
+  --row-hover: #f6f2ea;
+  --badge-1st: #e8e6f3;
+  --badge-1st-fg: #3d4b8f;
+  --badge-2nd: #fde4cc;
+  --badge-2nd-fg: #9a4a0b;
+  --badge-cover: #e3f1e6;
+  --badge-cover-fg: #2f6b3d;
+  /* ユニットタグ：太陽 = 朝の光、月夜 = 夜空と月明かり */
+  --sun-bg: linear-gradient(120deg, #fff6d2 0%, #ffe0a3 100%);
+  --sun-fg: #8a4b06;
+  --sun-icon: #f08a12;
+  --sun-border: #f6cf86;
+  --moon-bg:
+    radial-gradient(circle at 78% 30%, rgb(255 255 255 / 0.85) 0 0.6px, transparent 1.2px),
+    radial-gradient(circle at 62% 75%, rgb(255 255 255 / 0.6) 0 0.5px, transparent 1px),
+    radial-gradient(circle at 90% 70%, rgb(255 255 255 / 0.7) 0 0.5px, transparent 1px),
+    linear-gradient(120deg, #23285a 0%, #43397f 100%);
+  --moon-fg: #f6efd2;
+  --moon-icon: #ffe39a;
+  --moon-border: #23285a;
+  --tieup-bg: #fde3ee;
+  --tieup-fg: #b0306a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14131a;
+    --surface: #1c1b24;
+    --fg: #ece9f2;
+    --muted: #a19cae;
+    --border: #2e2c3a;
+    --accent: #f0a050;
+    --accent-2: #9aa8f0;
+    --accent-soft: #33261a;
+    --accent-text: var(--accent);
+    --bar: #6b4a2a;
+    --row-hover: #23222d;
+    --badge-1st: #2a2d48;
+    --badge-1st-fg: #b7c1f5;
+    --badge-2nd: #43301d;
+    --badge-2nd-fg: #f6c48f;
+    --badge-cover: #1f3326;
+    --badge-cover-fg: #9fd7ad;
+    --sun-bg: linear-gradient(120deg, #4a3310 0%, #5c3a12 100%);
+    --sun-fg: #ffd98f;
+    --sun-icon: #ffb341;
+    --sun-border: #6e4a18;
+    --moon-border: #4b4f8f;
+    --tieup-bg: #45202f;
+    --tieup-fg: #f6a3c6;
+    color-scheme: dark;
+  }
+}

@@ -1,0 +1,48 @@
+/* AttendancePage の見た目 */
+
+.event-year {
+  display: block;
+  font-size: 0.75em;
+  line-height: 1.2;
+}
+
+.attend-source {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.attend-form {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+
+.attend-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+}
+
+.attend-actions {
+  display: inline-flex;
+  gap: 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.attend-share {
+  margin: -8px 0 20px;
+}
+
+.attend-share .share-button svg {
+  width: 14px;
+  height: 14px;
+}

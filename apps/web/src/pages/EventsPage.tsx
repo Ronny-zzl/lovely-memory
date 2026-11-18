@@ -7,6 +7,7 @@ import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./EventsPage.css";
 
 const ALL_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
 const DEFAULT_HIDDEN: EventType[] = ["tokuten"];

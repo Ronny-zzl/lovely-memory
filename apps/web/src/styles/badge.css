@@ -1,0 +1,55 @@
+/* 曲・公演に付く小さなラベル */
+
+.badge {
+  padding: 0 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+}
+
+.badge.era-2nd {
+  background: var(--badge-2nd);
+  color: var(--badge-2nd-fg);
+}
+
+.badge.era-cover {
+  background: var(--badge-cover);
+  color: var(--badge-cover-fg);
+}
+
+.badge.debut {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+}
+
+.badge.collab {
+  margin-left: 8px;
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+  font-size: 0.7rem;
+  vertical-align: 0.1em;
+}
+
+.badge.tieup {
+  background: var(--tieup-bg);
+  color: var(--tieup-fg);
+}
+
+.badge.role {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.costume-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.6;
+}

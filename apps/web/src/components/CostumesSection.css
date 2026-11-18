@@ -1,0 +1,10 @@
+/* CostumesSection の見た目 */
+
+.costume-name {
+  font-weight: 600;
+}
+
+.costume-range {
+  margin-left: 10px;
+  font-weight: 400;
+}

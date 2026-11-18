@@ -1,0 +1,89 @@
+/* サイトのヘッダー（グループ名・メンバー・タブ） */
+
+.site-header {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.breadcrumb:hover {
+  color: var(--accent-text);
+}
+
+.site-title {
+  margin: 4px 0 8px;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  line-height: 1.25;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  margin-left: 0.5em;
+  font-size: 0.6em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.member-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.member-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  /* 狭い画面で入りきらないときは横にスクロール（文字を縦に折り返さない） */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs a {
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tabs a.active {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+/* トップページはタイトルが先頭行にあるので、ボタンと重ならないよう右を空ける */
+.install + .site-title {
+  padding-right: 10rem;
+}
+
+@media (max-width: 640px) {
+  .tabs a {
+    padding: 8px 10px;
+  }
+}

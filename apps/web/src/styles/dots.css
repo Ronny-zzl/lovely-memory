@@ -1,0 +1,22 @@
+/* メンバーの色の点 */
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+.member-dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.dot-absent {
+  background: transparent;
+  border: 1.5px solid;
+  box-shadow: none;
+}

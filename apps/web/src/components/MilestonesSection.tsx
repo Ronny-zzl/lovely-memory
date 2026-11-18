@@ -12,6 +12,7 @@ import {
 } from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 import { MilestoneBadge } from "./MilestoneBadge.tsx";
+import "./MilestonesSection.css";
 
 /** 最近の記録として最初から見せる日数（公演のあった日）。それより前はたたんでおく */
 const RECENT_DATES = 5;

@@ -4,6 +4,7 @@ import { CostumesSection } from "../components/CostumesSection.tsx";
 import { MilestonesSection } from "../components/MilestonesSection.tsx";
 import { formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./TrendsPage.css";
 
 const RANK_SIZE = 5;
 const TRANSITION_SIZE = 10;

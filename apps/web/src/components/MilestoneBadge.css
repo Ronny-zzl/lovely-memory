@@ -1,0 +1,49 @@
+/* MilestoneBadge の見た目 */
+
+.milestones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.milestone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px 3px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--fg);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.milestone-song-return {
+  background: var(--badge-1st);
+}
+
+.milestone-event-count,
+.milestone-total-songs,
+.milestone-debut-days {
+  background: var(--sun-bg);
+  color: var(--sun-fg);
+  border: 1px solid var(--sun-border);
+}
+
+.milestone-icon {
+  font-size: 0.9em;
+}
+
+.milestone-song {
+  color: inherit;
+  font-weight: 700;
+}
+
+.milestone-birthday {
+  background: var(--tieup-bg);
+  color: var(--tieup-fg);
+}
+
+.milestone .dot {
+  margin-right: 2px;
+}

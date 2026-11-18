@@ -1,0 +1,15 @@
+/* EventsPage の見た目 */
+
+.events .chips {
+  margin-bottom: 8px;
+}
+
+.month-heading {
+  margin: 24px 0 8px;
+  font-size: 1rem;
+}
+
+.upcoming summary {
+  cursor: pointer;
+  list-style-position: inside;
+}

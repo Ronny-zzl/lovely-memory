@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
 import { birthdayCountdown, displayTitle, formatDate, formatMonthDay, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./MembersPage.css";
 
 export function MembersPage() {
   const { artist, events, allStats, isHeld } = useArtistData();

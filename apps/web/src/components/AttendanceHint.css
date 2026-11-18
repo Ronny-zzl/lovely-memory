@@ -1,0 +1,70 @@
+/* AttendanceHint の見た目 */
+
+.attend-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.attend-hint p {
+  flex: 1;
+  margin: 0;
+}
+
+.attend-hint a {
+  color: var(--accent-2);
+}
+
+.attend-hint-sample {
+  display: inline-block;
+  margin: 0 3px;
+  padding: 0 8px;
+  border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--muted);
+  background: var(--surface);
+}
+
+.attend-hint-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.attend-hint-close:hover {
+  background: color-mix(in srgb, var(--muted) 15%, transparent);
+}
+
+.attend-hint.compact {
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.attend-hint.compact a {
+  margin-left: auto;
+}
+
+.attend-hint-check {
+  color: var(--accent-text);
+  font-weight: 700;
+}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useInstallState } from "../install.ts";
+import "./InstallButton.css";
 
 /** ヘッダー右上の「ホーム画面に追加」ボタン。追加できない環境・追加済みなら何も出さない */
 export function InstallButton() {

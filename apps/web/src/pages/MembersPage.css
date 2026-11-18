@@ -1,0 +1,118 @@
+/* MembersPage の見た目 */
+
+.member-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member-card {
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--member);
+  border-radius: 10px;
+}
+
+.member-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.member-name .dot {
+  width: 12px;
+  height: 12px;
+}
+
+.member-figures {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+
+.member-figures dt {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.member-figures dd {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.member-bar {
+  height: 6px;
+  margin: 10px 0 4px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.member-bar span {
+  display: block;
+  height: 100%;
+  background: var(--member);
+}
+
+.absence-list {
+  margin: 10px 0 0;
+  padding: 8px 0 0;
+  list-style: none;
+  border-top: 1px dashed var(--border);
+  font-size: 0.82rem;
+}
+
+.absence-list a {
+  display: flex;
+  gap: 10px;
+  padding: 3px 0;
+  text-decoration: none;
+}
+
+.absence-list a:hover .absence-title {
+  color: var(--accent-text);
+}
+
+.absence-date {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.absence-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.next-birthday {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: 0 0 16px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.member-birthday {
+  margin: 2px 0 6px;
+  font-size: 0.85rem;
+}
+
+.birthday-today {
+  color: var(--accent-text);
+  font-weight: 700;
+}

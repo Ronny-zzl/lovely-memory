@@ -9,6 +9,7 @@ import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { artists } from "../data.ts";
 import { displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
+import "./AttendancePage.css";
 
 // 全アーティストのうち一番古い活動開始日から読み込む（eventernote の連携はサイト全体で 1 つ）
 const SINCE = artists.flatMap((a) => (a.since ? [a.since] : [])).sort((a, b) => a.localeCompare(b))[0] ?? "2000-01-01";

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { cardChars, drawAttendanceCard, loadCardFont, type AttendanceCardData } from "../attendance-card.ts";
+import "./AttendanceShare.css";
 
 /**
  * 参戦記録のシェア画像。

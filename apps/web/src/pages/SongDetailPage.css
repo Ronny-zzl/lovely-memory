@@ -1,0 +1,154 @@
+/* SongDetailPage の見た目 */
+
+.song-detail-header {
+  margin: 12px 0 20px;
+}
+
+.song-detail-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 4px 0 8px;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.song-detail-title .badge,
+.song-detail-title .unit,
+.song-detail-title .unit-tag {
+  font-size: 0.75rem;
+}
+
+.song-detail-header p {
+  margin: 2px 0;
+}
+
+.song-detail-header a {
+  color: var(--accent-2);
+}
+
+.stat-date {
+  font-size: 1.1rem;
+}
+
+.stat-link {
+  text-decoration: none;
+}
+
+.stat-link:hover {
+  color: var(--accent-text);
+}
+
+.pattern {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.pattern .cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--border);
+}
+
+.pattern .cell.sung {
+  background: var(--accent);
+}
+
+.pattern .cell:hover {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 1px;
+}
+
+.event-date-full {
+  width: 6.2em;
+}
+
+.position-stats {
+  margin: 8px 0 0;
+}
+
+.position {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 曲ページ：セトリでの位置 */
+.zone-bar {
+  display: flex;
+  height: 26px;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5em;
+  white-space: nowrap;
+}
+
+.zone-early {
+  background: var(--sun-border);
+  color: var(--sun-fg);
+}
+
+.zone-middle {
+  background: var(--badge-2nd);
+  color: var(--badge-2nd-fg);
+}
+
+.zone-late {
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+}
+
+.neighbors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 32px;
+  max-width: 640px;
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .neighbors {
+    grid-template-columns: 1fr;
+  }
+}
+
+.record-facts {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  line-height: 1.9;
+}
+
+.milestone-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.milestone-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 5px 0;
+}
+
+.milestone-event {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}

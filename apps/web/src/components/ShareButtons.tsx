@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./ShareButtons.css";
 
 /**
  * ページの共有ボタン。X は投稿画面へのリンク（intent）なので、X のスクリプトは読み込まない。

@@ -1,0 +1,48 @@
+/* UnitTag の見た目 */
+
+.unit {
+  color: var(--muted);
+}
+
+.unit-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 7px 0 5px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.unit-icon {
+  display: inline-flex;
+  width: 1.05em;
+  height: 1.05em;
+}
+
+.unit-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.unit-sun {
+  background: var(--sun-bg);
+  color: var(--sun-fg);
+  border-color: var(--sun-border);
+}
+
+.unit-sun .unit-icon {
+  color: var(--sun-icon);
+}
+
+.unit-moon {
+  background: var(--moon-bg);
+  color: var(--moon-fg);
+  border-color: var(--moon-border);
+}
+
+.unit-moon .unit-icon {
+  color: var(--moon-icon);
+}

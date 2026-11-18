@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { artists } from "../data.ts";
 import { formatDate } from "../format.ts";
+import "./ArtistList.css";
 
 export function ArtistList() {
   return (

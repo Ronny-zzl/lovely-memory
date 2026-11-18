@@ -1,0 +1,68 @@
+/* MilestonesSection の見た目 */
+
+.milestones-section .trend-card {
+  margin-bottom: 16px;
+}
+
+.upcoming-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.upcoming-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 5px 0;
+}
+
+.upcoming-list li + li {
+  border-top: 1px dashed var(--border);
+}
+
+.milestone-subhead {
+  margin-top: 4px;
+}
+
+.milestone-days {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.milestone-days > li {
+  padding: 8px 0;
+}
+
+.milestone-days > li + li {
+  border-top: 1px dashed var(--border);
+}
+
+.milestone-day-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+  min-width: 0;
+}
+
+.milestone-day-head a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.milestone-all {
+  margin-top: 8px;
+}
+
+.milestone-all summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.upcoming-list .dot {
+  margin-right: 2px;
+}
