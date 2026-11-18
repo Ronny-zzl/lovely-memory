@@ -38,19 +38,34 @@ type Column = {
 /** 最後に歌われてからの日数（未披露は null） */
 const daysSince = (s: SongStats, today: string) => (s.last ? daysBetween(s.last.date, today) : null);
 
-const COUNT: Column = {
+/** 公演数に分母（初披露以降の公演数）を添える。歌唱率の分子・分母がここで読めるので、歌唱率の列は % だけにする */
+const withTotal = (n: number, s: SongStats) =>
+  s.count > 0 ? (
+    <>
+      {n}
+      <span className="num-total">/{s.eligibleEvents}</span>
+    </>
+  ) : (
+    n
+  );
+
+/**
+ * 回数の列。同じ公演で 2 回歌われた曲が無いうちは「回数＝歌唱した公演数」なので、分母もここに付ける
+ * （2 回歌われた曲が出たら「公演」の列を出し、分母はそちらに移す。回数に付けると 100% を超えて見えるため）
+ */
+const countColumn = (withEvents: boolean): Column => ({
   key: "count",
   label: "回数",
   numeric: true,
-  title: "歌唱回数（同一公演で 2 回歌えば 2 回）",
-  cell: (s) => s.count,
-};
+  title: withEvents ? "歌唱回数（同一公演で 2 回歌えば 2 回）" : "歌唱回数 / 初披露以降の公演数",
+  cell: (s) => (withEvents ? s.count : withTotal(s.count, s)),
+});
 const EVENTS: Column = {
   key: "events",
   label: "公演",
   numeric: true,
-  title: "歌唱した公演数",
-  cell: (s) => s.events,
+  title: "歌唱した公演数 / 初披露以降の公演数",
+  cell: (s) => withTotal(s.events, s),
 };
 
 const COLUMNS_BEFORE: Column[] = [
@@ -63,14 +78,7 @@ const COLUMNS_BEFORE: Column[] = [
     cell: (s) => (
       <span title={s.count > 0 ? `${s.events} / ${s.eligibleEvents} 公演` : undefined}>
         <span className="bar" style={{ "--rate": s.rate } as React.CSSProperties} />
-        <span className="rate-text">
-          {s.count > 0 ? formatPercent(s.rate) : "–"}
-          {s.count > 0 && (
-            <span className="rate-frac">
-              {s.events}/{s.eligibleEvents}
-            </span>
-          )}
-        </span>
+        <span className="rate-text">{s.count > 0 ? formatPercent(s.rate) : "–"}</span>
       </span>
     ),
   },
@@ -234,7 +242,8 @@ export function SongStatsPage() {
   }, [stats, era, unit, q, sortKey, desc, today, includeCollab, collabOnly]);
 
   // 同じ公演で 2 回歌われた曲が無いうちは「回数」と「公演」が常に一致するので、公演列は出さない
-  const columns: Column[] = [COUNT, ...(stats.songs.some((s) => s.count !== s.events) ? [EVENTS] : []), ...COLUMNS_BEFORE];
+  const withEvents = stats.songs.some((s) => s.count !== s.events);
+  const columns: Column[] = [countColumn(withEvents), ...(withEvents ? [EVENTS] : []), ...COLUMNS_BEFORE];
 
   const played = stats.songs.filter((s) => !s.song.cover && s.count > 0).length;
   // 未披露曲は既定で畳む。曲名で検索しているときは、探している曲が隠れないよう常に表示

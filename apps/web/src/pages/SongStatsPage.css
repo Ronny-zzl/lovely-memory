@@ -140,13 +140,10 @@
   position: relative;
 }
 
-.rate-frac {
-  display: inline-block;
-  min-width: 3.4em;
-  margin-left: 6px;
+.num-total {
+  margin-left: 1px;
   font-size: var(--text-xs);
   color: var(--muted);
-  text-align: right;
 }
 
 .unplayed td {
