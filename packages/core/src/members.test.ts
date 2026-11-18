@@ -33,14 +33,19 @@ const events = [
   ev(5, "2026-12-01", ["a"]), // 未来の公演は対象外
 ];
 const songs = [Song.parse({ id: "s1", title: "X" }), Song.parse({ id: "s2", title: "Y" })];
-const setlists = [
-  Setlist.parse({ event: 1, items: ["X", { song: "Y", members: ["a"] }] }),
-  Setlist.parse({ event: 2, items: ["X"] }),
-];
+const setlists = [Setlist.parse({ event: 1, items: ["X", { song: "Y", members: ["a"] }] }), Setlist.parse({ event: 2, items: ["X"] })];
 
 describe("computeMemberStats", () => {
   const stats = computeStats({ songs, events, setlists });
-  const [a, b] = computeMemberStats({ artist, events, stats, held: heldCheck("2026-11-18", setlists.map((s) => s.event)) });
+  const [a, b] = computeMemberStats({
+    artist,
+    events,
+    stats,
+    held: heldCheck(
+      "2026-11-18",
+      setlists.map((s) => s.event),
+    ),
+  });
 
   it("counts appearances over held live events only", () => {
     expect(a).toMatchObject({ appearances: 2, total: 3 });

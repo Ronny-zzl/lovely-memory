@@ -75,7 +75,14 @@ export function AttendanceBackup() {
         </div>
         {empty && <p className="muted small">まだ記録がありません。</p>}
         {code && (
-          <textarea className="backup-code" readOnly value={code} rows={3} onFocus={(e) => e.currentTarget.select()} aria-label="引き継ぎコード" />
+          <textarea
+            className="backup-code"
+            readOnly
+            value={code}
+            rows={3}
+            onFocus={(e) => e.currentTarget.select()}
+            aria-label="引き継ぎコード"
+          />
         )}
         <p className="muted small">コードは LINE やメモに貼り付けて、別の端末に送れます。</p>
       </div>

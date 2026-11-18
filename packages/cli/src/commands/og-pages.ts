@@ -34,7 +34,10 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
   const base = await readFile(join(dist, "index.html"), "utf8");
   const host = new URL(site).host;
 
-  const ids = artistArg === "all" ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name) : [artistArg];
+  const ids =
+    artistArg === "all"
+      ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name)
+      : [artistArg];
   const pages: Page[] = [];
   const cards: Card[] = [];
   for (const id of ids) {
@@ -77,7 +80,11 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     ["events", "公演", `${name}の公演一覧とセットリスト（${stats.events.length} 公演）。`],
     ["trends", "傾向", `${name}のセトリの傾向。1 曲目・ラストになりやすい曲、定番の流れ、よく続けて歌われる曲。`],
     ["members", "メンバー", `${name}のメンバーごとの出演率と欠席した公演。`],
-    ["attendance", "参戦記録", `${name}の参戦記録。参戦した公演と、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`],
+    [
+      "attendance",
+      "参戦記録",
+      `${name}の参戦記録。参戦した公演と、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`,
+    ],
   ];
   for (const [path, label, description] of sections) {
     const p = path ? `${artist.id}/${path}` : artist.id;
@@ -97,7 +104,10 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
         : s.song.cover
           ? `「${s.song.title}」（カバー曲・原曲: ${s.song.cover.artist}）の歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。`
           : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} 公演）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
-    pages.push({ path: p, meta: { title: title(s.song.title), description, url: url(p), image: url(img), imageAlt: `「${s.song.title}」の歌唱記録` } });
+    pages.push({
+      path: p,
+      meta: { title: title(s.song.title), description, url: url(p), image: url(img), imageAlt: `「${s.song.title}」の歌唱記録` },
+    });
     cards.push({ file: img, html: songCard(artist, s, position, role, host) });
   }
 
@@ -110,7 +120,16 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     const description = songTitles.length
       ? `${head}のセットリスト（${songTitles.length} 曲）: ${songTitles.join(" / ")}`
       : `${head}${e.venue ? ` @ ${e.venue.name}` : ""}`;
-    pages.push({ path: p, meta: { title: title(`${formatDate(e.date)} ${displayTitle(e.title, artist.name)}`), description, url: url(p), image: url(img), imageAlt: `${head}のセットリスト` } });
+    pages.push({
+      path: p,
+      meta: {
+        title: title(`${formatDate(e.date)} ${displayTitle(e.title, artist.name)}`),
+        description,
+        url: url(p),
+        image: url(img),
+        imageAlt: `${head}のセットリスト`,
+      },
+    });
     cards.push({ file: img, html: eventCard(artist, e, sl, host) });
   }
   return { pages, cards };

@@ -85,7 +85,9 @@ export function EventDetailPage() {
           <div className="milestones">
             {birthdays.map((m) => (
               <span key={m.id} className="milestone milestone-birthday">
-                <span className="milestone-icon" aria-hidden="true">🎂</span>
+                <span className="milestone-icon" aria-hidden="true">
+                  🎂
+                </span>
                 <span className="dot" style={{ background: m.color }} />
                 {m.name}の誕生日
               </span>
@@ -111,8 +113,7 @@ export function EventDetailPage() {
               <ol className="setlist-items">
                 {stage.entries.map((e, i) => {
                   // 公演の出演メンバーと違う場合だけ（ユニット曲・一部メンバー曲など）表示する
-                  const partial =
-                    e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
+                  const partial = e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
                   return (
                     <li key={i} className={e.encore ? "encore" : undefined}>
                       <span className="item-no">{e.encore ? "EN" : `M${e.position}`}</span>
@@ -141,9 +142,7 @@ export function EventDetailPage() {
           {setlist.note && <p className="setlist-note small">{setlist.note}</p>}
         </section>
       ) : (
-        <p className="muted empty-setlist">
-          {!isLiveEvent(event) ? "ライブの無いイベントです" : "セトリはまだ登録されていません"}
-        </p>
+        <p className="muted empty-setlist">{!isLiveEvent(event) ? "ライブの無いイベントです" : "セトリはまだ登録されていません"}</p>
       )}
 
       <p className="event-links small">

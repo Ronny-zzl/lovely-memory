@@ -27,8 +27,14 @@ export type AttendanceCardData = {
 const FONT = '"M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif';
 const SUN = "M8 4.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 1 0 0-6.8Z";
 const SUN_RAYS: Array<[number, number, number, number]> = [
-  [8, 1, 8, 2.8], [8, 13.2, 8, 15], [1, 8, 2.8, 8], [13.2, 8, 15, 8],
-  [3.05, 3.05, 4.3, 4.3], [11.7, 11.7, 12.95, 12.95], [3.05, 12.95, 4.3, 11.7], [11.7, 4.3, 12.95, 3.05],
+  [8, 1, 8, 2.8],
+  [8, 13.2, 8, 15],
+  [1, 8, 2.8, 8],
+  [13.2, 8, 15, 8],
+  [3.05, 3.05, 4.3, 4.3],
+  [11.7, 11.7, 12.95, 12.95],
+  [3.05, 12.95, 4.3, 11.7],
+  [11.7, 4.3, 12.95, 3.05],
 ];
 const MOON = "M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z";
 
@@ -121,20 +127,37 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
 
   // 背景：朝の光 → 夕暮れ → 夜空
   const bg = ctx.createLinearGradient(0, H * 0.2, W, H * 0.8);
-  for (const [o, c] of [[0, "#fff5d6"], [0.24, "#ffdca6"], [0.42, "#f7ae78"], [0.5, "#b4688f"], [0.58, "#5a4589"], [0.74, "#2f2c6c"], [1, "#1b1f4d"]] as const) {
+  for (const [o, c] of [
+    [0, "#fff5d6"],
+    [0.24, "#ffdca6"],
+    [0.42, "#f7ae78"],
+    [0.5, "#b4688f"],
+    [0.58, "#5a4589"],
+    [0.74, "#2f2c6c"],
+    [1, "#1b1f4d"],
+  ] as const) {
     bg.addColorStop(o, c);
   }
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "rgba(255,255,255,.85)";
-  for (const [x, y, r] of [[0.68, 0.05, 1.8], [0.81, 0.96, 2], [0.97, 0.4, 1.4], [0.63, 0.97, 1.4], [0.92, 0.04, 1.4]] as const) {
+  for (const [x, y, r] of [
+    [0.68, 0.05, 1.8],
+    [0.81, 0.96, 2],
+    [0.97, 0.4, 1.4],
+    [0.63, 0.97, 1.4],
+    [0.92, 0.04, 1.4],
+  ] as const) {
     ctx.beginPath();
     ctx.arc(W * x, H * y, r, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // カード
-  const cx = 48, cy = 40, cw = W - 96, ch = H - 40 - 96;
+  const cx = 48,
+    cy = 40,
+    cw = W - 96,
+    ch = H - 40 - 96;
   ctx.save();
   ctx.shadowColor = "rgba(30,20,60,.25)";
   ctx.shadowBlur = 50;
@@ -233,8 +256,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   ctx.fillText(d.firstDate ? d.firstDate.replaceAll("-", ".") : "—", split, ly + 44);
   ctx.font = `500 22px ${FONT}`;
   ctx.fillStyle = "#5b5470";
-  const note =
-    d.sungSongs > 0 && d.notHeard === 0 ? "全曲を生で聴きました！" : `まだ生で聴いていない曲 ${d.notHeard} 曲`;
+  const note = d.sungSongs > 0 && d.notHeard === 0 ? "全曲を生で聴きました！" : `まだ生で聴いていない曲 ${d.notHeard} 曲`;
   ctx.fillText(fit(ctx, note, px + inner - split), split, ly + 94);
 
   // フッター

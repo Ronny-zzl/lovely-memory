@@ -9,9 +9,7 @@ export type ImportedTrack = {
 
 /** since を持つ era のうち、date 以前で最も新しいものを返す */
 export function eraForDate(artist: ArtistConfig, date: string): string | undefined {
-  return artist.eras
-    .filter((e) => e.since && e.since <= date)
-    .sort((a, b) => b.since!.localeCompare(a.since!))[0]?.id;
+  return artist.eras.filter((e) => e.since && e.since <= date).sort((a, b) => b.since!.localeCompare(a.since!))[0]?.id;
 }
 
 export function songIndex(songs: Song[]): Map<string, Song> {

@@ -43,7 +43,8 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
   }
   const costumeIds = new Set(artist.costumes.map((c) => c.id));
   for (const [id, ov] of Object.entries(overrides.events)) {
-    if (ov.costume && !costumeIds.has(ov.costume)) err(`overrides.json: ${id} の costume "${ov.costume}" が artist.json の costumes にない`);
+    if (ov.costume && !costumeIds.has(ov.costume))
+      err(`overrides.json: ${id} の costume "${ov.costume}" が artist.json の costumes にない`);
   }
   const events = resolveEvents(rawEvents, overrides, artist);
   const eventById = new Map(events.map((e) => [e.id, e]));
@@ -103,9 +104,7 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
  */
 export async function validate(target: string, opts: Record<string, unknown>) {
   const ids =
-    target === "all"
-      ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name)
-      : [target];
+    target === "all" ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name) : [target];
   let errors = 0;
   for (const id of ids) errors += await validateOne(id, !!opts.missing);
   if (errors) process.exitCode = 1;

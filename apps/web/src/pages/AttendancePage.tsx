@@ -11,10 +11,7 @@ import { displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst
 import { useArtistData } from "./ArtistLayout.tsx";
 
 // 全アーティストのうち一番古い活動開始日から読み込む（eventernote の連携はサイト全体で 1 つ）
-const SINCE =
-  artists
-    .flatMap((a) => (a.since ? [a.since] : []))
-    .sort((a, b) => a.localeCompare(b))[0] ?? "2000-01-01";
+const SINCE = artists.flatMap((a) => (a.since ? [a.since] : [])).sort((a, b) => a.localeCompare(b))[0] ?? "2000-01-01";
 
 function EventernoteSection() {
   const attendance = useAttendance();
@@ -197,7 +194,8 @@ export function AttendancePage() {
 
       {past.length === 0 && planned.length === 0 ? (
         <p className="muted empty-setlist">
-          まだ参戦記録がありません。eventernote から読み込むか、<Link to={`/${artist.id}/events`}>公演一覧</Link>の「＋ 参戦」で印を付けてください。
+          まだ参戦記録がありません。eventernote から読み込むか、<Link to={`/${artist.id}/events`}>公演一覧</Link>の「＋
+          参戦」で印を付けてください。
         </p>
       ) : (
         <>

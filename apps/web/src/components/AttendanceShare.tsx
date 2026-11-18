@@ -24,7 +24,17 @@ async function copyImage(blob: Blob): Promise<boolean> {
   }
 }
 
-export function AttendanceShare({ card, postText, hashtags, fileName }: { card: AttendanceCardData; postText: string; hashtags: string[]; fileName: string }) {
+export function AttendanceShare({
+  card,
+  postText,
+  hashtags,
+  fileName,
+}: {
+  card: AttendanceCardData;
+  postText: string;
+  hashtags: string[];
+  fileName: string;
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [blob, setBlob] = useState<Blob>();

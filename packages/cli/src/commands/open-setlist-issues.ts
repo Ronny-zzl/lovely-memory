@@ -37,9 +37,7 @@ export async function openSetlistIssues(target: string, opts: Record<string, unk
   }
 
   const ids =
-    target === "all"
-      ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name)
-      : [target];
+    target === "all" ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name) : [target];
 
   let created = 0;
   for (const artistId of ids) {

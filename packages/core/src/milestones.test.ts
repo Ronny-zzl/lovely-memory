@@ -6,7 +6,15 @@ import { computeStats } from "./stats.ts";
 
 const songs = [Song.parse({ id: "s1", title: "A" }), Song.parse({ id: "s2", title: "B" }), Song.parse({ id: "s3", title: "C" })];
 const day = (i: number) => new Date(Date.UTC(2026, 8, 4 + i)).toISOString().slice(0, 10);
-const ev = (i: number): ResolvedEvent => ({ id: 1000 + i, date: day(i), title: `E${i}`, performers: [], types: ["external"], members: [], membersSource: "assumed" });
+const ev = (i: number): ResolvedEvent => ({
+  id: 1000 + i,
+  date: day(i),
+  title: `E${i}`,
+  performers: [],
+  types: ["external"],
+  members: [],
+  membersSource: "assumed",
+});
 
 // 公演 0..11（12 公演）。A は毎回、B は 0 と 9 だけ（9 公演ぶり）、C は 0..4（5 連続）
 const events = Array.from({ length: 12 }, (_, i) => ev(i));
@@ -15,7 +23,10 @@ const setlists = events.map((e, i) =>
 );
 const stats = computeStats({ songs, events, setlists });
 const today = day(11);
-const held = heldCheck(day(12), setlists.map((s) => s.event));
+const held = heldCheck(
+  day(12),
+  setlists.map((s) => s.event),
+);
 const m = computeMilestones({ stats, liveEvents: events, since: day(0), today, held });
 const of = (kind: string) => m.achieved.filter((x) => x.kind === kind);
 
@@ -68,14 +79,21 @@ describe("upcomingMilestones", () => {
     // A は次も歌えば 13 連続（節目ではない）
     expect(up.some((u) => u.kind === "song-streak")).toBe(false);
     // 既定（あと 2 回以内）では何も出ない
-    expect(upcomingMilestones({ milestones: m, stats, liveEvents: [...events, next], since: day(0), today, held }).filter((u) => u.kind === "song-count")).toEqual([]);
+    expect(
+      upcomingMilestones({ milestones: m, stats, liveEvents: [...events, next], since: day(0), today, held }).filter(
+        (u) => u.kind === "song-count",
+      ),
+    ).toEqual([]);
   });
 
   it("flags the next event when it is a round number", () => {
     const more = Array.from({ length: 13 }, (_, i) => ev(12 + i));
     const all = [...events, ...more];
     // 当日（day 24）の公演はセトリが無いので、まだ開催予定
-    const held24 = heldCheck(day(24), setlists.map((s) => s.event));
+    const held24 = heldCheck(
+      day(24),
+      setlists.map((s) => s.event),
+    );
     const ms = computeMilestones({ stats, liveEvents: all, since: day(0), today: day(24), held: (e) => e.date < day(24) || held24(e) });
     expect(ms.eventCount).toBe(24);
     const up = upcomingMilestones({ milestones: ms, stats, liveEvents: all, since: day(0), today: day(24), held: held24 });

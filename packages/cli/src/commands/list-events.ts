@@ -9,14 +9,12 @@ import { loadArtist, loadEvents, loadOverrides } from "../repo.ts";
 export async function listEvents(artistId: string, opts: Record<string, unknown>) {
   const artist = await loadArtist(artistId);
   const events = resolveEvents(await loadEvents(artistId), await loadOverrides(artistId), artist);
-  const filtered =
-    typeof opts.type === "string" ? events.filter((e) => eventHasType(e, opts.type as EventType)) : events;
+  const filtered = typeof opts.type === "string" ? events.filter((e) => eventHasType(e, opts.type as EventType)) : events;
 
   const counts = new Map<string, number>();
   for (const e of filtered) {
     for (const t of e.types) counts.set(t, (counts.get(t) ?? 0) + 1);
-    const members =
-      e.membersSource === "assumed" ? "(全員?)" : e.members.length === artist.members.length ? "全員" : e.members.join(",");
+    const members = e.membersSource === "assumed" ? "(全員?)" : e.members.length === artist.members.length ? "全員" : e.members.join(",");
     console.log(`${e.date} ${e.start ?? "--:--"} ${e.types.join("+").padEnd(14)} ${String(e.id).padStart(6)}  ${e.title}  [${members}]`);
   }
   console.log(`\n${filtered.length} events: ${[...counts].map(([t, n]) => `${t}=${n}`).join(" ")}`);

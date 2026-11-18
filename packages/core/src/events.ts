@@ -50,9 +50,7 @@ export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
  * 表示・集計に使うイベント一覧を作る。日付昇順（同日は開演時刻→id 順）。
  */
 export function resolveEvents(events: Event[], overrides: Overrides, artist: ArtistConfig): ResolvedEvent[] {
-  const memberByEnId = new Map(
-    artist.members.filter((m) => m.eventernoteId !== undefined).map((m) => [m.eventernoteId!, m.id]),
-  );
+  const memberByEnId = new Map(artist.members.filter((m) => m.eventernoteId !== undefined).map((m) => [m.eventernoteId!, m.id]));
   const allMembers = artist.members.map((m) => m.id);
 
   const merged: Array<Event & { types?: EventType[] }> = [...events, ...overrides.extraEvents];
@@ -88,9 +86,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
     });
   }
 
-  return out.sort(
-    (a, b) => a.date.localeCompare(b.date) || (a.start ?? "").localeCompare(b.start ?? "") || a.id - b.id,
-  );
+  return out.sort((a, b) => a.date.localeCompare(b.date) || (a.start ?? "").localeCompare(b.start ?? "") || a.id - b.id);
 }
 
 /** 公演が開催済みかどうか */
@@ -114,9 +110,7 @@ export type Costume = ArtistConfig["costumes"][number];
 export function eventCostume(artist: ArtistConfig, event: ResolvedEvent, held: boolean): Costume | undefined {
   if (event.costume) return artist.costumes.find((c) => c.id === event.costume);
   if (!held || !isLiveEvent(event)) return undefined;
-  return artist.costumes
-    .filter((c) => !c.special && c.since && c.since <= event.date)
-    .sort((a, b) => b.since!.localeCompare(a.since!))[0];
+  return artist.costumes.filter((c) => !c.special && c.since && c.since <= event.date).sort((a, b) => b.since!.localeCompare(a.since!))[0];
 }
 
 /** 衣装ごとの着用回数と、最初・最後の公演（着用回数の多い順） */

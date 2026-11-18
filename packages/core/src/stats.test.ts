@@ -20,7 +20,13 @@ const ev = (id: number, date: string, type: ResolvedEvent["types"][number] = "on
 const events = [ev(1, "2026-09-04"), ev(2, "2026-10-04", "external"), ev(3, "2026-10-10"), ev(4, "2027-01-02", "release")];
 const setlists = [
   Setlist.parse({ event: 1, items: ["A", { song: "B", encore: true, members: ["x"] }] }),
-  Setlist.parse({ event: 2, stages: [{ name: "S1", items: ["A", "C"] }, { name: "S2", items: ["a"] }] }),
+  Setlist.parse({
+    event: 2,
+    stages: [
+      { name: "S1", items: ["A", "C"] },
+      { name: "S2", items: ["a"] },
+    ],
+  }),
   Setlist.parse({ event: 4, items: ["B"] }),
 ];
 
@@ -65,10 +71,7 @@ describe("computeStats", () => {
       ...setlists.filter((s) => s.event !== 4),
       Setlist.parse({
         event: 4,
-        stages: [
-          { items: ["B"] },
-          { name: "コラボ", collab: true, items: [{ song: "D", members: ["x"], with: ["他グループの誰か"] }] },
-        ],
+        stages: [{ items: ["B"] }, { name: "コラボ", collab: true, items: [{ song: "D", members: ["x"], with: ["他グループの誰か"] }] }],
       }),
     ];
     const all = computeStats({ songs, events, setlists: withCollab });

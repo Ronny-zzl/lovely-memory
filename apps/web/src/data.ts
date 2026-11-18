@@ -54,8 +54,17 @@ async function load(artist: ArtistConfig): Promise<ArtistData> {
   const events = resolveEvents(rawEvents, overrides, artist);
   const allStats = computeStats({ songs, events, setlists });
   const today = todayJst();
-  const isHeld = heldCheck(today, setlists.map((s) => s.event));
-  const milestones = computeMilestones({ stats: allStats, liveEvents: events.filter(isLiveEvent), since: artist.since, today, held: isHeld });
+  const isHeld = heldCheck(
+    today,
+    setlists.map((s) => s.event),
+  );
+  const milestones = computeMilestones({
+    stats: allStats,
+    liveEvents: events.filter(isLiveEvent),
+    since: artist.since,
+    today,
+    held: isHeld,
+  });
   return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events), milestones, isHeld };
 }
 

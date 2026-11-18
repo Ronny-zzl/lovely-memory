@@ -11,7 +11,6 @@ import { useArtistData } from "./ArtistLayout.tsx";
 const ALL_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
 const DEFAULT_HIDDEN: EventType[] = ["tokuten"];
 
-
 export function EventsPage() {
   const { artist, events, allStats, isHeld } = useArtistData();
   const [params, setParams] = useSearchParams();
@@ -19,17 +18,14 @@ export function EventsPage() {
   const setlistByEvent = useMemo(() => new Map(allStats.events.map((e) => [e.event.id, e])), [allStats]);
   const presentTypes = ALL_TYPES.filter((t) => events.some((e) => eventHasType(e, t)));
   const selected = new Set<EventType>(
-    params.get("types")
-      ? (params.get("types")!.split(",") as EventType[])
-      : presentTypes.filter((t) => !DEFAULT_HIDDEN.includes(t)),
+    params.get("types") ? (params.get("types")!.split(",") as EventType[]) : presentTypes.filter((t) => !DEFAULT_HIDDEN.includes(t)),
   );
 
   const toggle = (t: EventType) => {
     const next = new Set(selected);
     if (next.has(t)) next.delete(t);
     else next.add(t);
-    const isDefault =
-      presentTypes.every((x) => next.has(x) === !DEFAULT_HIDDEN.includes(x));
+    const isDefault = presentTypes.every((x) => next.has(x) === !DEFAULT_HIDDEN.includes(x));
     setParams(
       (prev) => {
         const p = new URLSearchParams(prev);

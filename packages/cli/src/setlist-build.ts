@@ -104,5 +104,4 @@ export async function writeSetlist(artistId: string, setlist: Setlist, event: Re
   return path;
 }
 
-export const countSongs = (s: Setlist) =>
-  (s.stages ?? [{ items: s.items ?? [] }]).reduce((n, st) => n + st.items.length, 0);
+export const countSongs = (s: Setlist) => (s.stages ?? [{ items: s.items ?? [] }]).reduce((n, st) => n + st.items.length, 0);

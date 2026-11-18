@@ -1,6 +1,15 @@
 import { Link } from "react-router";
 import { isLiveEvent, upcomingBirthdays, upcomingMilestones, type Milestone, type UpcomingMilestone } from "@lovely-memory/core/runtime";
-import { birthdayCountdown, daysBetween, displayTitle, formatDate, formatDayWithWeekday, formatMonthDay, formatPercent, todayJst } from "../format.ts";
+import {
+  birthdayCountdown,
+  daysBetween,
+  displayTitle,
+  formatDate,
+  formatDayWithWeekday,
+  formatMonthDay,
+  formatPercent,
+  todayJst,
+} from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 import { MilestoneBadge } from "./MilestoneBadge.tsx";
 
@@ -65,7 +74,17 @@ function Upcoming({ u, artistId, artistName }: { u: UpcomingMilestone; artistId:
   }
 }
 
-function History({ items, artistId, artistName, titles }: { items: Milestone[]; artistId: string; artistName: string; titles: Map<number, string> }) {
+function History({
+  items,
+  artistId,
+  artistName,
+  titles,
+}: {
+  items: Milestone[];
+  artistId: string;
+  artistName: string;
+  titles: Map<number, string>;
+}) {
   // 日付ごとにまとめる（新しい順）
   const byDate = new Map<string, Milestone[]>();
   for (const m of [...items].reverse()) byDate.set(m.date, [...(byDate.get(m.date) ?? []), m]);

@@ -57,11 +57,8 @@ function compute(): InstallState {
 }
 
 export function useInstallState(): InstallState {
-  return useSyncExternalStore(
-    (l) => {
-      listeners.add(l);
-      return () => listeners.delete(l);
-    },
-    compute,
-  );
+  return useSyncExternalStore((l) => {
+    listeners.add(l);
+    return () => listeners.delete(l);
+  }, compute);
 }

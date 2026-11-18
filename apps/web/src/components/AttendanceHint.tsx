@@ -20,7 +20,9 @@ export function AttendanceHint({ artistId, eventIds }: { artistId: string; event
   if (count > 0) {
     return (
       <p className="attend-hint compact">
-        <span className="attend-hint-check" aria-hidden="true">✓</span>
+        <span className="attend-hint-check" aria-hidden="true">
+          ✓
+        </span>
         参戦 {count} 公演
         <Link to={`/${artistId}/attendance`}>参戦記録を見る →</Link>
       </p>

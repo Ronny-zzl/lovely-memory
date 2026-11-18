@@ -29,7 +29,11 @@ export function parseEventList(html: string): ListPage {
     const $li = $(li);
     const link = $li.find(".event h4 a").first();
     const id = idFromHref(link.attr("href"), "events");
-    const date = $li.find(".date p").first().text().match(/\d{4}-\d{2}-\d{2}/)?.[0];
+    const date = $li
+      .find(".date p")
+      .first()
+      .text()
+      .match(/\d{4}-\d{2}-\d{2}/)?.[0];
     if (!id || !date) return;
 
     const placeLink = $li.find(".event .place a").first();

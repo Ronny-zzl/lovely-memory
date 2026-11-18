@@ -23,7 +23,6 @@ export class GitHub {
     return this.repo.split("/")[0]!;
   }
 
-
   private async api<T>(path: string, init: RequestInit = {}): Promise<{ status: number; data: T }> {
     const res = await fetch(`https://api.github.com/repos/${this.repo}${path}`, {
       ...init,
@@ -42,9 +41,7 @@ export class GitHub {
   async listIssues(label: string): Promise<GitHubIssue[]> {
     const all: GitHubIssue[] = [];
     for (let page = 1; ; page++) {
-      const { data } = await this.api<GitHubIssue[]>(
-        `/issues?labels=${encodeURIComponent(label)}&state=all&per_page=100&page=${page}`,
-      );
+      const { data } = await this.api<GitHubIssue[]>(`/issues?labels=${encodeURIComponent(label)}&state=all&per_page=100&page=${page}`);
       all.push(...data);
       if (data.length < 100) return all;
     }

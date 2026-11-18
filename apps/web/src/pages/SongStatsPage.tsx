@@ -1,7 +1,24 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { computeStats, eventHasType, positionRole, isLiveEvent, normalizeTitle, type EventType, type SongStats } from "@lovely-memory/core/runtime";
-import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, POSITION_ROLE_LABEL, tieupLabels, todayJst } from "../format.ts";
+import {
+  computeStats,
+  eventHasType,
+  positionRole,
+  isLiveEvent,
+  normalizeTitle,
+  type EventType,
+  type SongStats,
+} from "@lovely-memory/core/runtime";
+import {
+  daysBetween,
+  EVENT_TYPE_LABEL,
+  formatDate,
+  formatPercent,
+  LIVE_EVENT_TYPES,
+  POSITION_ROLE_LABEL,
+  tieupLabels,
+  todayJst,
+} from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 
@@ -122,12 +139,7 @@ export function SongStatsPage() {
   const hasCollab = setlists.some((s) => s.stages?.some((st) => st.collab));
   // コラボステージでしか歌われていない曲（除外時は一覧からも外す）
   const collabOnly = useMemo(
-    () =>
-      new Set(
-        allStats.songs
-          .filter((s) => s.count > 0 && s.performances.every((p) => p.collab))
-          .map((s) => s.song.id),
-      ),
+    () => new Set(allStats.songs.filter((s) => s.count > 0 && s.performances.every((p) => p.collab)).map((s) => s.song.id)),
     [allStats],
   );
   const desc = (params.get("dir") ?? (sortKey === "title" ? "asc" : "desc")) === "desc";
@@ -184,11 +196,7 @@ export function SongStatsPage() {
   }, [stats, era, unit, q, sortKey, desc, today, includeCollab, collabOnly]);
 
   // 同じ公演で 2 回歌われた曲が無いうちは「回数」と「公演」が常に一致するので、公演列は出さない
-  const columns: Column[] = [
-    COUNT,
-    ...(stats.songs.some((s) => s.count !== s.events) ? [EVENTS] : []),
-    ...COLUMNS_BEFORE,
-  ];
+  const columns: Column[] = [COUNT, ...(stats.songs.some((s) => s.count !== s.events) ? [EVENTS] : []), ...COLUMNS_BEFORE];
 
   const played = stats.songs.filter((s) => !s.song.cover && s.count > 0).length;
   // 未披露曲は既定で畳む。曲名で検索しているときは、探している曲が隠れないよう常に表示
@@ -197,19 +205,19 @@ export function SongStatsPage() {
   const visibleRows = showUnplayed ? rows : rows.filter((s) => s.count > 0);
   const songTotal = songs.filter((s) => !s.cover && (includeCollab || !collabOnly.has(s.id))).length;
   // カバー曲は全公演の記録を表示する（上の絞り込みとは独立）。最近歌われた順
-  const covers = allStats.songs
-    .filter((s) => s.song.cover)
-    .sort((a, b) => (b.last?.date ?? "").localeCompare(a.last?.date ?? ""));
+  const covers = allStats.songs.filter((s) => s.song.cover).sort((a, b) => (b.last?.date ?? "").localeCompare(a.last?.date ?? ""));
   // カバー曲だけの区分は選択肢に出さない
   const eraOptions = artist.eras.filter((e) => songs.some((s) => s.era === e.id && !s.cover));
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
   const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
   const unitById = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u]));
   // 「ラスト定番」などは全公演の曲順から判定する（絞り込みに左右されない）
-  const roles = new Map(patterns.positions.flatMap((p) => {
-    const r = positionRole(p);
-    return r ? [[p.song.id, r] as const] : [];
-  }));
+  const roles = new Map(
+    patterns.positions.flatMap((p) => {
+      const r = positionRole(p);
+      return r ? [[p.song.id, r] as const] : [];
+    }),
+  );
 
   const toggleType = (t: EventType) => {
     const next = new Set(selectedTypes);
@@ -253,11 +261,7 @@ export function SongStatsPage() {
           ))}
           {hasCollab && (
             <label className="chip chip-option" title="他グループとのコラボステージでの歌唱も集計に含める">
-              <input
-                type="checkbox"
-                checked={includeCollab}
-                onChange={() => update({ collab: includeCollab ? null : "1" })}
-              />
+              <input type="checkbox" checked={includeCollab} onChange={() => update({ collab: includeCollab ? null : "1" })} />
               コラボステージを含む
             </label>
           )}
@@ -279,12 +283,7 @@ export function SongStatsPage() {
               </option>
             ))}
           </select>
-          <input
-            type="search"
-            placeholder="曲名で絞り込み"
-            value={q}
-            onChange={(e) => update({ q: e.target.value })}
-          />
+          <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
         </div>
       </div>
 
@@ -379,11 +378,7 @@ export function SongStatsPage() {
                 <span className="cover-dates">
                   {s.performances.length === 0 && <span className="muted small">未披露</span>}
                   {s.performances.map((p) => (
-                    <Link
-                      key={`${p.eventId}-${p.stageIndex}-${p.position}`}
-                      to={`/${artist.id}/events/${p.eventId}`}
-                      className="date-chip"
-                    >
+                    <Link key={`${p.eventId}-${p.stageIndex}-${p.position}`} to={`/${artist.id}/events/${p.eventId}`} className="date-chip">
                       {formatDate(p.date)}
                       {p.collab && <span className="badge collab">コラボ</span>}
                     </Link>

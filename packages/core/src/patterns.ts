@@ -47,9 +47,9 @@ export type Patterns = {
 type Stage = Song[];
 
 function mainStages(events: EventSetlist[]): Stage[] {
-  return events.flatMap((e) =>
-    e.stages.filter((s) => !s.collab).map((s) => s.entries.filter((x) => !x.encore).map((x) => x.song)),
-  ).filter((s) => s.length > 0);
+  return events
+    .flatMap((e) => e.stages.filter((s) => !s.collab).map((s) => s.entries.filter((x) => !x.encore).map((x) => x.song)))
+    .filter((s) => s.length > 0);
 }
 
 export function zoneOf(index: number, length: number): Zone | undefined {
@@ -97,7 +97,12 @@ export function computePatterns(events: EventSetlist[], options: { minChainCount
     .map((t) => ({ ...t, fromCount: hasNext.get(t.from.id)! }))
     .sort((a, b) => b.count - a.count || b.count / b.fromCount - a.count / a.fromCount);
 
-  return { stages: stages.length, positions: [...positions.values()], transitions, chains: findChains(stages, minChainCount, minChainLength) };
+  return {
+    stages: stages.length,
+    positions: [...positions.values()],
+    transitions,
+    chains: findChains(stages, minChainCount, minChainLength),
+  };
 }
 
 /**
@@ -125,9 +130,7 @@ function findChains(stages: Stage[], minCount: number, minLength: number): Chain
   const maximal = frequent.filter(
     ([key, c]) => !frequent.some(([other, o]) => other !== key && o.count === c.count && `>${other}>`.includes(`>${key}>`)),
   );
-  return maximal
-    .map(([, c]) => c)
-    .sort((a, b) => b.count - a.count || b.songs.length - a.songs.length);
+  return maximal.map(([, c]) => c).sort((a, b) => b.count - a.count || b.songs.length - a.songs.length);
 }
 
 /** 曲の前後に来た曲（本編のつながり）。回数の多い順 */

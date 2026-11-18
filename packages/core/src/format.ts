@@ -32,8 +32,7 @@ export function displayTitle(title: string, artistName: string): string {
   return t || title;
 }
 
-export const eventernoteUrl = (eventId: number) =>
-  eventId > 0 ? `https://www.eventernote.com/events/${eventId}` : undefined;
+export const eventernoteUrl = (eventId: number) => (eventId > 0 ? `https://www.eventernote.com/events/${eventId}` : undefined);
 
 /** Asia/Tokyo での今日（YYYY-MM-DD） */
 export const todayJst = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());

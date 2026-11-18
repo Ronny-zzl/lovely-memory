@@ -86,8 +86,7 @@ export function SongDetailPage() {
   const sinceDebut = firstIdx >= 0 ? allStats.events.slice(firstIdx) : [];
   const sungIn = new Set(stats.performances.map((p) => p.eventId));
 
-  const stageSize = (eventId: number, stageIndex: number) =>
-    eventSetlists.get(eventId)?.stages[stageIndex]?.entries.length ?? 0;
+  const stageSize = (eventId: number, stageIndex: number) => eventSetlists.get(eventId)?.stages[stageIndex]?.entries.length ?? 0;
   // 本編での位置と前後の曲（コラボステージを除く）
   const position = patterns.positions.find((p) => p.song.id === song.id);
   const role = position && positionRole(position);
@@ -287,8 +286,7 @@ export function SongDetailPage() {
                 </div>
               )}
               <p className="small muted position-stats">
-                1 曲目 {position.opener} 回 ・ ラスト {position.closer} 回
-                {position.encore > 0 && ` ・ アンコール ${position.encore} 回`}
+                1 曲目 {position.opener} 回 ・ ラスト {position.closer} 回{position.encore > 0 && ` ・ アンコール ${position.encore} 回`}
               </p>
               <div className="neighbors">
                 <NeighborList title="前に歌われた曲" items={near.before} pick={(t) => t.from} />

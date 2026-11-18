@@ -68,8 +68,6 @@ export async function sync(target: string, opts: Record<string, unknown>) {
   const syncOpts = { dryRun: !!opts["dry-run"], full: !!opts.full, frozenDays };
 
   const ids =
-    target === "all"
-      ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name)
-      : [target];
+    target === "all" ? (await readdir(ARTISTS_DIR, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name) : [target];
   for (const id of ids) await syncOne(id, syncOpts);
 }

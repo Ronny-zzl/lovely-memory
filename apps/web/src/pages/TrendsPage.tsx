@@ -50,7 +50,8 @@ export function TrendsPage() {
   return (
     <div className="trends">
       <p className="muted small">
-        セトリのある {patterns.stages} ステージの本編（アンコール・コラボステージを除く）の曲順から集計。割合は本編でその曲が歌われた回数に対するもの。
+        セトリのある {patterns.stages}{" "}
+        ステージの本編（アンコール・コラボステージを除く）の曲順から集計。割合は本編でその曲が歌われた回数に対するもの。
       </p>
 
       <MilestonesSection />
@@ -73,7 +74,11 @@ export function TrendsPage() {
                 <span className="chain">
                   {c.songs.map((s, i) => (
                     <span key={`${s.id}-${i}`} className="chain-step">
-                      {i > 0 && <span className="arrow" aria-label="の次に">→</span>}
+                      {i > 0 && (
+                        <span className="arrow" aria-label="の次に">
+                          →
+                        </span>
+                      )}
                       <SongLink song={s} />
                     </span>
                   ))}
@@ -97,7 +102,9 @@ export function TrendsPage() {
                   <SongLink song={t.from} />
                 </span>
                 <span className="chain-step">
-                  <span className="arrow" aria-label="の次に">→</span>
+                  <span className="arrow" aria-label="の次に">
+                    →
+                  </span>
                   <SongLink song={t.to} />
                 </span>
               </span>

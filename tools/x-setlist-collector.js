@@ -16,11 +16,7 @@
 (() => {
   const HANDLE = "taiyototsukiyo";
   const SINCE = "2026-09-04";
-  const QUERIES = [
-    `(セトリ OR セットリスト OR setlist OR "set list" OR セトリスト)`,
-    `(M1 OR M01 OR "M.1")`,
-    `(作詞 OR 作曲 OR 編曲)`,
-  ];
+  const QUERIES = [`(セトリ OR セットリスト OR setlist OR "set list" OR セトリスト)`, `(M1 OR M01 OR "M.1")`, `(作詞 OR 作曲 OR 編曲)`];
   /** セトリ告知の可能性があるポストだけ残す（取り込み側でも曲行の有無で再判定する） */
   const KEEP = /^\s*M\s*\d|セトリ|セットリスト|set\s*list|作詞|作曲|編曲/im;
   const STORE = `lovely-memory:tweets:${HANDLE}`;
@@ -204,7 +200,8 @@
       }
       const note = document.createElement("div");
       note.style.cssText = "margin-top:6px;color:#666";
-      note.textContent = "↓ タイムライン上でポストをクリックして詳細を開くと全文が入ります（別タブで開いた場合はそのタブでもスクリプトを実行）";
+      note.textContent =
+        "↓ タイムライン上でポストをクリックして詳細を開くと全文が入ります（別タブで開いた場合はそのタブでもスクリプトを実行）";
       panel.append(note, list);
     }
   };

@@ -144,9 +144,7 @@ export function looksLikeSetlistAnnouncement(text: string): boolean {
 export function findSong(songs: Song[], item: Pick<ParsedItem, "label" | "title">): Song | undefined {
   const keys = [normalizeTitle(item.label), normalizeTitle(item.title)];
   for (const key of keys) {
-    const hit = songs.find(
-      (s) => normalizeTitle(s.title) === key || s.aliases.some((a) => normalizeTitle(a) === key),
-    );
+    const hit = songs.find((s) => normalizeTitle(s.title) === key || s.aliases.some((a) => normalizeTitle(a) === key));
     if (hit) return hit;
   }
   return undefined;

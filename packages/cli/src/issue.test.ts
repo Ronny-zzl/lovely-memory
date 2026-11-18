@@ -12,12 +12,9 @@ describe("issue marker", () => {
 describe("parseComment", () => {
   it("extracts directives and the post URL, leaving the setlist text", () => {
     const c = parseComment(
-      [
-        "https://twitter.com/taiyototsukiyo/status/2119427196028874863?s=20",
-        "☀️単独公演 セトリ🌙",
-        "M1_ もしも",
-        "/add-unknown",
-      ].join("\n"),
+      ["https://twitter.com/taiyototsukiyo/status/2119427196028874863?s=20", "☀️単独公演 セトリ🌙", "M1_ もしも", "/add-unknown"].join(
+        "\n",
+      ),
     );
     expect(c).toEqual({
       skip: false,

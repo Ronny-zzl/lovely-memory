@@ -142,9 +142,7 @@ export const Song = z.object({
     .object({
       artist: z.string(),
       title: z.string().optional(),
-      release: z
-        .object({ date: isoDate, title: z.string().optional(), url: z.string().url().optional() })
-        .optional(),
+      release: z.object({ date: isoDate, title: z.string().optional(), url: z.string().url().optional() }).optional(),
     })
     .optional(),
   /** アニメ主題歌などのタイアップ */
@@ -259,4 +257,3 @@ export const Setlist = z
     message: "items と stages のどちらか一方だけを書いてください",
   });
 export type Setlist = z.infer<typeof Setlist>;
-

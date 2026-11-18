@@ -87,8 +87,7 @@ export function extractPosts(tweets: CollectedTweet[], opts: ExtractOptions = {}
     if (!hasNumberedItems(t.text) && !looksLikeSetlistAnnouncement(t.text)) continue;
     const prev = groups.at(-1);
     const prevLast = prev ? mNumbers(prev.at(-1)!.text).at(-1) : undefined;
-    const withinMinutes =
-      prev && (new Date(t.time).getTime() - new Date(prev.at(-1)!.time).getTime()) / 60000 <= 20;
+    const withinMinutes = prev && (new Date(t.time).getTime() - new Date(prev.at(-1)!.time).getTime()) / 60000 <= 20;
     if (prev && withinMinutes && prevLast !== undefined && nums[0] === prevLast + 1) prev.push(t);
     else groups.push([t]);
   }
@@ -212,9 +211,7 @@ export function matchPosts(
 
     // 1) 告知文に日付があればその日、なければ投稿当日 → 前日
     const headerDates = datesInHeader(post.text, day.slice(0, 4));
-    let candidates = headerDates.length
-      ? started.filter((e) => headerDates.includes(e.date))
-      : started.filter((e) => e.date === day);
+    let candidates = headerDates.length ? started.filter((e) => headerDates.includes(e.date)) : started.filter((e) => e.date === day);
     if (!headerDates.length && candidates.length === 0) candidates = started.filter((e) => e.date === prevDate(day));
 
     let reason = headerDates.length ? `本文の日付 ${headerDates.join(",")}` : "投稿日時";

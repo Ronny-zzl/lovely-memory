@@ -5,7 +5,15 @@ import { useAttendance } from "../attendance.ts";
  * 公演の「参戦」印のボタン。開催前の公演は「予定」。
  * variant="row" は一覧の行の右端、"detail" は公演ページ（説明文付き）。
  */
-export function AttendanceToggle({ eventId, upcoming, variant = "row" }: { eventId: number; upcoming: boolean; variant?: "row" | "detail" }) {
+export function AttendanceToggle({
+  eventId,
+  upcoming,
+  variant = "row",
+}: {
+  eventId: number;
+  upcoming: boolean;
+  variant?: "row" | "detail";
+}) {
   const attendance = useAttendance();
   const [pop, setPop] = useState(false);
   const on = attendance.isAttended(eventId);
@@ -30,7 +38,14 @@ export function AttendanceToggle({ eventId, upcoming, variant = "row" }: { event
     >
       <svg viewBox="0 0 16 16" aria-hidden="true">
         {on ? (
-          <path d="M3.5 8.5 6.5 11.5 12.5 4.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M3.5 8.5 6.5 11.5 12.5 4.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         ) : (
           <path d="M8 3.5v9M3.5 8h9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         )}

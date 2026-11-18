@@ -32,7 +32,8 @@ export function parseCredits(text: string): CreditRoles {
     .replace(/[:：]/g, "：")
     .trim();
   // 「役割(・役割)*：名前」を順に拾う。名前は次の役割表記・改行・全角空白の手前まで
-  const re = /((?:作詞|作曲|編曲)(?:[・/／、](?:作詞|作曲|編曲))*)：\s*([^\n]*?)(?=\s*(?:(?:作詞|作曲|編曲)(?:[・/／、](?:作詞|作曲|編曲))*：|\n|$))/g;
+  const re =
+    /((?:作詞|作曲|編曲)(?:[・/／、](?:作詞|作曲|編曲))*)：\s*([^\n]*?)(?=\s*(?:(?:作詞|作曲|編曲)(?:[・/／、](?:作詞|作曲|編曲))*：|\n|$))/g;
   for (const m of cleaned.matchAll(re)) {
     const roles = m[1]!.split(/[・/／、]/);
     const name = m[2]!.replace(/[\s　]+$/u, "").replace(/^[\s　]+/u, "");

@@ -14,7 +14,14 @@ const artist = ArtistConfig.parse({
   ],
 });
 const ev = (id: number, date: string, extra: Partial<ResolvedEvent> = {}): ResolvedEvent => ({
-  id, date, title: `E${id}`, performers: [], types: ["external"], members: [], membersSource: "assumed", ...extra,
+  id,
+  date,
+  title: `E${id}`,
+  performers: [],
+  types: ["external"],
+  members: [],
+  membersSource: "assumed",
+  ...extra,
 });
 
 describe("eventCostume", () => {

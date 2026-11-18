@@ -21,11 +21,7 @@ async function readJson(path: string): Promise<unknown> {
 
 /** 空配列・undefined を落として 2 スペースで書き出す（差分を小さく保つ） */
 export async function writeJson(path: string, data: unknown): Promise<void> {
-  const text = JSON.stringify(
-    data,
-    (_k, v) => (Array.isArray(v) && v.length === 0 ? undefined : v),
-    2,
-  );
+  const text = JSON.stringify(data, (_k, v) => (Array.isArray(v) && v.length === 0 ? undefined : v), 2);
   await writeFile(path, text + "\n", "utf8");
 }
 

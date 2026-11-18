@@ -24,7 +24,15 @@ ${next ? `<li class=next><a href="/users/u/events?page=2&user_id=1">&gt;</a></li
 
 describe("parseAttendedPage", () => {
   it("extracts event ids and dates, and whether there is a next page", () => {
-    const r = parseAttendedPage(page([[498229, "2026-12-27"], [486948, "2026-09-04"]], true));
+    const r = parseAttendedPage(
+      page(
+        [
+          [498229, "2026-12-27"],
+          [486948, "2026-09-04"],
+        ],
+        true,
+      ),
+    );
     expect(r.events).toEqual([
       { id: 498229, date: "2026-12-27" },
       { id: 486948, date: "2026-09-04" },
@@ -36,8 +44,20 @@ describe("parseAttendedPage", () => {
 
 describe("fetchAttended", () => {
   const pages = [
-    page([[3, "2026-12-01"], [2, "2026-10-01"]], true),
-    page([[1, "2026-09-04"], [0, "2026-08-31"]], true),
+    page(
+      [
+        [3, "2026-12-01"],
+        [2, "2026-10-01"],
+      ],
+      true,
+    ),
+    page(
+      [
+        [1, "2026-09-04"],
+        [0, "2026-08-31"],
+      ],
+      true,
+    ),
     page([[-1, "2026-01-01"]], false),
   ];
   const fakeFetch = (calls: string[]) =>

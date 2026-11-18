@@ -105,7 +105,8 @@ export function computeMilestones({
       const idx = eventIndex.get(id)!;
       const date = stats.events[idx]!.event.date;
       streak = prevIdx !== undefined && idx === prevIdx + 1 ? streak + 1 : 1;
-      if (prevIdx !== undefined && idx - prevIdx >= RETURN_GAP) achieved.push({ kind: "song-return", date, eventId: id, song: s.song, gap: idx - prevIdx });
+      if (prevIdx !== undefined && idx - prevIdx >= RETURN_GAP)
+        achieved.push({ kind: "song-return", date, eventId: id, song: s.song, gap: idx - prevIdx });
       if (isStreakMilestone(streak)) achieved.push({ kind: "song-streak", date, eventId: id, song: s.song, streak });
       if (streak >= longest) {
         longest = streak;
@@ -145,7 +146,14 @@ export function computeMilestones({
     achieved.push({ kind: "debut-days", date: d.date, eventId: ev?.id, days: d.days, years: d.years });
   }
 
-  const order: Record<Milestone["kind"], number> = { "debut-days": 0, "event-count": 1, "total-songs": 2, "song-count": 3, "song-streak": 4, "song-return": 5 };
+  const order: Record<Milestone["kind"], number> = {
+    "debut-days": 0,
+    "event-count": 1,
+    "total-songs": 2,
+    "song-count": 3,
+    "song-streak": 4,
+    "song-return": 5,
+  };
   achieved.sort((a, b) => a.date.localeCompare(b.date) || order[a.kind] - order[b.kind]);
   return { achieved, songs, eventCount: held.length, totalSongs: total };
 }
@@ -210,10 +218,12 @@ export function upcomingMilestones({
   });
 
   const next = liveEvents.find((e) => !held(e));
-  if (next && isEventCountMilestone(milestones.eventCount + 1)) out.push({ kind: "event-count", count: milestones.eventCount + 1, event: next });
+  if (next && isEventCountMilestone(milestones.eventCount + 1))
+    out.push({ kind: "event-count", count: milestones.eventCount + 1, event: next });
 
   const nextTotal = nextAfter(milestones.totalSongs, isTotalSongsMilestone);
-  if (nextTotal - milestones.totalSongs <= 20) out.push({ kind: "total-songs", count: nextTotal, remaining: nextTotal - milestones.totalSongs });
+  if (nextTotal - milestones.totalSongs <= 20)
+    out.push({ kind: "total-songs", count: nextTotal, remaining: nextTotal - milestones.totalSongs });
 
   const limit = addDays(today, withinDays);
   for (const d of since ? debutDayMilestones(since, limit) : []) if (d.date > today) out.push({ kind: "debut-days", ...d });

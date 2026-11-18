@@ -49,7 +49,10 @@ export type FetchAttendedOptions = {
   delayMs?: number;
 };
 
-export async function fetchAttended(user: string, opts: FetchAttendedOptions): Promise<{ events: AttendedEvent[]; pages: number; truncated: boolean }> {
+export async function fetchAttended(
+  user: string,
+  opts: FetchAttendedOptions,
+): Promise<{ events: AttendedEvent[]; pages: number; truncated: boolean }> {
   if (!USERNAME_PATTERN.test(user)) throw new AttendedError("invalid", "ユーザー名の形式が正しくありません");
   const doFetch = opts.fetch ?? fetch;
   const maxPages = opts.maxPages ?? 10;

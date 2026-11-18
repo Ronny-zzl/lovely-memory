@@ -18,8 +18,7 @@ import {
   type SongStats,
 } from "@lovely-memory/core";
 
-export const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const SUN = `<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.4" fill="currentColor"/><g stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><line x1="8" y1="1" x2="8" y2="2.8"/><line x1="8" y1="13.2" x2="8" y2="15"/><line x1="1" y1="8" x2="2.8" y2="8"/><line x1="13.2" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.3" y2="4.3"/><line x1="11.7" y1="11.7" x2="12.95" y2="12.95"/><line x1="3.05" y1="12.95" x2="4.3" y2="11.7"/><line x1="11.7" y1="4.3" x2="12.95" y2="3.05"/></g></svg>`;
 const MOON = `<svg viewBox="0 0 16 16"><path d="M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z" fill="currentColor"/></svg>`;
@@ -128,7 +127,13 @@ function groupLine(artist: ArtistConfig): string {
   return `<div class="group">${esc(artist.name)}${artist.subtitle ? `<small>${esc(artist.subtitle)}</small>` : ""}</div>`;
 }
 
-export function songCard(artist: ArtistConfig, s: SongStats, position: SongPosition | undefined, role: "opener" | "closer" | undefined, host?: string): string {
+export function songCard(
+  artist: ArtistConfig,
+  s: SongStats,
+  position: SongPosition | undefined,
+  role: "opener" | "closer" | undefined,
+  host?: string,
+): string {
   const { song } = s;
   const era = artist.eras.find((e) => e.id === song.era && e.id !== artist.defaultEra);
   const unit = artist.units.find((u) => u.id === song.unit && u.id !== artist.defaultUnit);
@@ -148,7 +153,11 @@ export function songCard(artist: ArtistConfig, s: SongStats, position: SongPosit
     stats = [];
   } else if (song.cover) {
     // カバー曲は歌唱率を出さない（サイトと同じ）
-    stats = [stat(`${s.count}<small>回</small>`, "歌唱回数"), stat(formatDate(s.first!.date), "初披露", "date"), stat(formatDate(s.last!.date), "最終", "date")];
+    stats = [
+      stat(`${s.count}<small>回</small>`, "歌唱回数"),
+      stat(formatDate(s.first!.date), "初披露", "date"),
+      stat(formatDate(s.last!.date), "最終", "date"),
+    ];
   } else {
     stats = [
       stat(`${formatPercent(s.rate)}<small>${s.events}/${s.eligibleEvents}</small>`, "歌唱率（初披露以降）"),

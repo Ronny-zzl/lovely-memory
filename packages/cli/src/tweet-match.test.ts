@@ -92,14 +92,10 @@ describe("extractPosts", () => {
 
 describe("matchPosts", () => {
   const match = (tweets: CollectedTweet[], manual = {}) =>
-    matchPosts(extractPosts(tweets), events, manual).map((r) =>
-      r.kind === "matched" ? [r.post.id, r.event.id] : [r.post.id, r.kind],
-    );
+    matchPosts(extractPosts(tweets), events, manual).map((r) => (r.kind === "matched" ? [r.post.id, r.event.id] : [r.post.id, r.kind]));
 
   it("ignores events that had not started when posted (1部 / 2部)", () => {
-    expect(
-      match([tw("a", "2026-10-18T13:10", "M1_ もしも"), tw("b", "2026-10-18T17:00", "M1_ オトワ")]),
-    ).toEqual([
+    expect(match([tw("a", "2026-10-18T13:10", "M1_ もしも"), tw("b", "2026-10-18T17:00", "M1_ オトワ")])).toEqual([
       ["a", 10],
       ["b", 11],
     ]);
