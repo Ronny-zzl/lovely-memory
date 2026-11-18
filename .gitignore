@@ -7,3 +7,6 @@ dist/
 # X から収集したポスト（tools/x-setlist-collector.js）と対応表
 tweets-*.json
 setlist-map.json
+
+# wrangler pages dev のローカル状態（キャッシュ・D1 など）
+.wrangler/
