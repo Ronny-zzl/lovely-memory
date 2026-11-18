@@ -20,7 +20,6 @@
   font-size: var(--text-title);
   line-height: 1.25;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }

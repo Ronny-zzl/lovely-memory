@@ -2,7 +2,7 @@
   "extends": ["stylelint-config-standard"],
   "ignoreFiles": ["**/dist/**", "**/node_modules/**", "tools/**"],
   "rules": {
-    "property-no-vendor-prefix": [true, { "ignoreProperties": ["-webkit-text-size-adjust", "-webkit-background-clip"] }],
+    "property-no-vendor-prefix": [true, { "ignoreProperties": ["-webkit-text-size-adjust"] }],
     "no-descending-specificity": null,
     "declaration-no-important": true,
     "selector-max-id": 0,

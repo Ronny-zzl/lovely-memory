@@ -14,7 +14,10 @@ body {
     "Noto Sans JP",
     sans-serif;
   line-height: 1.5;
+
+  /* 横向きにしたときなどに文字が勝手に拡大されないように。iOS Safari は接頭辞付き、Chrome は接頭辞なしだけを読む */
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 a {
