@@ -9,6 +9,8 @@
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "lint": "oxlint --type-aware",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lm": "node packages/cli/src/index.ts",
     "smoke": "pnpm --filter @lovely-memory/web smoke"
   },

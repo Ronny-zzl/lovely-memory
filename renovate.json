@@ -34,6 +34,11 @@
       "description": "Vite 関連は同時に上げる",
       "matchPackageNames": ["vite", "@vitejs/**", "vitest"],
       "groupName": "vite"
+    },
+    {
+      "description": "oxc（oxlint・oxlint-tsgolint・oxfmt）は同時に上げる",
+      "matchPackageNames": ["oxlint", "oxlint-tsgolint", "oxfmt"],
+      "groupName": "oxc"
     }
   ]
 }

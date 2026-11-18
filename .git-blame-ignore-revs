@@ -1,0 +1,3 @@
+# git blame で無視する一括整形のコミット（GitHub は自動で読む。手元では git config blame.ignoreRevsFile .git-blame-ignore-revs）
+# oxfmt の導入
+2c47acbb4c7c75bfadd7f95b904cccbb999e6a11
