@@ -6,7 +6,9 @@
     "495779": { "types": ["release", "free"] },
     "496575": { "types": ["release", "free"] },
     "496576": { "types": ["release", "free"] },
-    "497730": { "types": ["oneman", "free"] }
+    "497730": { "types": ["oneman", "free"] },
+    "491702": { "costume": "malymoon" },
+    "494522": { "costume": "malymoon" }
   },
   "extraEvents": []
 }

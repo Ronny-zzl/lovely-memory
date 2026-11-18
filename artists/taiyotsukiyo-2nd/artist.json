@@ -21,6 +21,10 @@
     { "id": "taiyo",   "label": "太陽と踊れ", "motif": "sun" },
     { "id": "tsukiyo", "label": "月夜に唄え", "motif": "moon" }
   ],
+  "costumes": [
+    { "id": "lovely-felis", "name": "ラブリィフェリス衣装", "since": "2026-09-04" },
+    { "id": "malymoon", "name": "Malymoon衣装", "special": true }
+  ],
   "defaultEra": "1st",
   "defaultUnit": "all",
   "shareHashtags": ["太陽月夜"],

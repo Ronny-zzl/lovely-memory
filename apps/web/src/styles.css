@@ -1704,3 +1704,33 @@ a.item-title:hover {
 .upcoming-list .dot {
   margin-right: 2px;
 }
+
+/* 衣装 */
+.event-costume {
+  margin: 4px 0;
+}
+.event-costume.special {
+  font-weight: 700;
+  color: var(--accent);
+}
+.costume-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--badge-1st);
+  color: var(--badge-1st-fg);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.event-meta .costume-badge {
+  margin-left: 0;
+}
+.costume-name {
+  font-weight: 600;
+}
+.costume-range {
+  margin-left: 10px;
+  font-weight: 400;
+}

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
+import { eventCostume, eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
 import { AttendanceHint } from "../components/AttendanceHint.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
@@ -56,6 +56,7 @@ export function EventsPage() {
     const sl = setlistByEvent.get(e.id);
     const entries = sl?.stages.flatMap((s) => s.entries) ?? [];
     const debuts = entries.filter((x) => x.debut).length;
+    const costume = eventCostume(artist, e, today);
     return (
       <li key={e.id} className="with-toggle">
         <Link to={String(e.id)} className="event-row">
@@ -75,6 +76,7 @@ export function EventsPage() {
                 isLiveEvent(e) && <span className="muted">{e.date >= today ? "開催予定" : "セトリ未登録"}</span>
               )}
               {debuts > 0 && <span className="debut-count">初披露 {debuts}</span>}
+              {costume?.special && <span className="costume-badge">{costume.name}</span>}
             </span>
           </span>
           <MemberDots artist={artist} present={e.members} />

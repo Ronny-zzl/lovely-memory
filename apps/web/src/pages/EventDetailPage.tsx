@@ -1,11 +1,11 @@
 import { Link, useParams } from "react-router";
-import { birthdayMembers, isLiveEvent } from "@lovely-memory/core/runtime";
+import { birthdayMembers, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
-import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
+import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 
 export function EventDetailPage() {
@@ -35,6 +35,7 @@ export function EventDetailPage() {
   const multiStage = (setlist?.stages.length ?? 0) > 1;
   // この公演で達成した節目（グループの記録を先に）
   const birthdays = birthdayMembers(artist.members, event.date);
+  const costume = eventCostume(artist, event, todayJst());
   const reached = milestones.achieved.filter((m) => m.eventId === id).sort((a, b) => Number("song" in a) - Number("song" in b));
 
   return (
@@ -63,6 +64,11 @@ export function EventDetailPage() {
             <span className="small muted">全員出演</span>
           )}
         </p>
+        {costume && (
+          <p className={`event-costume small${costume.special ? " special" : ""}`}>
+            <span className="muted">衣装</span> {costume.name}
+          </p>
+        )}
         {event.note && <p className="small">{event.note}</p>}
         <div className="detail-actions">
           {isLiveEvent(event) && <AttendanceToggle eventId={event.id} date={event.date} variant="detail" />}

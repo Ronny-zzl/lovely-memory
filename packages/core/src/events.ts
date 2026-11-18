@@ -13,6 +13,8 @@ export type ResolvedEvent = Event & {
    */
   membersSource: "override" | "eventernote" | "assumed";
   note?: string;
+  /** overrides で指定した衣装（指定が無ければ eventCostume で既定を求める） */
+  costume?: string;
 };
 
 /** 表示・保存時の種別の並び順 */
@@ -59,7 +61,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
   for (const base of merged) {
     const ov = overrides.events[String(base.id)] ?? {};
     if (ov.hidden) continue;
-    const { types: ovTypes, members: ovMembers, hidden: _h, note, ...fields } = ov;
+    const { types: ovTypes, members: ovMembers, hidden: _h, note, costume, ...fields } = ov;
     const ev = { ...base, ...fields } as Event & { types?: EventType[] };
 
     if (artist.since && ev.date < artist.since) continue;
@@ -82,10 +84,40 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
       members,
       membersSource,
       note,
+      costume,
     });
   }
 
   return out.sort(
     (a, b) => a.date.localeCompare(b.date) || (a.start ?? "").localeCompare(b.start ?? "") || a.id - b.id,
   );
+}
+
+export type Costume = ArtistConfig["costumes"][number];
+
+/**
+ * 公演の衣装。overrides での指定があればそれ、無ければその日までに始まった通常衣装のうち最新のもの。
+ * まだ開催していない公演・ライブでないものは分からないので undefined
+ */
+export function eventCostume(artist: ArtistConfig, event: ResolvedEvent, today: string): Costume | undefined {
+  if (event.costume) return artist.costumes.find((c) => c.id === event.costume);
+  if (event.date > today || !isLiveEvent(event)) return undefined;
+  return artist.costumes
+    .filter((c) => !c.special && c.since && c.since <= event.date)
+    .sort((a, b) => b.since!.localeCompare(a.since!))[0];
+}
+
+/** 衣装ごとの着用回数と、最初・最後の公演（着用回数の多い順） */
+export function costumeStats(artist: ArtistConfig, events: ResolvedEvent[], today: string) {
+  const by = new Map<string, { costume: Costume; events: ResolvedEvent[] }>();
+  for (const e of events) {
+    const c = eventCostume(artist, e, today);
+    if (!c) continue;
+    const s = by.get(c.id) ?? { costume: c, events: [] };
+    s.events.push(e);
+    by.set(c.id, s);
+  }
+  return [...by.values()]
+    .map((s) => ({ costume: s.costume, count: s.events.length, first: s.events[0]!, last: s.events.at(-1)! }))
+    .sort((a, b) => b.count - a.count);
 }

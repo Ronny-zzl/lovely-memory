@@ -41,6 +41,10 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
     if (!known.has(Number(id))) warns.push(`overrides.json: event ${id} が events.json にない`);
     for (const m of overrides.events[id]!.members ?? []) if (!memberIds.has(m)) err(`overrides.json: ${id} の member "${m}" が不明`);
   }
+  const costumeIds = new Set(artist.costumes.map((c) => c.id));
+  for (const [id, ov] of Object.entries(overrides.events)) {
+    if (ov.costume && !costumeIds.has(ov.costume)) err(`overrides.json: ${id} の costume "${ov.costume}" が artist.json の costumes にない`);
+  }
   const events = resolveEvents(rawEvents, overrides, artist);
   const eventById = new Map(events.map((e) => [e.id, e]));
 

@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import type { Song, SongPosition } from "@lovely-memory/core/runtime";
+import { CostumesSection } from "../components/CostumesSection.tsx";
 import { MilestonesSection } from "../components/MilestonesSection.tsx";
 import { formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
@@ -111,6 +112,8 @@ export function TrendsPage() {
           ))}
         </ul>
       </section>
+
+      <CostumesSection />
     </div>
   );
 }

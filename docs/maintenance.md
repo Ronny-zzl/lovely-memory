@@ -39,6 +39,11 @@ pbpaste | pnpm lm add-setlist taiyotsukiyo-2nd --date 2026-11-18 --source <推�
 # 翻唱曲・未发行曲
 pnpm lm add-song taiyotsukiyo-2nd --title "曲名" --cover "原唱"
 
+# 衣装：artist.json 的 costumes 里登记。没有单独指定的公演，自动算作「当时最新的常规衣装」（since 最晚且不晚于公演日、不是 special 的那件）
+#   换了新的常规衣装：在 costumes 加一行 { "id": "...", "name": "…衣装", "since": "开始穿的日期" }
+#   特别衣装（只在某些公演）：costumes 加 { "id": "...", "name": "…衣装", "special": true }，
+#   再在 overrides.json 的 "events": { "<eventId>": { "costume": "<id>" } } 指定
+
 # 动画主题曲等合作信息：在 songs.json 对应的曲目里加 tieups（列表上显示「アニメ」等标签）
 #   "tieups": [{ "type": "anime", "work": "作品名", "role": "オープニングテーマ", "url": "官网" }]
 #   type: anime / drama / movie / game / cm / other
