@@ -311,14 +311,16 @@
   list-style: none;
 }
 
+/* 左：1 段目に曲名・2 段目にラベル、右：1 段目に数字・2 段目に補足。どの行も同じ形になるよう、ラベルは曲名の後ろに続けない */
 .song-row {
   display: grid;
   grid-template-columns: 1.6em minmax(0, 1fr) auto;
   column-gap: 10px;
-
-  /* 番号・曲名・数字の 1 行目をそろえる */
   align-items: baseline;
   padding: 8px 12px;
+
+  /* 歌唱率：行の下の線を、歌唱率の分だけ色付きにする */
+  background: linear-gradient(var(--bar), var(--bar)) left bottom / calc(var(--rate) * 100%) 3px no-repeat;
 }
 
 .song-row + .song-row {
@@ -333,29 +335,12 @@
 }
 
 .song-row-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   min-width: 0;
-}
-
-.song-row-title {
-  display: block;
   line-height: 1.5;
-}
-
-.song-row-title .song-title {
-  margin-right: 6px;
-}
-
-.song-row-title .song-meta {
-  vertical-align: 1px;
-}
-
-/* 歌唱率：曲名の下の細い線（背景が 100%） */
-.song-row-bar {
-  display: block;
-  height: 4px;
-  margin-top: 4px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(to right, var(--bar) calc(var(--rate) * 100%), var(--row-hover) 0);
 }
 
 .song-row-figures {
@@ -364,6 +349,7 @@
   align-items: flex-end;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  gap: 2px;
 }
 
 .song-row-value {
@@ -374,6 +360,9 @@
 .song-row-sub {
   color: var(--muted);
   font-size: var(--text-2xs);
+
+  /* 左のラベルと同じ高さにして、ラベルの有無で行の高さが変わらないように */
+  line-height: 20px;
 }
 
 .song-row.unplayed .song-row-value {

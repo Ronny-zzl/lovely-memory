@@ -257,6 +257,11 @@ export function SongStatsPage() {
     }),
   );
 
+  const hasBadges = (s: SongStats) =>
+    !!(s.song.era && eraLabel.has(s.song.era)) ||
+    !!(s.song.unit && unitById.has(s.song.unit)) ||
+    s.song.tieups.length > 0 ||
+    roles.has(s.song.id);
   const meta = (s: SongStats) => (
     <span className="song-meta">
       {s.song.era && eraLabel.has(s.song.era) && <span className={`badge era-${s.song.era}`}>{eraLabel.get(s.song.era)}</span>}
@@ -435,16 +440,17 @@ export function SongStatsPage() {
             {visibleRows.map((s, i) => {
               const f = figures(s, sortKey, today);
               return (
-                <li key={s.song.id} className={s.count === 0 ? "song-row unplayed" : "song-row"}>
+                <li
+                  key={s.song.id}
+                  className={s.count === 0 ? "song-row unplayed" : "song-row"}
+                  style={{ "--rate": s.count > 0 ? s.rate : 0 } as React.CSSProperties}
+                >
                   <span className="song-row-rank">{s.count > 0 ? i + 1 : "–"}</span>
                   <span className="song-row-main">
-                    <span className="song-row-title">
-                      <Link to={s.song.id} className="song-title">
-                        {s.song.title}
-                      </Link>
-                      {meta(s)}
-                    </span>
-                    {s.count > 0 && <span className="song-row-bar" style={{ "--rate": s.rate } as React.CSSProperties} />}
+                    <Link to={s.song.id} className="song-title">
+                      {s.song.title}
+                    </Link>
+                    {hasBadges(s) && meta(s)}
                   </span>
                   <span className="song-row-figures">
                     <span className="song-row-value">{f.main}</span>
