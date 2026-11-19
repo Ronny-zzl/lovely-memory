@@ -86,3 +86,6 @@ export const formatMonthDay = (iso: string) => `${Number(iso.slice(5, 7))}月${N
 
 /** 誕生日までの日数の表記 */
 export const birthdayCountdown = (days: number) => (days === 0 ? "今日が誕生日！" : days === 1 ? "明日" : `あと ${days} 日`);
+/** 「20歳の誕生日・あと 98 日」（当日は「今日が20歳の誕生日！」） */
+export const birthdayWithAge = (b: { days: number; age: number }) =>
+  b.days === 0 ? `今日が${b.age}歳の誕生日！` : `${b.age}歳の誕生日・${birthdayCountdown(b.days)}`;

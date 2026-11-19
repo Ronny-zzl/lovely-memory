@@ -8,6 +8,7 @@ export {
   formatDayWithWeekday,
   formatMonthDay,
   birthdayCountdown,
+  birthdayWithAge,
   formatPercent,
   LIVE_EVENT_TYPES,
   milestoneText,

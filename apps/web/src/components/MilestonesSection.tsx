@@ -140,7 +140,7 @@ export function MilestonesSection() {
                 <span>
                   <span aria-hidden="true">🎂 </span>
                   <span className="dot" style={{ background: b.member.color }} />
-                  <strong>{b.member.name}</strong>の誕生日
+                  <strong>{b.member.name}</strong>の{b.age}歳の誕生日
                 </span>
                 <span className="muted small">
                   {formatMonthDay(b.date)}（{birthdayCountdown(b.days)}）

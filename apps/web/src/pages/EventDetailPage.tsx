@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router";
 import { Fragment } from "react";
-import { birthdayMembers, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
+import { ageOn, birthdayMembers, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
@@ -101,7 +101,7 @@ export function EventDetailPage() {
                   🎂
                 </span>
                 <span className="dot" style={{ background: m.color }} />
-                {m.name}の誕生日
+                {m.name}の{ageOn(m.birthday!, event.date)}歳の誕生日
               </span>
             ))}
             {reached.map((m, i) => (

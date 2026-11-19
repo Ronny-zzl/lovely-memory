@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
-import { computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
-import { birthdayCountdown, displayTitle, formatDate, formatMonthDay, formatPercent, todayJst } from "../format.ts";
+import { ageOn, computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
+import { birthdayCountdown, birthdayWithAge, displayTitle, formatDate, formatMonthDay, formatPercent, todayJst } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./MembersPage.css";
 
@@ -20,7 +20,7 @@ export function MembersPage() {
           <span aria-hidden="true">🎂</span> 次の誕生日：
           <span className="dot" style={{ background: soonest.member.color }} />
           <strong>{soonest.member.name}</strong> {formatMonthDay(soonest.date)}
-          <span className={soonest.days === 0 ? "birthday-today" : "muted"}>（{birthdayCountdown(soonest.days)}）</span>
+          <span className={soonest.days === 0 ? "birthday-today" : "muted"}>（{birthdayWithAge(soonest)}）</span>
         </p>
       )}
       <ul className="member-cards">
@@ -36,7 +36,7 @@ export function MembersPage() {
               return (
                 b && (
                   <p className={`member-birthday${b.days === 0 ? " birthday-today" : ""}`}>
-                    <span aria-hidden="true">🎂</span> {formatMonthDay(b.date)}
+                    <span aria-hidden="true">🎂</span> {formatMonthDay(b.date)} ・ {ageOn(s.member.birthday!, today)}歳
                     <span className="muted">（{birthdayCountdown(b.days)}）</span>
                   </p>
                 )

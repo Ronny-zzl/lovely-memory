@@ -18,7 +18,14 @@ function daysBetween(from: string, to: string): number {
   return Math.round((t(to) - t(from)) / 86_400_000);
 }
 
-export type NextBirthday = { member: Member; date: string; days: number };
+/** date の時点の年齢（その年の誕生日を迎えていれば加算。2/29 生まれは平年の 2/28 に迎える） */
+export function ageOn(birthday: string, date: string): number {
+  const year = Number(date.slice(0, 4));
+  return year - Number(birthday.slice(0, 4)) - (date < birthdayIn(birthday, year) ? 1 : 0);
+}
+
+/** age: その誕生日で迎える年齢 */
+export type NextBirthday = { member: Member; date: string; days: number; age: number };
 
 /** 次の誕生日（今日なら days = 0） */
 export function nextBirthday(member: Member, today: string): NextBirthday | undefined {
@@ -26,7 +33,7 @@ export function nextBirthday(member: Member, today: string): NextBirthday | unde
   const year = Number(today.slice(0, 4));
   let date = birthdayIn(member.birthday, year);
   if (date < today) date = birthdayIn(member.birthday, year + 1);
-  return { member, date, days: daysBetween(today, date) };
+  return { member, date, days: daysBetween(today, date), age: ageOn(member.birthday, date) };
 }
 
 /** 誕生日の近い順 */
