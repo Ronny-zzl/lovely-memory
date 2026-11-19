@@ -123,6 +123,8 @@ try {
   try {
     const p = await broken.newPage();
     await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => route.abort());
+    // わざと起こしたエラーなので、報告はブラウザ側で受け止める（中身は下で確かめる。サーバーに届くと [client error] と表示されて紛らわしい）
+    await p.route("**/api/errors", (route) => route.fulfill({ status: 204 }));
     const report = p.waitForRequest((r) => r.method() === "POST" && new URL(r.url()).pathname === "/api/errors", { timeout: 10_000 });
     await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
     try {
