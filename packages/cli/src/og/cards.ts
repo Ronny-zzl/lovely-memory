@@ -172,8 +172,9 @@ export function songCard(
   const tieupNote = song.tieups.length ? `<p class="note">${song.tieups.map((t) => esc(tieupText(t))).join(" ・ ")}</p>` : "";
   const note = song.cover
     ? `<p class="note">カバー曲 ・ 原曲: ${esc(song.cover.artist)}${song.cover.title ? `「${esc(song.cover.title)}」` : ""}</p>`
-    : position && position.count > 0 && !role
-      ? `<p class="note muted">1 曲目 ${position.opener} 回 ・ ラスト ${position.closer} 回</p>`
+    : position && position.count > 0
+      ? // 「ラスト定番」などのバッジがあっても回数は出す（サイトの「セトリでの位置」と同じ）
+        `<p class="note muted">1 曲目 ${position.opener} 回 ・ ラスト ${position.closer} 回${position.encore > 0 ? ` ・ アンコール ${position.encore} 回` : ""}</p>`
       : "";
 
   return page(
