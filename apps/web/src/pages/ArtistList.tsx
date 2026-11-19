@@ -10,7 +10,7 @@ import "./ArtistList.css";
 
 const SECTIONS = [
   { path: "songs", label: "楽曲", note: "歌唱率・回数" },
-  { path: "events", label: "公演", note: "セトリ一覧" },
+  { path: "events", label: "イベント", note: "セトリ一覧" },
   { path: "trends", label: "傾向", note: "定番の流れ" },
   { path: "members", label: "メンバー", note: "出演・誕生日" },
   { path: "attendance", label: "参戦記録", note: "生で聴いた曲" },
@@ -33,7 +33,7 @@ export function ArtistList() {
           </h1>
           <p className="home-lead">ライブのセットリストを記録・集計するファンサイト</p>
           <p className="muted small">
-            公式の告知から歌われた曲を記録して、歌唱率・初披露・定番の流れなどをまとめています。参戦した公演に印を付けると、生で聴いた曲も分かります。
+            公式の告知から歌われた曲を記録して、歌唱率・初披露・定番の流れなどをまとめています。参戦したイベントに印を付けると、生で聴いた曲も分かります。
           </p>
         </div>
       </header>
@@ -52,7 +52,7 @@ export function ArtistList() {
   );
 }
 
-/** データを読み込んでから、数字・最新のセトリ・次の公演を添える */
+/** データを読み込んでから、数字・最新のセトリ・次のイベントを添える */
 function ArtistCardWithData({ artist }: { artist: ArtistConfig }) {
   return <ArtistCard artist={artist} data={artistDataOn(use(loadArtistData(artist)), useToday())} />;
 }
@@ -93,7 +93,7 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
       {data && (
         <dl className="artist-card-stats">
           <div>
-            <dt>公演</dt>
+            <dt>イベント</dt>
             <dd>{data.allStats.events.length}</dd>
           </div>
           <div>
@@ -122,7 +122,7 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
           )}
           {next && (
             <Link to={`${base}/events/${next.id}`} className="artist-card-event">
-              <span className="artist-card-event-label">次の公演</span>
+              <span className="artist-card-event-label">次のイベント</span>
               <span className="event-date">{formatDayWithWeekday(next.date)}</span>
               <span className="artist-card-event-title">{displayTitle(next.title, artist.name)}</span>
               {next.start && <span className="muted small">{next.start} 開演</span>}

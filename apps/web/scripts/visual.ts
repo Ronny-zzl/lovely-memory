@@ -19,7 +19,7 @@ import { preview } from "vite";
 
 const ARTIST = "taiyotsukiyo-2nd";
 const NOW = new Date("2026-11-18T21:00:00+09:00");
-/** 参戦記録のページ用（参戦済み 3 公演・参戦予定 1 公演） */
+/** 参戦記録のページ用（参戦済み 3 件・参戦予定 1 件） */
 const ATTENDANCE = { manual: { 491702: true, 492324: true, 499149: true, 497664: true } };
 
 const PAGES: Array<{ name: string; path: string; attendance?: boolean }> = [

@@ -20,7 +20,7 @@ export type CollectedTweet = {
   truncated?: boolean;
 };
 
-/** 1 公演分のセトリ告知（スレッドで分割されたものは結合済み） */
+/** 1 イベント分のセトリ告知（スレッドで分割されたものは結合済み） */
 export type SetlistPost = {
   /** 先頭ポストの id（対応表のキー） */
   id: string;

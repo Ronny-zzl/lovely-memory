@@ -69,11 +69,11 @@ export function milestoneText(m: import("./milestones.ts").Milestone): string {
     case "song-count":
       return `通算 ${m.count} 回目`;
     case "song-streak":
-      return `${m.streak} 公演連続`;
+      return `${m.streak} 回連続`;
     case "song-return":
-      return `${m.gap} 公演ぶり`;
+      return `${m.gap} 回ぶり`;
     case "event-count":
-      return `通算 ${m.count} 公演目`;
+      return `通算 ${m.count} 回目のイベント`;
     case "total-songs":
       return `通算 ${m.count} 曲目`;
     case "debut-days":

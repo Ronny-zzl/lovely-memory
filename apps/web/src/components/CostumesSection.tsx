@@ -4,7 +4,7 @@ import { formatDate } from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 import "./CostumesSection.css";
 
-/** 傾向タブの「衣装」：衣装ごとの公演数と、最初・最後に着た公演 */
+/** 傾向タブの「衣装」：衣装ごとのイベント数と、最初・最後に着たイベント */
 export function CostumesSection() {
   const { artist, events, isHeld } = useArtistData();
   const stats = costumeStats(artist, events, isHeld);
@@ -27,7 +27,7 @@ export function CostumesSection() {
               {s.costume.special && <span className="costume-badge">特別</span>}
             </span>
             <span className="rank-count">
-              {s.count} 公演
+              {s.count} 回
               <span className="costume-range">
                 {link(s.first)}
                 {s.last.date !== s.first.date && (

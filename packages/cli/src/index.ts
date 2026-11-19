@@ -40,7 +40,7 @@ commands:
                      --issue <Issue本文> --file <コメント> --out <返信本文の出力先>
   watch-x            公式 X のポストからセトリ告知を自動で取り込む（GitHub Actions 用、artistId に all 可）
                      セトリ待ちのイベントがあるときだけ X API を読む。X_BEARER_TOKEN 環境変数が必要
-                     X_WEBHOOK_ID があれば Webhook の購読を公演に合わせて開く・閉じる
+                     X_WEBHOOK_ID があれば Webhook の購読をイベントに合わせて開く・閉じる
                      --state <path>       前回までに読んだポスト（次回に引き継ぐ）  (必須)
                      --out <path>         Issue への返信の出力先（reply-issues に渡す）  (必須)
                      --commit-msg <path>  取り込んだときのコミットメッセージの出力先

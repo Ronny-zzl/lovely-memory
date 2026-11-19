@@ -4,15 +4,15 @@ import type { Stats } from "./stats.ts";
 
 export type MemberStats = {
   member: Member;
-  /** 出演した公演数 */
+  /** 出演したイベント数 */
   appearances: number;
-  /** 集計対象の公演数（開催済みのライブ） */
+  /** 集計対象のイベント数（開催済みのライブ） */
   total: number;
   /** appearances / total */
   rate: number;
-  /** 欠席した公演（日付昇順） */
+  /** 欠席したイベント（日付昇順） */
   absences: ResolvedEvent[];
-  /** 参加した歌唱の数（セトリ登録済みの公演のみ） */
+  /** 参加した歌唱の数（セトリ登録済みのイベントのみ） */
   performances: number;
 };
 
@@ -22,13 +22,13 @@ export type MemberStatsInput = {
   events: ResolvedEvent[];
   /** computeStats の結果（歌唱数の集計に使う） */
   stats: Stats;
-  /** 開催済みの公演だけを対象にする（heldCheck） */
+  /** 開催済みのイベントだけを対象にする（heldCheck） */
   held: HeldCheck;
 };
 
 /**
  * メンバーごとの出演・欠席・歌唱数。
- * 出演メンバーの情報が無い公演（membersSource: "assumed"）は全員出演として数える。
+ * 出演メンバーの情報が無いイベント（membersSource: "assumed"）は全員出演として数える。
  */
 export function computeMemberStats({ artist, events, stats, held: isHeld }: MemberStatsInput): MemberStats[] {
   const held = events.filter((e) => isLiveEvent(e) && isHeld(e));

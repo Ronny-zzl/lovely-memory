@@ -13,7 +13,7 @@ import { useArtistData } from "../pages/ArtistLayout.tsx";
 import { MilestoneBadge } from "./MilestoneBadge.tsx";
 import "./MilestonesSection.css";
 
-/** 最近の記録として最初から見せる日数（公演のあった日）。それより前はたたんでおく */
+/** 最近の記録として最初から見せる日数（イベントのあった日）。それより前はたたんでおく */
 const RECENT_DATES = 5;
 
 function Upcoming({ u, artistId, artistName, today }: { u: UpcomingMilestone; artistId: string; artistName: string; today: string }) {
@@ -38,7 +38,7 @@ function Upcoming({ u, artistId, artistName, today }: { u: UpcomingMilestone; ar
         <>
           {song(u.song)}
           <span>
-            次も歌われれば <strong>{u.streak} 公演連続</strong>
+            次も歌われれば <strong>{u.streak} 回連続</strong>
           </span>
           <span className="muted small">歌唱率 {formatPercent(u.rate)}</span>
         </>
@@ -47,7 +47,7 @@ function Upcoming({ u, artistId, artistName, today }: { u: UpcomingMilestone; ar
       return (
         <>
           <span>
-            次の公演で<strong>通算 {u.count} 公演目</strong>
+            次のイベントで<strong>通算 {u.count} 回目</strong>
           </span>
           <Link to={`/${artistId}/events/${u.event.id}`} className="muted small">
             {formatDayWithWeekday(u.event.date)} {displayTitle(u.event.title, artistName)}

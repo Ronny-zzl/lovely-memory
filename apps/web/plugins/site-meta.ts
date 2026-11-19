@@ -2,7 +2,7 @@ import type { Plugin } from "vite";
 
 const TITLE = "ラブリィメモリー";
 const DESCRIPTION =
-  "太陽と踊れ月夜に唄え（Second Season）のライブのセットリストを記録・集計する非公式ファンサイト。曲ごとの歌唱率や初披露、公演ごとのセトリを見られます。";
+  "太陽と踊れ月夜に唄え（Second Season）のライブのセットリストを記録・集計する非公式ファンサイト。曲ごとの歌唱率や初披露、イベントごとのセトリを見られます。";
 
 /**
  * サイトの URL に関わる head 要素を index.html に入れる。

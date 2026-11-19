@@ -29,7 +29,7 @@ type Card = { file: string; html: string };
 type Page = { path: string; meta: PageMeta };
 
 /**
- * 曲・公演などのページごとに OGP 用の meta を HTML（<path>.html）に入れ、画像（og/…png）をビルド結果に追加する。
+ * 曲・イベントなどのページごとに OGP 用の meta を HTML（<path>.html）に入れ、画像（og/…png）をビルド結果に追加する。
  * Cloudflare Pages は /a/b を a/b.html で返すので、SNS のクローラーにページごとのカードが見える。
  */
 export async function ogPages(artistArg: string, opts: { dist?: string; "skip-images"?: boolean; only?: string }): Promise<void> {
@@ -77,7 +77,7 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
   const stats = computeStats({ songs, events, setlists });
   const patterns = computePatterns(stats.events);
   const setlistByEvent = new Map(stats.events.map((e) => [e.event.id, e]));
-  // 公演カードに添える節目（サイトの「この公演の記録」と同じ計算）
+  // イベントカードに添える節目（サイトの「このイベントの記録」と同じ計算）
   const today = jstDateDaysAgo(0);
   const milestones = computeMilestones({
     stats,
@@ -98,15 +98,15 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
 
   // 一覧ページはサイト共通の画像のまま、タイトルと説明だけ変える
   const sections: Array<[string, string, string]> = [
-    ["", "", `${name}のライブのセットリストを記録・集計。曲ごとの歌唱率や初披露、公演ごとのセトリを見られます。`],
+    ["", "", `${name}のライブのセットリストを記録・集計。曲ごとの歌唱率や初披露、イベントごとのセトリを見られます。`],
     ["songs", "楽曲", `${name}の楽曲ごとの歌唱回数・歌唱率・初披露日・最後に歌われた日。`],
-    ["events", "公演", `${name}の公演一覧とセットリスト（${stats.events.length} 公演）。`],
+    ["events", "イベント", `${name}のイベント一覧とセットリスト（${stats.events.length} イベント）。`],
     ["trends", "傾向", `${name}のセトリの傾向。1 曲目・ラストになりやすい曲、定番の流れ、よく続けて歌われる曲。`],
-    ["members", "メンバー", `${name}のメンバーごとの出演率と欠席した公演。`],
+    ["members", "メンバー", `${name}のメンバーごとの出演率と欠席したイベント。`],
     [
       "attendance",
       "参戦記録",
-      `${name}の参戦記録。参戦した公演と、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`,
+      `${name}の参戦記録。参戦したイベントと、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`,
     ],
   ];
   for (const [path, label, description] of sections) {
@@ -126,7 +126,7 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
         ? `「${s.song.title}」はまだ歌われていません（${artist.name}）。`
         : s.song.cover
           ? `「${s.song.title}」（カバー曲・原曲: ${s.song.cover.artist}）の歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。`
-          : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} 公演）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
+          : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} イベント）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
     pages.push({
       path: p,
       meta: { title: title(s.song.title), description, url: url(p), image: url(img), imageAlt: `「${s.song.title}」の歌唱記録` },

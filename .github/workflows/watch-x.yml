@@ -5,7 +5,7 @@ name: Watch X
 # X_BEARER_TOKEN（リポジトリの secret）が必要。
 # - workflow_dispatch: 公式がポストすると、サイトの /api/x-webhook（X の Webhook）がすぐにこのワークフローを起動する
 #   （トークンの権限を Actions だけにするため repository_dispatch ではなくこちら）。手動の確認にも使う
-# - schedule: 1 時間ごとの見回り。Webhook の購読を公演に合わせて開閉し、Webhook が届かなかったときの取りこぼしも拾う
+# - schedule: 1 時間ごとの見回り。Webhook の購読をイベントに合わせて開閉し、Webhook が届かなかったときの取りこぼしも拾う
 on:
   schedule:
     - cron: "7 * * * *"
@@ -16,7 +16,7 @@ on:
         type: boolean
         default: false
       now:
-        description: "現在時刻の代わり（確認用。例: 2026-11-18T22:30+09:00 で 11/18 の公演後として読む）"
+        description: "現在時刻の代わり（確認用。例: 2026-11-18T22:30+09:00 で 11/18 のイベント後として読む）"
         type: string
         default: ""
 

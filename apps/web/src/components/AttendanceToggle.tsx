@@ -3,8 +3,8 @@ import { useAttendance } from "../attendance.ts";
 import "./AttendanceToggle.css";
 
 /**
- * 公演の「参戦」印のボタン。開催前の公演は「予定」。
- * variant="row" は一覧の行の右端、"detail" は公演ページ（説明文付き）。
+ * イベントの「参戦」印のボタン。開催前のイベントは「予定」。
+ * variant="row" は一覧の行の右端、"detail" はイベントページ（説明文付き）。
  */
 export function AttendanceToggle({
   eventId,
@@ -22,7 +22,7 @@ export function AttendanceToggle({
   const future = upcoming;
   const word = future ? "予定" : "参戦";
   const fromEventernote = attendance.source(eventId) === "eventernote";
-  const action = on ? `${word}の印を外す` : future ? "参戦予定にする" : "参戦した公演に印を付ける";
+  const action = on ? `${word}の印を外す` : future ? "参戦予定にする" : "参戦したイベントに印を付ける";
 
   const button = (
     <button

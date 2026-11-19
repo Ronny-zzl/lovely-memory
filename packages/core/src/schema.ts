@@ -57,7 +57,7 @@ export const ArtistConfig = z.object({
   defaultEra: slug.optional(),
   defaultUnit: slug.optional(),
   /**
-   * 衣装。公演ごとに指定が無ければ、その日までに始まった通常衣装（special でないもの）のうち最新のものを着ていたとみなす。
+   * 衣装。イベントごとに指定が無ければ、その日までに始まった通常衣装（special でないもの）のうち最新のものを着ていたとみなす。
    * 特別な衣装（ハロウィンなど）は overrides.json の events.<id>.costume で指定する
    */
   costumes: z
@@ -67,7 +67,7 @@ export const ArtistConfig = z.object({
         name: z.string(),
         /** 通常衣装として着始めた日 */
         since: isoDate.optional(),
-        /** その公演だけの特別な衣装（既定にはならない） */
+        /** そのイベントだけの特別な衣装（既定にはならない） */
         special: z.boolean().default(false),
         note: z.string().optional(),
       }),
@@ -203,7 +203,7 @@ export const EventOverride = Event.partial()
     /** true なら一覧から除外 */
     hidden: z.boolean().optional(),
     note: z.string().optional(),
-    /** この公演の衣装（artist.json の costumes の id）。通常衣装でないときに指定する */
+    /** このイベントの衣装（artist.json の costumes の id）。通常衣装でないときに指定する */
     costume: slug.optional(),
   });
 export type EventOverride = z.infer<typeof EventOverride>;
@@ -219,7 +219,7 @@ export type Overrides = z.infer<typeof Overrides>;
 
 /**
  * 1 曲分。曲名だけなら文字列で書ける。
- * 初披露かどうかは記録せず、集計時に「最初に歌われた公演」として算出する。
+ * 初披露かどうかは記録せず、集計時に「最初に歌われたイベント」として算出する。
  */
 export const SetlistItem = z.union([
   z.string(),

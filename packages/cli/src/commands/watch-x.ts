@@ -32,7 +32,7 @@ export type IssueAction = { artistId: string; eventId: number; close: boolean; b
  * - out: 対応する Issue に書く返信。コミット・push の後で reply-issues に渡す
  * - X_WEBHOOK_ID があれば、Webhook（/api/x-webhook）への post.create の購読を開く・閉じる。
  *   購読中は公式がポストするとワークフローがすぐに起動する。購読は開演から、セトリが確定するか翌日 02:00 まで
- * - --dry-run: 書き込まない。キャッシュも登録済みのセトリも無視するので、--now で過去の公演後を指定すると取り込みを試せる
+ * - --dry-run: 書き込まない。キャッシュも登録済みのセトリも無視するので、--now で過去のイベント後を指定すると取り込みを試せる
  */
 export async function watchX(target: string, opts: Record<string, unknown>) {
   if (typeof opts.state !== "string" || typeof opts.out !== "string") throw new Error("--state と --out が必要です");
@@ -162,11 +162,11 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
             eventId: e.id,
             close: false,
             body: [
-              `🤖 公式 X のセトリ告知（${at}）を見つけましたが、どの公演のものか 1 つに絞れませんでした（候補 ${d.candidates.length} 件）。`,
+              `🤖 公式 X のセトリ告知（${at}）を見つけましたが、どのイベントのものか 1 つに絞れませんでした（候補 ${d.candidates.length} 件）。`,
               "",
               d.post.url,
               "",
-              "この公演のセトリなら、告知を貼り付けてコメントしてください。",
+              "このイベントのセトリなら、告知を貼り付けてコメントしてください。",
             ].join("\n"),
           });
         }

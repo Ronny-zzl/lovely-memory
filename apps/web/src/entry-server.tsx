@@ -8,7 +8,7 @@ import { createStaticHandler, createStaticRouter, StaticRouterProvider } from "r
 import { artists, loadArtistData } from "./data.ts";
 import { routes } from "./routes.tsx";
 
-/** HTML を作るページのパス（トップ・各グループのタブ・全曲・全公演） */
+/** HTML を作るページのパス（トップ・各グループのタブ・全曲・全イベント） */
 export async function paths(): Promise<string[]> {
   const out = ["/"];
   for (const artist of artists) {

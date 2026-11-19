@@ -54,7 +54,7 @@ export function AttendanceBackup() {
     attendance.replaceAll(next);
     setPending(undefined);
     setInput("");
-    setMessage({ kind: "ok", text: `読み込みました（参戦 ${countAttended(next)} 公演）` });
+    setMessage({ kind: "ok", text: `読み込みました（参戦 ${countAttended(next)} 回）` });
   };
 
   return (
@@ -128,9 +128,9 @@ export function AttendanceBackup() {
         {pending && (
           <div className="backup-confirm" role="group" aria-label="読み込む内容の確認">
             <p className="small">
-              参戦 <strong>{countAttended(pending)}</strong> 公演の記録
+              参戦 <strong>{countAttended(pending)}</strong> 回分の記録
               {pending.eventernote && `（eventernote: ${pending.eventernote.user}）`}
-              {empty ? "を読み込みます。" : `があります。今の記録（参戦 ${currentCount} 公演）とどうしますか？`}
+              {empty ? "を読み込みます。" : `があります。今の記録（参戦 ${currentCount} 回）とどうしますか？`}
             </p>
             <div className="backup-actions">
               {empty ? (

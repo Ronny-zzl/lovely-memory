@@ -85,7 +85,7 @@ try {
     checked++;
     if (size !== icon.sizes) failures.push(`${icon.src}: ${icon.sizes} のはずが ${size}`);
   }
-  // カードの中には公演・各ページへのリンクもあるので、グループ名のリンクだけを使う
+  // カードの中にはイベント・各ページへのリンクもあるので、グループ名のリンクだけを使う
   const artists = await hrefs(page, ".artist-list a.artist-card-head");
   if (artists.length === 0) failures.push("/: アーティストが 1 件も表示されていない");
 
@@ -95,7 +95,7 @@ try {
       (await p.locator(".stats-table tbody tr").count()) > 0 ? undefined : "曲の行が無い",
     );
     const songs = await hrefs(page, "a.song-title");
-    // 開催予定は折りたたまれているので、表示されている公演の行を待つ
+    // 開催予定は折りたたまれているので、表示されているイベントの行を待つ
     await visit(page, `${artist}/events`, "a.event-row:visible");
     const events = await hrefs(page, ".event-list a.event-row");
     await visit(page, `${artist}/trends`, ".trend-grid");
@@ -105,7 +105,7 @@ try {
     for (const path of songs) await visit(page, path, ".song-detail-title");
     for (const path of events) await visit(page, path, ".event-detail-title");
     if (songs.length === 0) failures.push(`${artist}/songs: 曲へのリンクが無い`);
-    if (events.length === 0) failures.push(`${artist}/events: 公演へのリンクが無い`);
+    if (events.length === 0) failures.push(`${artist}/events: イベントへのリンクが無い`);
 
     // 以前の hash ルーティングのリンクが通常のパスに置き換わること
     if (songs[0]) {

@@ -200,7 +200,7 @@ export function SongDetailPage() {
           text={
             stats.count === 0 || song.cover
               ? `「${song.title}」の歌唱記録（${artist.name}）`
-              : `「${song.title}」の歌唱率 ${formatPercent(stats.rate)}（${stats.events}/${stats.eligibleEvents} 公演）・歌唱 ${stats.count} 回（${artist.name}）`
+              : `「${song.title}」の歌唱率 ${formatPercent(stats.rate)}（${stats.events}/${stats.eligibleEvents} イベント）・歌唱 ${stats.count} 回（${artist.name}）`
           }
           hashtags={artist.shareHashtags}
           image={{ src: `/og/${artist.id}/songs/${song.id}.png`, fileName: `${song.title}.png`, alt: `「${song.title}」の歌唱記録` }}
@@ -245,7 +245,7 @@ export function SongDetailPage() {
           {!isCover && (
             <section className="song-section">
               <h3 className="section-heading">
-                出現パターン<span className="muted small"> 初披露以降 {sinceDebut.length} 公演（古い順）</span>
+                出現パターン<span className="muted small"> 初披露以降 {sinceDebut.length} イベント（古い順）</span>
               </h3>
               <ol className="pattern">
                 {sinceDebut.map(({ event }) => {
@@ -271,12 +271,12 @@ export function SongDetailPage() {
               <ul className="record-facts">
                 {record.currentStreak >= STREAK_MIN && (
                   <li>
-                    <span aria-hidden="true">🔥</span> いま <strong>{record.currentStreak} 公演連続</strong>で歌唱中
+                    <span aria-hidden="true">🔥</span> いま <strong>{record.currentStreak} 回連続</strong>で歌唱中
                   </li>
                 )}
                 {record.longestStreak >= 2 && record.longestStreak > record.currentStreak && (
                   <li>
-                    最長 <strong>{record.longestStreak} 公演連続</strong>
+                    最長 <strong>{record.longestStreak} 回連続</strong>
                     <span className="muted small">（〜{formatDate(record.longestStreakEnd!.date)}）</span>
                   </li>
                 )}

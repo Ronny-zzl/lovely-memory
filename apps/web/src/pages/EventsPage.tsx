@@ -95,7 +95,7 @@ export function EventsPage() {
 
   return (
     <section className={editing ? "events editing" : "events"}>
-      <fieldset className="chips" aria-label="公演の種別">
+      <fieldset className="chips" aria-label="イベントの種別">
         {presentTypes.map((t) => (
           <label key={t} className="chip">
             <input type="checkbox" checked={selected.has(t)} onChange={() => toggle(t)} />
@@ -123,7 +123,7 @@ export function EventsPage() {
       {upcoming.length > 0 && (
         <details className="upcoming">
           <summary className="month-heading">
-            今後の公演<span className="muted small"> {upcoming.length} 公演</span>
+            今後のイベント<span className="muted small"> {upcoming.length} 件</span>
           </summary>
           <ul className="event-list">{upcoming.map(row)}</ul>
         </details>
@@ -132,12 +132,12 @@ export function EventsPage() {
       {[...months].map(([month, list]) => (
         <div key={month}>
           <h2 className="month-heading">
-            {month.slice(0, 4)}年{Number(month.slice(5))}月<span className="muted small"> {list.length} 公演</span>
+            {month.slice(0, 4)}年{Number(month.slice(5))}月<span className="muted small"> {list.length} 件</span>
           </h2>
           <ul className="event-list">{list.map(row)}</ul>
         </div>
       ))}
-      {visible.length === 0 && <p className="muted">該当する公演がありません</p>}
+      {visible.length === 0 && <p className="muted">該当するイベントがありません</p>}
     </section>
   );
 }

@@ -6,7 +6,7 @@ export function MemberDots({ artist, present }: { artist: ArtistConfig; present:
   const absent = artist.members.filter((m) => !set.has(m.id)).map((m) => m.name);
   return (
     <span
-      // 全員出演かどうかで見せ方を変えられるように（狭い画面の公演一覧では、全員出演なら省く）
+      // 全員出演かどうかで見せ方を変えられるように（狭い画面のイベント一覧では、全員出演なら省く）
       className={absent.length ? "member-dots" : "member-dots member-dots-full"}
       role="img"
       title={absent.length ? `欠席: ${absent.join("・")}` : "全員出演"}

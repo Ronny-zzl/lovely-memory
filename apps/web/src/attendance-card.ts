@@ -18,7 +18,7 @@ export type AttendanceCardData = {
   sungSongs: number;
   performances: number;
   topSongs: Array<{ title: string; count: number }>;
-  /** 最初に参戦した公演の日（YYYY-MM-DD） */
+  /** 最初に参戦したイベントの日（YYYY-MM-DD） */
   firstDate?: string;
   notHeard: number;
   host: string;
@@ -204,7 +204,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   const by = cy + 196;
   const bh = 138;
   const boxes: Array<[string, string, string]> = [
-    [String(d.attended), `/ ${d.held}`, "参戦した公演"],
+    [String(d.attended), `/ ${d.held}`, "参戦したイベント"],
     [String(d.heardSongs), `/ ${d.sungSongs}`, "生で聴いた曲"],
     [String(d.performances), "曲", "聴いた歌唱（のべ）"],
   ];

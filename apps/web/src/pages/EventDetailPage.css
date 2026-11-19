@@ -4,7 +4,7 @@
   margin: 12px 0 20px;
 }
 
-/* 公演の基本情報のカード。上端に朝から夜へのグラデーションの細い帯（トップのカードと同じ） */
+/* イベントの基本情報のカード。上端に朝から夜へのグラデーションの細い帯（トップのカードと同じ） */
 .event-card {
   position: relative;
   padding: 16px;
@@ -175,7 +175,7 @@
   color: var(--accent-2);
 }
 
-/* 前後の公演：カードにして押しやすく */
+/* 前後のイベント：カードにして押しやすく */
 .event-nav {
   display: flex;
   justify-content: space-between;

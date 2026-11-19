@@ -86,7 +86,7 @@ export function parseBackup(text: string): AttendanceData {
 /**
  * 読み込んだ記録を今の記録に反映する。
  * - replace: そっくり置き換える
- * - merge: 手の印は両方を合わせ、同じ公演は読み込んだ側を優先。eventernote 連携は今のものが無いときだけ引き継ぐ
+ * - merge: 手の印は両方を合わせ、同じイベントは読み込んだ側を優先。eventernote 連携は今のものが無いときだけ引き継ぐ
  */
 export function applyBackup(current: AttendanceData, incoming: AttendanceData, mode: "merge" | "replace"): AttendanceData {
   if (mode === "replace") return incoming;
@@ -96,7 +96,7 @@ export function applyBackup(current: AttendanceData, incoming: AttendanceData, m
   };
 }
 
-/** 記録に含まれる公演の数（手の印 ＋ eventernote、手で外したものを除く） */
+/** 記録に含まれるイベントの数（手の印 ＋ eventernote、手で外したものを除く） */
 export function countAttended(data: AttendanceData): number {
   const ids = new Set(data.eventernote?.ids ?? []);
   for (const [k, v] of Object.entries(data.manual)) {

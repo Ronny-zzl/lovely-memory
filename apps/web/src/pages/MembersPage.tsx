@@ -65,7 +65,7 @@ export function MembersPage() {
                 <dt>欠席</dt>
                 <dd>
                   {s.absences.length}
-                  <span className="muted small"> 公演</span>
+                  <span className="muted small"> 回</span>
                 </dd>
               </div>
             </dl>
@@ -75,7 +75,7 @@ export function MembersPage() {
 
             {s.absences.length > 0 && (
               <div className="absence">
-                <h3 className="absence-heading">欠席した公演</h3>
+                <h3 className="absence-heading">欠席したイベント</h3>
                 <ul className="absence-list">
                   {[...s.absences].reverse().map((e) => (
                     <li key={e.id}>
@@ -93,8 +93,8 @@ export function MembersPage() {
       </ul>
       <p className="muted small note">
         開催済みのライブ（特典会のみのイベントを除く）が対象。出演メンバーは eventernote の出演者情報と手動修正に基づく。
-        {assumed > 0 && `出演者情報の無い ${assumed} 公演は全員出演として数えている。`}
-        「歌唱」はセトリ登録済みの公演で参加した曲数。
+        {assumed > 0 && `出演者情報の無い ${assumed} イベントは全員出演として数えている。`}
+        「歌唱」はセトリ登録済みのイベントで参加した曲数。
       </p>
     </section>
   );

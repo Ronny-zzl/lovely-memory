@@ -16,7 +16,7 @@ const ev = (i: number): ResolvedEvent => ({
   membersSource: "assumed",
 });
 
-// 公演 0..11（12 公演）。A は毎回、B は 0 と 9 だけ（9 公演ぶり）、C は 0..4（5 連続）
+// イベント 0..11（12 イベント）。A は毎回、B は 0 と 9 だけ（9 回ぶり）、C は 0..4（5 連続）
 const events = Array.from({ length: 12 }, (_, i) => ev(i));
 const setlists = events.map((e, i) =>
   Setlist.parse({ event: e.id, items: ["A", ...(i === 0 || i === 9 ? ["B"] : []), ...(i <= 4 ? ["C"] : [])] }),

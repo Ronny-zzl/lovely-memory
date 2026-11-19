@@ -29,7 +29,7 @@ type Column = {
 /** 最後に歌われてからの日数（未披露は null） */
 const daysSince = (s: SongStats, today: string) => (s.last ? daysBetween(s.last.date, today) : null);
 
-/** 公演数に分母（初披露以降の公演数）を添える。歌唱率の分子・分母がここで読めるので、歌唱率の列は % だけにする */
+/** イベント数に分母（初披露以降のイベント数）を添える。歌唱率の分子・分母がここで読めるので、歌唱率の列は % だけにする */
 const withTotal = (n: number, s: SongStats) =>
   s.count > 0 ? (
     <>
@@ -41,21 +41,21 @@ const withTotal = (n: number, s: SongStats) =>
   );
 
 /**
- * 回数の列。同じ公演で 2 回歌われた曲が無いうちは「回数＝歌唱した公演数」なので、分母もここに付ける
- * （2 回歌われた曲が出たら「公演」の列を出し、分母はそちらに移す。回数に付けると 100% を超えて見えるため）
+ * 回数の列。同じイベントで 2 回歌われた曲が無いうちは「回数＝歌唱したイベント数」なので、分母もここに付ける
+ * （2 回歌われた曲が出たら「イベント」の列を出し、分母はそちらに移す。回数に付けると 100% を超えて見えるため）
  */
 const countColumn = (withEvents: boolean): Column => ({
   key: "count",
   label: "回数",
   numeric: true,
-  title: withEvents ? "歌唱回数（同一公演で 2 回歌えば 2 回）" : "歌唱回数 / 初披露以降の公演数",
+  title: withEvents ? "歌唱回数（同一イベントで 2 回歌えば 2 回）" : "歌唱回数 / 初披露以降のイベント数",
   cell: (s) => (withEvents ? s.count : withTotal(s.count, s)),
 });
 const EVENTS: Column = {
   key: "events",
-  label: "公演",
+  label: "イベント",
   numeric: true,
-  title: "歌唱した公演数 / 初披露以降の公演数",
+  title: "歌唱したイベント数 / 初披露以降のイベント数",
   cell: (s) => withTotal(s.events, s),
 };
 
@@ -65,9 +65,9 @@ const COLUMNS_BEFORE: Column[] = [
     label: "歌唱率",
     numeric: true,
     className: "rate",
-    title: "初披露以降の公演のうち歌唱した割合",
+    title: "初披露以降のイベントのうち歌唱した割合",
     cell: (s) => (
-      <span title={s.count > 0 ? `${s.events} / ${s.eligibleEvents} 公演` : undefined}>
+      <span title={s.count > 0 ? `${s.events} / ${s.eligibleEvents} イベント` : undefined}>
         <span className="bar" style={{ "--rate": s.rate } as React.CSSProperties} />
         <span className="rate-text">{s.count > 0 ? formatPercent(s.rate) : "–"}</span>
       </span>
@@ -124,7 +124,7 @@ function figures(s: SongStats, sortKey: SortKey, today: string): { main: string;
     case "count":
       return { main: `${s.count}回`, sub: [rate, ago(d)] };
     case "events":
-      return { main: `${s.events}公演`, sub: [rate, ago(d)] };
+      return { main: `${s.events}イベント`, sub: [rate, ago(d)] };
     case "daysSince":
       return { main: ago(d), sub: [rate] };
     case "last":
@@ -232,7 +232,7 @@ export function SongStatsPage() {
     });
   }, [stats, era, unit, q, sortKey, desc, today, includeCollab, collabOnly]);
 
-  // 同じ公演で 2 回歌われた曲が無いうちは「回数」と「公演」が常に一致するので、公演列は出さない
+  // 同じイベントで 2 回歌われた曲が無いうちは「回数」と「イベント」が常に一致するので、イベント列は出さない
   const withEvents = stats.songs.some((s) => s.count !== s.events);
   const columns: Column[] = [countColumn(withEvents), ...(withEvents ? [EVENTS] : []), ...COLUMNS_BEFORE];
 
@@ -242,14 +242,14 @@ export function SongStatsPage() {
   const showUnplayed = params.get("unplayed") === "1" || q !== "";
   const visibleRows = showUnplayed ? rows : rows.filter((s) => s.count > 0);
   const songTotal = songs.filter((s) => !s.cover && (includeCollab || !collabOnly.has(s.id))).length;
-  // カバー曲は全公演の記録を表示する（上の絞り込みとは独立）。最近歌われた順
+  // カバー曲は全イベントの記録を表示する（上の絞り込みとは独立）。最近歌われた順
   const covers = allStats.songs.filter((s) => s.song.cover).sort((a, b) => (b.last?.date ?? "").localeCompare(a.last?.date ?? ""));
   // カバー曲だけの区分は選択肢に出さない
   const eraOptions = artist.eras.filter((e) => songs.some((s) => s.era === e.id && !s.cover));
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
   const eraLabel = new Map(artist.eras.filter((e) => e.id !== artist.defaultEra).map((e) => [e.id, e.label]));
   const unitById = new Map(artist.units.filter((u) => u.id !== artist.defaultUnit).map((u) => [u.id, u]));
-  // 「ラスト定番」などは全公演の曲順から判定する（絞り込みに左右されない）
+  // 「ラスト定番」などは全イベントの曲順から判定する（絞り込みに左右されない）
   const roles = new Map(
     patterns.positions.flatMap((p) => {
       const r = positionRole(p);
@@ -315,7 +315,7 @@ export function SongStatsPage() {
       <div className="summary">
         <div className="stat">
           <span className="stat-value">{stats.events.length}</span>
-          <span className="stat-label">公演</span>
+          <span className="stat-label">イベント</span>
         </div>
         <div className="stat">
           <span className="stat-value">{stats.totalPerformances}</span>
@@ -338,7 +338,7 @@ export function SongStatsPage() {
           <summary>
             絞り込み・並べ替え<span className="muted small">{filterSummary}</span>
           </summary>
-          <fieldset className="chips" aria-label="公演の種別">
+          <fieldset className="chips" aria-label="イベントの種別">
             {presentTypes.map((t) => (
               <label key={t} className="chip">
                 <input type="checkbox" checked={selectedTypes.has(t)} onChange={() => toggleType(t)} />
@@ -399,7 +399,7 @@ export function SongStatsPage() {
         </details>
       </div>
       <div className="filters only-wide">
-        <fieldset className="chips" aria-label="公演の種別">
+        <fieldset className="chips" aria-label="イベントの種別">
           {presentTypes.map((t) => (
             <label key={t} className="chip">
               <input type="checkbox" checked={selectedTypes.has(t)} onChange={() => toggleType(t)} />
@@ -528,7 +528,7 @@ export function SongStatsPage() {
       {covers.length > 0 && (
         <section className="covers">
           <h3 className="section-heading">
-            カバー曲<span className="muted small"> {covers.length} 曲（全公演の記録）</span>
+            カバー曲<span className="muted small"> {covers.length} 曲（全イベントの記録）</span>
           </h3>
           <ul className="cover-list">
             {covers.map((s) => (
@@ -555,8 +555,8 @@ export function SongStatsPage() {
       )}
 
       <p className="muted small note">
-        集計対象はセトリを登録済みの公演のみ（{stats.events.length} / {events.filter(isLiveEvent).length} 公演）。
-        「歌唱率」は初披露以降の公演のうち歌唱した割合、「前回から」は最後に歌われてから今日までの日数。
+        集計対象はセトリを登録済みのイベントのみ（{stats.events.length} / {events.filter(isLiveEvent).length} イベント）。
+        「歌唱率」は初披露以降のイベントのうち歌唱した割合、「前回から」は最後に歌われてから今日までの日数。
       </p>
     </section>
   );

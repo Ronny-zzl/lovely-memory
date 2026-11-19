@@ -50,7 +50,7 @@ export type SongStats = {
   stages: number;
   /** 歌唱イベント数 */
   events: number;
-  /** 初披露以降の集計対象イベント数（初披露の公演を含む）。未披露なら 0 */
+  /** 初披露以降の集計対象イベント数（初披露のイベントを含む）。未披露なら 0 */
   eligibleEvents: number;
   /**
    * 歌唱率 = events / eligibleEvents。

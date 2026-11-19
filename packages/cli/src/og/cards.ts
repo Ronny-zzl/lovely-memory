@@ -86,7 +86,7 @@ body {
 .stat .v.date { font-size: 34px; padding: 6px 0 4px; }
 .stat .l { font-size: 20px; font-weight: 500; color: #7a7488; margin-top: 2px; }
 .note { margin-top: 10px; font-size: 22px; color: #5b5470; }
-/* 公演 */
+/* イベント */
 .ev-date { font-size: 26px; font-weight: 800; color: #4a3f7a; display: flex; gap: 14px; align-items: baseline; white-space: nowrap; overflow: hidden; }
 .ev-date .venue { font-size: 22px; font-weight: 500; color: #7a7488; overflow: hidden; text-overflow: ellipsis; }
 .ev-title { margin: 6px 0 10px; height: 92px; font-size: 40px; font-weight: 800; line-height: 1.15; display: flex; align-items: center; }
@@ -111,7 +111,7 @@ body {
 .more { font-size: 20px; color: #7a7488; text-align: right; margin-top: 4px; }
 `;
 
-/** 収まるまで文字を小さくする（曲名・公演名の長さがまちまちなので） */
+/** 収まるまで文字を小さくする（曲名・イベント名の長さがまちまちなので） */
 const FIT_SCRIPT = `
 for (const el of document.querySelectorAll(".fit")) {
   let size = parseFloat(getComputedStyle(el).fontSize);
@@ -201,17 +201,17 @@ function songMilestoneShort(m: Milestone): string | undefined {
     case "song-count":
       return `通算${m.count}回目`;
     case "song-streak":
-      return `${m.streak}公演連続`;
+      return `${m.streak}回連続`;
     case "song-return":
-      return `${m.gap}公演ぶり`;
+      return `${m.gap}回ぶり`;
     default:
       return undefined;
   }
 }
 
-/** 公演カードに添える記録（サイトの「この公演の記録」と同じもの） */
+/** イベントカードに添える記録（サイトの「このイベントの記録」と同じもの） */
 export type EventHighlights = {
-  /** この公演で達成した節目 */
+  /** このイベントで達成した節目 */
   milestones: Milestone[];
   /** この日が誕生日のメンバーと、迎えた年齢 */
   birthdays: Array<{ member: Member; age: number }>;
@@ -224,7 +224,7 @@ export function eventCard(
   host?: string,
   highlights: EventHighlights = { milestones: [], birthdays: [] },
 ): string {
-  // 公演全体の節目（通算 N 公演目など）と誕生日は、種別の隣にバッジで
+  // イベント全体の節目（通算 N 回目のイベントなど）と誕生日は、種別の隣にバッジで
   const eventBadges = [
     ...highlights.birthdays.map(
       (b) =>
@@ -246,14 +246,14 @@ export function eventCard(
   // ステージが複数あるときはステージ名を見出しとして挟む
   const lines: string[] = [];
   let total = 0;
-  // デビュー公演のように大半が初披露なら、1 曲ずつの「初披露」は付けない
+  // デビューイベントのように大半が初披露なら、1 曲ずつの「初披露」は付けない
   const entries = setlist?.stages.flatMap((st) => st.entries) ?? [];
   const markDebut = entries.filter((e) => e.debut).length * 2 <= entries.length;
   for (const st of setlist?.stages ?? []) {
     if ((setlist?.stages.length ?? 0) > 1 && st.name) lines.push(`<li class="stage">${esc(st.name)}${st.collab ? "（コラボ）" : ""}</li>`);
     for (const e of st.entries) {
       total++;
-      // 公演の出演メンバーと違う曲（ユニット曲・カバー・コラボなど）は、歌ったメンバーの色を付ける（サイトと同じ条件）
+      // イベントの出演メンバーと違う曲（ユニット曲・カバー・コラボなど）は、歌ったメンバーの色を付ける（サイトと同じ条件）
       const partial = e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
       const mdots = partial
         ? `<span class="mdots">${artist.members

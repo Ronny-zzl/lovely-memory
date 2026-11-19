@@ -4,9 +4,9 @@ import type { Stats } from "./stats.ts";
 
 /*
  * マイルストーン（記録の節目）。
- * - 曲：通算 N 回目・N 公演連続・N 公演ぶり
- * - グループ：デビュー N 日・通算 N 公演目・通算 N 曲目
- * 「公演」は、曲の記録ではセトリのある公演（Stats.events）、通算公演数では開催済みのライブ（セトリの無いものも含む）。
+ * - 曲：通算 N 回目・N 回連続・N 回ぶり
+ * - グループ：デビュー N 日・通算 N 回目のイベント・通算 N 曲目
+ * 「イベント」は、曲の記録ではセトリのあるイベント（Stats.events）、通算イベント数では開催済みのライブ（セトリの無いものも含む）。
  */
 
 export type Milestone =
@@ -19,13 +19,13 @@ export type Milestone =
 
 /** 通算回数の節目：100 回までは 10 回ごと、その先は 50 回ごと */
 export const isSongCountMilestone = (n: number) => (n <= 100 ? n % 10 === 0 : n % 50 === 0);
-/** 連続の節目：5 公演ごと */
+/** 連続の節目：5 イベントごと */
 export const isStreakMilestone = (n: number) => n >= 5 && n % 5 === 0;
-/** 通算公演数の節目 */
+/** 通算イベント数の節目 */
 export const isEventCountMilestone = (n: number) => n === 10 || n === 25 || (n >= 50 && n % 50 === 0);
 /** 通算歌唱数の節目 */
 export const isTotalSongsMilestone = (n: number) => n === 100 || n === 250 || (n >= 500 && n % 500 === 0);
-/** これだけ間が空いて歌われたら「N 公演ぶり」 */
+/** これだけ間が空いて歌われたら「N 回ぶり」 */
 export const RETURN_GAP = 8;
 /** 現在の連続をこれ以上から表示する */
 export const STREAK_MIN = 5;
@@ -51,10 +51,10 @@ export function debutDayMilestones(since: string, until: string): Array<{ date: 
 
 export type SongRecord = {
   song: Song;
-  /** 今続いている連続公演数（最後のセトリのある公演で歌われていなければ 0） */
+  /** 今続いている連続イベント数（最後のセトリのあるイベントで歌われていなければ 0） */
   currentStreak: number;
   longestStreak: number;
-  /** 最長の連続が終わった（または続いている）公演 */
+  /** 最長の連続が終わった（または続いている）イベント */
   longestStreakEnd?: { eventId: number; date: string };
   /** 次の通算回数の節目 */
   nextCount: number;
@@ -91,11 +91,11 @@ export function computeMilestones({
 
   for (const s of stats.songs) {
     const perf = s.performances;
-    // 通算回数（1 公演で複数回歌われたら、それぞれ数える）
+    // 通算回数（1 イベントで複数回歌われたら、それぞれ数える）
     perf.forEach((p, i) => {
       if (isSongCountMilestone(i + 1)) achieved.push({ kind: "song-count", date: p.date, eventId: p.eventId, song: s.song, count: i + 1 });
     });
-    // 公演単位：連続と「N 公演ぶり」
+    // イベント単位：連続と「N 回ぶり」
     const eventIds = [...new Set(perf.map((p) => p.eventId))];
     let streak = 0;
     let longest = 0;
@@ -124,13 +124,13 @@ export function computeMilestones({
     });
   }
 
-  // 通算公演数（開催済みのライブ）
+  // 通算イベント数（開催済みのライブ）
   const held = liveEvents.filter(isHeld);
   held.forEach((e, i) => {
     if (isEventCountMilestone(i + 1)) achieved.push({ kind: "event-count", date: e.date, eventId: e.id, count: i + 1 });
   });
 
-  // 通算歌唱数（セトリのある公演の全歌唱）
+  // 通算歌唱数（セトリのあるイベントの全歌唱）
   let total = 0;
   for (const es of stats.events) {
     const n = es.stages.reduce((m, st) => m + st.entries.length, 0);
@@ -140,7 +140,7 @@ export function computeMilestones({
     total += n;
   }
 
-  // デビューからの日数。その日に公演があれば結び付ける
+  // デビューからの日数。その日にイベントがあれば結び付ける
   for (const d of since ? debutDayMilestones(since, today) : []) {
     const ev = held.find((e) => e.date === d.date);
     achieved.push({ kind: "debut-days", date: d.date, eventId: ev?.id, days: d.days, years: d.years });
@@ -175,7 +175,7 @@ export type UpcomingMilestone =
  * これから達成しそうな節目。
  * - 曲の通算回数：あと maxRemaining 回以内（歌唱率の高い順）
  * - 連続：次も歌えば節目になる曲
- * - 通算公演数：次の公演で節目になるとき
+ * - 通算イベント数：次のイベントで節目になるとき
  * - 通算歌唱数：あと 20 曲以内
  * - デビューからの日数：withinDays 日以内
  */

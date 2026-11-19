@@ -79,7 +79,7 @@ function EventernoteSection() {
       {error && <p className="small error">{error}</p>}
       <p className="muted small">
         eventernote で「参加」にしたイベントに印が付きます（ユーザー名は https://www.eventernote.com/users/<strong>ここ</strong>
-        の部分）。各公演の「参戦」ボタンで手で付け外しもでき、そちらが優先されます。記録はこのブラウザだけに保存され、サーバーには残りません。
+        の部分）。各イベントの「参戦」ボタンで手で付け外しもでき、そちらが優先されます。記録はこのブラウザだけに保存され、サーバーには残りません。
       </p>
     </section>
   );
@@ -169,7 +169,7 @@ export function AttendancePage() {
             {past.length}
             <span className="stat-total"> / {held}</span>
           </span>
-          <span className="stat-label">参戦した公演</span>
+          <span className="stat-label">参戦したイベント</span>
         </div>
         <div className="stat">
           <span className="stat-value">
@@ -192,7 +192,7 @@ export function AttendancePage() {
         <div className="attend-share">
           <AttendanceShare
             card={card}
-            postText={`${artist.name} 参戦記録\n参戦 ${past.length} 公演・生で聴いた曲 ${heard.length}/${sung}・のべ ${total} 曲`}
+            postText={`${artist.name} 参戦記録\n参戦 ${past.length} 回・生で聴いた曲 ${heard.length}/${sung}・のべ ${total} 曲`}
             hashtags={artist.shareHashtags}
             fileName={`lovely-memory-参戦記録-${today.replaceAll("-", "")}.png`}
           />
@@ -201,7 +201,7 @@ export function AttendancePage() {
 
       {past.length === 0 && planned.length === 0 ? (
         <p className="muted empty-setlist">
-          まだ参戦記録がありません。eventernote から読み込むか、<Link to={`/${artist.id}/events`}>公演一覧</Link>の「＋
+          まだ参戦記録がありません。eventernote から読み込むか、<Link to={`/${artist.id}/events`}>イベント一覧</Link>の「＋
           参戦」で印を付けてください。
         </p>
       ) : (
@@ -269,7 +269,7 @@ export function AttendancePage() {
           )}
           {past.length > 0 && (
             <section className="song-section">
-              <h3 className="section-heading">参戦した公演</h3>
+              <h3 className="section-heading">参戦したイベント</h3>
               <ul className="event-list">{[...past].reverse().map(row)}</ul>
             </section>
           )}

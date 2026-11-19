@@ -18,13 +18,13 @@ export function EventDetailPage() {
   if (!event) {
     return (
       <p className="muted">
-        公演が見つかりません。<Link to="..">公演一覧へ</Link>
+        イベントが見つかりません。<Link to="..">イベント一覧へ</Link>
       </p>
     );
   }
 
   const setlist = allStats.events.find((e) => e.event.id === id);
-  // 前後の公演（特典会を除く）
+  // 前後のイベント（特典会を除く）
   const live = events.filter(isLiveEvent);
   const idx = live.findIndex((e) => e.id === id);
   const prev = idx > 0 ? live[idx - 1] : undefined;
@@ -35,7 +35,7 @@ export function EventDetailPage() {
   const times = [event.open && `開場 ${event.open}`, event.start && `開演 ${event.start}`].filter(Boolean).join(" / ");
   const enUrl = eventernoteUrl(event.id);
   const multiStage = (setlist?.stages.length ?? 0) > 1;
-  // この公演で達成した節目（グループの記録を先に）
+  // このイベントで達成した節目（グループの記録を先に）
   const birthdays = birthdayMembers(artist.members, event.date);
   const costume = eventCostume(artist, event, isHeld(event));
   const reached = milestones.achieved.filter((m) => m.eventId === id).sort((a, b) => Number("song" in a) - Number("song" in b));
@@ -43,11 +43,11 @@ export function EventDetailPage() {
   return (
     <article className="event-detail">
       <Link to=".." relative="path" className="back-link">
-        ← 公演一覧
+        ← イベント一覧
       </Link>
 
       <header className="event-detail-header">
-        {/* 公演の基本情報のカード（上端に朝から夜へのグラデーションの帯） */}
+        {/* イベントの基本情報のカード（上端に朝から夜へのグラデーションの帯） */}
         <div className="event-card">
           <p className="event-detail-date">
             <span className="event-detail-year">{event.date.slice(0, 4)}</span>
@@ -111,7 +111,7 @@ export function EventDetailPage() {
 
       {(reached.length > 0 || birthdays.length > 0) && (
         <section className="event-milestones">
-          <h3 className="section-heading">この公演の記録</h3>
+          <h3 className="section-heading">このイベントの記録</h3>
           <div className="milestones">
             {birthdays.map((m) => (
               <span key={m.id} className="milestone milestone-birthday">
@@ -147,7 +147,7 @@ export function EventDetailPage() {
                       {part === 1 && <h4 className="encore-heading">アンコール</h4>}
                       <ol className="setlist-items">
                         {entries.map((e) => {
-                          // 公演の出演メンバーと違う場合だけ（ユニット曲・一部メンバー曲など）表示する
+                          // イベントの出演メンバーと違う場合だけ（ユニット曲・一部メンバー曲など）表示する
                           const partial = e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
                           return (
                             <li key={e.position} className={e.encore ? "encore" : undefined}>

@@ -73,7 +73,7 @@ export function issueBody(artist: ArtistConfig, e: ResolvedEvent, siteUrl?: stri
   const times = [e.open && `開場 ${e.open}`, e.start && `開演 ${e.start}`].filter(Boolean).join(" / ");
   const links = [
     e.id > 0 && `[イベンターノート](https://www.eventernote.com/events/${e.id})`,
-    siteUrl && `[サイトの公演ページ](${siteUrl}${artist.id}/events/${e.id})`,
+    siteUrl && `[サイトのイベントページ](${siteUrl}${artist.id}/events/${e.id})`,
   ].filter(Boolean);
   return [
     buildMarker({ artistId: artist.id, eventId: e.id }),
