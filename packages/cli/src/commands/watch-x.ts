@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { appendFile, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { resolveEvents } from "@lovely-memory/core";
@@ -6,10 +6,16 @@ import { loadArtist, loadEvents, loadOverrides, loadSongs, ARTISTS_DIR } from ".
 import { setlistPath, writeSetlist } from "../setlist-build.ts";
 import type { CollectedTweet } from "../tweet-match.ts";
 import { compareIds, fetchUserPosts } from "../x-api.ts";
-import { decide, jstLabel, pendingEvents, prune, startOf } from "../x-watch.ts";
+import { decide, jstLabel, keyPostId, KEEP_HOURS, pendingEvents, prune, startOf } from "../x-watch.ts";
 import { successReply } from "./import-comment.ts";
 
-type ArtistState = { sinceId?: string; tweets: CollectedTweet[]; handled: string[] };
+type ArtistState = {
+  sinceId?: string;
+  tweets: CollectedTweet[];
+  handled: string[];
+  /** 自動で取り込んだセトリ（イベント id → 書いたファイルの中身）。続きのポストで更新してよいかの判断に使う */
+  imports?: Record<string, { text: string; time: string }>;
+};
 type State = { artists: Record<string, ArtistState> };
 
 /** Issue への返信（reply-issues が使う） */
@@ -48,9 +54,12 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     if (!x) continue;
     const songs = await loadSongs(artistId);
     const events = resolveEvents(await loadEvents(artistId), await loadOverrides(artistId), artist);
+    const st = (state.artists[artistId] ??= { tweets: [], handled: [] });
+    const imports = (st.imports ??= {});
     const hasSetlist = (id: number) => !dryRun && existsSync(setlistPath(artistId, id));
+    const ownImport = (id: number) => hasSetlist(id) && imports[id]?.text === readFileSync(setlistPath(artistId, id), "utf8");
 
-    const pending = pendingEvents(events, hasSetlist, now);
+    const pending = pendingEvents(events, (id) => hasSetlist(id) && !ownImport(id), now);
     if (pending.length === 0) {
       console.log(`[${artistId}] セトリ待ちのイベントなし（API は呼ばない）`);
       continue;
@@ -61,7 +70,6 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
       continue;
     }
 
-    const st = (state.artists[artistId] ??= { tweets: [], handled: [] });
     // キャッシュが無い（初回・期限切れ）ときは、セトリ待ちの最も早い開演から読む
     const earliest = new Date(Math.min(...pending.map((e) => startOf(e).getTime())));
     const fresh = await fetchUserPosts({
@@ -89,7 +97,7 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     for (const t of fresh) if (!st.sinceId || compareIds(t.id, st.sinceId) > 0) st.sinceId = t.id;
 
     const handled = new Set(st.handled);
-    for (const d of decide({ tweets: st.tweets, events, songs, artistName: artist.name, hasSetlist, handled, now })) {
+    for (const d of decide({ tweets: st.tweets, events, songs, artistName: artist.name, hasSetlist, ownImport, handled })) {
       handled.add(d.key);
       if (d.kind === "ignore") {
         console.log(`[${artistId}] skip ${d.key}: ${d.reason}`);
@@ -101,15 +109,29 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
           st.items.map((i) => (typeof i === "string" ? i : i.song)),
         );
         console.log(
-          `[${artistId}] 取り込み ${d.event.date} ${d.event.title} ← ${d.post.url}（${titles.length} 曲: ${titles.join(" / ")}）`,
+          `[${artistId}] ${d.update ? "更新" : "取り込み"} ${d.event.date} ${d.event.title} ← ${d.post.url}（${titles.length} 曲: ${titles.join(" / ")}）`,
         );
-        if (!dryRun) await writeSetlist(artistId, d.setlist, d.event);
+        if (!dryRun) {
+          const before = imports[d.event.id]?.text;
+          const text = readFileSync(await writeSetlist(artistId, d.setlist, d.event), "utf8");
+          if (d.update && text === before) {
+            console.log(`[${artistId}] 内容は変わらない`);
+            continue;
+          }
+          imports[d.event.id] = { text, time: now.toISOString() };
+        }
         imported.push(`${d.event.date} ${d.event.title}`);
         actions.push({
           artistId,
           eventId: d.event.id,
           close: true,
-          body: successReply(artistId, d.event.id, d.setlist, d.warnings, "🤖 公式 X のポストから自動で"),
+          body: successReply(
+            artistId,
+            d.event.id,
+            d.setlist,
+            d.warnings,
+            d.update ? "🤖 続きのポストも合わせて、全" : "🤖 公式 X のポストから自動で",
+          ),
         });
       } else if (d.kind === "unknown-songs") {
         console.log(`[${artistId}] songs.json に無い曲: ${d.unknown.join(", ")} ← ${d.post.url}`);
@@ -146,7 +168,9 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     }
     // キャッシュに残っているポストの分だけ覚えておく
     const kept = new Set(st.tweets.map((t) => t.id));
-    st.handled = [...handled].filter((k) => kept.has(k.split("#")[0]!));
+    st.handled = [...handled].filter((k) => kept.has(keyPostId(k)));
+    const limit = now.getTime() - KEEP_HOURS * 3_600_000;
+    for (const [id, imp] of Object.entries(imports)) if (new Date(imp.time).getTime() < limit) delete imports[id];
   }
 
   if (!dryRun) {
