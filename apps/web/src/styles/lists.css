@@ -3,8 +3,17 @@
 .trend-card {
   padding: 16px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--surface);
+}
+
+/* 一覧そのものをカードにするとき（.chain-list の padding: 0 より強く）。最後の行の区切り線は消す */
+.trend-card.chain-list {
+  padding: 4px 16px;
+}
+
+.trend-card.chain-list li:last-child {
+  border-bottom: 0;
 }
 
 .rank-list {

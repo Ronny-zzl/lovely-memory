@@ -8,3 +8,12 @@
   margin-left: 10px;
   font-weight: 400;
 }
+
+/* 狭い画面では、公演数と日付を衣装名の下の行へ（衣装名が細く折り返されないように） */
+.costume-list li {
+  flex-wrap: wrap;
+}
+
+.costume-list .rank-count {
+  margin-left: auto;
+}

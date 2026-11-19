@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import type { Song, SongPosition } from "@lovely-memory/core/runtime";
 import { CostumesSection } from "../components/CostumesSection.tsx";
 import { MilestonesSection } from "../components/MilestonesSection.tsx";
+import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./TrendsPage.css";
@@ -17,17 +18,32 @@ function SongLink({ song }: { song: Song }) {
   );
 }
 
-function PositionRanking({ title, positions, pick }: { title: string; positions: SongPosition[]; pick: (p: SongPosition) => number }) {
+function PositionRanking({
+  title,
+  icon,
+  positions,
+  pick,
+}: {
+  title: string;
+  /** 1 曲目は朝（太陽）、ラストは夜（月） */
+  icon: "sun" | "moon";
+  positions: SongPosition[];
+  pick: (p: SongPosition) => number;
+}) {
   const ranked = positions
     .filter((p) => pick(p) > 0)
     .sort((a, b) => pick(b) - pick(a) || pick(b) / b.count - pick(a) / a.count)
     .slice(0, RANK_SIZE);
   return (
     <section className="trend-card">
-      <h3 className="section-heading">{title}</h3>
+      <h3 className={`section-heading rank-heading rank-${icon}`}>
+        <span className="rank-icon">{icon === "sun" ? <SunIcon /> : <MoonIcon />}</span>
+        {title}
+      </h3>
       <ol className="rank-list">
         {ranked.map((p, i) => (
-          <li key={p.song.id}>
+          // --share: 本編で歌われたうち、この位置だった割合（行の下の細い帯）
+          <li key={p.song.id} className="rank-row" style={{ "--share": pick(p) / p.count } as React.CSSProperties}>
             <span className="rank-no">{i + 1}.</span>
             <SongLink song={p.song} />
             <span className="rank-count">
@@ -51,16 +67,12 @@ export function TrendsPage() {
   return (
     <div className="trends">
       <h2 className="visually-hidden">セトリの傾向</h2>
-      <p className="muted small">
-        セトリのある {patterns.stages} ステージ（コラボステージを除く）から集計。1
-        曲目・ラストは本編（アンコールを除く）での位置で、割合は本編でその曲が歌われた回数に対するもの。つながりは本編どうし・アンコールどうしで続いた曲。
-      </p>
 
       <MilestonesSection />
 
       <div className="trend-grid">
-        <PositionRanking title="1 曲目" positions={patterns.positions} pick={(p) => p.opener} />
-        <PositionRanking title="ラスト" positions={patterns.positions} pick={(p) => p.closer} />
+        <PositionRanking title="1 曲目" icon="sun" positions={patterns.positions} pick={(p) => p.opener} />
+        <PositionRanking title="ラスト" icon="moon" positions={patterns.positions} pick={(p) => p.closer} />
       </div>
 
       <section className="song-section">
@@ -70,7 +82,7 @@ export function TrendsPage() {
         {patterns.chains.length === 0 ? (
           <p className="muted small">まだありません。</p>
         ) : (
-          <ul className="chain-list">
+          <ul className="chain-list trend-card flow-chains">
             {patterns.chains.map((c) => (
               <li key={c.songs.map((s) => s.id).join(">")}>
                 <span className="chain">
@@ -96,7 +108,7 @@ export function TrendsPage() {
         <h3 className="section-heading">
           よくあるつながり<span className="muted small"> 続けて歌われた 2 曲（分数は、前の曲の次にこの曲が来た割合）</span>
         </h3>
-        <ul className="chain-list">
+        <ul className="chain-list trend-card transition-list">
           {transitions.map((t) => (
             <li key={`${t.from.id}>${t.to.id}`}>
               <span className="chain">
@@ -123,6 +135,11 @@ export function TrendsPage() {
       </section>
 
       <CostumesSection />
+
+      <p className="muted small trends-note">
+        セトリのある {patterns.stages} ステージ（コラボステージを除く）から集計。1
+        曲目・ラストは本編（アンコールを除く）での位置で、割合は本編でその曲が歌われた回数に対するもの。つながりは本編どうし・アンコールどうしで続いた曲。
+      </p>
     </div>
   );
 }

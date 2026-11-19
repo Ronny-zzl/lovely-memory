@@ -155,18 +155,20 @@ export function MilestonesSection() {
           </ul>
         </div>
       )}
-      <h4 className="neighbor-heading milestone-subhead">最近の記録</h4>
-      {recent.length > 0 ? (
-        <History items={recent} artistId={artist.id} artistName={artist.name} titles={titles} />
-      ) : (
-        <p className="muted small">ありません。</p>
-      )}
-      {older.length > 0 && (
-        <details className="milestone-all">
-          <summary className="small">それ以前の記録（{older.length} 件）</summary>
-          <History items={older} artistId={artist.id} artistName={artist.name} titles={titles} />
-        </details>
-      )}
+      <div className="trend-card">
+        <h4 className="neighbor-heading">最近の記録</h4>
+        {recent.length > 0 ? (
+          <History items={recent} artistId={artist.id} artistName={artist.name} titles={titles} />
+        ) : (
+          <p className="muted small">ありません。</p>
+        )}
+        {older.length > 0 && (
+          <details className="milestone-all">
+            <summary className="small">それ以前の記録（{older.length} 件）</summary>
+            <History items={older} artistId={artist.id} artistName={artist.name} titles={titles} />
+          </details>
+        )}
+      </div>
     </section>
   );
 }

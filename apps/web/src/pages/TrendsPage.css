@@ -6,3 +6,71 @@
   gap: 12px;
   margin-top: 12px;
 }
+
+/* 1 曲目（朝の太陽）とラスト（夜の月） */
+.rank-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rank-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.rank-sun .rank-icon {
+  color: var(--sun-icon);
+}
+
+.rank-moon .rank-icon {
+  color: var(--accent-2);
+}
+
+/* 行の下に、その位置だった割合の細い帯 */
+.rank-list .rank-row {
+  padding-bottom: 6px;
+  background: linear-gradient(var(--bar), var(--bar)) no-repeat left bottom / calc(var(--share) * 100%) 3px;
+}
+
+/* 定番の流れ：曲を丸いタグにして矢印でつなぐ */
+.flow-chains .chain {
+  gap: 6px;
+}
+
+.flow-chains .trend-song {
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+}
+
+.flow-chains li {
+  align-items: center;
+  padding: 8px 0;
+}
+
+/* よくあるつながり：広い画面では 2 列にして縦に長くしない */
+@media (width > 640px) {
+  .transition-list {
+    columns: 2;
+    column-gap: 32px;
+  }
+
+  .transition-list li {
+    break-inside: avoid;
+  }
+
+  /* 2 列にすると区切り線の位置が列ごとにずれるので、線は引かずに行の間隔で分ける */
+  .transition-list.chain-list {
+    padding: 10px 16px;
+  }
+
+  .transition-list.chain-list li {
+    border-bottom: 0;
+  }
+}
+
+.trends-note {
+  margin: 24px 0 0;
+}

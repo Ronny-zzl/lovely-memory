@@ -19,7 +19,7 @@ export function CostumesSection() {
       <h3 className="section-heading">
         衣装<span className="muted small"> 開催済みのライブ</span>
       </h3>
-      <ul className="chain-list">
+      <ul className="chain-list trend-card costume-list">
         {stats.map((s) => (
           <li key={s.costume.id}>
             <span className="costume-name">
