@@ -7,7 +7,8 @@ const STATIC_FILES = ["/", "/manifest.webmanifest", "/favicon.svg", "/icons/icon
 /**
  * オフライン対応の Service Worker（sw.js）をビルド時に書き出す。
  * - ページ（HTML）: ネットワーク優先。つながらなければキャッシュ、無ければアプリ本体（/）を返して SPA で描画
- * - /assets/（ファイル名にハッシュ入り＝内容が変わらない）: キャッシュ優先。ビルド時の全ファイルを事前キャッシュ
+ * - /assets/（ファイル名にハッシュ入り＝内容が変わらない）: キャッシュ優先。ビルド時のファイルを事前キャッシュ
+ *   （フォントは文字の範囲ごとに百以上のファイルに分かれていて、使うのはその一部なので、事前には取らず使ったものだけ残す）
  * - その他の同一オリジン GET: ネットワーク優先、失敗時キャッシュ
  * バージョン（ファイル一覧のハッシュ）ごとにキャッシュを分け、有効化した順に最新 2 世代だけ残す
  * （デプロイ直後に古いページが古いチャンクを読みに来ても困らないように）。
@@ -18,7 +19,7 @@ export function serviceWorker(): Plugin {
     apply: "build",
     generateBundle(_options, bundle) {
       const assets = Object.keys(bundle)
-        .filter((f) => f.startsWith("assets/"))
+        .filter((f) => f.startsWith("assets/") && !/\.woff2?$/.test(f))
         .map((f) => `/${f}`)
         .sort();
       const precache = [...STATIC_FILES, ...assets];

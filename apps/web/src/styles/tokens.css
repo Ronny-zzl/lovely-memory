@@ -25,6 +25,20 @@
   --shadow-popover: 0 8px 24px rgb(0 0 0 / 15%);
   --backdrop: rgb(0 0 0 / 50%);
 
+  /* 字体：見出し・数字・ロゴは共有画像と同じ丸ゴシック（自前で配信。使う文字の分だけ読み込まれる） */
+  --font-round: "M PLUS Rounded 1c", system-ui, sans-serif;
+
+  /* ヘッダー：共有画像と同じ「左が朝の光、右が夜空」 */
+  --hero-bg: linear-gradient(105deg, #fff5d6 0%, #ffdca6 24%, #f7ae78 42%, #b4688f 50%, #5a4589 58%, #2f2c6c 74%, #1b1f4d 100%);
+  --hero-stars:
+    radial-gradient(circle at 68% 12%, #fff 0 1px, transparent 1.6px),
+    radial-gradient(circle at 83% 88%, #fffbe6 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 96% 38%, #fff 0 0.9px, transparent 1.4px),
+    radial-gradient(circle at 76% 52%, #fffbe6 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 91% 8%, #fff 0 0.9px, transparent 1.4px);
+  --hero-card: rgb(255 255 255 / 94%);
+  --shadow-hero: 0 8px 24px rgb(30 20 60 / 18%);
+
   /* 色 */
   --bg: #fbfaf7;
   --surface: #fff;
@@ -109,6 +123,9 @@
     --sun-icon: #ffb341;
     --sun-border: #6e4a18;
     --moon-border: #4b4f8f;
+    --hero-bg: linear-gradient(105deg, #5a4426 0%, #6e4a2e 24%, #7a4a44 42%, #5c3a64 50%, #33295e 58%, #1f1c4a 74%, #131536 100%);
+    --hero-card: rgb(28 27 36 / 92%);
+    --shadow-hero: 0 8px 24px rgb(0 0 0 / 40%);
     --tieup-bg: #45202f;
     --tieup-fg: #f6a3c6;
 

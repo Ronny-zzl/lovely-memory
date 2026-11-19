@@ -1,5 +1,6 @@
 import { Suspense, use } from "react";
 import { Link, Navigate, NavLink, Outlet, useOutletContext, useParams } from "react-router";
+import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { findArtist, loadArtistData, type ArtistData } from "../data.ts";
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
@@ -10,30 +11,38 @@ export function ArtistLayout() {
 
   return (
     <div className="page">
-      <header className="site-header">
-        <InstallButton />
-        <Link to="/" className="breadcrumb">
-          ラブリィメモリー
-        </Link>
-        <h1 className="site-title">
-          {artist.name}
-          {artist.subtitle && <span className="subtitle">{artist.subtitle}</span>}
-        </h1>
-        <ul className="member-legend">
-          {artist.members.map((m) => (
-            <li key={m.id}>
-              <span className="dot" style={{ background: m.color }} />
-              {m.name}
-            </li>
-          ))}
-        </ul>
-        <nav className="tabs">
-          <NavLink to="songs">楽曲</NavLink>
-          <NavLink to="events">公演</NavLink>
-          <NavLink to="trends">傾向</NavLink>
-          <NavLink to="members">メンバー</NavLink>
-          <NavLink to="attendance">参戦記録</NavLink>
-        </nav>
+      <header className="site-header hero">
+        <div className="hero-card">
+          <InstallButton />
+          <Link to="/" className="brand">
+            <span className="sun">
+              <SunIcon />
+            </span>
+            ラブリィメモリー
+            <span className="moon">
+              <MoonIcon />
+            </span>
+          </Link>
+          <h1 className="site-title">
+            {artist.name}
+            {artist.subtitle && <span className="subtitle">{artist.subtitle}</span>}
+          </h1>
+          <ul className="member-legend">
+            {artist.members.map((m) => (
+              <li key={m.id}>
+                <span className="dot" style={{ background: m.color }} />
+                {m.name}
+              </li>
+            ))}
+          </ul>
+          <nav className="tabs">
+            <NavLink to="songs">楽曲</NavLink>
+            <NavLink to="events">公演</NavLink>
+            <NavLink to="trends">傾向</NavLink>
+            <NavLink to="members">メンバー</NavLink>
+            <NavLink to="attendance">参戦記録</NavLink>
+          </nav>
+        </div>
       </header>
       <main>
         <Suspense fallback={<p className="muted">読み込み中…</p>}>

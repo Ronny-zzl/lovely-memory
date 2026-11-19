@@ -17,8 +17,9 @@
 }
 
 .stat-value {
+  font-family: var(--font-round);
   font-size: var(--text-xl);
-  font-weight: 700;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 

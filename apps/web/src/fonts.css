@@ -1,0 +1,9 @@
+/*
+ * 見出し・数字・ロゴの丸ゴシック（共有画像と同じ M PLUS Rounded 1c の 800）。
+ * 自前で配信し、ページで使う文字を含む部分（unicode-range）だけが読み込まれる。
+ * @font-face の定義だけで百数十 KB あるので、main.tsx から後で読み込む（描画を止めない。読み込むまではシステムのフォント）。
+ */
+
+/* パッケージ名で解決させるため url() にしない */
+/* stylelint-disable-next-line import-notation */
+@import "@fontsource/m-plus-rounded-1c/800.css";

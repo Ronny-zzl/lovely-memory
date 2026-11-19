@@ -7,10 +7,12 @@ import "./ArtistList.css";
 export function ArtistList() {
   return (
     <div className="page">
-      <header className="site-header">
-        <InstallButton />
-        <h1 className="site-title">ラブリィメモリー</h1>
-        <p className="muted">ライブのセットリストを記録・集計する</p>
+      <header className="site-header hero">
+        <div className="hero-card home-hero">
+          <InstallButton />
+          <h1 className="site-title">ラブリィメモリー</h1>
+          <p className="muted">ライブのセットリストを記録・集計する</p>
+        </div>
       </header>
       <main>
         <ul className="artist-list">

@@ -25,8 +25,10 @@ let checked = 0;
 async function visit(page: Page, path: string, selector: string, check?: (page: Page) => Promise<string | undefined>) {
   const errors: string[] = [];
   const onError = (e: Error) => errors.push(`pageerror: ${e.message}`);
-  const onConsole = (m: { type(): string; text(): string }) => {
-    if (m.type() === "error") errors.push(`console: ${m.text()}`);
+  const onConsole = (m: { type(): string; text(): string; location(): { url: string } }) => {
+    // フォントは使う分だけ後から読むので、オフラインでは読めないことがある（システムのフォントで表示される）。
+    // オンラインで本当に見つからない場合は下の HTTP の確認で分かる
+    if (m.type() === "error" && !/\.woff2?$/.test(m.location().url)) errors.push(`console: ${m.text()}`);
   };
   const onResponse = (r: { status(): number; url(): string }) => {
     if (r.status() >= 400) errors.push(`HTTP ${r.status()} ${r.url()}`);

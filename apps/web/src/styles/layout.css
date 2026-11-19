@@ -5,19 +5,60 @@
   margin-bottom: 24px;
 }
 
-.breadcrumb {
+/* 共有画像と同じ構成：朝から夜へのグラデーション（星つき）の上に、白いカード */
+.hero {
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--hero-stars), var(--hero-bg);
+}
+
+.hero-card {
+  position: relative;
+  padding: 16px 20px 0;
+  border-radius: var(--radius-md);
+  background: var(--hero-card);
+  box-shadow: var(--shadow-hero);
+}
+
+.hero-card .install {
+  top: 12px;
+  right: 12px;
+}
+
+/* ロゴ（トップへのリンク）：☀ ラブリィメモリー ☾ */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-round);
   font-size: var(--text-sm);
+  font-weight: 800;
   color: var(--muted);
   text-decoration: none;
 }
 
-.breadcrumb:hover {
+.brand:hover {
   color: var(--accent-text);
+}
+
+.brand svg {
+  width: 16px;
+  height: 16px;
+}
+
+.brand .sun {
+  color: var(--sun-icon);
+}
+
+.brand .moon {
+  color: var(--accent-2);
 }
 
 .site-title {
   margin: 4px 0 8px;
+  font-family: var(--font-round);
   font-size: var(--text-title);
+  font-weight: 800;
   line-height: 1.25;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   background-clip: text;
@@ -25,6 +66,8 @@
 }
 
 .subtitle {
+  /* 「Second Season」の途中で折り返さない（入らなければまとめて次の行へ） */
+  display: inline-block;
   margin-left: 0.5em;
   font-size: 0.6em;
   font-weight: 600;
@@ -57,6 +100,12 @@
   scrollbar-width: none;
 }
 
+/* カードの下端に置くので、下線はカードの縁に任せる */
+.hero-card .tabs {
+  margin: 0 -8px;
+  border-bottom: 0;
+}
+
 .tabs::-webkit-scrollbar {
   display: none;
 }
@@ -85,5 +134,18 @@
 @media (width <= 640px) {
   .tabs a {
     padding: 8px 10px;
+  }
+
+  .hero {
+    padding: 8px;
+  }
+
+  .hero-card {
+    padding: 12px 12px 0;
+  }
+
+  .hero-card .install {
+    top: 8px;
+    right: 8px;
   }
 }

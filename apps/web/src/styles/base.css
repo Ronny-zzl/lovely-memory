@@ -71,6 +71,14 @@ a.item-title:hover {
   margin-top: 24px;
 }
 
+/* 見出しは共有画像と同じ丸ゴシック */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-round);
+}
+
 .section-heading {
   margin: 0 0 8px;
   font-size: var(--text-base);

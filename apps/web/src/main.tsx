@@ -81,6 +81,9 @@ if (import.meta.env.PROD && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {});
 }
 
+// 見出し・数字の丸ゴシック。定義が大きいので、描画を止めないよう後から読み込む（src/fonts.css）
+void import("./fonts.css");
+
 createRoot(document.getElementById("root")!, {
   onUncaughtError: (error) => reportError("render", error),
   onCaughtError: (error) => reportError("render", error),
