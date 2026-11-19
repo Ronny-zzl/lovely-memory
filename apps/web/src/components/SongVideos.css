@@ -2,11 +2,21 @@
 
 .song-videos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* カードの枠。行の中では高さが揃う（grid の stretch）。中身は 2 行固定なので行をまたいでも揃う */
+.song-video {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
 }
 
 /* 再生中のものは横幅いっぱいにして大きく見せる */
@@ -14,22 +24,30 @@
   grid-column: 1 / -1;
 }
 
+.song-video-row {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  min-width: 0;
+}
+
 .song-video-card {
   display: flex;
+  flex: 1;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 10px;
+  border: 0;
+  background: none;
   color: var(--fg);
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
-.song-video-card:hover {
+.song-video-card:hover,
+.song-video-link:hover {
   background: var(--row-hover);
 }
 
@@ -37,8 +55,8 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-pill);
   background: var(--accent-fill);
   color: var(--on-accent-fill);
@@ -53,6 +71,7 @@
 
 .song-video-kind {
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .song-video-era {
@@ -61,14 +80,47 @@
   vertical-align: 0.1em;
 }
 
+/* 公演名・日付は 1 行。日付は必ず見せ、長い公演名だけ省略する（全文は title） */
+.song-video-meta {
+  display: flex;
+  min-width: 0;
+  white-space: nowrap;
+}
+
 .song-video-label {
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-video-date {
+  flex: none;
+}
+
+.song-video-sep {
+  flex: none;
+}
+
+/* YouTube で開く：カードの右端の細い列 */
+.song-video-link {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  border-left: 1px solid var(--border);
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.song-video-caption {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  padding: 8px 12px;
 }
 
 .song-video-frame {
   position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
   aspect-ratio: 16 / 9;
   background: var(--fg);
 }
@@ -79,10 +131,4 @@
   width: 100%;
   height: 100%;
   border: 0;
-}
-
-.song-video-link {
-  display: inline-block;
-  margin: 2px 0 0 4px;
-  color: var(--muted);
 }
