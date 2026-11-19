@@ -57,12 +57,14 @@ export function EventsPage() {
     const costume = eventCostume(artist, e, isHeld(e));
     return (
       <li key={e.id} className="with-toggle">
-        <Link to={String(e.id)} className="event-row">
+        <Link to={String(e.id)} className="event-row event-row-stacked">
           <span className="event-date">{formatDayWithWeekday(e.date)}</span>
           <span className="event-main">
             <span className="event-title">
-              <TypeBadges types={e.types} />
-              {displayTitle(e.title, artist.name)}
+              <span className="event-badges">
+                <TypeBadges types={e.types} />
+              </span>
+              <span className="event-name">{displayTitle(e.title, artist.name)}</span>
             </span>
             <span className="event-meta">
               {e.venue && <span>{e.venue.name}</span>}

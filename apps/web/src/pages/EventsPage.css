@@ -13,3 +13,54 @@
   cursor: pointer;
   list-style-position: inside;
 }
+
+/*
+ * 狭い画面の公演の行：日付と種別を 1 行目に、公演名は 2 行目に横幅いっぱい（2 行まで）、会場などは 3 行目。
+ * 公演名が日付の横の細い列に押し込まれて 4〜5 行になるのを避ける。全員出演ならメンバーの色は省く。
+ */
+@media (width <= 640px) {
+  .event-list li.with-toggle .event-row.event-row-stacked {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 2px 8px;
+    align-items: baseline;
+  }
+
+  .event-row-stacked .event-main,
+  .event-row-stacked .event-title {
+    display: contents;
+  }
+
+  .event-row-stacked .event-date {
+    grid-column: 1;
+  }
+
+  .event-row-stacked .event-badges {
+    grid-column: 2;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .event-row-stacked .event-name {
+    display: -webkit-box;
+    grid-column: 1 / -1;
+    overflow: hidden;
+    font-weight: 600;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .event-row-stacked .event-meta {
+    grid-column: 1 / -1;
+  }
+
+  .event-list li.with-toggle .event-row.event-row-stacked .member-dots {
+    grid-column: 1 / -1;
+    margin-top: 2px;
+  }
+
+  .event-row-stacked .member-dots-full {
+    display: none;
+  }
+}

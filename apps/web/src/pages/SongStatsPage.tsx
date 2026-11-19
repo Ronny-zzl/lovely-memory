@@ -364,7 +364,12 @@ export function SongStatsPage() {
               )}
             </fieldset>
             <div className="filter-row">
-              <select value={era} onChange={(e) => update({ era: e.target.value })} aria-label="区分">
+              <select
+                value={era}
+                onChange={(e) => update({ era: e.target.value })}
+                aria-label="区分"
+                className={era ? "is-set" : undefined}
+              >
                 <option value="">すべての区分</option>
                 {eraOptions.map((e) => (
                   <option key={e.id} value={e.id}>
@@ -372,7 +377,12 @@ export function SongStatsPage() {
                   </option>
                 ))}
               </select>
-              <select value={unit} onChange={(e) => update({ unit: e.target.value })} aria-label="オリジナル">
+              <select
+                value={unit}
+                onChange={(e) => update({ unit: e.target.value })}
+                aria-label="オリジナル"
+                className={unit ? "is-set" : undefined}
+              >
                 <option value="">すべてのオリジナル</option>
                 {artist.units.map((u) => (
                   <option key={u.id} value={u.id}>
@@ -421,7 +431,7 @@ export function SongStatsPage() {
             )}
           </fieldset>
           <div className="filter-row">
-            <select value={era} onChange={(e) => update({ era: e.target.value })} aria-label="区分">
+            <select value={era} onChange={(e) => update({ era: e.target.value })} aria-label="区分" className={era ? "is-set" : undefined}>
               <option value="">すべての区分</option>
               {eraOptions.map((e) => (
                 <option key={e.id} value={e.id}>
@@ -429,7 +439,12 @@ export function SongStatsPage() {
                 </option>
               ))}
             </select>
-            <select value={unit} onChange={(e) => update({ unit: e.target.value })} aria-label="オリジナル">
+            <select
+              value={unit}
+              onChange={(e) => update({ unit: e.target.value })}
+              aria-label="オリジナル"
+              className={unit ? "is-set" : undefined}
+            >
               <option value="">すべてのオリジナル</option>
               {artist.units.map((u) => (
                 <option key={u.id} value={u.id}>
