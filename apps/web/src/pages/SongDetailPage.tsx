@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router";
 import { neighbors, positionRole, STREAK_MIN, type Song, type Transition } from "@lovely-memory/core/runtime";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
+import { SongVideos } from "../components/SongVideos.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
@@ -208,7 +209,10 @@ export function SongDetailPage() {
       </header>
 
       {stats.count === 0 ? (
-        <p className="muted empty-setlist">記録上、まだ歌われていません。</p>
+        <>
+          <p className="muted empty-setlist">記録上、まだ歌われていません。</p>
+          <SongVideos videos={song.videos} artist={artist} />
+        </>
       ) : (
         <>
           <div className={isCover ? "summary" : "summary summary-4"}>
@@ -241,6 +245,8 @@ export function SongDetailPage() {
               </Link>
             </div>
           </div>
+
+          <SongVideos videos={song.videos} artist={artist} />
 
           {!isCover && (
             <section className="song-section">

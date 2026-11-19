@@ -53,6 +53,7 @@ export function mergeTracks(songs: Song[], tracks: ImportedTrack[], opts: MergeO
         title: t.title,
         aliases: [],
         tieups: [],
+        videos: [],
         era: opts.era ?? eraForDate(opts.artist, t.release.date),
         unit: t.unit,
         release: t.release,

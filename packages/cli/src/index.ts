@@ -6,6 +6,7 @@ import { importComment } from "./commands/import-comment.ts";
 import { importOfficial } from "./commands/import-official.ts";
 import { importSetlists } from "./commands/import-setlists.ts";
 import { importWikipedia } from "./commands/import-wikipedia.ts";
+import { importYoutube } from "./commands/import-youtube.ts";
 import { listEvents } from "./commands/list-events.ts";
 import { ogPages } from "./commands/og-pages.ts";
 import { openSetlistIssues } from "./commands/open-setlist-issues.ts";
@@ -57,6 +58,9 @@ commands:
   import-wikipedia   Wikipedia のディスコグラフィから songs.json を補完（空き項目のみ）
                      --era <eraId>  新規追加曲の era を固定（省略時は発売日から判定）
                      --file <path>  ローカルの wikitext を使う
+                     --dry-run
+  import-youtube     公式 YouTube の MV・ライブ映像・Dance Practice・歌割動画を songs.json の videos に追加
+                     yt-dlp を使う（PATH に無ければ uvx yt-dlp）。登録済みの動画は飛ばす
                      --dry-run
   og-pages           ビルド結果にページごとの共有カード（<path>.html と og/…png）を追加（artistId に all 可）
                      SITE_URL 環境変数が必要。画像はローカルの Google Chrome で描画
@@ -124,6 +128,7 @@ const commands: Record<string, Command> = {
   validate,
   "import-official": importOfficial,
   "import-wikipedia": importWikipedia,
+  "import-youtube": importYoutube as Command,
   "add-song": addSong,
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,

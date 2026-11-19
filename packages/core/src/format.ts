@@ -1,5 +1,12 @@
 /* 表示用の書式（ブラウザ・CLI〔OGP 生成〕で共通） */
-import type { EventType, Tieup } from "./schema.ts";
+import type { EventType, SongVideo, Tieup } from "./schema.ts";
+
+export const VIDEO_KIND_LABEL: Record<SongVideo["kind"], string> = {
+  mv: "Music Video",
+  live: "ライブ映像",
+  dance: "Dance Practice",
+  parts: "歌割動画",
+};
 
 export const EVENT_TYPE_LABEL: Record<EventType, string> = {
   oneman: "単独公演",

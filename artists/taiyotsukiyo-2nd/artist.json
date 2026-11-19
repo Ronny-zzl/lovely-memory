@@ -33,7 +33,8 @@
     "eventernote": { "actorId": 72524 },
     "official": { "adapter": "taiyotsukiyo", "url": "https://taiyotsukiyo.com/discography/" },
     "wikipedia": { "lang": "ja", "title": "太陽と踊れ月夜に唄え" },
-    "x": { "username": "taiyototsukiyo", "userId": "1622844880824463362" }
+    "x": { "username": "taiyototsukiyo", "userId": "1622844880824463362" },
+    "youtube": { "channelId": "UC_fvQXSuCvliRg7oaEMdXmw" }
   },
   "eventTypeRules": [
     { "pattern": "チェキ会|特典会", "type": "tokuten" },

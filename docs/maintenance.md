@@ -87,6 +87,12 @@ pnpm lm add-song taiyotsukiyo-2nd --title "曲名" --cover "原唱"
 #   "tieups": [{ "type": "anime", "work": "作品名", "role": "オープニングテーマ", "url": "官网" }]
 #   type: anime / drama / movie / game / cm / other
 
+# 曲页面的视频：官方 YouTube 出了新的 MV・ライブ映像・Dance Practice・歌割動画后
+#   用 yt-dlp 读频道的「動画」页（没装的话用 uvx yt-dlp，需要 uv），只追加还没登记的视频
+#   显示「? 曲が決まりません」的是 songs.json 里没有的曲：先 add-song，再运行一次
+pnpm lm import-youtube taiyotsukiyo-2nd --dry-run
+pnpm lm import-youtube taiyotsukiyo-2nd
+
 # 数据检查（也列出还没有歌单的已结束活动）
 pnpm lm validate all --missing
 

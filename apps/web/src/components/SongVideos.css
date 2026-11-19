@@ -1,0 +1,88 @@
+/* 曲ページの「動画」 */
+
+.song-videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 再生中のものは横幅いっぱいにして大きく見せる */
+.song-video.is-playing {
+  grid-column: 1 / -1;
+}
+
+.song-video-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.song-video-card:hover {
+  background: var(--row-hover);
+}
+
+.song-video-play {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
+  font-size: var(--text-sm);
+}
+
+.song-video-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.song-video-kind {
+  font-weight: 700;
+}
+
+.song-video-era {
+  margin-left: 6px;
+  font-size: var(--text-2xs);
+  vertical-align: 0.1em;
+}
+
+.song-video-label {
+  overflow-wrap: anywhere;
+}
+
+.song-video-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  aspect-ratio: 16 / 9;
+  background: var(--fg);
+}
+
+.song-video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.song-video-link {
+  display: inline-block;
+  margin: 2px 0 0 4px;
+  color: var(--muted);
+}

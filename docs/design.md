@@ -20,6 +20,7 @@
 | 曲目列表・制作人员 | 官网 Discography | `pnpm lm import-official`，官网为准（覆盖） |
 | 曲目列表（补充） | ja.wikipedia | `pnpm lm import-wikipedia`，只补空字段（维基没有更新二期的信息） |
 | 翻唱曲・未发行曲 | 人工 | `pnpm lm add-song --title … [--cover 原唱]` |
+| 曲页面的视频 | 官方 YouTube（`artist.json` 的 `sources.youtube.channelId`） | `pnpm lm import-youtube`（yt-dlp，按标题里「」『』中的曲名对应） |
 
 ### eventernote 抓取说明（实测，2026-11-17）
 
@@ -67,6 +68,8 @@ type Song = {
   originalUnit?: "太陽と踊れ" | "月夜に唄え" | "全体";
   release?: { date: string; title: string; type: "EP" | "single" | "digital" };
   credits?: { lyrics?: string; music?: string; arrangement?: string };
+  // 官方 YouTube 的视频（`pnpm lm import-youtube` 追加）。live 的 date 是演出日（取自标题），其他是公开日
+  videos?: Array<{ id: string; kind: "mv" | "live" | "dance" | "parts"; date: string; label?: string }>;
 };
 
 type EventType =
@@ -208,6 +211,7 @@ lovely-memory/
 - 前端错误上报：`src/error-report.ts` 收集 `window` 的错误、未处理的 Promise 错误和 React 渲染错误（`createRoot` 的 `onCaughtError`/`onUncaughtError`，以及路由的 `errorElement` = `RouteError`），用 `sendBeacon` 发到 `POST /api/errors`（`worker/errors.ts`）。Worker 只接受同源请求、单条 8KB 以内，写入 D1 数据库 `lovely-memory` 的 `client_errors` 表（`apps/web/migrations/`），约每 100 次写入顺带删除 90 天前的记录。Pages Functions 的日志不保存，所以存在 D1。只上报错误内容、页面路径、构建（commit 前 7 位）和 UA，不含参戦記録。每次打开页面最多 5 条，同一错误只报一次，浏览器扩展的错误和 `Script error.` 不报。冒烟测试会确认正常浏览时没有上报，以及页面代码加载失败时显示错误画面并上报。
 - Issue 本文・回复中的网站链接来自仓库变量 `SITE_URL`。
 - 分享卡片（OGP）：`apps/web/plugins/site-meta.ts` 在构建时写入 meta 标签，`og:image` 等绝对 URL 也取自 `SITE_URL`（`deploy.yml` 的构建步骤传入）。图片 `apps/web/public/og.png` 由 `tools/og/og.html` 生成：`tools/og/render.sh`（用本地 Google Chrome 截图，字体是 Google Fonts 的 M PLUS Rounded 1c）。
+- 曲页面的视频（`components/SongVideos.tsx`）：点击之前不和 YouTube 通信（不显示缩略图），点击后在原位置换成 `youtube-nocookie.com` 的播放器。现在成员出道（`artist.since`）之前的视频按 `eras` 标上「1期」等。
 - 参战记录：保存在浏览器的 localStorage（`apps/web/src/attendance.ts`，键 `lovely-memory:attendance:v1`），手动勾选优先于 eventernote 导入。备份・引继（`attendance-backup.ts`）：JSON 文件，或 `LM1.` + base64url(JSON) 的引继码；导入时可「合并」（同一公演以导入为准，eventernote 连携保留现有的）或「替换」。分享图片（`attendance-card.ts`）：记录只在浏览器里，所以用 Canvas 在浏览器生成 1200×675 的 PNG（字体用 Google Fonts 的 `text=` 只取用到的字，离线时用系统字体）。手机（`pointer: coarse`）用系统分享菜单附带图片；电脑在生成后自动复制到剪贴板，点「ポスト」时也会先复制，再到 X 的投稿栏粘贴。eventernote 的参加活动通过站内 API `/api/eventernote/<用户名>?since=YYYY-MM-DD` 读取：Cloudflare Pages 的 `_worker.js`（`apps/web/worker/`，构建时用 esbuild 打包，`_routes.json` 只让 `/api/*` 进入 Worker），解析器是不依赖 cheerio 的 `@lovely-memory/eventernote/attended`。页面按新到旧排列，读到早于 since 的那一页就停（上限 10 页，间隔 0.5 秒），结果在边缘缓存 10 分钟；用户名不保存。开发・预览时同一个处理函数作为 Vite 中间件运行（`plugins/api-dev.ts`）。
 - 访问统计：Cloudflare Web Analytics（在 Pages 项目的 Metrics 里开启，部署时由 Cloudflare 自动在 HTML 里插入 beacon 脚本，只对 `Accept: text/html` 的请求插入；数据 POST 到 `/cdn-cgi/rum`）。不用 Cookie。代码里没有相关设置。
 - 添加到主屏幕（PWA）：`apps/web/public/manifest.webmanifest` + 图标 `apps/web/public/icons/`（由 `tools/icons/icon.html` 经 `tools/icons/render.sh` 生成，512px 兼作 maskable，图案在中央安全区内）。iOS 用 `apple-touch-icon`（180px）。离线：构建时生成 `sw.js`（`apps/web/plugins/service-worker.ts`）。页面优先联网、断网时用缓存（没缓存过的页面用壳 `shell.html` 在浏览器端渲染）；`/assets/`（带哈希）先查缓存，构建时全部预缓存，所以打开过一次就能离线看所有页面。缓存按版本分开，保留最近 2 个版本。分享卡片图片（`/og/`）不缓存。冒烟测试里有离线检查。

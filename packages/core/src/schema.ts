@@ -100,6 +100,12 @@ export const ArtistConfig = z.object({
         userId: z.string().regex(/^\d+$/),
       })
       .optional(),
+    /** 公式 YouTube チャンネル（import-youtube が曲ページの動画を集める） */
+    youtube: z
+      .object({
+        channelId: z.string().regex(/^UC[\w-]{22}$/),
+      })
+      .optional(),
     /** 楽曲リストの初期インポート元（ディスコグラフィ節を解析） */
     wikipedia: z
       .object({
@@ -170,9 +176,24 @@ export const Song = z.object({
       }),
     )
     .default([]),
+  /** 公式 YouTube の動画（MV・ライブ映像など）。曲ページで新しい順に並べる */
+  videos: z
+    .array(
+      z.object({
+        /** YouTube の動画 id */
+        id: z.string().regex(/^[\w-]{11}$/),
+        kind: z.enum(["mv", "live", "dance", "parts"]),
+        /** ライブ映像は公演日、それ以外は公開日 */
+        date: isoDate,
+        /** 補足（ライブ映像の公演名、MV の別バージョン名など） */
+        label: z.string().optional(),
+      }),
+    )
+    .default([]),
   note: z.string().optional(),
 });
 export type Song = z.infer<typeof Song>;
+export type SongVideo = Song["videos"][number];
 export type Tieup = Song["tieups"][number];
 export const SongList = z.array(Song);
 

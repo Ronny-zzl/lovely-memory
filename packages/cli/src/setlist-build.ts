@@ -51,6 +51,7 @@ export function buildSetlist(
         title: p.title,
         aliases: [],
         tieups: [],
+        videos: [],
         credits: Object.keys(p.credits).length ? p.credits : undefined,
       };
       songs.push(song);

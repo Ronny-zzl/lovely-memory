@@ -14,7 +14,20 @@
       "lyrics": "渡辺翔",
       "music": "渡辺翔",
       "arrangement": "ヤマモトショウ"
-    }
+    },
+    "videos": [
+      {
+        "id": "_-BabImwJnE",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      },
+      {
+        "id": "ZV7psXwLwKg",
+        "kind": "parts",
+        "date": "2023-07-02"
+      }
+    ]
   },
   {
     "id": "s002",
@@ -31,7 +44,15 @@
       "lyrics": "やしきん（F.M.F）",
       "music": "やしきん（F.M.F）",
       "arrangement": "やしきん（F.M.F）"
-    }
+    },
+    "videos": [
+      {
+        "id": "BTLIGqSFTOc",
+        "kind": "live",
+        "date": "2023-09-13",
+        "label": "Taiban Live Vol.1"
+      }
+    ]
   },
   {
     "id": "s003",
@@ -65,7 +86,20 @@
       "lyrics": "Akki",
       "music": "Akki",
       "arrangement": "Akki"
-    }
+    },
+    "videos": [
+      {
+        "id": "kVxQOh-OfTs",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      },
+      {
+        "id": "zYKadd5YEbo",
+        "kind": "mv",
+        "date": "2023-07-26"
+      }
+    ]
   },
   {
     "id": "s005",
@@ -82,7 +116,20 @@
       "lyrics": "中村瑛彦",
       "music": "中村瑛彦",
       "arrangement": "中村瑛彦"
-    }
+    },
+    "videos": [
+      {
+        "id": "k-gYizKrNcQ",
+        "kind": "live",
+        "date": "2023-09-13",
+        "label": "Taiban Live Vol.1"
+      },
+      {
+        "id": "S8wp_vdP8Po",
+        "kind": "parts",
+        "date": "2023-07-02"
+      }
+    ]
   },
   {
     "id": "s006",
@@ -99,7 +146,15 @@
       "lyrics": "Mumei",
       "music": "Mumei",
       "arrangement": "Mumei"
-    }
+    },
+    "videos": [
+      {
+        "id": "rGyQMxgCH8o",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      }
+    ]
   },
   {
     "id": "s007",
@@ -116,7 +171,15 @@
       "lyrics": "やぎぬまかな",
       "music": "石濱翔（MONACA）",
       "arrangement": "石濱翔（MONACA）"
-    }
+    },
+    "videos": [
+      {
+        "id": "hw_emvAvM-Y",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      }
+    ]
   },
   {
     "id": "s008",
@@ -133,7 +196,20 @@
       "lyrics": "RIRIKO",
       "music": "RIRIKO",
       "arrangement": "石原剛志"
-    }
+    },
+    "videos": [
+      {
+        "id": "yp5XvoHXpxo",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      },
+      {
+        "id": "RRr4yEfFdiM",
+        "kind": "mv",
+        "date": "2023-07-26"
+      }
+    ]
   },
   {
     "id": "s009",
@@ -150,7 +226,20 @@
       "lyrics": "mekakushe",
       "music": "mekakushe",
       "arrangement": "Tomggg"
-    }
+    },
+    "videos": [
+      {
+        "id": "pTGKDlY-KS4",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      },
+      {
+        "id": "-W3Ss0Bdr1Q",
+        "kind": "mv",
+        "date": "2023-09-12"
+      }
+    ]
   },
   {
     "id": "s010",
@@ -167,7 +256,14 @@
       "lyrics": "jon-YAKITORY",
       "music": "jon-YAKITORY",
       "arrangement": "jon-YAKITORY"
-    }
+    },
+    "videos": [
+      {
+        "id": "Ox-MICVLyi0",
+        "kind": "mv",
+        "date": "2023-10-03"
+      }
+    ]
   },
   {
     "id": "s011",
@@ -184,7 +280,14 @@
       "lyrics": "佐々木喫茶",
       "music": "佐々木喫茶",
       "arrangement": "佐々木喫茶"
-    }
+    },
+    "videos": [
+      {
+        "id": "98uo7CJovTo",
+        "kind": "mv",
+        "date": "2023-10-24"
+      }
+    ]
   },
   {
     "id": "s012",
@@ -201,7 +304,20 @@
       "lyrics": "四市田雲豹",
       "music": "四市田雲豹",
       "arrangement": "四市田雲豹"
-    }
+    },
+    "videos": [
+      {
+        "id": "mLrT5bR-3HE",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      },
+      {
+        "id": "m-elYSoc-Yo",
+        "kind": "mv",
+        "date": "2023-11-14"
+      }
+    ]
   },
   {
     "id": "s013",
@@ -218,7 +334,14 @@
       "lyrics": "前山田健一",
       "music": "前山田健一",
       "arrangement": "藤原燈太"
-    }
+    },
+    "videos": [
+      {
+        "id": "sTdPe3R8qb8",
+        "kind": "mv",
+        "date": "2023-12-05"
+      }
+    ]
   },
   {
     "id": "s014",
@@ -235,7 +358,14 @@
       "lyrics": "RIRIKO",
       "music": "RIRIKO",
       "arrangement": "広川恵一"
-    }
+    },
+    "videos": [
+      {
+        "id": "wcLOweIR1AM",
+        "kind": "mv",
+        "date": "2023-12-26"
+      }
+    ]
   },
   {
     "id": "s015",
@@ -259,6 +389,19 @@
         "work": "愚かな天使は悪魔と踊る",
         "role": "オープニングテーマ",
         "url": "https://kanaten-anime.com/"
+      }
+    ],
+    "videos": [
+      {
+        "id": "hwtPXwI3VS8",
+        "kind": "mv",
+        "date": "2024-01-19"
+      },
+      {
+        "id": "IZv5apvlgTs",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
       }
     ]
   },
@@ -294,7 +437,21 @@
       "lyrics": "林直大",
       "music": "林直大",
       "arrangement": "林直大"
-    }
+    },
+    "videos": [
+      {
+        "id": "jKquPXlAF7k",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      },
+      {
+        "id": "fKfh1Fi02kM",
+        "kind": "live",
+        "date": "2023-07-28",
+        "label": "Debut Live"
+      }
+    ]
   },
   {
     "id": "s018",
@@ -311,7 +468,26 @@
       "lyrics": "Akki",
       "music": "Akki",
       "arrangement": "Akki"
-    }
+    },
+    "videos": [
+      {
+        "id": "_lP43XITFmk",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      },
+      {
+        "id": "gU_2B0R99Mw",
+        "kind": "mv",
+        "date": "2024-03-03"
+      },
+      {
+        "id": "RCeYebhdUqI",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      }
+    ]
   },
   {
     "id": "s019",
@@ -328,7 +504,21 @@
       "lyrics": "カジ",
       "music": "カジ",
       "arrangement": "tonerico"
-    }
+    },
+    "videos": [
+      {
+        "id": "zgFBGM-zaYw",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      },
+      {
+        "id": "nmu5NMB4gCE",
+        "kind": "mv",
+        "date": "2024-04-07",
+        "label": "Sakura Edition"
+      }
+    ]
   },
   {
     "id": "s020",
@@ -362,7 +552,20 @@
       "lyrics": "Medansy",
       "music": "Medansy",
       "arrangement": "Medansy"
-    }
+    },
+    "videos": [
+      {
+        "id": "wIRa70bF6ag",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      },
+      {
+        "id": "p6W9cs_Hu7M",
+        "kind": "mv",
+        "date": "2024-07-02"
+      }
+    ]
   },
   {
     "id": "s022",
@@ -413,7 +616,14 @@
       "lyrics": "じゃすみん",
       "music": "パリで食べたカマボコ",
       "arrangement": "パリで食べたカマボコ"
-    }
+    },
+    "videos": [
+      {
+        "id": "eOOh60xwHwA",
+        "kind": "mv",
+        "date": "2024-07-09"
+      }
+    ]
   },
   {
     "id": "s025",
@@ -430,7 +640,14 @@
       "lyrics": "磯野涼(TRIFRONTIER)",
       "music": "磯野涼(TRIFRONTIER)",
       "arrangement": "磯野涼(TRIFRONTIER)"
-    }
+    },
+    "videos": [
+      {
+        "id": "TgVzrqfa14w",
+        "kind": "mv",
+        "date": "2024-07-03"
+      }
+    ]
   },
   {
     "id": "s026",
@@ -481,7 +698,14 @@
       "lyrics": "だてぃが",
       "music": "堀江晶太",
       "arrangement": "堀江晶太"
-    }
+    },
+    "videos": [
+      {
+        "id": "6wrUDSPWF0g",
+        "kind": "mv",
+        "date": "2024-07-10"
+      }
+    ]
   },
   {
     "id": "s029",
@@ -505,6 +729,13 @@
         "work": "凍牌〜裏レート麻雀闘牌録〜",
         "role": "エンディングテーマ",
         "url": "https://tohai-anime.com/music/ed/"
+      }
+    ],
+    "videos": [
+      {
+        "id": "dYt22_lo8M8",
+        "kind": "mv",
+        "date": "2024-10-11"
       }
     ]
   },
@@ -557,7 +788,15 @@
       "lyrics": "佐々木喫茶",
       "music": "佐々木喫茶",
       "arrangement": "佐々木喫茶"
-    }
+    },
+    "videos": [
+      {
+        "id": "lUklJbVopkw",
+        "kind": "live",
+        "date": "2025-04-19",
+        "label": "新体制お披露目公演"
+      }
+    ]
   },
   {
     "id": "s033",
@@ -574,7 +813,15 @@
       "lyrics": "Mumei",
       "music": "Mumei",
       "arrangement": "Mumei"
-    }
+    },
+    "videos": [
+      {
+        "id": "99nlWl1dlfU",
+        "kind": "live",
+        "date": "2025-04-19",
+        "label": "新体制お披露目公演"
+      }
+    ]
   },
   {
     "id": "s034",
@@ -591,7 +838,20 @@
       "lyrics": "カジ",
       "music": "カジ",
       "arrangement": "tonerico"
-    }
+    },
+    "videos": [
+      {
+        "id": "Dfub2RwpSwg",
+        "kind": "mv",
+        "date": "2025-05-28"
+      },
+      {
+        "id": "oXCICxFyl7o",
+        "kind": "live",
+        "date": "2025-04-19",
+        "label": "新体制お披露目公演"
+      }
+    ]
   },
   {
     "id": "s035",
@@ -616,6 +876,24 @@
         "role": "エンディングテーマ",
         "url": "https://turkey-project.com/"
       }
+    ],
+    "videos": [
+      {
+        "id": "b_2XMGbPGRc",
+        "kind": "dance",
+        "date": "2025-09-04"
+      },
+      {
+        "id": "mXqkkMy9aSo",
+        "kind": "live",
+        "date": "2025-07-27",
+        "label": "2nd ANNIVERSARY LIVE"
+      },
+      {
+        "id": "sBS3o0-zrRo",
+        "kind": "mv",
+        "date": "2025-07-16"
+      }
     ]
   },
   {
@@ -633,7 +911,14 @@
       "lyrics": "渡邊亜希子",
       "music": "ラムシーニ",
       "arrangement": "ラムシーニ"
-    }
+    },
+    "videos": [
+      {
+        "id": "4cqJrTo4p00",
+        "kind": "dance",
+        "date": "2025-09-05"
+      }
+    ]
   },
   {
     "id": "s037",
@@ -650,7 +935,14 @@
       "lyrics": "だてぃが",
       "music": "だてぃが",
       "arrangement": "藤代佑太郎"
-    }
+    },
+    "videos": [
+      {
+        "id": "hQLFge4P34U",
+        "kind": "dance",
+        "date": "2025-09-06"
+      }
+    ]
   },
   {
     "id": "s038",
@@ -718,7 +1010,15 @@
       "lyrics": "カジ",
       "music": "カジ",
       "arrangement": "tonerico"
-    }
+    },
+    "videos": [
+      {
+        "id": "RCDJI26x29M",
+        "kind": "live",
+        "date": "2026-09-04",
+        "label": "Second Season Debut LIVE"
+      }
+    ]
   },
   {
     "id": "s042",
@@ -735,7 +1035,15 @@
       "lyrics": "海野水玉",
       "music": "萩龍一",
       "arrangement": "萩龍一"
-    }
+    },
+    "videos": [
+      {
+        "id": "H_P2vfN5YI8",
+        "kind": "live",
+        "date": "2026-09-04",
+        "label": "Second Season Debut LIVE"
+      }
+    ]
   },
   {
     "id": "s043",
@@ -752,7 +1060,25 @@
       "lyrics": "夢魅たぴ",
       "music": "夢魅たぴ",
       "arrangement": "夢魅たぴ"
-    }
+    },
+    "videos": [
+      {
+        "id": "Ft9MKC1tomA",
+        "kind": "parts",
+        "date": "2026-10-19"
+      },
+      {
+        "id": "LDrmP3Md68Y",
+        "kind": "mv",
+        "date": "2026-10-17"
+      },
+      {
+        "id": "WOR_ILwshYI",
+        "kind": "live",
+        "date": "2026-09-04",
+        "label": "Second Season Debut LIVE"
+      }
+    ]
   },
   {
     "id": "s044",
@@ -788,5 +1114,24 @@
         "url": "https://music.apple.com/jp/album/mythological-happy-end-single/1657308877"
       }
     }
+  },
+  {
+    "id": "s000",
+    "title": "今しかできない音楽を",
+    "era": "1st",
+    "unit": "all",
+    "credits": {
+      "lyrics": "Akki",
+      "music": "Akki",
+      "arrangement": "Akki"
+    },
+    "videos": [
+      {
+        "id": "OAvuyx-5Tu0",
+        "kind": "live",
+        "date": "2023-12-03",
+        "label": "1st ONEMAN BAND LIVE"
+      }
+    ]
   }
 ]
