@@ -1,0 +1,103 @@
+name: Watch X
+
+# 公式 X のセトリ告知を読んで自動で取り込む（pnpm lm watch-x）。
+# セトリ待ちのイベント（開演済み・開演から 8 時間以内・未登録）が無い回は X API を呼ばずに終わる。
+# X_BEARER_TOKEN（リポジトリの secret）が必要。
+on:
+  # schedule:
+  #   # 10:00〜翌 02:45 JST に 15 分ごと（01〜17 時 UTC）
+  #   - cron: "*/15 1-17 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "書き込み・コミット・返信をしない（API は読む）"
+        type: boolean
+        default: false
+      now:
+        description: "現在時刻の代わり（確認用。例: 2026-11-18T22:30+09:00 で 11/18 の公演後として読む）"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  # 読んだポストのキャッシュを順番に引き継ぐため、同時に 1 つだけ
+  group: watch-x
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # 作業ディレクトリ内（.gitignore 済み）。コミットはしない
+      STATE: .x-state/state.json
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      # Node のバージョンは mise.toml で管理
+      - uses: jdx/mise-action@v5
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+
+      # 前回までに読んだポスト（同じポストを読み直して課金されないように）
+      - name: Restore state
+        uses: actions/cache/restore@v6
+        with:
+          path: .x-state
+          key: x-state-${{ github.run_id }}
+          restore-keys: x-state-
+
+      - name: Watch
+        id: watch
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          DRY_RUN: ${{ inputs.dry_run == true }}
+          # 入力はシェルに展開せず環境変数で渡す
+          NOW: ${{ inputs.now }}
+        run: |
+          args=(--state "$STATE" --out "$RUNNER_TEMP/actions.json" --commit-msg "$RUNNER_TEMP/commit-msg.txt")
+          [ "$DRY_RUN" = "true" ] && args+=(--dry-run)
+          [ -n "$NOW" ] && args+=(--now "$NOW")
+          pnpm -s lm watch-x all "${args[@]}"
+
+      - name: Validate
+        if: steps.watch.outputs.imported != '0' && inputs.dry_run != true
+        run: pnpm -s lm validate all
+
+      - name: Commit
+        if: steps.watch.outputs.imported != '0' && inputs.dry_run != true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artists
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -F "$RUNNER_TEMP/commit-msg.txt"
+          # 他のワークフローと同時に push した場合に備えて、rebase して数回試す
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
+
+      # push できてから Issue に返信する（取り込めなかった告知の知らせも含む）
+      - name: Reply to issues
+        if: steps.watch.outputs.actions != '0' && inputs.dry_run != true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: pnpm -s lm reply-issues --file "$RUNNER_TEMP/actions.json"
+
+      # ここまで成功したときだけ保存する（失敗したら次回、同じ告知をもう一度処理する）
+      - name: Save state
+        if: success() && steps.watch.outputs.read != '0' && inputs.dry_run != true
+        uses: actions/cache/save@v6
+        with:
+          path: .x-state
+          key: x-state-${{ github.run_id }}

@@ -88,6 +88,13 @@ export const ArtistConfig = z.object({
         url: z.string().url(),
       })
       .optional(),
+    /** セトリを告知する公式 X アカウント（watch-x が読む）。userId は数字の id（ユーザー名の変更に影響されない） */
+    x: z
+      .object({
+        username: z.string(),
+        userId: z.string().regex(/^\d+$/),
+      })
+      .optional(),
     /** 楽曲リストの初期インポート元（ディスコグラフィ節を解析） */
     wikipedia: z
       .object({

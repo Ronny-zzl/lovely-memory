@@ -9,8 +9,10 @@ import { importWikipedia } from "./commands/import-wikipedia.ts";
 import { listEvents } from "./commands/list-events.ts";
 import { ogPages } from "./commands/og-pages.ts";
 import { openSetlistIssues } from "./commands/open-setlist-issues.ts";
+import { replyIssues } from "./commands/reply-issues.ts";
 import { sync } from "./commands/sync.ts";
 import { validate } from "./commands/validate.ts";
+import { watchX } from "./commands/watch-x.ts";
 
 const USAGE = `usage: pnpm lm <command> <artistId> [options]
 
@@ -35,6 +37,15 @@ commands:
                      --date <YYYY-MM-DD>  --catch-up-days <n>（既定 7）  --dry-run
   import-comment     Issue コメントのセトリ告知を取り込む（GitHub Actions 用、artistId 不要）
                      --issue <Issue本文> --file <コメント> --out <返信本文の出力先>
+  watch-x            公式 X のポストからセトリ告知を自動で取り込む（GitHub Actions 用、artistId に all 可）
+                     セトリ待ちのイベントがあるときだけ X API を読む。X_BEARER_TOKEN 環境変数が必要
+                     --state <path>       前回までに読んだポスト（次回に引き継ぐ）  (必須)
+                     --out <path>         Issue への返信の出力先（reply-issues に渡す）  (必須)
+                     --commit-msg <path>  取り込んだときのコミットメッセージの出力先
+                     --now <ISO 日時>     現在時刻の代わり（確認用）
+                     --dry-run            書き込まない。キャッシュと登録済みのセトリを無視する（--now と組み合わせて確認）
+  reply-issues       watch-x の返信をセトリ入力用 Issue にコメントする（GitHub Actions 用、artistId 不要）
+                     --file <actions.json>
   validate           データ全体の整合性チェック（artistId に all 可）
                      --missing      セトリ未入力の終了済みイベントと、出典（source）の無いセトリを一覧表示
   import-official    公式サイトのディスコグラフィから songs.json を更新（公式の値を優先）
@@ -89,13 +100,16 @@ const { positionals, values } = parseArgs({
     "skip-images": { type: "boolean" },
     only: { type: "string" },
     days: { type: "string" },
+    state: { type: "string" },
+    "commit-msg": { type: "string" },
+    now: { type: "string" },
   },
 });
 const [command, artistId] = positionals;
 
 type Command = (id: string, opts: Record<string, any>) => Promise<void>;
 /** artistId を取らないコマンド（対象は引数のファイルなどから決まる） */
-const NO_ARTIST = new Set(["import-comment"]);
+const NO_ARTIST = new Set(["import-comment", "reply-issues"]);
 const commands: Record<string, Command> = {
   sync,
   "list-events": listEvents,
@@ -107,6 +121,8 @@ const commands: Record<string, Command> = {
   "add-song": addSong,
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,
+  "watch-x": watchX,
+  "reply-issues": replyIssues as Command,
   "og-pages": ogPages,
   errors,
 };

@@ -88,20 +88,21 @@ export async function importComment(_target: string | undefined, opts: Record<st
 
   await writeSetlist(target.artistId, result.setlist, event);
   if (result.songsChanged) await writeJson(artistPath(target.artistId, "songs.json"), songs);
+  return finish("success", successReply(target.artistId, event.id, result.setlist, result.warnings));
+}
 
+/** 取り込めたときの返信（Issue コメント）。X からの自動取り込みでも使う */
+export function successReply(artistId: string, eventId: number, setlist: Setlist, warnings: string[], lead = "✅"): string {
   const site = siteUrl();
-  const page = site ? `${site}${target.artistId}/events/${event.id}` : undefined;
-  return finish(
-    "success",
-    [
-      `✅ ${countSongs(result.setlist)} 曲を取り込みました${result.setlist.source ? `（出典: ${result.setlist.source}）` : ""}`,
-      "",
-      renderSetlist(result.setlist),
-      warnings && `\n${warnings}`,
-      page && `\nデプロイ後に反映されます: ${page}`,
-      "\n修正したいときは、もう一度コメントすると上書きします。",
-    ]
-      .filter(Boolean)
-      .join("\n"),
-  );
+  const page = site ? `${site}${artistId}/events/${eventId}` : undefined;
+  return [
+    `${lead} ${countSongs(setlist)} 曲を取り込みました${setlist.source ? `（出典: ${setlist.source}）` : ""}`,
+    "",
+    renderSetlist(setlist),
+    warnings.length > 0 && `\n${warnings.map((w) => `- ⚠️ ${w}`).join("\n")}`,
+    page && `\nデプロイ後に反映されます: ${page}`,
+    "\n修正したいときは、もう一度コメントすると上書きします。",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }

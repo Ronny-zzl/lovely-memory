@@ -54,6 +54,14 @@ export class GitHub {
     }
   }
 
+  async comment(number: number, body: string): Promise<void> {
+    await this.api(`/issues/${number}/comments`, { method: "POST", body: JSON.stringify({ body }) });
+  }
+
+  async closeIssue(number: number): Promise<void> {
+    await this.api(`/issues/${number}`, { method: "PATCH", body: JSON.stringify({ state: "closed", state_reason: "completed" }) });
+  }
+
   async createIssue(issue: { title: string; body: string; labels: string[]; assignees?: string[] }): Promise<number> {
     const { data } = await this.api<{ number: number }>("/issues", { method: "POST", body: JSON.stringify(issue) });
     return data.number;

@@ -10,3 +10,6 @@ setlist-map.json
 
 # wrangler pages dev のローカル状態（キャッシュ・D1 など）
 .wrangler/
+
+# watch-x が読んだポストのキャッシュ（Actions のキャッシュに保存する）
+.x-state/
