@@ -11,8 +11,11 @@ import {
   POSITION_ROLE_LABEL,
   tieupLabels,
   tieupText,
+  milestoneText,
   type ArtistConfig,
   type EventSetlist,
+  type Member,
+  type Milestone,
   type ResolvedEvent,
   type SongPosition,
   type SongStats,
@@ -99,6 +102,11 @@ body {
 .setlist .no { flex-shrink: 0; width: 2.4em; color: #9a93ab; font-size: .8em; font-weight: 500; }
 .setlist .debut { flex-shrink: 0; color: #d4741c; font-size: .7em; font-weight: 800; margin-left: 6px; }
 .setlist .stage { font-weight: 800; color: #d4741c; font-size: .82em; }
+.setlist .ms { flex-shrink: 0; color: #b0306a; font-size: .7em; font-weight: 800; margin-left: 6px; }
+.ev-meta { flex-wrap: wrap; row-gap: 8px; }
+.badge.ms { background: #fde4cc; color: #9a4a0b; }
+.badge.bday { display: inline-flex; align-items: center; gap: 8px; background: #fde3ee; color: #b0306a; }
+.badge.bday i { width: 16px; height: 16px; border-radius: 50%; }
 .empty { margin-top: auto; margin-bottom: auto; font-size: 30px; color: #7a7488; text-align: center; }
 .more { font-size: 20px; color: #7a7488; text-align: right; margin-top: 4px; }
 `;
@@ -187,8 +195,50 @@ ${s.count === 0 ? `<p class="empty">まだ歌われていません</p>` : `<div 
   );
 }
 
-export function eventCard(artist: ArtistConfig, event: ResolvedEvent, setlist: EventSetlist | undefined, host?: string): string {
-  const types = event.types.map((t) => `<span class="badge type">${esc(EVENT_TYPE_LABEL[t])}</span>`).join("");
+/** 曲の節目を、セトリの行に添える短い表記で */
+function songMilestoneShort(m: Milestone): string | undefined {
+  switch (m.kind) {
+    case "song-count":
+      return `通算${m.count}回目`;
+    case "song-streak":
+      return `${m.streak}公演連続`;
+    case "song-return":
+      return `${m.gap}公演ぶり`;
+    default:
+      return undefined;
+  }
+}
+
+/** 公演カードに添える記録（サイトの「この公演の記録」と同じもの） */
+export type EventHighlights = {
+  /** この公演で達成した節目 */
+  milestones: Milestone[];
+  /** この日が誕生日のメンバーと、迎えた年齢 */
+  birthdays: Array<{ member: Member; age: number }>;
+};
+
+export function eventCard(
+  artist: ArtistConfig,
+  event: ResolvedEvent,
+  setlist: EventSetlist | undefined,
+  host?: string,
+  highlights: EventHighlights = { milestones: [], birthdays: [] },
+): string {
+  // 公演全体の節目（通算 N 公演目など）と誕生日は、種別の隣にバッジで
+  const eventBadges = [
+    ...highlights.birthdays.map(
+      (b) =>
+        `<span class="badge bday"><i style="background:${esc(b.member.color ?? "#ccc")}"></i>${esc(b.member.name)} ${b.age}歳の誕生日</span>`,
+    ),
+    ...highlights.milestones.filter((m) => !("song" in m)).map((m) => `<span class="badge ms">${esc(milestoneText(m))}</span>`),
+  ];
+  // 曲の節目は、その曲の行に（同じ曲が 2 回あれば最初の行に）
+  const songMarks = new Map<string, string[]>();
+  for (const m of highlights.milestones) {
+    const text = "song" in m ? songMilestoneShort(m) : undefined;
+    if ("song" in m && text) songMarks.set(m.song.id, [...(songMarks.get(m.song.id) ?? []), text]);
+  }
+  const types = event.types.map((t) => `<span class="badge type">${esc(EVENT_TYPE_LABEL[t])}</span>`).join("") + eventBadges.join("");
   const dots = artist.members
     .map((m) => `<span style="background:${esc(m.color ?? "#ccc")}"${event.members.includes(m.id) ? "" : ` class="absent"`}></span>`)
     .join("");
@@ -211,8 +261,11 @@ export function eventCard(artist: ArtistConfig, event: ResolvedEvent, setlist: E
             .map((m) => `<span style="background:${esc(m.color ?? "#ccc")}"></span>`)
             .join("")}</span>`
         : "";
+      const marks = songMarks.get(e.song.id);
+      songMarks.delete(e.song.id);
+      const ms = marks ? `<span class="ms">${esc(marks.join("・"))}</span>` : "";
       lines.push(
-        `<li><span class="no">${e.no}</span><span class="t">${esc(e.song.title)}</span>${mdots}${e.debut && markDebut ? `<span class="debut">初披露</span>` : ""}</li>`,
+        `<li><span class="no">${e.no}</span><span class="t">${esc(e.song.title)}</span>${mdots}${e.debut && markDebut ? `<span class="debut">初披露</span>` : ""}${ms}</li>`,
       );
     }
   }

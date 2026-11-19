@@ -2,8 +2,12 @@ import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import {
+  ageOn,
+  birthdayMembers,
+  computeMilestones,
   computePatterns,
   computeStats,
+  heldCheck,
   displayTitle,
   formatDate,
   formatPercent,
@@ -15,6 +19,7 @@ import {
   type ArtistConfig,
 } from "@lovely-memory/core";
 import { eventCard, songCard } from "../og/cards.ts";
+import { jstDateDaysAgo } from "./sync.ts";
 import { pageHtml, sitemap, type PageMeta } from "../og/meta.ts";
 import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs, REPO_ROOT, siteUrl } from "../repo.ts";
 
@@ -69,6 +74,18 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
   const stats = computeStats({ songs, events, setlists });
   const patterns = computePatterns(stats.events);
   const setlistByEvent = new Map(stats.events.map((e) => [e.event.id, e]));
+  // 公演カードに添える節目（サイトの「この公演の記録」と同じ計算）
+  const today = jstDateDaysAgo(0);
+  const milestones = computeMilestones({
+    stats,
+    liveEvents: events.filter(isLiveEvent),
+    since: artist.since,
+    today,
+    held: heldCheck(
+      today,
+      setlists.map((s) => s.event),
+    ),
+  });
 
   const name = artist.subtitle ? `${artist.name}（${artist.subtitle}）` : artist.name;
   const title = (t?: string) => (t ? `${t} — ${artist.name} | ${SITE_NAME}` : `${artist.name} | ${SITE_NAME}`);
@@ -133,7 +150,11 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
         imageAlt: `${head}のセットリスト`,
       },
     });
-    cards.push({ file: img, html: eventCard(artist, e, sl, host) });
+    const highlights = {
+      milestones: milestones.achieved.filter((m) => m.eventId === e.id),
+      birthdays: birthdayMembers(artist.members, e.date).map((member) => ({ member, age: ageOn(member.birthday!, e.date) })),
+    };
+    cards.push({ file: img, html: eventCard(artist, e, sl, host, highlights) });
   }
   return { pages, cards };
 }
