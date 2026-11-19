@@ -3,14 +3,6 @@
 event: 490206
 source: https://x.com/taiyototsukiyo/status/2109615306037710945
 stages:
-  - name: duo MUSIC EXCHANGE
-    items:
-      - ライブアンドシーク
-      - アンディセンバー
-      - もしも
-      - はなうらNIGHT!
-      - ラブリィフェリス
-      - スプらっしゃい！
   # 主催（さとりモンスター）企画のコラボステージ。17:10-17:30
   - name: Spotify O-Crest
     collab: true
@@ -21,3 +13,11 @@ stages:
       - song: 神話級ハッピーエンド
         members: [mei]
         with: [空中つき, 高橋あず, 森崎璃音, 平野未季, たべる子, ゴコノコトコ]
+  - name: duo MUSIC EXCHANGE
+    items:
+      - ライブアンドシーク
+      - アンディセンバー
+      - もしも
+      - はなうらNIGHT!
+      - ラブリィフェリス
+      - スプらっしゃい！

@@ -92,9 +92,12 @@ body {
 .dots span { width: 22px; height: 22px; border-radius: 50%; }
 .dots span.absent { opacity: .2; }
 .setlist { margin-top: 16px; flex: 1; columns: var(--cols); column-gap: 28px; column-fill: auto; font-size: var(--fs); line-height: 1.45; list-style: none; overflow: hidden; }
-.setlist li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; break-inside: avoid; }
-.setlist .no { display: inline-block; width: 2.4em; color: #9a93ab; font-size: .8em; font-weight: 500; }
-.setlist .debut { color: #d4741c; font-size: .7em; font-weight: 800; margin-left: 6px; }
+.setlist li { display: flex; align-items: baseline; white-space: nowrap; break-inside: avoid; }
+.setlist .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.setlist .mdots { display: inline-flex; gap: 4px; margin-left: 8px; flex-shrink: 0; align-self: center; }
+.setlist .mdots span { width: .5em; height: .5em; border-radius: 50%; }
+.setlist .no { flex-shrink: 0; width: 2.4em; color: #9a93ab; font-size: .8em; font-weight: 500; }
+.setlist .debut { flex-shrink: 0; color: #d4741c; font-size: .7em; font-weight: 800; margin-left: 6px; }
 .setlist .stage { font-weight: 800; color: #d4741c; font-size: .82em; }
 .empty { margin-top: auto; margin-bottom: auto; font-size: 30px; color: #7a7488; text-align: center; }
 .more { font-size: 20px; color: #7a7488; text-align: right; margin-top: 4px; }
@@ -199,8 +202,16 @@ export function eventCard(artist: ArtistConfig, event: ResolvedEvent, setlist: E
     if ((setlist?.stages.length ?? 0) > 1 && st.name) lines.push(`<li class="stage">${esc(st.name)}${st.collab ? "（コラボ）" : ""}</li>`);
     for (const e of st.entries) {
       total++;
+      // 公演の出演メンバーと違う曲（ユニット曲・カバー・コラボなど）は、歌ったメンバーの色を付ける（サイトと同じ条件）
+      const partial = e.members.length !== event.members.length || e.members.some((m) => !event.members.includes(m));
+      const mdots = partial
+        ? `<span class="mdots">${artist.members
+            .filter((m) => e.members.includes(m.id))
+            .map((m) => `<span style="background:${esc(m.color ?? "#ccc")}"></span>`)
+            .join("")}</span>`
+        : "";
       lines.push(
-        `<li><span class="no">${e.no}</span>${esc(e.song.title)}${e.debut && markDebut ? `<span class="debut">初披露</span>` : ""}</li>`,
+        `<li><span class="no">${e.no}</span><span class="t">${esc(e.song.title)}</span>${mdots}${e.debut && markDebut ? `<span class="debut">初披露</span>` : ""}</li>`,
       );
     }
   }
