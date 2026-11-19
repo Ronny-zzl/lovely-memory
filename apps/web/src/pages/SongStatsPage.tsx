@@ -10,6 +10,7 @@ import {
   type SongStats,
 } from "@lovely-memory/core/runtime";
 import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, POSITION_ROLE_LABEL, tieupLabels } from "../format.ts";
+import { SearchInput } from "../components/SearchInput.tsx";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useSearchParamsAfterHydration } from "../hydration.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
@@ -340,7 +341,7 @@ export function SongStatsPage() {
 
       <div className="filters only-narrow">
         <div className="filter-row">
-          <input type="search" placeholder="曲名・作詞・作曲・編曲で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
+          <SearchInput placeholder="曲名・作詞・作曲・編曲で絞り込み" value={q} onChange={(v) => update({ q: v })} />
         </div>
         <details className="filter-panel">
           <summary>
@@ -443,7 +444,7 @@ export function SongStatsPage() {
               </option>
             ))}
           </select>
-          <input type="search" placeholder="曲名・作詞・作曲・編曲で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
+          <SearchInput placeholder="曲名・作詞・作曲・編曲で絞り込み" value={q} onChange={(v) => update({ q: v })} />
         </div>
       </div>
 

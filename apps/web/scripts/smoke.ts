@@ -189,6 +189,32 @@ try {
       failures.push("[サイト内の移動] リンクを押したらページ全体が読み直された");
   }
 
+  // 絞り込みの入力欄に日本語を変換して入れられること（入力欄を URL から描き直すと、変換中の文字が壊れて「ｗわわｔ…」になる）
+  if (first) {
+    await step(
+      page,
+      "[日本語入力] 楽曲の絞り込み",
+      () => page.goto(`${base}${first}/songs`, { waitUntil: "domcontentloaded" }),
+      ".only-wide input[type=search]",
+      {
+        check: async (p) => {
+          const input = p.locator(".only-wide input[type=search]");
+          await input.click();
+          // Chrome の IME の操作（DevTools Protocol）で、ローマ字入力の途中経過を送ってから確定する
+          const cdp = await p.context().newCDPSession(p);
+          for (const t of ["ｗ", "わ", "わｔ", "わた", "わたｎ", "わたな", "わたなｂ", "わたなべ"]) {
+            await cdp.send("Input.imeSetComposition", { text: t, selectionStart: t.length, selectionEnd: t.length });
+          }
+          await cdp.send("Input.insertText", { text: "渡辺" });
+          await cdp.detach();
+          await p.waitForURL(/[?&]q=/, { timeout: 5_000 }).catch(() => {});
+          const value = await input.inputValue();
+          return value === "渡辺" ? undefined : `「渡辺」と入力したのに「${value}」になった`;
+        },
+      },
+    );
+  }
+
   noReports("見て回る間", reported);
   await context.close();
 
