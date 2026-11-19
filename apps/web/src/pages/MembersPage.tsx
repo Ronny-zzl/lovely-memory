@@ -75,16 +75,19 @@ export function MembersPage() {
             </div>
 
             {s.absences.length > 0 && (
-              <ul className="absence-list">
-                {[...s.absences].reverse().map((e) => (
-                  <li key={e.id}>
-                    <Link to={`/${artist.id}/events/${e.id}`}>
-                      <span className="absence-date">{formatDate(e.date)}</span>
-                      <span className="absence-title">{displayTitle(e.title, artist.name)}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <div className="absence">
+                <h3 className="absence-heading">欠席した公演</h3>
+                <ul className="absence-list">
+                  {[...s.absences].reverse().map((e) => (
+                    <li key={e.id}>
+                      <Link to={`/${artist.id}/events/${e.id}`}>
+                        <span className="absence-date">{formatDate(e.date)}</span>
+                        <span className="absence-title">{displayTitle(e.title, artist.name)}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </li>
         ))}

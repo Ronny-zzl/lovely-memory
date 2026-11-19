@@ -4,25 +4,83 @@
   margin: 12px 0 20px;
 }
 
+/* 公演の基本情報のカード。上端に朝から夜へのグラデーションの細い帯（トップのカードと同じ） */
+.event-card {
+  position: relative;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.event-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--hero-bg);
+  content: "";
+}
+
 .event-detail-date {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
 
+.event-detail-year {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.event-detail-day {
+  font-family: var(--font-round);
+  font-size: var(--text-lg);
+  font-weight: 800;
+}
+
 .event-detail-title {
-  margin: 4px 0 8px;
+  margin: 4px 0 12px;
   font-size: var(--text-lg);
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
-.event-detail-meta,
+/* 種別・会場・出演・衣装：左に小さな見出し */
+.event-facts {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.event-facts div {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+}
+
+.event-facts dt {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.event-facts dd {
+  margin: 0;
+}
+
 .event-detail-members {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 10px;
-  margin: 4px 0;
+}
+
+.event-detail-note {
+  margin: 12px 0 0;
 }
 
 .setlist {
@@ -64,14 +122,22 @@
   border-bottom: 0;
 }
 
+/* 曲順は小さな丸いラベル（幅を揃える） */
 .item-no {
-  width: 2.6em;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 2.6em;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--row-hover);
   color: var(--muted);
   font-size: var(--text-xs);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .setlist-items li.encore .item-no {
+  background: var(--accent-soft);
   color: var(--accent-text);
   font-weight: 700;
 }
@@ -109,23 +175,40 @@
   color: var(--accent-2);
 }
 
+/* 前後の公演：カードにして押しやすく */
 .event-nav {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
   margin-top: 24px;
   font-variant-numeric: tabular-nums;
 }
 
 .event-nav a {
   display: flex;
+  flex: 0 1 48%;
   flex-direction: column;
-  max-width: 48%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
   color: var(--accent-2);
   text-decoration: none;
 }
 
+.event-nav a:hover {
+  border-color: var(--accent);
+}
+
 .event-nav .nav-next {
+  margin-left: auto;
   text-align: right;
+}
+
+.nav-date {
+  font-family: var(--font-round);
+  font-weight: 800;
 }
 
 .nav-title {
@@ -147,10 +230,6 @@
 
 .event-milestones {
   margin: 4px 0 20px;
-}
-
-.event-costume {
-  margin: 4px 0;
 }
 
 .event-costume.special {

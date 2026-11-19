@@ -9,12 +9,13 @@
   list-style: none;
 }
 
+/* 上端の帯と、上の方にうっすらとメンバーの色 */
 .member-card {
   padding: 16px;
-  background: var(--surface);
+  background: linear-gradient(color-mix(in srgb, var(--member) 12%, var(--surface)), var(--surface) 96px);
   border: 1px solid var(--border);
   border-top: 4px solid var(--member);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
 }
 
 .member-name {
@@ -68,11 +69,22 @@
   background: var(--member);
 }
 
-.absence-list {
-  margin: 10px 0 0;
-  padding: 8px 0 0;
-  list-style: none;
+.absence {
+  margin-top: 10px;
+  padding-top: 8px;
   border-top: 1px dashed var(--border);
+}
+
+.absence-heading {
+  margin: 0 0 2px;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.absence-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   font-size: var(--text-sm);
 }
 

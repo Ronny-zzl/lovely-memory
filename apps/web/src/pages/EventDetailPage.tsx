@@ -47,31 +47,49 @@ export function EventDetailPage() {
       </Link>
 
       <header className="event-detail-header">
-        <p className="event-detail-date">
-          {event.date.slice(0, 4)}.{formatDayWithWeekday(event.date)}
-          {times && <span className="muted"> {times}</span>}
-        </p>
-        <h2 className="event-detail-title">{event.title}</h2>
-        <p className="event-detail-meta">
-          <TypeBadges types={event.types} />
-          {event.venue && <span>{event.venue.name}</span>}
-        </p>
-        <p className="event-detail-members">
-          <MemberDots artist={artist} present={event.members} />
-          {event.membersSource === "assumed" ? (
-            <span className="muted small">出演メンバー情報なし（全員出演として表示）</span>
-          ) : absent.length ? (
-            <span className="small">欠席: {absent.map((m) => m.name).join("・")}</span>
-          ) : (
-            <span className="small muted">全員出演</span>
-          )}
-        </p>
-        {costume && (
-          <p className={`event-costume small${costume.special ? " special" : ""}`}>
-            <span className="muted">衣装</span> {costume.name}
+        {/* 公演の基本情報のカード（上端に朝から夜へのグラデーションの帯） */}
+        <div className="event-card">
+          <p className="event-detail-date">
+            <span className="event-detail-year">{event.date.slice(0, 4)}</span>
+            <span className="event-detail-day">{formatDayWithWeekday(event.date)}</span>
+            {times && <span className="muted small">{times}</span>}
           </p>
-        )}
-        {event.note && <p className="small">{event.note}</p>}
+          <h2 className="event-detail-title">{event.title}</h2>
+          <dl className="event-facts">
+            <div>
+              <dt>種別</dt>
+              <dd>
+                <TypeBadges types={event.types} />
+              </dd>
+            </div>
+            {event.venue && (
+              <div>
+                <dt>会場</dt>
+                <dd>{event.venue.name}</dd>
+              </div>
+            )}
+            <div>
+              <dt>出演</dt>
+              <dd className="event-detail-members">
+                <MemberDots artist={artist} present={event.members} />
+                {event.membersSource === "assumed" ? (
+                  <span className="muted small">出演メンバー情報なし（全員出演として表示）</span>
+                ) : absent.length ? (
+                  <span className="small">欠席: {absent.map((m) => m.name).join("・")}</span>
+                ) : (
+                  <span className="small muted">全員出演</span>
+                )}
+              </dd>
+            </div>
+            {costume && (
+              <div>
+                <dt>衣装</dt>
+                <dd className={costume.special ? "event-costume special" : "event-costume"}>{costume.name}</dd>
+              </div>
+            )}
+          </dl>
+          {event.note && <p className="small event-detail-note">{event.note}</p>}
+        </div>
         <div className="detail-actions">
           {isLiveEvent(event) && <AttendanceToggle eventId={event.id} upcoming={!isHeld(event)} variant="detail" />}
         </div>
