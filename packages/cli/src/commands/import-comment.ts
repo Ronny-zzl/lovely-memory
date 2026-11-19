@@ -8,6 +8,7 @@ import {
   type Setlist,
 } from "@lovely-memory/core";
 import { parseComment, parseMarker } from "../issue.ts";
+import { fetchSetlistText } from "../post-text.ts";
 import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, siteUrl, writeJson } from "../repo.ts";
 import { buildSetlist, countSongs, writeSetlist } from "../setlist-build.ts";
 
@@ -52,10 +53,27 @@ export async function importComment(_target: string | undefined, opts: Record<st
 
   if (!target) return finish("noop", "");
   if (comment.skip) return finish("skip", "⏭️ セトリなしとして閉じます。取り込みたくなったら、閉じたままでもコメントすれば取り込みます。");
-  // 雑談などのコメントには反応しない（曲番号もセトリ見出しも無い）
-  if (!hasNumberedItems(comment.text) && !looksLikeSetlistAnnouncement(comment.text)) return finish("noop", "");
-
   const artist = await loadArtist(target.artistId);
+
+  // ポストの URL だけが貼られたら、X API で本文を読む（X_BEARER_TOKEN が必要）
+  const looksLikeSetlist = (t: string) => hasNumberedItems(t) || looksLikeSetlistAnnouncement(t);
+  if (!looksLikeSetlist(comment.text) && comment.source && !comment.text.trim()) {
+    const token = process.env.X_BEARER_TOKEN;
+    if (!token) return finish("error", "❌ ポストの URL だけでは取り込めません（X_BEARER_TOKEN が未設定）。本文を貼り付けてください。");
+    try {
+      comment.text = await fetchSetlistText(token, artist, comment.source.split("/").at(-1)!);
+    } catch (e) {
+      return finish(
+        "error",
+        `❌ ポストを読めませんでした: ${e instanceof Error ? e.message.slice(0, 200) : String(e)}\n\n本文を貼り付けてコメントしてください。`,
+      );
+    }
+    if (!looksLikeSetlist(comment.text))
+      return finish("error", "❌ このポストにはセトリが見つかりませんでした。セトリ告知のポストか確認してください。");
+  }
+  // 雑談などのコメントには反応しない（曲番号もセトリ見出しも無い）
+  if (!looksLikeSetlist(comment.text)) return finish("noop", "");
+
   const songs = await loadSongs(target.artistId);
   const events = resolveEvents(await loadEvents(target.artistId), await loadOverrides(target.artistId), artist);
   const event = events.find((e) => e.id === target.eventId);

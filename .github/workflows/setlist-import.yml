@@ -43,6 +43,8 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
           GITHUB_TOKEN: ${{ github.token }}
           SITE_URL: ${{ vars.SITE_URL }}
+          # ポストの URL だけが貼られたとき、本文を X API で読む
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
         run: |
           printf '%s' "$ISSUE_BODY" > "$RUNNER_TEMP/issue.md"
           printf '%s' "$COMMENT_BODY" > "$RUNNER_TEMP/comment.txt"

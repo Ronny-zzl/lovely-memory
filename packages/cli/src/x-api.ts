@@ -5,7 +5,7 @@
  */
 import type { CollectedTweet } from "./tweet-match.ts";
 
-type ApiPost = { id: string; text: string; created_at: string; note_tweet?: { text: string } };
+export type ApiPost = { id: string; text: string; created_at: string; note_tweet?: { text: string } };
 type ApiResponse = { data?: ApiPost[]; meta?: { next_token?: string; result_count?: number }; errors?: unknown[] };
 
 /** 1 回の実行で読む最大ページ数（1 ページ最大 100 件）。想定外に多く読んで課金されるのを防ぐ */
@@ -112,3 +112,14 @@ export async function createSubscription(token: string, opts: { userId: string; 
 }
 
 export const deleteSubscription = (token: string, id: string) => xApi(token, "DELETE", `/activity/subscriptions/${id}`);
+
+/** 1 件のポストを読む（id から） */
+export async function fetchPost(token: string, id: string): Promise<ApiPost & { author_id?: string }> {
+  const res = await xApi<{ data?: ApiPost & { author_id?: string } }>(
+    token,
+    "GET",
+    `/tweets/${id}?tweet.fields=created_at,note_tweet,author_id`,
+  );
+  if (!res.data) throw new Error(`ポスト ${id} を読めませんでした`);
+  return res.data;
+}
