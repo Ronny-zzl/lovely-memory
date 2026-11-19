@@ -46,3 +46,9 @@
   width: 14px;
   height: 14px;
 }
+
+/* 聴いたカバー曲: 原曲のアーティストは曲名の下の行に */
+.cover-artist {
+  display: block;
+  font-weight: 400;
+}

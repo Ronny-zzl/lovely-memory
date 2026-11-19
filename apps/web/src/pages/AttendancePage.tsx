@@ -97,7 +97,9 @@ export function AttendancePage() {
   const planned = live.filter((e) => attendance.isAttended(e.id) && !isHeld(e));
   const held = live.filter(isHeld).length;
 
-  const { heard, notHeard, total } = useMemo(() => {
+  // カバー曲はたいてい 1 回きりなので、「生で聴いた曲 X / Y」やまだ聴いていない曲には入れず、別に並べる
+  // （のべの歌唱数には含める）
+  const { heard, heardCovers, notHeard, total } = useMemo(() => {
     const ids = new Set(past.map((e) => e.id));
     const bySong = new Map<string, Heard>();
     let total = 0;
@@ -112,13 +114,15 @@ export function AttendancePage() {
         }
       }
     }
-    const heard = [...bySong.values()].sort((a, b) => b.count - a.count || a.first.date.localeCompare(b.first.date));
-    // 披露されたことのある曲のうち、まだ聴いていないもの（歌唱率の高い順＝次に聴けそうな順）
-    const notHeard = allStats.songs.filter((s) => s.count > 0 && !bySong.has(s.song.id)).sort((a, b) => b.rate - a.rate);
-    return { heard, notHeard, total };
+    const all = [...bySong.values()].sort((a, b) => b.count - a.count || a.first.date.localeCompare(b.first.date));
+    const heard = all.filter((h) => !h.song.cover);
+    const heardCovers = all.filter((h) => h.song.cover).sort((a, b) => a.first.date.localeCompare(b.first.date));
+    // 披露されたことのあるオリジナル曲のうち、まだ聴いていないもの（歌唱率の高い順＝次に聴けそうな順）
+    const notHeard = allStats.songs.filter((s) => s.count > 0 && !s.song.cover && !bySong.has(s.song.id)).sort((a, b) => b.rate - a.rate);
+    return { heard, heardCovers, notHeard, total };
   }, [past, allStats]);
 
-  const sung = allStats.songs.filter((s) => s.count > 0).length;
+  const sung = allStats.songs.filter((s) => s.count > 0 && !s.song.cover).length;
   // シェア画像の中身（変わったときだけ描き直す）
   const card = useMemo<AttendanceCardData>(
     () => ({
@@ -209,6 +213,25 @@ export function AttendancePage() {
                   <li key={h.song.id}>
                     <Link to={`/${artist.id}/songs/${h.song.id}`} className="trend-song">
                       {h.song.title}
+                    </Link>
+                    <span className="rank-count">
+                      {h.count}回<span className="muted small"> 初 {formatDate(h.first.date)}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {heardCovers.length > 0 && (
+            <section className="song-section">
+              <h3 className="section-heading">聴いたカバー曲</h3>
+              <ul className="chain-list">
+                {heardCovers.map((h) => (
+                  <li key={h.song.id}>
+                    <Link to={`/${artist.id}/songs/${h.song.id}`} className="trend-song">
+                      {h.song.title}
+                      <span className="cover-artist muted small">原曲: {h.song.cover!.artist}</span>
                     </Link>
                     <span className="rank-count">
                       {h.count}回<span className="muted small"> 初 {formatDate(h.first.date)}</span>
