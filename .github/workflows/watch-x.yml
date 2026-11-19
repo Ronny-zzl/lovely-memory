@@ -4,9 +4,9 @@ name: Watch X
 # セトリ待ちのイベント（開演済み・開演から 8 時間以内・未登録）が無い回は X API を呼ばずに終わる。
 # X_BEARER_TOKEN（リポジトリの secret）が必要。
 on:
-  # schedule:
-  #   # 10:00〜翌 02:45 JST に 15 分ごと（01〜17 時 UTC）
-  #   - cron: "*/15 1-17 * * *"
+  schedule:
+    # 10:00〜翌 02:45 JST に 15 分ごと（01〜17 時 UTC）
+    - cron: "*/15 1-17 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
