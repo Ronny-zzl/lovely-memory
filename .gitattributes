@@ -1,0 +1,7 @@
+# 改行はどの OS でも LF（Windows の core.autocrlf に左右されない）
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
