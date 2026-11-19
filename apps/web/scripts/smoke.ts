@@ -85,7 +85,8 @@ try {
     checked++;
     if (size !== icon.sizes) failures.push(`${icon.src}: ${icon.sizes} のはずが ${size}`);
   }
-  const artists = await hrefs(page, ".artist-list a");
+  // カードの中には公演・各ページへのリンクもあるので、グループ名のリンクだけを使う
+  const artists = await hrefs(page, ".artist-list a.artist-card-head");
   if (artists.length === 0) failures.push("/: アーティストが 1 件も表示されていない");
 
   for (const artist of artists) {
@@ -147,7 +148,7 @@ try {
       Promise.race([navigator.serviceWorker.ready.then(() => "ok"), new Promise((r) => setTimeout(() => r("timeout"), 15_000))]),
     );
     if (ready !== "ok") throw new Error("Service Worker が有効にならない（sw.js の事前キャッシュの失敗など）");
-    const artist = (await hrefs(p, ".artist-list a"))[0];
+    const artist = (await hrefs(p, ".artist-list a.artist-card-head"))[0];
     await offline.setOffline(true);
     if (artist) {
       for (const [path, selector] of [

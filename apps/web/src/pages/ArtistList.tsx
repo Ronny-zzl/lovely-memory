@@ -74,7 +74,8 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: Awaited<Ret
 
   return (
     <article className="artist-card">
-      <Link to={`${base}/songs`} className="artist-card-head">
+      {/* グループのページ（/:artistId → 楽曲へ）。smoke テストはこのリンクからグループを見つける */}
+      <Link to={base} className="artist-card-head">
         <span className="artist-card-name">{artist.name}</span>
         {artist.subtitle && <span className="artist-card-sub">{artist.subtitle}</span>}
       </Link>
