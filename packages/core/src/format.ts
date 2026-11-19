@@ -1,5 +1,25 @@
 /* 表示用の書式（ブラウザ・CLI〔OGP 生成〕で共通） */
-import type { EventType, SongVideo, Tieup } from "./schema.ts";
+import type { EventType, Song, SongVideo, Tieup } from "./schema.ts";
+
+/** 作詞・作曲・編曲のうち同じ人をまとめる（例: [{ roles: "作詞・作曲", name: "カジ" }, { roles: "編曲", name: "tonerico" }]） */
+export function creditParts(c: Song["credits"]): Array<{ roles: string; name: string }> {
+  if (!c) return [];
+  const groups: Array<{ roles: string[]; name: string }> = [];
+  for (const [role, name] of [
+    ["作詞", c.lyrics],
+    ["作曲", c.music],
+    ["編曲", c.arrangement],
+  ] as const) {
+    if (!name) continue;
+    const g = groups.find((x) => x.name === name);
+    if (g) g.roles.push(role);
+    else groups.push({ roles: [role], name });
+  }
+  return groups.map((g) => ({ roles: g.roles.join("・"), name: g.name }));
+}
+
+/** 「作詞・作曲：カジ」「編曲：tonerico」の行 */
+export const formatCredits = (c: Song["credits"]) => creditParts(c).map((p) => `${p.roles}：${p.name}`);
 
 export const VIDEO_KIND_LABEL: Record<SongVideo["kind"], string> = {
   mv: "Music Video",

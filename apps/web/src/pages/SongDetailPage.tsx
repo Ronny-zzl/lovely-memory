@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { neighbors, positionRole, STREAK_MIN, type Song, type Transition } from "@lovely-memory/core/runtime";
+import { formatCredits, neighbors, positionRole, STREAK_MIN, type Song, type Transition } from "@lovely-memory/core/runtime";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { SongVideos } from "../components/SongVideos.tsx";
@@ -16,24 +16,6 @@ const RELEASE_KIND: Record<NonNullable<Song["release"]>["kind"], string> = {
   album: "アルバム",
   other: "",
 };
-
-/** 作詞・作曲・編曲のうち同じ人をまとめる（例: 作詞・作曲：カジ / 編曲：tonerico） */
-function formatCredits(c: Song["credits"]): string[] {
-  if (!c) return [];
-  const roles: Array<[string, string | undefined]> = [
-    ["作詞", c.lyrics],
-    ["作曲", c.music],
-    ["編曲", c.arrangement],
-  ];
-  const groups: Array<{ roles: string[]; name: string }> = [];
-  for (const [role, name] of roles) {
-    if (!name) continue;
-    const g = groups.find((x) => x.name === name);
-    if (g) g.roles.push(role);
-    else groups.push({ roles: [role], name });
-  }
-  return groups.map((g) => `${g.roles.join("・")}：${g.name}`);
-}
 
 const ZONES = [
   ["early", "前半"],

@@ -3,6 +3,7 @@
  * 見た目はサイト全体の画像（tools/og/og.html）と揃える：左が朝の光、右が夜空。
  */
 import {
+  creditParts,
   displayTitle,
   EVENT_TYPE_LABEL,
   formatDate,
@@ -59,10 +60,10 @@ body {
 .footer .sun { color: #f39a1e; filter: drop-shadow(0 0 10px rgb(255 190 80 / .9)); }
 .footer .moon { color: #ffe7a6; }
 .footer .host { font-size: 24px; font-weight: 500; opacity: .9; }
-.group { font-size: 24px; font-weight: 800; color: #4a3f7a; }
+.group { flex-shrink: 0; font-size: 24px; font-weight: 800; color: #4a3f7a; }
 .group small { font-size: 19px; font-weight: 500; color: #8a7fa8; margin-left: 8px; }
 .fit { overflow: hidden; }
-.badges { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.badges { flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .badge { font-size: 22px; font-weight: 800; padding: 3px 14px; border-radius: 8px; background: #e8e6f3; color: #3d4b8f; }
 .badge.era-2nd { background: #fde4cc; color: #9a4a0b; }
 .badge.era-cover { background: #e3f1e6; color: #2f6b3d; }
@@ -77,15 +78,22 @@ body {
 .unit-moon svg { color: #ffe39a; }
 .muted { color: #7a7488; }
 /* 曲 */
-.song-title { margin: 10px 0 14px; height: 120px; display: flex; align-items: center; font-size: 92px; font-weight: 800; line-height: 1.15; white-space: nowrap;
+.song-title { flex-shrink: 0; margin: 6px 0 8px; height: 108px; display: flex; align-items: center; font-size: 92px; font-weight: 800; line-height: 1.15; white-space: nowrap;
   background: linear-gradient(90deg, #e98a1f 0%, #d9658a 55%, #4b3f9a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.stats { margin-top: auto; display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 16px; }
+/* 作詞・作曲・編曲。長いもの（作曲者が 5 人など）は 2 行まで折り返し、それでも入らなければ .fit で小さくし、最後は … で切る */
+.credit { flex-shrink: 0; margin: 0 0 12px; font-size: 24px; line-height: 1.35; max-height: 2.7em; overflow: hidden; color: #7a7488;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; }
+.credit .cr { margin-right: 1.1em; }
+.credit .cr:last-child { margin-right: 0; }
+.credit b { font-weight: 800; color: #4a3f7a; }
+.stats { flex-shrink: 0; margin-top: auto; display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 16px; }
 .stat { padding: 14px 18px; border-radius: 16px; background: #f6f3fb; }
 .stat .v { font-size: 46px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .stat .v small { font-size: 24px; font-weight: 500; color: #7a7488; margin-left: 6px; }
 .stat .v.date { font-size: 34px; padding: 6px 0 4px; }
 .stat .l { font-size: 20px; font-weight: 500; color: #7a7488; margin-top: 2px; }
-.note { margin-top: 10px; font-size: 22px; color: #5b5470; }
+.note { flex-shrink: 0; margin-top: 10px; font-size: 22px; color: #5b5470; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note span + span { margin-left: 1.2em; }
 /* イベント */
 .ev-date { font-size: 26px; font-weight: 800; color: #4a3f7a; display: flex; gap: 14px; align-items: baseline; white-space: nowrap; overflow: hidden; }
 .ev-date .venue { font-size: 22px; font-weight: 500; color: #7a7488; overflow: hidden; text-overflow: ellipsis; }
@@ -177,19 +185,27 @@ export function songCard(
       stat(formatDate(s.last!.date), "最終", "date"),
     ];
   }
-  const tieupNote = song.tieups.length ? `<p class="note">${song.tieups.map((t) => esc(tieupText(t))).join(" ・ ")}</p>` : "";
-  const note = song.cover
-    ? `<p class="note">カバー曲 ・ 原曲: ${esc(song.cover.artist)}${song.cover.title ? `「${esc(song.cover.title)}」` : ""}</p>`
-    : position && position.count > 0
-      ? // 「ラスト定番」などのバッジがあっても回数は出す（サイトの「セトリでの位置」と同じ）
-        `<p class="note muted">1 曲目 ${position.opener} 回 ・ ラスト ${position.closer} 回${position.encore > 0 ? ` ・ アンコール ${position.encore} 回` : ""}</p>`
-      : "";
+  // タイアップと、カバーの原曲または曲順での位置を 1 行にまとめる（作詞・作曲・編曲の行の分の高さを空けるため）
+  const notes = [
+    ...song.tieups.map((t) => `<span>${esc(tieupText(t))}</span>`),
+    song.cover
+      ? `<span>カバー曲 ・ 原曲: ${esc(song.cover.artist)}${song.cover.title ? `「${esc(song.cover.title)}」` : ""}</span>`
+      : position && position.count > 0
+        ? // 「ラスト定番」などのバッジがあっても回数は出す（サイトの「セトリでの位置」と同じ）
+          `<span class="muted">1 曲目 ${position.opener} 回 ・ ラスト ${position.closer} 回${position.encore > 0 ? ` ・ アンコール ${position.encore} 回` : ""}</span>`
+        : "",
+  ].filter(Boolean);
+  const note = notes.length ? `<p class="note fit" data-min="16">${notes.join("")}</p>` : "";
 
+  const credits = creditParts(song.credits)
+    .map((p) => `<span class="cr">${esc(p.roles)}：<b>${esc(p.name)}</b></span>`)
+    .join(" ");
   return page(
     `${groupLine(artist)}
 <div class="song-title fit" data-min="40">${esc(song.title)}</div>
+${credits ? `<p class="credit fit" data-min="18">${credits}</p>` : ""}
 <div class="badges">${badges.join("")}</div>
-${tieupNote}${note}
+${note}
 ${s.count === 0 ? `<p class="empty">まだ歌われていません</p>` : `<div class="stats" style="--cols:${stats.length}">${stats.join("")}</div>`}`,
     host,
   );
