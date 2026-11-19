@@ -6,7 +6,7 @@
 |---|---|---|
 | 每天 05:00 JST | 从 eventernote 同步活动（开演 30 天以内与未来的活动） | `sync.yml` |
 | 每月 2 日 04:00 JST | 全量同步 | `sync.yml` |
-| 有待处理公演时每 15 分钟 | 读取官方 X 的歌单推文并自动导入（见下文「从 X 自动导入」） | `watch-x.yml` |
+| 官方发推时（Webhook）＋每小时 | 读取官方 X 的歌单推文并自动导入（见下文「从 X 自动导入」） | `watch-x.yml` |
 | 同步之后 | 为**当天**的每场演出开一个「[セトリ] …」Issue（指派给仓库所有者；过去 7 天内漏开的也会补开） | `sync.yml` |
 | 随时（Renovate） | 依赖更新 PR。CI（类型检查・测试・数据检查・构建・冒烟测试〔用 Chrome 打开全部页面〕）通过后自动合并；npm 包发布满 3 天才会更新，lockfile 每周一整理 | `renovate.json` / `ci.yml` |
 | 同步・歌单导入・push 之后 | 先跑和 CI 相同的检查（再加上对最终产物的冒烟测试），全部通过才部署到 Cloudflare Pages（https://lovely-memory.moe/）；有一项失败就不部署，网站保持上一个版本 | `deploy.yml` |
@@ -30,16 +30,41 @@
 
 ### 从 X 自动导入（`watch-x.yml`）
 
-- 每 15 分钟（10:00〜翌 02:45 JST）检查一次。只有存在「已开演、开演后 8 小时以内、还没有歌单」的公演时才调用 X API（`pnpm lm watch-x`），否则不读取，也不产生费用
-- 读取官方账号（`artist.json` 的 `sources.x`）的新推文，用和批量导入相同的规则匹配公演。只处理带「セトリ」等字样的告知，找到后立即导入；之后若有续推（编号接续、20 分钟以内），合并后重新导入并再次回复
+**触发方式**
+- **Webhook（主要）**：公演开演前 90 分钟到歌单确定（或开演后 8 小时）为止，订阅官方账号的发推事件（X Activity API 的 `post.create`）。官方发推后，X 把推文推送到 `https://lovely-memory.moe/api/x-webhook`。Worker 校验签名后，如果是歌单类推文（含「セトリ」等字样，或以 `M数字` 开头的续推），就立刻启动 `watch-x.yml`。收到的推送都记在 D1 的 `x_events` 表（保留 30 天）
+- **每小时巡检（兜底）**：开关订阅；Webhook 没送到时也会把歌单捡回来
+- 订阅期间官方发的每条推文都按「读取一条推文」计费；订阅关闭期间不产生费用
+
+**导入规则**
+- 只有存在「已开演、开演后 8 小时以内、歌单未确定」的公演时才调用 X API（`pnpm lm watch-x`），用 `since_id` 只读新推文
+- 用和批量导入相同的规则匹配公演。只处理带「セトリ」等字样的告知，找到后立即导入；之后若有续推（编号接续、20 分钟以内），合并后重新导入并再次回复
 - 曲目全部能对上 → 自动提交，在 Issue 中回复后关闭；有对不上的曲名，或无法确定是哪场公演 → 只在 Issue 中报告，按上面的手动流程处理
-- **不会覆盖已有的歌单**（手动导入优先）；唯一例外是自动导入后没被改动过的歌单（为了接上续推）。手动修改过之后，该公演就不再读取 X。自动导入的结果有误时，在 Issue 中评论正确内容即可覆盖
+- **不会覆盖已有的歌单**（手动导入优先）；唯一例外是自动导入后没被改动过的歌单（为了接上续推）。手动修改过之后，该公演就不再读取 X
 - 读过的推文保存在 Actions 的缓存中（`x-state-*`），同一条推文不会重复读取。缓存丢失时从待处理公演中最早的开演时间重新读取
-- 启用步骤（2026-11-19 已完成）：
-  1. 在 X 开发者平台创建 App，充值少量额度（按量计费）
-  2. 在仓库 Settings → Secrets and variables → Actions 中添加 secret `X_BEARER_TOKEN`
-  3. 在 Actions 页面手动运行 Watch X，勾选 dry run（只读取，不写入、不提交、不回复），`now` 填过去某场公演结束后的时刻（如 `2026-11-18T22:30+09:00`），确认能读到那场的歌单推文
-  4. 取消 `watch-x.yml` 中 `schedule` 的注释，开始定时执行
+
+**需要的设置**
+
+| 放在哪里 | 名称 | 内容 |
+|---|---|---|
+| GitHub Actions secret | `X_BEARER_TOKEN` | X App 的 Bearer Token（读推文、管理 Webhook 和订阅） |
+| GitHub Actions variable | `X_WEBHOOK_ID` | `pnpm lm x-webhook register` 输出的 id。没有设置时只靠每小时巡检 |
+| Cloudflare Pages secret | `X_WEBHOOK_SECRET` | X App 的 OAuth 2.0 Client Secret（CRC 和签名校验） |
+| Cloudflare Pages secret | `GITHUB_DISPATCH_TOKEN` | GitHub fine-grained token：只选本仓库，权限只开 Actions: Read and write |
+
+Cloudflare 的 secret 用 `pnpm --filter @lovely-memory/web exec wrangler pages secret put <名称> --project-name lovely-memory` 设置，**下一次部署后生效**。
+
+**Webhook 的注册与排查**
+
+```sh
+export X_BEARER_TOKEN=...   # 只在自己的终端里
+pnpm lm x-webhook register --url https://lovely-memory.moe/api/x-webhook   # 一次性。X 会立刻做 CRC 校验
+pnpm lm x-webhook list                    # Webhook 是否有效、当前的订阅
+pnpm lm x-webhook revalidate --id <id>    # Webhook 变成无效时重新做 CRC
+
+# 收到的推送
+pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote \
+  --command "SELECT at, event_type, post_id, dispatched, substr(text, 1, 40) FROM x_events ORDER BY at DESC LIMIT 20"
+```
 
 ## 手动操作
 

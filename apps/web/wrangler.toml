@@ -10,3 +10,8 @@ binding = "DB"
 database_name = "lovely-memory"
 database_id = "9cd3f5ff-b1cc-46d0-a001-41e645777558"
 migrations_dir = "migrations"
+
+# X の Webhook（/api/x-webhook）が起動するワークフローのリポジトリ。
+# 秘密の値（X_WEBHOOK_SECRET・GITHUB_DISPATCH_TOKEN）は wrangler pages secret put で設定する（ここには書かない）
+[vars]
+GITHUB_REPOSITORY = "Ronny-zzl/lovely-memory"

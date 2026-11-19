@@ -5,8 +5,8 @@ import { resolveEvents } from "@lovely-memory/core";
 import { loadArtist, loadEvents, loadOverrides, loadSongs, ARTISTS_DIR } from "../repo.ts";
 import { setlistPath, writeSetlist } from "../setlist-build.ts";
 import type { CollectedTweet } from "../tweet-match.ts";
-import { compareIds, fetchUserPosts } from "../x-api.ts";
-import { decide, jstLabel, keyPostId, KEEP_HOURS, pendingEvents, prune, startOf } from "../x-watch.ts";
+import { compareIds, createSubscription, deleteSubscription, fetchUserPosts, listSubscriptions } from "../x-api.ts";
+import { decide, jstLabel, keyPostId, KEEP_HOURS, pendingEvents, prune, startOf, wantsSubscription } from "../x-watch.ts";
 import { successReply } from "./import-comment.ts";
 
 type ArtistState = {
@@ -30,6 +30,8 @@ export type IssueAction = { artistId: string; eventId: number; close: boolean; b
  * - X_BEARER_TOKEN 環境変数が必要（無ければ何もせずに終わる）
  * - state: 前回までに読んだポストと処理済みの告知。Actions のキャッシュに保存して次回に引き継ぐ
  * - out: 対応する Issue に書く返信。コミット・push の後で reply-issues に渡す
+ * - X_WEBHOOK_ID があれば、Webhook（/api/x-webhook）への post.create の購読を開く・閉じる。
+ *   購読中は公式がポストするとワークフローがすぐに起動する。購読は開演の 90 分前から、セトリが確定するか開演 8 時間後まで
  * - --dry-run: 書き込まない。キャッシュも登録済みのセトリも無視するので、--now で過去の公演後を指定すると取り込みを試せる
  */
 export async function watchX(target: string, opts: Record<string, unknown>) {
@@ -38,6 +40,7 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
   const dryRun = !!opts["dry-run"];
   const now = typeof opts.now === "string" ? new Date(opts.now) : new Date();
   const token = process.env.X_BEARER_TOKEN;
+  const webhookId = process.env.X_WEBHOOK_ID;
 
   // dry-run は確認用: キャッシュを使わず、登録済みのセトリも無いものとして「何を取り込むか」を表示する
   const state: State = existsSync(statePath) && !dryRun ? JSON.parse(await readFile(statePath, "utf8")) : { artists: {} };
@@ -59,7 +62,11 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     const hasSetlist = (id: number) => !dryRun && existsSync(setlistPath(artistId, id));
     const ownImport = (id: number) => hasSetlist(id) && imports[id]?.text === readFileSync(setlistPath(artistId, id), "utf8");
 
-    const pending = pendingEvents(events, (id) => hasSetlist(id) && !ownImport(id), now);
+    const settled = (id: number) => hasSetlist(id) && !ownImport(id);
+    if (token && webhookId && !dryRun)
+      await syncSubscription(token, webhookId, artistId, x.userId, wantsSubscription(events, settled, now));
+
+    const pending = pendingEvents(events, settled, now);
     if (pending.length === 0) {
       console.log(`[${artistId}] セトリ待ちのイベントなし（API は呼ばない）`);
       continue;
@@ -189,4 +196,19 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     await appendFile(process.env.GITHUB_OUTPUT, `imported=${imported.length}\nactions=${actions.length}\nread=${read}\n`);
   }
   console.log(`取り込み ${imported.length} 件、Issue への返信 ${actions.length} 件${dryRun ? "（dry-run: 書き込みなし）" : ""}`);
+}
+
+/** このアーティストの購読（tag で見分ける）を、want に合わせて作る・消す */
+async function syncSubscription(token: string, webhookId: string, artistId: string, userId: string, want: boolean) {
+  const tag = `lovely-memory:${artistId}`;
+  const mine = (await listSubscriptions(token)).filter((s) => s.tag === tag);
+  if (want && mine.length === 0) {
+    const id = await createSubscription(token, { userId, webhookId, tag });
+    console.log(`[${artistId}] Webhook の購読を開始（${id}）`);
+  } else if (!want) {
+    for (const s of mine) {
+      await deleteSubscription(token, s.subscription_id);
+      console.log(`[${artistId}] Webhook の購読を終了（${s.subscription_id}）`);
+    }
+  }
 }

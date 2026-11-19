@@ -13,6 +13,7 @@ import { replyIssues } from "./commands/reply-issues.ts";
 import { sync } from "./commands/sync.ts";
 import { validate } from "./commands/validate.ts";
 import { watchX } from "./commands/watch-x.ts";
+import { xWebhook } from "./commands/x-webhook.ts";
 
 const USAGE = `usage: pnpm lm <command> <artistId> [options]
 
@@ -39,11 +40,14 @@ commands:
                      --issue <Issue本文> --file <コメント> --out <返信本文の出力先>
   watch-x            公式 X のポストからセトリ告知を自動で取り込む（GitHub Actions 用、artistId に all 可）
                      セトリ待ちのイベントがあるときだけ X API を読む。X_BEARER_TOKEN 環境変数が必要
+                     X_WEBHOOK_ID があれば Webhook の購読を公演に合わせて開く・閉じる
                      --state <path>       前回までに読んだポスト（次回に引き継ぐ）  (必須)
                      --out <path>         Issue への返信の出力先（reply-issues に渡す）  (必須)
                      --commit-msg <path>  取り込んだときのコミットメッセージの出力先
                      --now <ISO 日時>     現在時刻の代わり（確認用）
                      --dry-run            書き込まない。キャッシュと登録済みのセトリを無視する（--now と組み合わせて確認）
+  x-webhook          X の Webhook（/api/x-webhook）の登録・確認。artistId の位置に操作を書く（X_BEARER_TOKEN が必要）
+                     list | register --url <url> | revalidate --id <id> | delete --id <id>
   reply-issues       watch-x の返信をセトリ入力用 Issue にコメントする（GitHub Actions 用、artistId 不要）
                      --file <actions.json>
   validate           データ全体の整合性チェック（artistId に all 可）
@@ -103,6 +107,8 @@ const { positionals, values } = parseArgs({
     state: { type: "string" },
     "commit-msg": { type: "string" },
     now: { type: "string" },
+    url: { type: "string" },
+    id: { type: "string" },
   },
 });
 const [command, artistId] = positionals;
@@ -123,6 +129,7 @@ const commands: Record<string, Command> = {
   "import-comment": importComment as Command,
   "watch-x": watchX,
   "reply-issues": replyIssues as Command,
+  "x-webhook": xWebhook,
   "og-pages": ogPages,
   errors,
 };

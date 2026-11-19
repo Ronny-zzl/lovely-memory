@@ -3,10 +3,12 @@ name: Watch X
 # 公式 X のセトリ告知を読んで自動で取り込む（pnpm lm watch-x）。
 # セトリ待ちのイベント（開演済み・開演から 8 時間以内・未登録）が無い回は X API を呼ばずに終わる。
 # X_BEARER_TOKEN（リポジトリの secret）が必要。
+# - workflow_dispatch: 公式がポストすると、サイトの /api/x-webhook（X の Webhook）がすぐにこのワークフローを起動する
+#   （トークンの権限を Actions だけにするため repository_dispatch ではなくこちら）。手動の確認にも使う
+# - schedule: 1 時間ごとの見回り。Webhook の購読を公演に合わせて開閉し、Webhook が届かなかったときの取りこぼしも拾う
 on:
   schedule:
-    # 10:00〜翌 02:45 JST に 15 分ごと（01〜17 時 UTC）
-    - cron: "*/15 1-17 * * *"
+    - cron: "7 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -23,7 +25,8 @@ permissions:
   issues: write
 
 concurrency:
-  # 読んだポストのキャッシュを順番に引き継ぐため、同時に 1 つだけ
+  # 読んだポストのキャッシュを順番に引き継ぐため、同時に 1 つだけ。
+  # 待っている回が重なったら新しい方だけ残る（どの回も前回以降の新しいポストをすべて読むので問題ない）
   group: watch-x
   cancel-in-progress: false
 
@@ -55,6 +58,7 @@ jobs:
         id: watch
         env:
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          X_WEBHOOK_ID: ${{ vars.X_WEBHOOK_ID }}
           SITE_URL: ${{ vars.SITE_URL }}
           DRY_RUN: ${{ inputs.dry_run == true }}
           # 入力はシェルに展開せず環境変数で渡す

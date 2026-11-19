@@ -27,6 +27,17 @@ export function pendingEvents(events: ResolvedEvent[], settled: (id: number) => 
 }
 
 /** 告知の識別子。続きのポストが付くと最後のポストの id が変わるので、もう一度処理される */
+/** Webhook の購読を開く時間（開演の少し前から。セトリが確定するか、開演から WATCH_HOURS 経つまで） */
+export const SUBSCRIBE_BEFORE_MINUTES = 90;
+
+export function wantsSubscription(events: ResolvedEvent[], settled: (id: number) => boolean, now: Date): boolean {
+  return events.some((e) => {
+    if (!isLiveEvent(e) || settled(e.id)) return false;
+    const start = startOf(e).getTime();
+    return start - SUBSCRIBE_BEFORE_MINUTES * 60_000 <= now.getTime() && now.getTime() <= start + WATCH_HOURS * 3_600_000;
+  });
+}
+
 export const postKey = (p: SetlistPost) => `${p.part ? `${p.id}#${p.part}` : p.id}@${p.tweets.at(-1)!.id}`;
 /** postKey の先頭のポストの id */
 export const keyPostId = (key: string) => key.split(/[#@]/)[0]!;

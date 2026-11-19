@@ -62,3 +62,53 @@ export async function fetchUserPosts(opts: {
 export function compareIds(a: string, b: string): number {
   return a.length - b.length || (a < b ? -1 : a > b ? 1 : 0);
 }
+
+/** Webhook・購読の管理 API（アプリのベアラートークン） */
+async function xApi<T>(token: string, method: string, path: string, body?: unknown): Promise<T> {
+  const res = await fetch(`https://api.x.com/2${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "User-Agent": "lovely-memory-bot",
+      ...(body !== undefined && { "Content-Type": "application/json" }),
+    },
+    ...(body !== undefined && { body: JSON.stringify(body) }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`X API ${method} ${path} ${res.status}: ${text.slice(0, 500)}`);
+  return (text ? JSON.parse(text) : {}) as T;
+}
+
+export type Webhook = { id: string; url: string; valid: boolean; created_at?: string };
+
+export const listWebhooks = async (token: string) => (await xApi<{ data?: Webhook[] }>(token, "GET", "/webhooks")).data ?? [];
+export const registerWebhook = async (token: string, url: string) =>
+  (await xApi<{ data: Webhook }>(token, "POST", "/webhooks", { url })).data;
+export const deleteWebhook = (token: string, id: string) => xApi(token, "DELETE", `/webhooks/${id}`);
+/** CRC をやり直して、無効になった Webhook を有効に戻す */
+export const revalidateWebhook = (token: string, id: string) => xApi(token, "PUT", `/webhooks/${id}`);
+
+export type Subscription = {
+  subscription_id: string;
+  event_type: string;
+  filter?: { user_id?: string };
+  tag?: string;
+  webhook_id?: string;
+};
+
+export async function listSubscriptions(token: string): Promise<Subscription[]> {
+  return (await xApi<{ data?: Subscription[] }>(token, "GET", "/activity/subscriptions")).data ?? [];
+}
+
+/** post.create の購読を作り、id を返す（レスポンスは data か data.subscription のどちらかに入る） */
+export async function createSubscription(token: string, opts: { userId: string; webhookId: string; tag: string }): Promise<string> {
+  const res = await xApi<{ data?: Subscription & { subscription?: Subscription } }>(token, "POST", "/activity/subscriptions", {
+    event_type: "post.create",
+    filter: { user_id: opts.userId },
+    webhook_id: opts.webhookId,
+    tag: opts.tag,
+  });
+  return res.data?.subscription_id ?? res.data?.subscription?.subscription_id ?? "?";
+}
+
+export const deleteSubscription = (token: string, id: string) => xApi(token, "DELETE", `/activity/subscriptions/${id}`);
