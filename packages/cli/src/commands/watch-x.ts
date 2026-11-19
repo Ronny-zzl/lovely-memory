@@ -6,7 +6,7 @@ import { loadArtist, loadEvents, loadOverrides, loadSongs, ARTISTS_DIR } from ".
 import { setlistPath, writeSetlist } from "../setlist-build.ts";
 import type { CollectedTweet } from "../tweet-match.ts";
 import { compareIds, createSubscription, deleteSubscription, fetchUserPosts, listSubscriptions } from "../x-api.ts";
-import { decide, jstLabel, keyPostId, KEEP_HOURS, pendingEvents, prune, startOf, wantsSubscription } from "../x-watch.ts";
+import { decide, jstLabel, keyPostId, KEEP_HOURS, pendingEvents, prune, startOf } from "../x-watch.ts";
 import { successReply } from "./import-comment.ts";
 
 type ArtistState = {
@@ -26,12 +26,12 @@ export type IssueAction = { artistId: string; eventId: number; close: boolean; b
  *
  *   pnpm lm watch-x <artistId|all> --state <state.json> --out <actions.json> [--commit-msg <file>] [--dry-run]
  *
- * - セトリを待っているイベント（開演済み・開演から 8 時間以内・未登録）が無ければ API を呼ばない
+ * - セトリを待っているイベント（開演から翌日 02:00 まで・未登録）が無ければ API を呼ばない
  * - X_BEARER_TOKEN 環境変数が必要（無ければ何もせずに終わる）
  * - state: 前回までに読んだポストと処理済みの告知。Actions のキャッシュに保存して次回に引き継ぐ
  * - out: 対応する Issue に書く返信。コミット・push の後で reply-issues に渡す
  * - X_WEBHOOK_ID があれば、Webhook（/api/x-webhook）への post.create の購読を開く・閉じる。
- *   購読中は公式がポストするとワークフローがすぐに起動する。購読は開演の 90 分前から、セトリが確定するか開演 8 時間後まで
+ *   購読中は公式がポストするとワークフローがすぐに起動する。購読は開演から、セトリが確定するか翌日 02:00 まで
  * - --dry-run: 書き込まない。キャッシュも登録済みのセトリも無視するので、--now で過去の公演後を指定すると取り込みを試せる
  */
 export async function watchX(target: string, opts: Record<string, unknown>) {
@@ -63,10 +63,9 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     const ownImport = (id: number) => hasSetlist(id) && imports[id]?.text === readFileSync(setlistPath(artistId, id), "utf8");
 
     const settled = (id: number) => hasSetlist(id) && !ownImport(id);
-    if (token && webhookId && !dryRun)
-      await syncSubscription(token, webhookId, artistId, x.userId, wantsSubscription(events, settled, now));
-
     const pending = pendingEvents(events, settled, now);
+    if (token && webhookId && !dryRun) await syncSubscription(token, webhookId, artistId, x.userId, pending.length > 0);
+
     if (pending.length === 0) {
       console.log(`[${artistId}] セトリ待ちのイベントなし（API は呼ばない）`);
       continue;

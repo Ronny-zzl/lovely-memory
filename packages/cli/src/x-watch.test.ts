@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Song, type ResolvedEvent } from "@lovely-memory/core";
 import type { CollectedTweet } from "./tweet-match.ts";
 import { postText } from "./x-api.ts";
-import { decide, pendingEvents, prune } from "./x-watch.ts";
+import { decide, pendingEvents, prune, watchEnd } from "./x-watch.ts";
 
 const ev = (id: number, date: string, start: string, title: string): ResolvedEvent => ({
   id,
@@ -41,13 +41,20 @@ const run = (tweets: CollectedTweet[], opts: { has?: number[]; own?: number[]; h
   });
 
 describe("pendingEvents", () => {
-  it("waits from the start time for WATCH_HOURS, only for events whose setlist is not settled", () => {
+  it("waits from the start time until 02:00 the next day, only for events whose setlist is not settled", () => {
     const at = (now: string, has: number[] = []) => pendingEvents(events, (id) => has.includes(id), jst(now)).map((e) => e.id);
     expect(at("2026-11-18T18:59")).toEqual([]);
     expect(at("2026-11-18T19:00")).toEqual([1]);
-    expect(at("2026-11-19T03:00")).toEqual([1]);
-    expect(at("2026-11-19T03:01")).toEqual([]);
+    expect(at("2026-11-19T02:00")).toEqual([1]);
+    expect(at("2026-11-19T02:01")).toEqual([]);
     expect(at("2026-11-18T22:00", [1])).toEqual([]);
+  });
+
+  it("waits at least MIN_WATCH_HOURS for late shows and covers all-day festivals", () => {
+    const late = ev(3, "2026-11-20", "23:30", "深夜のライブ");
+    expect(watchEnd(late).toISOString()).toBe(jst("2026-11-21T03:30").toISOString());
+    const fes = ev(4, "2026-11-20", "08:00", "朝から夜までのフェス");
+    expect(pendingEvents([fes], () => false, jst("2026-11-20T21:30")).map((e) => e.id)).toEqual([4]);
   });
 });
 

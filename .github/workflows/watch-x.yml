@@ -1,7 +1,7 @@
 name: Watch X
 
 # 公式 X のセトリ告知を読んで自動で取り込む（pnpm lm watch-x）。
-# セトリ待ちのイベント（開演済み・開演から 8 時間以内・未登録）が無い回は X API を呼ばずに終わる。
+# セトリ待ちのイベント（開演から翌日 02:00 まで・未登録）が無い回は X API を呼ばずに終わる。
 # X_BEARER_TOKEN（リポジトリの secret）が必要。
 # - workflow_dispatch: 公式がポストすると、サイトの /api/x-webhook（X の Webhook）がすぐにこのワークフローを起動する
 #   （トークンの権限を Actions だけにするため repository_dispatch ではなくこちら）。手動の確認にも使う

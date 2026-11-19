@@ -5,8 +5,10 @@ import { findSong, isLiveEvent, looksLikeSetlistAnnouncement, type ResolvedEvent
 import { buildSetlist } from "./setlist-build.ts";
 import { extractPosts, matchPosts, toJst, type CollectedTweet, type SetlistPost } from "./tweet-match.ts";
 
-/** 開演からこの時間までを「セトリ告知を待つ」時間とする */
-export const WATCH_HOURS = 8;
+/** セトリ告知を待つのは開演から翌日のこの時刻（JST）まで（朝から夜までの大型イベントもあるので「開演から N 時間」にしない） */
+export const WATCH_UNTIL_NEXT_DAY = "02:00";
+/** 開演が遅いイベントでも、開演からこの時間は待つ */
+export const MIN_WATCH_HOURS = 4;
 /** 開演時刻が無いイベントはこの時刻に始まったとみなす */
 const DEFAULT_START = "10:00";
 /** キャッシュに残すポストの期間 */
@@ -14,30 +16,26 @@ export const KEEP_HOURS = 36;
 
 export const startOf = (e: ResolvedEvent) => new Date(`${e.date}T${e.start ?? DEFAULT_START}:00+09:00`);
 
+/** セトリ告知を待つ時間の終わり（翌日 02:00 JST。ただし開演から MIN_WATCH_HOURS は待つ） */
+export function watchEnd(e: ResolvedEvent): Date {
+  const next = new Date(`${e.date}T${WATCH_UNTIL_NEXT_DAY}:00+09:00`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  return new Date(Math.max(next.getTime(), startOf(e).getTime() + MIN_WATCH_HOURS * 3_600_000));
+}
+
 /**
- * セトリ告知を待っているイベント（ライブで、開演済み・開演から WATCH_HOURS 以内・セトリが確定していない）。
+ * セトリ告知を待っているイベント（ライブで、開演から翌日 02:00 まで・セトリが確定していない）。
+ * この間だけ X を読み、Webhook の購読も開いておく。
  * 自動で取り込んだだけのセトリは、続きのポストで更新するかもしれないので「確定」に含めない。
  */
 export function pendingEvents(events: ResolvedEvent[], settled: (id: number) => boolean, now: Date): ResolvedEvent[] {
   return events.filter((e) => {
     if (!isLiveEvent(e) || settled(e.id)) return false;
-    const start = startOf(e).getTime();
-    return start <= now.getTime() && now.getTime() <= start + WATCH_HOURS * 3_600_000;
+    return startOf(e).getTime() <= now.getTime() && now.getTime() <= watchEnd(e).getTime();
   });
 }
 
 /** 告知の識別子。続きのポストが付くと最後のポストの id が変わるので、もう一度処理される */
-/** Webhook の購読を開く時間（開演の少し前から。セトリが確定するか、開演から WATCH_HOURS 経つまで） */
-export const SUBSCRIBE_BEFORE_MINUTES = 90;
-
-export function wantsSubscription(events: ResolvedEvent[], settled: (id: number) => boolean, now: Date): boolean {
-  return events.some((e) => {
-    if (!isLiveEvent(e) || settled(e.id)) return false;
-    const start = startOf(e).getTime();
-    return start - SUBSCRIBE_BEFORE_MINUTES * 60_000 <= now.getTime() && now.getTime() <= start + WATCH_HOURS * 3_600_000;
-  });
-}
-
 export const postKey = (p: SetlistPost) => `${p.part ? `${p.id}#${p.part}` : p.id}@${p.tweets.at(-1)!.id}`;
 /** postKey の先頭のポストの id */
 export const keyPostId = (key: string) => key.split(/[#@]/)[0]!;

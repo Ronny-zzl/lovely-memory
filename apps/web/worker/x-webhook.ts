@@ -115,8 +115,11 @@ export async function handleXWebhook(request: Request, env: XWebhookEnv): Promis
 
   const body = new Uint8Array(await request.arrayBuffer());
   if (body.byteLength > MAX_BYTES) return json({ error: "too large" }, 413);
-  const signature = request.headers.get("x-twitter-webhooks-signature-oauth2") ?? request.headers.get("x-twitter-webhooks-signature");
-  if (!(await validSignature(secret, body, signature))) return json({ error: "invalid signature" }, 401);
+  // OAuth 2.0 用の新しいヘッダーを優先し、合わなければ従来のヘッダーも試す
+  const valid =
+    (await validSignature(secret, body, request.headers.get("x-twitter-webhooks-signature-oauth2"))) ||
+    (await validSignature(secret, body, request.headers.get("x-twitter-webhooks-signature")));
+  if (!valid) return json({ error: "invalid signature" }, 401);
 
   const raw = new TextDecoder().decode(body);
   let event: PostEvent | undefined;
