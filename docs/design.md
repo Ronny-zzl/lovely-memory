@@ -192,6 +192,7 @@ lovely-memory/
 
 - **Cloudflare Pages**，项目名 `lovely-memory`，域名 **https://lovely-memory.moe/**（Porkbun 注册，nameserver 指向 Cloudflare）。`www.` 和 `lovely-memory.pages.dev` 由 Cloudflare 后台的规则 301 跳转到正式域名（`www`：域名的 Redirect Rule；`pages.dev`：账户的 Bulk Redirects，不含子域名，所以预览部署 `<hash>.lovely-memory.pages.dev` 不跳转）。页面里也有同样的跳转脚本作为后备（`site-meta.ts`），旧的 `/#/...` 链接也由页面转换。选择理由：网址不含个人账号名；将来可用 Pages Functions / D1 / KV 扩展（用户系统等）。
 - GitHub Actions 在类型检查・测试・数据检查・构建・冒烟测试全部通过后，用 wrangler 上传（`deploy.yml`）。wrangler 是 `apps/web` 的 devDependency，版本由 lockfile 固定、Renovate 更新（不用 `npx wrangler@4`）。`ci.yml` 只在 PR 上运行。
+- 冒烟测试（`apps/web/scripts/smoke.ts`）：用 Chrome 直接打开全部页面（JS 错误・console 错误・HTTP 400 以上・`/api/errors` 的报告，同一错误合并并列出页面）；另外检查：站内点链接移动（不整页重新加载）、关掉 JS 时 HTML 里有内容（预渲染）、有参戦記録时印能显示、页面代码读取失败时的错误画面、离线（Service Worker）、图标尺寸、旧的 `/#/` 链接。
 - 代码检查：`pnpm lint`（oxlint，带类型信息的规则由 oxlint-tsgolint 提供，配置在 `.oxlintrc.json`），`pnpm format`（oxfmt，宽 140；`artists/` 数据、Markdown、CSS、HTML 不格式化，配置在 `.oxfmtrc.json`）。CI 和 deploy 都会检查这两项。异步的事件处理函数写成 `onClick={() => void f()}`。
 - CSS：
   - `apps/web/src/styles/`：全站共用（`tokens.css` 的变量・`base.css`・头部 `layout.css`・多个页面共用的部件），由 `main.tsx` 统一引入。

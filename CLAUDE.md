@@ -31,7 +31,7 @@ pnpm visual shoot <dir> / pnpm visual compare <前> <后> <差异>   # 截图逐
   - 不要直接用 `window`・`document`・`localStorage`・`navigator`・`location`・`matchMedia`（构建时没有）；要在 effect／事件处理里用，或者用 `src/hydration.ts` 的 `useHydrated()`・`useOrigin()`。
   - 「今天」用 `useArtistData().today`（不要调用 `todayJst()`）；网址参数用 `useSearchParamsAfterHydration()`。
   - 手机／电脑的不同布局两种都输出，用 `.only-narrow`／`.only-wide` 切换（不要用 JS 判断宽度）。
-  - 接管时内容不一致，smoke 会以控制台错误报出来。
+  - 接管时内容不一致，smoke 会以「エラーの報告が送られた」报出来（列出页面，并提示是 hydrate 不一致）。
 - 界面文字和代码注释用日语；`docs/` 用中文。
 - 用语：活动一律叫「イベント」，不用「公演」（リリイベ・fes 不叫公演；种别名「単独公演」除外）。计数用「回」「件」：「3 回連続」「5 回ぶり」「参戦 8 回」「今後のイベント 5 件」；歌唱率的分母写「12/20 イベント」；组合的通算是「通算 25 回目のイベント」（「通算 N 回目」是曲的）。
 - 参戦記録只存在浏览器的 localStorage，不发送到服务器（错误上报也不包含它）。
