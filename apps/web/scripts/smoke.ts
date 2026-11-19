@@ -142,7 +142,11 @@ try {
   try {
     const p = await offline.newPage();
     await p.goto(base + "/", { waitUntil: "load" });
-    await p.evaluate(() => navigator.serviceWorker.ready.then(() => undefined));
+    // Service Worker が入らない（事前キャッシュの失敗など）と ready が終わらないので、待つのは 15 秒まで
+    const ready = await p.evaluate(() =>
+      Promise.race([navigator.serviceWorker.ready.then(() => "ok"), new Promise((r) => setTimeout(() => r("timeout"), 15_000))]),
+    );
+    if (ready !== "ok") throw new Error("Service Worker が有効にならない（sw.js の事前キャッシュの失敗など）");
     const artist = (await hrefs(p, ".artist-list a"))[0];
     await offline.setOffline(true);
     if (artist) {

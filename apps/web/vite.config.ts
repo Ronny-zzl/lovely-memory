@@ -12,4 +12,15 @@ export default defineConfig({
   // エラーの記録に、どのビルドで起きたかを残す（GitHub Actions ではコミット）
   define: { __BUILD__: JSON.stringify(process.env.GITHUB_SHA?.slice(0, 7) ?? "local") },
   plugins: [react(), artistsData(), apiDev(), siteMeta(), preloadRoute(), serviceWorker()],
+  build: {
+    rollupOptions: {
+      // ファイル名の「v2」は、2026-11-19 に CDN・ブラウザ・Service Worker に HTML が JS として残ってしまったのを避けるため、
+      // 全ファイルの URL を一度だけ変えたもの（中身が同じでも新しい URL で取り直させる）。上げる必要があるのは同じ事故のときだけ
+      output: {
+        entryFileNames: "assets/[name]-v2-[hash].js",
+        chunkFileNames: "assets/[name]-v2-[hash].js",
+        assetFileNames: "assets/[name]-v2-[hash][extname]",
+      },
+    },
+  },
 });

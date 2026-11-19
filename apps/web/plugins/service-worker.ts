@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import { readdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { Plugin } from "vite";
 
 /** public/ のうち、オフラインでも使うもの */
@@ -17,14 +19,18 @@ export function serviceWorker(): Plugin {
   return {
     name: "lovely-memory:service-worker",
     apply: "build",
-    generateBundle(_options, bundle) {
-      const assets = Object.keys(bundle)
-        .filter((f) => f.startsWith("assets/") && !/\.woff2?$/.test(f))
-        .map((f) => `/${f}`)
+    // 書き出しが終わってから、実際にある assets/ のファイルで一覧を作る。generateBundle の時点の一覧には、
+    // 後で消えるもの（動的 import した CSS だけのチャンクの JS など）が含まれていて、それを事前キャッシュしようとすると
+    // SPA の HTML が返ってきてしまう
+    async writeBundle(options) {
+      const outDir = options.dir!;
+      const assets = (await readdir(join(outDir, "assets")))
+        .filter((f) => !/\.woff2?$/.test(f))
+        .map((f) => `/assets/${f}`)
         .sort();
       const precache = [...STATIC_FILES, ...assets];
       const version = createHash("sha256").update(precache.join("\n")).digest("hex").slice(0, 12);
-      this.emitFile({ type: "asset", fileName: "sw.js", source: swSource(version, precache) });
+      await writeFile(join(outDir, "sw.js"), swSource(version, precache));
     },
   };
 }
@@ -43,7 +49,15 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE);
-      await cache.addAll(PRECACHE.map((url) => new Request(url, { cache: "reload" })));
+      // addAll は中身を確かめないので、1 つずつ取って HTML（無いファイルへの SPA の応答）を入れない
+      await Promise.all(
+        PRECACHE.map(async (url) => {
+          const response = await fetch(new Request(url, { cache: "reload" }));
+          if (!response.ok) throw new Error(url + " " + response.status);
+          if (url.startsWith("/assets/") && isHtml(response)) throw new Error(url + " is html");
+          await cache.put(url, response);
+        }),
+      );
       await self.skipWaiting();
     })(),
   );
@@ -92,11 +106,14 @@ async function networkFirst(request, fallbackUrl) {
   }
 }
 
+// /assets/ に HTML が返ってきたら（ファイルが無いときの SPA の応答）、それはアセットではない。キャッシュから使わず、保存もしない
+const isHtml = (response) => (response.headers.get("content-type") || "").includes("text/html");
+
 async function cacheFirst(request) {
   const cached = await fromCache(request);
-  if (cached) return cached;
+  if (cached && !isHtml(cached)) return cached;
   const response = await fetch(request);
-  if (response.ok) {
+  if (response.ok && !isHtml(response)) {
     const copy = response.clone();
     caches.open(CACHE).then((c) => c.put(request, copy));
   }
