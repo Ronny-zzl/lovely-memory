@@ -1,12 +1,16 @@
 import { Suspense, use } from "react";
-import { Link, Navigate, NavLink, Outlet, useOutletContext, useParams } from "react-router";
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigation, useOutletContext, useParams } from "react-router";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
+import { PageSkeleton } from "../components/PageSkeleton.tsx";
 import { findArtist, loadArtistData, type ArtistData } from "../data.ts";
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
 
 export function ArtistLayout() {
   const artist = findArtist(useParams().artistId);
+  const { pathname } = useLocation();
+  // 開くページのコードを読み込んでいる間（初めて開くタブなど）
+  const loading = useNavigation().state === "loading";
   if (!artist) return <Navigate to="/" replace />;
 
   return (
@@ -44,9 +48,13 @@ export function ArtistLayout() {
           </nav>
         </div>
       </header>
+      {loading && <div className="route-progress" aria-hidden="true" />}
       <main>
-        <Suspense fallback={<p className="muted">読み込み中…</p>}>
-          <ArtistOutlet artist={artist} />
+        <Suspense fallback={<PageSkeleton />}>
+          {/* ページが変わるたびに中身をふわっと出す（styles/motion.css） */}
+          <div key={pathname} className="page-enter">
+            <ArtistOutlet artist={artist} />
+          </div>
         </Suspense>
       </main>
     </div>

@@ -15,7 +15,20 @@
     <meta name="theme-color" content="#14131a" media="(prefers-color-scheme: dark)" />
   </head>
   <body>
-    <div id="root"></div>
+    <!-- スクリプトを読み込むまでの仮の形（ヘッダーと読み込み中の帯）。React が描画すると置き換わる -->
+    <div id="root">
+      <div class="page">
+        <div class="site-header hero">
+          <div class="hero-card sk-hero"></div>
+        </div>
+        <div class="skeleton" role="status" aria-label="読み込み中">
+          <div class="sk-stats"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+          <div class="sk sk-line"></div>
+          <div class="sk sk-line"></div>
+          <div class="sk sk-line short"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

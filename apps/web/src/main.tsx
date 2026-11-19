@@ -18,6 +18,7 @@ import "./styles/badge.css";
 import "./styles/event-list.css";
 import "./styles/lists.css";
 import "./styles/button.css";
+import "./styles/motion.css";
 
 // 起きたエラーをサイトに送る（読み込みの途中で起きたものも拾えるよう、最初に）
 installErrorReporting();
