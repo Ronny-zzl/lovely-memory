@@ -20,11 +20,31 @@ type Row = {
 
 const run = promisify(execFile);
 
+// wrangler は --json のとき、エラーも stdout に {"error":{"text":…}} で出す
+function wranglerError(e: unknown): string {
+  const { stdout = "", stderr = "" } = e as { stdout?: string; stderr?: string };
+  let text = "";
+  try {
+    text = (JSON.parse(stdout) as { error?: { text?: string } }).error?.text ?? "";
+  } catch {
+    text = stderr.trim() || stdout.trim();
+  }
+  const notLoggedIn = /CLOUDFLARE_API_TOKEN|not authenticated|wrangler login/i.test(text);
+  return notLoggedIn
+    ? "Cloudflare にログインしていません。apps/web で `pnpm exec wrangler login` を実行してください。"
+    : `wrangler d1 execute が失敗しました: ${text || String(e)}`;
+}
+
 async function query(sql: string): Promise<Row[]> {
-  const { stdout } = await run("pnpm", ["exec", "wrangler", "d1", "execute", "lovely-memory", "--remote", "--json", "--command", sql], {
-    cwd: join(REPO_ROOT, "apps/web"),
-    maxBuffer: 32 * 1024 * 1024,
-  });
+  let stdout: string;
+  try {
+    ({ stdout } = await run("pnpm", ["exec", "wrangler", "d1", "execute", "lovely-memory", "--remote", "--json", "--command", sql], {
+      cwd: join(REPO_ROOT, "apps/web"),
+      maxBuffer: 32 * 1024 * 1024,
+    }));
+  } catch (e) {
+    throw new Error(wranglerError(e), { cause: e });
+  }
   const out = JSON.parse(stdout) as Array<{ results: Row[] }>;
   return out.flatMap((r) => r.results);
 }
