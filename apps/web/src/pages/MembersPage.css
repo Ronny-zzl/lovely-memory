@@ -25,6 +25,10 @@
   font-size: var(--text-base);
 }
 
+.member-age {
+  font-weight: 400;
+}
+
 .member-name .dot {
   width: 12px;
   height: 12px;

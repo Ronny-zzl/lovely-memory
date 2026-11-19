@@ -29,6 +29,7 @@ export function MembersPage() {
             <h2 className="member-name">
               <span className="dot" style={{ background: s.member.color }} />
               {s.member.name}
+              {s.member.birthday && <span className="member-age">{ageOn(s.member.birthday, today)}歳</span>}
               {s.member.colorName && <span className="muted small">{s.member.colorName}</span>}
             </h2>
             {(() => {
@@ -36,7 +37,7 @@ export function MembersPage() {
               return (
                 b && (
                   <p className={`member-birthday${b.days === 0 ? " birthday-today" : ""}`}>
-                    <span aria-hidden="true">🎂</span> {formatMonthDay(b.date)} ・ {ageOn(s.member.birthday!, today)}歳
+                    <span aria-hidden="true">🎂</span> {formatMonthDay(b.date)}
                     <span className="muted">（{birthdayCountdown(b.days)}）</span>
                   </p>
                 )
