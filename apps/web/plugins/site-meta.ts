@@ -26,6 +26,8 @@ export function siteMeta(): Plugin {
     // robots.txt が無いと SPA のフォールバックで index.html が返り、クローラーが HTML を robots.txt として読んでしまう。
     // sitemap.xml（デプロイ時に og-pages が書く）は絶対 URL で示す必要があるので、SITE_URL があるときだけ載せる
     generateBundle() {
+      // ビルド時の描画用のビルド（--ssr）では出さない
+      if (this.environment.config.build.ssr) return;
       const site = siteUrl();
       this.emitFile({
         type: "asset",

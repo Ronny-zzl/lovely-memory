@@ -29,14 +29,14 @@ type Card = { file: string; html: string };
 type Page = { path: string; meta: PageMeta };
 
 /**
- * 曲・公演などのページごとに OGP 用の HTML（<path>.html）と画像（og/…png）をビルド結果に追加する。
+ * 曲・公演などのページごとに OGP 用の meta を HTML（<path>.html）に入れ、画像（og/…png）をビルド結果に追加する。
  * Cloudflare Pages は /a/b を a/b.html で返すので、SNS のクローラーにページごとのカードが見える。
  */
 export async function ogPages(artistArg: string, opts: { dist?: string; "skip-images"?: boolean; only?: string }): Promise<void> {
   const site = siteUrl();
   if (!site) throw new Error("SITE_URL が未設定（og:url・og:image に絶対 URL が必要）");
   const dist = resolve(REPO_ROOT, opts.dist ?? "apps/web/dist");
-  const base = await readFile(join(dist, "index.html"), "utf8");
+  const shell = await readFile(join(dist, existsSync(join(dist, "shell.html")) ? "shell.html" : "index.html"), "utf8");
   const host = new URL(site).host;
 
   const ids =
@@ -54,7 +54,10 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
   for (const p of pages) {
     const file = join(dist, `${p.path}.html`);
     await mkdir(dirname(file), { recursive: true });
-    await writeFile(file, pageHtml(base, p.meta));
+    // ビルド時に中身を描いた HTML（apps/web/scripts/prerender.ts）があれば、それに meta を入れる。
+    // 無ければ中身の無いアプリの枠（shell.html。無い古いビルドでは index.html）を型にする
+    const template = existsSync(file) ? await readFile(file, "utf8") : shell;
+    await writeFile(file, pageHtml(template, p.meta));
   }
   console.log(`pages: ${pages.length}`);
 

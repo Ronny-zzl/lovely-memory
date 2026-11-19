@@ -18,8 +18,8 @@ function setMeta(html: string, attr: "name" | "property", key: string, value: st
 }
 
 /**
- * ビルド済みの index.html（サイト共通の meta 入り）を、ページごとの内容に書き換える。
- * アプリ本体（script・CSS）はそのままなので、開けば普通に SPA として動く。
+ * ビルド済みのページの HTML（サイト共通の meta 入り）の meta を、ページごとの内容に書き換える。
+ * 中身（#root）・script・CSS はそのまま。
  */
 export function pageHtml(base: string, m: PageMeta): string {
   let html = base.replace(/<title>[^<]*<\/title>/, () => `<title>${esc(m.title)}</title>`);

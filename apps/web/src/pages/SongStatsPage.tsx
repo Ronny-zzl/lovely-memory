@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link } from "react-router";
 import {
   computeStats,
   eventHasType,
@@ -11,6 +11,7 @@ import {
 } from "@lovely-memory/core/runtime";
 import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, POSITION_ROLE_LABEL, tieupLabels } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
+import { useSearchParamsAfterHydration } from "../hydration.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./SongStatsPage.css";
 
@@ -153,7 +154,7 @@ function sortValue(s: SongStats, key: SortKey, today: string): string | number |
 
 export function SongStatsPage() {
   const { artist, songs, events, setlists, allStats, patterns } = useArtistData();
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParamsAfterHydration();
   const { today } = useArtistData();
 
   const presentTypes = useMemo(() => {

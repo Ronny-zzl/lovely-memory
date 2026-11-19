@@ -27,6 +27,11 @@ pnpm visual shoot <dir> / pnpm visual compare <前> <后> <差异>   # 截图逐
 - 浏览器端从 `@lovely-memory/core/runtime` 引入（不含 zod）；zod 只在构建和 CLI 里用。
 - 异步的事件处理函数写成 `onClick={() => void f()}`（oxlint 的 no-misused-promises）。
 - 「已举行」统一用 `heldCheck(today, setlistEventIds)`：日期在今天之前，或者是今天且已录入歌单。不要自己用日期比较。
+- **页面在构建时预渲染**（`scripts/prerender.ts`），浏览器端接管（hydrate）。所以组件渲染时：
+  - 不要直接用 `window`・`document`・`localStorage`・`navigator`・`location`・`matchMedia`（构建时没有）；要在 effect／事件处理里用，或者用 `src/hydration.ts` 的 `useHydrated()`・`useOrigin()`。
+  - 「今天」用 `useArtistData().today`（不要调用 `todayJst()`）；网址参数用 `useSearchParamsAfterHydration()`。
+  - 手机／电脑的不同布局两种都输出，用 `.only-narrow`／`.only-wide` 切换（不要用 JS 判断宽度）。
+  - 接管时内容不一致，smoke 会以控制台错误报出来。
 - 界面文字和代码注释用日语；`docs/` 用中文。
 - 参戦記録只存在浏览器的 localStorage，不发送到服务器（错误上报也不包含它）。
 

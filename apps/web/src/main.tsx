@@ -1,12 +1,11 @@
 // ホーム画面への追加のイベントを、描画前から待ち受ける
 import "./install.ts";
 import { installErrorReporting, reportError } from "./error-report.ts";
-import { type ComponentType, StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { createBrowserRouter, Navigate, RouterProvider, type RouteObject } from "react-router";
-import { ArtistLayout } from "./pages/ArtistLayout.tsx";
-import { RouteError } from "./pages/RouteError.tsx";
+import { StrictMode } from "react";
+import { createRoot, hydrateRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import { findArtist, loadArtistData } from "./data.ts";
+import { routes } from "./routes.tsx";
 // サイト全体で使う見た目（ページ・部品ごとのものは、それぞれの .tsx の隣の .css）
 import "./styles/tokens.css";
 import "./styles/base.css";
@@ -28,38 +27,7 @@ if (location.hash.startsWith("#/")) {
   history.replaceState(null, "", location.hash.slice(1));
 }
 
-// 各ページのコードは開いたときに読み込む（最初に読み込む量を減らす）。
-// 移動先のページの読み込みが終わるまで今のページを表示したままにするので、「読み込み中」は出ない
-const page = (load: () => Promise<ComponentType>): Pick<RouteObject, "lazy"> => ({
-  lazy: async () => ({ Component: await load() }),
-});
-
-// Cloudflare Pages は存在しないパスに index.html を返す（SPA フォールバック）ので、通常のパスでルーティングする
-const router = createBrowserRouter([
-  { path: "/", ...page(() => import("./pages/ArtistList.tsx").then((m) => m.ArtistList)), errorElement: <RouteError /> },
-  {
-    path: "/:artistId",
-    element: <ArtistLayout />,
-    errorElement: <RouteError />,
-    children: [
-      {
-        // ページでエラーが起きても、ヘッダー（タブ）は残して中身だけエラーの表示にする
-        errorElement: <RouteError />,
-        children: [
-          { index: true, element: <Navigate to="songs" replace /> },
-          { path: "songs", ...page(() => import("./pages/SongStatsPage.tsx").then((m) => m.SongStatsPage)) },
-          { path: "songs/:songId", ...page(() => import("./pages/SongDetailPage.tsx").then((m) => m.SongDetailPage)) },
-          { path: "events", ...page(() => import("./pages/EventsPage.tsx").then((m) => m.EventsPage)) },
-          { path: "events/:eventId", ...page(() => import("./pages/EventDetailPage.tsx").then((m) => m.EventDetailPage)) },
-          { path: "trends", ...page(() => import("./pages/TrendsPage.tsx").then((m) => m.TrendsPage)) },
-          { path: "members", ...page(() => import("./pages/MembersPage.tsx").then((m) => m.MembersPage)) },
-          { path: "attendance", ...page(() => import("./pages/AttendancePage.tsx").then((m) => m.AttendancePage)) },
-        ],
-      },
-    ],
-  },
-  { path: "*", element: <Navigate to="/" replace /> },
-]);
+const router = createBrowserRouter(routes);
 
 // URL のアーティストのデータを描画前に読み込んでおく（数ミリ秒で終わる）。
 // 描画中に読み込むと「読み込み中」が一瞬出て、React の仕様で最低 300ms 表示が遅れる
@@ -85,11 +53,19 @@ if (import.meta.env.PROD && "serviceWorker" in navigator) {
 // 見出し・数字の丸ゴシック。定義が大きいので、描画を止めないよう後から読み込む（src/fonts.css）
 void import("./fonts.css");
 
-createRoot(document.getElementById("root")!, {
-  onUncaughtError: (error) => reportError("render", error),
-  onCaughtError: (error) => reportError("render", error),
-}).render(
+// ビルド時に作った HTML（scripts/prerender.ts。#root の data-prerendered にそのパス）なら、それを引き継ぐ。
+// 無いとき（開発時・404 のページなど）や、別のパスの中身のとき（以前の /#/… のリンクでトップの HTML が来た、など）はブラウザで描き直す
+const root = document.getElementById("root")!;
+const app = (
   <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>,
+  </StrictMode>
 );
+const options = {
+  onUncaughtError: (error: unknown) => reportError("render", error),
+  onCaughtError: (error: unknown) => reportError("render", error),
+  // ビルド時の HTML と食い違ったとき（その部分はブラウザで描き直される）
+  onRecoverableError: (error: unknown) => reportError("render", error),
+};
+if (root.dataset.prerendered === location.pathname) hydrateRoot(root, app, options);
+else createRoot(root, options).render(app);

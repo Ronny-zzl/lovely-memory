@@ -4,11 +4,20 @@ import { join } from "node:path";
 import type { Plugin } from "vite";
 
 /** public/ のうち、オフラインでも使うもの */
-const STATIC_FILES = ["/", "/manifest.webmanifest", "/favicon.svg", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-180.png"];
+const STATIC_FILES = [
+  "/",
+  "/shell.html",
+  "/manifest.webmanifest",
+  "/favicon.svg",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/icons/icon-180.png",
+];
 
 /**
  * オフライン対応の Service Worker（sw.js）をビルド時に書き出す。
- * - ページ（HTML）: ネットワーク優先。つながらなければキャッシュ、無ければアプリ本体（/）を返して SPA で描画
+ * - ページ（HTML）: ネットワーク優先。つながらなければキャッシュ、無ければ中身の無いアプリの枠（/shell.html）を返してブラウザで描く
+ *   （各ページの HTML はビルド時に描いた中身入りなので、別のページの HTML を代わりに返すと引き継ぎで食い違う）
  * - /assets/（ファイル名にハッシュ入り＝内容が変わらない）: キャッシュ優先。ビルド時のファイルを事前キャッシュ
  *   （フォントは文字の範囲ごとに百以上のファイルに分かれていて、使うのはその一部なので、事前には取らず使ったものだけ残す）
  * - その他の同一オリジン GET: ネットワーク優先、失敗時キャッシュ
@@ -18,7 +27,8 @@ const STATIC_FILES = ["/", "/manifest.webmanifest", "/favicon.svg", "/icons/icon
 export function serviceWorker(): Plugin {
   return {
     name: "lovely-memory:service-worker",
-    apply: "build",
+    // ブラウザ用のビルドだけ（ビルド時の描画用のビルド --ssr では使わない）
+    apply: (_config, env) => env.command === "build" && !env.isSsrBuild,
     // 書き出しが終わってから、実際にある assets/ のファイルで一覧を作る。generateBundle の時点の一覧には、
     // 後で消えるもの（動的 import した CSS だけのチャンクの JS など）が含まれていて、それを事前キャッシュしようとすると
     // SPA の HTML が返ってきてしまう
@@ -130,7 +140,7 @@ self.addEventListener("fetch", (event) => {
   // 共有カードの画像はページ表示に使わないのでキャッシュしない
   if (url.pathname.startsWith("/og/") || url.pathname === "/og.png") return;
   if (request.mode === "navigate") {
-    event.respondWith(networkFirst(request, "/"));
+    event.respondWith(networkFirst(request, "/shell.html"));
   } else if (url.pathname.startsWith("/assets/")) {
     event.respondWith(cacheFirst(request));
   } else {

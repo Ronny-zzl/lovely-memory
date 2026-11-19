@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link } from "react-router";
 import { eventCostume, eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
 import { useAttendance } from "../attendance.ts";
 import { AttendanceHint } from "../components/AttendanceHint.tsx";
@@ -7,6 +7,7 @@ import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday } from "../format.ts";
+import { useSearchParamsAfterHydration } from "../hydration.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./EventsPage.css";
 
@@ -15,7 +16,7 @@ const DEFAULT_HIDDEN: EventType[] = ["tokuten"];
 
 export function EventsPage() {
   const { artist, events, allStats, isHeld } = useArtistData();
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParamsAfterHydration();
 
   const setlistByEvent = useMemo(() => new Map(allStats.events.map((e) => [e.event.id, e])), [allStats]);
   const presentTypes = ALL_TYPES.filter((t) => events.some((e) => eventHasType(e, t)));

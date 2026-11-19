@@ -15,8 +15,11 @@
     <meta name="theme-color" content="#14131a" media="(prefers-color-scheme: dark)" />
   </head>
   <body>
-    <!-- スクリプトを読み込むまでの仮の形（ヘッダーと読み込み中の帯）。React が描画すると置き換わる -->
-    <div id="root">
+    <!--
+      スクリプトを読み込むまでの仮の形（ヘッダーと読み込み中の帯）。React が描画すると置き換わる。
+      ビルド後に scripts/prerender.ts が、#root の中の「app」「/app」の印の間を各ページの中身に差し替える
+    -->
+    <div id="root"><!--app-->
       <div class="page">
         <div class="site-header hero">
           <div class="hero-card sk-hero"></div>
@@ -28,7 +31,7 @@
           <div class="sk sk-line short"></div>
         </div>
       </div>
-    </div>
+    <!--/app--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import { Suspense, use } from "react";
+import { Suspense, use, useState } from "react";
 import { Link, Navigate, NavLink, Outlet, useLocation, useNavigation, useOutletContext, useParams } from "react-router";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
@@ -12,6 +12,8 @@ export function ArtistLayout() {
   const { pathname } = useLocation();
   // 開くページのコードを読み込んでいる間（初めて開くタブなど）
   const loading = useNavigation().state === "loading";
+  // 最初に開いたページは、ビルド時の HTML でもう見えているので、ふわっとは出さない（サイト内で移動したときだけ）
+  const [firstPath] = useState(pathname);
   if (!artist) return <Navigate to="/" replace />;
 
   return (
@@ -53,7 +55,7 @@ export function ArtistLayout() {
       <main>
         <Suspense fallback={<PageSkeleton />}>
           {/* ページが変わるたびに中身をふわっと出す（styles/motion.css） */}
-          <div key={pathname} className="page-enter">
+          <div key={pathname} className={pathname === firstPath ? undefined : "page-enter"}>
             <ArtistOutlet artist={artist} />
           </div>
         </Suspense>

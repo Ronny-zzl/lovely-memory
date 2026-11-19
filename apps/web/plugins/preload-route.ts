@@ -1,3 +1,5 @@
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { Plugin, Rollup } from "vite";
 
 type OutputBundle = Rollup.OutputBundle;
@@ -11,7 +13,14 @@ type OutputChunk = Rollup.OutputChunk;
  * ビルド結果からそれぞれのチャンク（と、その先で必要になるチャンク）を調べ、
  * URL に合うものを <link rel="modulepreload"> で先に要求する小さなスクリプトを index.html に入れる。
  * ページの CSS も同じく <link rel="stylesheet"> で先に入れる（Vite は同じ href の link があれば読み込み直さない）。
+ *
+ * 同じ一覧を dist/route-assets.json にも書き出す。ビルド時に HTML を作る scripts/prerender.ts が、
+ * ページごとの CSS を最初から <link> で入れるのに使う（その後で消す）。
  */
+
+/** prerender.ts が読む一覧（pages: ページ名 → ファイル、artists: アーティスト id → ファイル） */
+export type RouteAssets = { pages: Record<string, string[]>; artists: Record<string, string[]> };
+export const ROUTE_ASSETS_FILE = "route-assets.json";
 
 /** pages/ のファイル名 → main.tsx のルート。パスの判定はスクリプトの PAGE_OF と揃える */
 const PAGES = [
@@ -47,9 +56,14 @@ function filesFor(chunk: OutputChunk, bundle: OutputBundle, already: Set<string>
 }
 
 export function preloadRoute(): Plugin {
+  let assets: RouteAssets | undefined;
   return {
     name: "lovely-memory:preload-route",
-    apply: "build",
+    // ブラウザ用のビルドだけ（ビルド時の描画用のビルド --ssr では使わない）
+    apply: (_config, env) => env.command === "build" && !env.isSsrBuild,
+    async writeBundle(options) {
+      if (assets) await writeFile(join(options.dir!, ROUTE_ASSETS_FILE), JSON.stringify(assets));
+    },
     transformIndexHtml: {
       order: "post",
       handler(_html, ctx) {
@@ -70,6 +84,7 @@ export function preloadRoute(): Plugin {
           const artist = id.match(ARTIST_MODULE)?.[1];
           if (artist) artists[artist] = filesFor(c, bundle, already);
         }
+        assets = { pages, artists };
         const missing = PAGES.filter((p) => !pages[p]);
         if (missing.length) this.warn(`preload-route: チャンクが見つからないページ: ${missing.join(", ")}`);
 
@@ -79,9 +94,10 @@ var s=location.pathname.split("/").filter(Boolean);
 var PAGE_OF={songs:s[2]?"SongDetailPage":"SongStatsPage",events:s[2]?"EventDetailPage":"EventsPage",trends:"TrendsPage",members:"MembersPage",attendance:"AttendancePage"};
 var page=s.length===0?"ArtistList":s.length===1?"SongStatsPage":PAGE_OF[s[1]];
 var files=[].concat((page&&P[page])||[],(s[0]&&A[s[0]])||[]);
-files.forEach(function(f){var l=document.createElement("link");l.rel=f.slice(-4)===".css"?"stylesheet":"modulepreload";l.href="/"+f;document.head.appendChild(l);});
+files.forEach(function(f){if(document.querySelector('link[href="/'+f+'"]'))return;var l=document.createElement("link");l.rel=f.slice(-4)===".css"?"stylesheet":"modulepreload";l.href="/"+f;document.head.appendChild(l);});
 })();`;
-        return [{ tag: "script", children: script, injectTo: "head" }];
+        // ビルド時に中身を描いた HTML では、prerender.ts がこのスクリプトを外して <link> を直接入れる（目印の属性）
+        return [{ tag: "script", attrs: { "data-route-preload": true }, children: script, injectTo: "head" }];
       },
     },
   };

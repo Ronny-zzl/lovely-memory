@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# ビルド時の描画用のビルド（apps/web の vite build --ssr）
+dist-ssr/
 .DS_Store
 *.log
 .vite/

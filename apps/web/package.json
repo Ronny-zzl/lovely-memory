@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/build-worker.ts",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.ts && node scripts/build-worker.ts",
     "preview": "vite preview",
     "typecheck": "tsc -p .",
     "smoke": "node scripts/smoke.ts",

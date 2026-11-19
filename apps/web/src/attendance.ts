@@ -16,6 +16,8 @@ type Stored = AttendanceData;
 const EMPTY: Stored = { manual: {} };
 
 function read(): Stored {
+  // ビルド時の描画（Node）では読まない（Node にも試験的な localStorage があり、読むと警告が出る）
+  if (typeof window === "undefined") return EMPTY;
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return EMPTY;

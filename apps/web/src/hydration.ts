@@ -4,6 +4,7 @@
  * そのため「今日」「参戦記録」「ブラウザの機能」など、ビルド時には分からないものは、引き継いだ後で使う。
  */
 import { useSyncExternalStore } from "react";
+import { useSearchParams } from "react-router";
 import { todayJst } from "./format.ts";
 
 const subscribe = () => () => {};
@@ -28,4 +29,15 @@ export function useToday(): string {
 /** サイトの origin。ビルド時の HTML と引き継ぎの最初の描画では、設定されたサイトの URL */
 export function useOrigin(): string {
   return useHydrated() ? location.origin : __SITE_ORIGIN__;
+}
+
+const NO_PARAMS = new URLSearchParams();
+
+/**
+ * URL のクエリ（絞り込みなど）。ビルド時の HTML はクエリなしで作るので、引き継ぎの最初の描画ではクエリなしとして描き、
+ * その後で実際のクエリで描き直す
+ */
+export function useSearchParamsAfterHydration(): ReturnType<typeof useSearchParams> {
+  const [params, setParams] = useSearchParams();
+  return [useHydrated() ? params : NO_PARAMS, setParams];
 }

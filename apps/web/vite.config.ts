@@ -7,7 +7,7 @@ import { serviceWorker } from "./plugins/service-worker.ts";
 import { siteMeta } from "./plugins/site-meta.ts";
 
 // 通常のパスでルーティングするため、アセットは絶対パス（サイトはドメインのルートに置く）
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   base: "/",
   // エラーの記録に、どのビルドで起きたかを残す（GitHub Actions ではコミット）
   define: {
@@ -18,15 +18,21 @@ export default defineConfig({
     __SITE_ORIGIN__: JSON.stringify((process.env.SITE_URL ?? "https://lovely-memory.moe").replace(/\/$/, "")),
   },
   plugins: [react(), artistsData(), apiDev(), siteMeta(), preloadRoute(), serviceWorker()],
-  build: {
-    rollupOptions: {
-      // ファイル名の「v2」は、2026-11-19 に CDN・ブラウザ・Service Worker に HTML が JS として残ってしまったのを避けるため、
-      // 全ファイルの URL を一度だけ変えたもの（中身が同じでも新しい URL で取り直させる）。上げる必要があるのは同じ事故のときだけ
-      output: {
-        entryFileNames: "assets/[name]-v2-[hash].js",
-        chunkFileNames: "assets/[name]-v2-[hash].js",
-        assetFileNames: "assets/[name]-v2-[hash][extname]",
+  build: isSsrBuild
+    ? {
+        // ビルド時の描画用（scripts/prerender.ts が dist-ssr/entry-server.js を読み込む）。public/ は要らない
+        copyPublicDir: false,
+        rollupOptions: { output: { entryFileNames: "[name].js", chunkFileNames: "assets/[name]-[hash].js" } },
+      }
+    : {
+        rollupOptions: {
+          // ファイル名の「v2」は、2026-11-19 に CDN・ブラウザ・Service Worker に HTML が JS として残ってしまったのを避けるため、
+          // 全ファイルの URL を一度だけ変えたもの（中身が同じでも新しい URL で取り直させる）。上げる必要があるのは同じ事故のときだけ
+          output: {
+            entryFileNames: "assets/[name]-v2-[hash].js",
+            chunkFileNames: "assets/[name]-v2-[hash].js",
+            assetFileNames: "assets/[name]-v2-[hash][extname]",
+          },
+        },
       },
-    },
-  },
-});
+}));
