@@ -58,6 +58,7 @@ async function shoot(dir: string) {
           const context = await browser.newContext({
             viewport: { width: vp.width, height: vp.height },
             colorScheme: scheme,
+            // ページを開いたときのふわっとした表示などの動きを止めて、撮るたびに同じ絵になるように（styles/motion.css）
             reducedMotion: "reduce",
             serviceWorkers: "block",
           });
@@ -97,7 +98,8 @@ async function compare(a: string, b: string, diffDir?: string) {
       continue;
     }
     const diff = new PNG({ width: x.width, height: x.height });
-    const pixels = pixelmatch(x.data, y.data, diff.data, x.width, x.height, { threshold: 0 });
+    // 細いグラデーションや丸の縁は、描くたびに色が 1〜2 段ずれることがある（ディザ・アンチエイリアス）ので、ごく小さな差は数えない
+    const pixels = pixelmatch(x.data, y.data, diff.data, x.width, x.height, { threshold: 0.03 });
     if (pixels > 0) {
       changed.push(`${f}: ${pixels} ピクセル`);
       if (diffDir) await writeFile(join(diffDir, f), PNG.sync.write(diff));

@@ -7,7 +7,6 @@ import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday } from "../format.ts";
-import { useNarrow } from "../use-narrow.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./EventsPage.css";
 
@@ -43,10 +42,9 @@ export function EventsPage() {
   // 選ばれた種別のどれかに該当すれば表示（主催対バンは「対バン・フェス」にも該当）
   const visible = events.filter((e) => [...selected].some((t) => eventHasType(e, t)));
   // 「参戦」ボタンは押す機会が少ないので、狭い画面では普段は印だけ出し、記録するときだけボタンを出す
-  const narrow = useNarrow();
+  // （ボタンと印は両方出して CSS で見せ分ける。EventsPage.css）
   const attendance = useAttendance();
   const [editing, setEditing] = useState(false);
-  const showToggles = !narrow || editing;
   const upcoming = visible.filter((e) => !isHeld(e));
   const past = visible.filter((e) => !upcoming.includes(e)).reverse();
 
@@ -87,15 +85,15 @@ export function EventsPage() {
             </span>
           </span>
           <MemberDots artist={artist} present={e.members} />
-          {!showToggles && attendance.isAttended(e.id) && <span className="attend-mark">✓ {isHeld(e) ? "参戦" : "予定"}</span>}
+          {attendance.isAttended(e.id) && <span className="attend-mark">✓ {isHeld(e) ? "参戦" : "予定"}</span>}
         </Link>
-        {showToggles && isLiveEvent(e) && <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />}
+        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />}
       </li>
     );
   };
 
   return (
-    <section className="events">
+    <section className={editing ? "events editing" : "events"}>
       <fieldset className="chips" aria-label="公演の種別">
         {presentTypes.map((t) => (
           <label key={t} className="chip">
@@ -108,18 +106,16 @@ export function EventsPage() {
       <AttendanceHint
         artistId={artist.id}
         eventIds={events.filter(isLiveEvent).map((e) => e.id)}
-        buttonsHidden={narrow && !editing}
+        buttonsHidden={!editing}
         action={
-          narrow && (
-            <button
-              type="button"
-              className={`attend-edit${editing ? " on" : ""}`}
-              aria-pressed={editing}
-              onClick={() => setEditing(!editing)}
-            >
-              {editing ? "完了" : "参戦を記録"}
-            </button>
-          )
+          <button
+            type="button"
+            className={`attend-edit only-narrow${editing ? " on" : ""}`}
+            aria-pressed={editing}
+            onClick={() => setEditing(!editing)}
+          >
+            {editing ? "完了" : "参戦を記録"}
+          </button>
         }
       />
 

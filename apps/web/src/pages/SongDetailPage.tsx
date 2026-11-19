@@ -3,7 +3,7 @@ import { neighbors, positionRole, STREAK_MIN, type Song, type Transition } from 
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
-import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText, todayJst } from "../format.ts";
+import { daysBetween, displayTitle, formatDate, formatPercent, POSITION_ROLE_LABEL, tieupLabels, tieupText } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./SongDetailPage.css";
@@ -78,7 +78,7 @@ function NeighborList({
 }
 
 export function SongDetailPage() {
-  const { artist, allStats, patterns, milestones } = useArtistData();
+  const { artist, allStats, patterns, milestones, today } = useArtistData();
   const songId = useParams().songId;
   const stats = allStats.songs.find((s) => s.song.id === songId);
 
@@ -91,7 +91,6 @@ export function SongDetailPage() {
   }
 
   const { song } = stats;
-  const today = todayJst();
   const era = artist.eras.find((e) => e.id === song.era && e.id !== artist.defaultEra);
   const unit = artist.units.find((u) => u.id === song.unit && u.id !== artist.defaultUnit);
 

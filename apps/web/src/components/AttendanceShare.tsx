@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { cardChars, drawAttendanceCard, loadCardFont, type AttendanceCardData } from "../attendance-card.ts";
+import { useLocation } from "react-router";
+import { useHydrated, useOrigin } from "../hydration.ts";
 import { canCopyImage, canShareFiles, copyImage, isTouchDevice, saveImage } from "../share-image.ts";
 import "./ShareDialog.css";
 
@@ -44,12 +46,14 @@ export function AttendanceShare({
     };
   }, [open, card]);
 
-  const url = location.origin + location.pathname;
+  const url = useOrigin() + useLocation().pathname;
   const text = [postText, hashtags.map((h) => `#${h}`).join(" "), url].filter(Boolean).join("\n");
   const file = blob && new File([blob], fileName, { type: "image/png" });
-  const touch = isTouchDevice();
+  // 端末の種類・ブラウザの機能はブラウザで調べる（ビルド時の HTML では、どちらでもない形で描く）
+  const hydrated = useHydrated();
+  const touch = hydrated && isTouchDevice();
   const canShareFile = !!blob && canShareFiles(blob);
-  const canCopy = canCopyImage();
+  const canCopy = hydrated && canCopyImage();
   // スマホは共有シート、PC はコピー＆貼り付けを主にする
   const shareFirst = touch && canShareFile;
 

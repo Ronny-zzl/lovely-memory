@@ -7,7 +7,8 @@ import { AttendanceBackup } from "../components/AttendanceBackup.tsx";
 import { AttendanceShare } from "../components/AttendanceShare.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { artists } from "../data.ts";
-import { displayTitle, formatDate, formatDayWithWeekday, formatPercent, todayJst } from "../format.ts";
+import { displayTitle, formatDate, formatDayWithWeekday, formatPercent } from "../format.ts";
+import { useOrigin } from "../hydration.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./AttendancePage.css";
 
@@ -87,9 +88,9 @@ function EventernoteSection() {
 type Heard = { song: Song; count: number; first: { eventId: number; date: string } };
 
 export function AttendancePage() {
-  const { artist, events, allStats, isHeld } = useArtistData();
+  const { artist, events, allStats, isHeld, today } = useArtistData();
   const attendance = useAttendance();
-  const today = todayJst();
+  const origin = useOrigin();
 
   const live = useMemo(() => events.filter(isLiveEvent), [events]);
   // 記録が変わったときだけ作り直す（下の集計やシェア画像の再計算をそれに合わせる）
@@ -137,9 +138,9 @@ export function AttendancePage() {
       topSongs: heard.slice(0, 3).map((h) => ({ title: h.song.title, count: h.count })),
       notHeard: notHeard.length,
       firstDate: past[0]?.date,
-      host: location.host,
+      host: new URL(origin).host,
     }),
-    [artist, today, past, held, heard, sung, total, notHeard],
+    [artist, today, past, held, heard, sung, total, notHeard, origin],
   );
   const row = (e: ResolvedEvent) => (
     <li key={e.id} className="with-toggle">

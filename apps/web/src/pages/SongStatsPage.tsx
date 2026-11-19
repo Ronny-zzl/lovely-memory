@@ -9,18 +9,8 @@ import {
   type EventType,
   type SongStats,
 } from "@lovely-memory/core/runtime";
-import {
-  daysBetween,
-  EVENT_TYPE_LABEL,
-  formatDate,
-  formatPercent,
-  LIVE_EVENT_TYPES,
-  POSITION_ROLE_LABEL,
-  tieupLabels,
-  todayJst,
-} from "../format.ts";
+import { daysBetween, EVENT_TYPE_LABEL, formatDate, formatPercent, LIVE_EVENT_TYPES, POSITION_ROLE_LABEL, tieupLabels } from "../format.ts";
 import { UnitTag } from "../components/UnitTag.tsx";
-import { useNarrow } from "../use-narrow.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./SongStatsPage.css";
 
@@ -164,7 +154,7 @@ function sortValue(s: SongStats, key: SortKey, today: string): string | number |
 export function SongStatsPage() {
   const { artist, songs, events, setlists, allStats, patterns } = useArtistData();
   const [params, setParams] = useSearchParams();
-  const today = todayJst();
+  const { today } = useArtistData();
 
   const presentTypes = useMemo(() => {
     const withSetlist = new Set(setlists.map((s) => s.event));
@@ -295,7 +285,6 @@ export function SongStatsPage() {
     </button>
   );
 
-  const narrow = useNarrow();
   // スマホで絞り込みを畳んでいるときに、今の条件がわかるように
   const filterSummary = [
     selectedTypes.size === presentTypes.length ? "全種別" : `${selectedTypes.size} 種別`,
@@ -340,82 +329,14 @@ export function SongStatsPage() {
         </div>
       </div>
 
-      {narrow ? (
-        <div className="filters">
-          <div className="filter-row">
-            <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
-          </div>
-          <details className="filter-panel">
-            <summary>
-              絞り込み・並べ替え<span className="muted small">{filterSummary}</span>
-            </summary>
-            <fieldset className="chips" aria-label="公演の種別">
-              {presentTypes.map((t) => (
-                <label key={t} className="chip">
-                  <input type="checkbox" checked={selectedTypes.has(t)} onChange={() => toggleType(t)} />
-                  {EVENT_TYPE_LABEL[t]}
-                </label>
-              ))}
-              {hasCollab && (
-                <label className="chip chip-option" title="他グループとのコラボステージでの歌唱も集計に含める">
-                  <input type="checkbox" checked={includeCollab} onChange={() => update({ collab: includeCollab ? null : "1" })} />
-                  コラボステージを含む
-                </label>
-              )}
-            </fieldset>
-            <div className="filter-row">
-              <select
-                value={era}
-                onChange={(e) => update({ era: e.target.value })}
-                aria-label="区分"
-                className={era ? "is-set" : undefined}
-              >
-                <option value="">すべての区分</option>
-                {eraOptions.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={unit}
-                onChange={(e) => update({ unit: e.target.value })}
-                aria-label="オリジナル"
-                className={unit ? "is-set" : undefined}
-              >
-                <option value="">すべてのオリジナル</option>
-                {artist.units.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.label}
-                  </option>
-                ))}
-              </select>
-              <span className="sort-control">
-                <select
-                  value={sortKey}
-                  onChange={(e) => update({ sort: e.target.value === "rate" ? null : e.target.value, dir: null })}
-                  aria-label="並べ替え"
-                >
-                  {SORT_OPTIONS.map(([k, label]) => (
-                    <option key={k} value={k}>
-                      {label}順
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  className="sort-dir"
-                  onClick={() => update({ dir: desc ? "asc" : "desc" })}
-                  aria-label={desc ? "逆順にする" : "元の順にする"}
-                >
-                  {desc ? "▼" : "▲"}
-                </button>
-              </span>
-            </div>
-          </details>
+      <div className="filters only-narrow">
+        <div className="filter-row">
+          <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
         </div>
-      ) : (
-        <div className="filters">
+        <details className="filter-panel">
+          <summary>
+            絞り込み・並べ替え<span className="muted small">{filterSummary}</span>
+          </summary>
           <fieldset className="chips" aria-label="公演の種別">
             {presentTypes.map((t) => (
               <label key={t} className="chip">
@@ -452,100 +373,157 @@ export function SongStatsPage() {
                 </option>
               ))}
             </select>
-            <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
+            <span className="sort-control">
+              <select
+                value={sortKey}
+                onChange={(e) => update({ sort: e.target.value === "rate" ? null : e.target.value, dir: null })}
+                aria-label="並べ替え"
+              >
+                {SORT_OPTIONS.map(([k, label]) => (
+                  <option key={k} value={k}>
+                    {label}順
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="sort-dir"
+                onClick={() => update({ dir: desc ? "asc" : "desc" })}
+                aria-label={desc ? "逆順にする" : "元の順にする"}
+              >
+                {desc ? "▼" : "▲"}
+              </button>
+            </span>
           </div>
+        </details>
+      </div>
+      <div className="filters only-wide">
+        <fieldset className="chips" aria-label="公演の種別">
+          {presentTypes.map((t) => (
+            <label key={t} className="chip">
+              <input type="checkbox" checked={selectedTypes.has(t)} onChange={() => toggleType(t)} />
+              {EVENT_TYPE_LABEL[t]}
+            </label>
+          ))}
+          {hasCollab && (
+            <label className="chip chip-option" title="他グループとのコラボステージでの歌唱も集計に含める">
+              <input type="checkbox" checked={includeCollab} onChange={() => update({ collab: includeCollab ? null : "1" })} />
+              コラボステージを含む
+            </label>
+          )}
+        </fieldset>
+        <div className="filter-row">
+          <select value={era} onChange={(e) => update({ era: e.target.value })} aria-label="区分" className={era ? "is-set" : undefined}>
+            <option value="">すべての区分</option>
+            {eraOptions.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.label}
+              </option>
+            ))}
+          </select>
+          <select
+            value={unit}
+            onChange={(e) => update({ unit: e.target.value })}
+            aria-label="オリジナル"
+            className={unit ? "is-set" : undefined}
+          >
+            <option value="">すべてのオリジナル</option>
+            {artist.units.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.label}
+              </option>
+            ))}
+          </select>
+          <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
         </div>
-      )}
+      </div>
 
-      {narrow ? (
-        <div className="song-rows-wrap">
-          {rows.length === 0 && <p className="empty-row">{emptyMessage}</p>}
-          <ol className="song-rows">
-            {visibleRows.map((s, i) => {
-              const f = figures(s, sortKey, today);
-              return (
-                <li
-                  key={s.song.id}
-                  className={s.count === 0 ? "song-row unplayed" : "song-row"}
-                  style={{ "--rate": s.count > 0 ? s.rate : 0 } as React.CSSProperties}
+      <div className="song-rows-wrap only-narrow">
+        {rows.length === 0 && <p className="empty-row">{emptyMessage}</p>}
+        <ol className="song-rows">
+          {visibleRows.map((s, i) => {
+            const f = figures(s, sortKey, today);
+            return (
+              <li
+                key={s.song.id}
+                className={s.count === 0 ? "song-row unplayed" : "song-row"}
+                style={{ "--rate": s.count > 0 ? s.rate : 0 } as React.CSSProperties}
+              >
+                <span className="song-row-rank">{s.count > 0 ? i + 1 : "–"}</span>
+                <span className="song-row-main">
+                  <Link to={s.song.id} className="song-title">
+                    {s.song.title}
+                  </Link>
+                  {hasBadges(s) && meta(s)}
+                </span>
+                <span className="song-row-figures">
+                  <span className="song-row-value">{f.main}</span>
+                  {f.sub.length > 0 && <span className="song-row-sub">{f.sub.join(" · ")}</span>}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+        {unplayedToggle && <div className="song-rows-toggle">{unplayedToggle}</div>}
+      </div>
+      <div className="table-wrap only-wide">
+        <table className="stats-table">
+          <thead>
+            <tr>
+              <th className="rank">#</th>
+              <th title="曲名">
+                <button type="button" onClick={() => setSort("title")}>
+                  曲名
+                  <span className="sort-mark">{sortKey === "title" ? (desc ? "▼" : "▲") : ""}</span>
+                </button>
+              </th>
+              {columns.map((c) => (
+                <th
+                  key={c.key}
+                  className={[c.numeric && "num", c.className].filter(Boolean).join(" ")}
+                  title={c.title}
+                  aria-sort={sortKey === c.key ? (desc ? "descending" : "ascending") : undefined}
                 >
-                  <span className="song-row-rank">{s.count > 0 ? i + 1 : "–"}</span>
-                  <span className="song-row-main">
-                    <Link to={s.song.id} className="song-title">
-                      {s.song.title}
-                    </Link>
-                    {hasBadges(s) && meta(s)}
-                  </span>
-                  <span className="song-row-figures">
-                    <span className="song-row-value">{f.main}</span>
-                    {f.sub.length > 0 && <span className="song-row-sub">{f.sub.join(" · ")}</span>}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-          {unplayedToggle && <div className="song-rows-toggle">{unplayedToggle}</div>}
-        </div>
-      ) : (
-        <div className="table-wrap">
-          <table className="stats-table">
-            <thead>
-              <tr>
-                <th className="rank">#</th>
-                <th title="曲名">
-                  <button type="button" onClick={() => setSort("title")}>
-                    曲名
-                    <span className="sort-mark">{sortKey === "title" ? (desc ? "▼" : "▲") : ""}</span>
+                  <button type="button" onClick={() => setSort(c.key)}>
+                    {c.label}
+                    <span className="sort-mark">{sortKey === c.key ? (desc ? "▼" : "▲") : ""}</span>
                   </button>
                 </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={columns.length + 2} className="empty-row">
+                  {emptyMessage}
+                </td>
+              </tr>
+            )}
+            {visibleRows.map((s, i) => (
+              <tr key={s.song.id} className={s.count === 0 ? "unplayed" : undefined}>
+                <td className="rank">{s.count > 0 ? i + 1 : "–"}</td>
+                <td className="title">
+                  <Link to={s.song.id} className="song-title">
+                    {s.song.title}
+                  </Link>
+                  {meta(s)}
+                </td>
                 {columns.map((c) => (
-                  <th
-                    key={c.key}
-                    className={[c.numeric && "num", c.className].filter(Boolean).join(" ")}
-                    title={c.title}
-                    aria-sort={sortKey === c.key ? (desc ? "descending" : "ascending") : undefined}
-                  >
-                    <button type="button" onClick={() => setSort(c.key)}>
-                      {c.label}
-                      <span className="sort-mark">{sortKey === c.key ? (desc ? "▼" : "▲") : ""}</span>
-                    </button>
-                  </th>
+                  <td key={c.key} className={[c.numeric && "num", c.className].filter(Boolean).join(" ")}>
+                    {c.cell(s, today)}
+                  </td>
                 ))}
               </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length + 2} className="empty-row">
-                    {emptyMessage}
-                  </td>
-                </tr>
-              )}
-              {visibleRows.map((s, i) => (
-                <tr key={s.song.id} className={s.count === 0 ? "unplayed" : undefined}>
-                  <td className="rank">{s.count > 0 ? i + 1 : "–"}</td>
-                  <td className="title">
-                    <Link to={s.song.id} className="song-title">
-                      {s.song.title}
-                    </Link>
-                    {meta(s)}
-                  </td>
-                  {columns.map((c) => (
-                    <td key={c.key} className={[c.numeric && "num", c.className].filter(Boolean).join(" ")}>
-                      {c.cell(s, today)}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {unplayedToggle && (
-                <tr className="toggle-row">
-                  <td colSpan={columns.length + 2}>{unplayedToggle}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+            ))}
+            {unplayedToggle && (
+              <tr className="toggle-row">
+                <td colSpan={columns.length + 2}>{unplayedToggle}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       {covers.length > 0 && (
         <section className="covers">
           <h3 className="section-heading">

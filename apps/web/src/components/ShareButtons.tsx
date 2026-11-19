@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useLocation } from "react-router";
+import { useHydrated, useOrigin } from "../hydration.ts";
 import { ImageShare } from "./ImageShare.tsx";
 import "./ShareButtons.css";
 
@@ -18,13 +20,14 @@ export function ShareButtons({
 }) {
   const [copied, setCopied] = useState(false);
   // 共有するのは正式ドメインのパス（クエリ・ハッシュは付けない）
-  const url = location.origin + location.pathname;
+  const url = useOrigin() + useLocation().pathname;
   // hashtags・url パラメータだと並び順を選べないので、本文・ハッシュタグ・URL を改行区切りで 1 つの本文にする
   const tags = hashtags.map((h) => `#${h}`).join(" ");
   const intent = new URL("https://x.com/intent/post");
   intent.searchParams.set("text", [text, tags, url].filter(Boolean).join("\n"));
 
-  const canShare = typeof navigator.share === "function";
+  // 共有シートの有無はブラウザで調べる（ビルド時の HTML では出さない）
+  const canShare = useHydrated() && typeof navigator.share === "function";
   const share = () => navigator.share({ title: document.title, text, url }).catch(() => {});
   const copy = async () => {
     try {

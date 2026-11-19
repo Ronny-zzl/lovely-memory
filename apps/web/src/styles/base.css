@@ -104,3 +104,21 @@ h4 {
   white-space: nowrap;
   border: 0;
 }
+
+/*
+ * 画面の幅で見せ分ける（スマホの幅は 640px 以下。CSS の他の @media と同じ）。
+ * JS で幅を調べて出し分けると、ビルド時に作る HTML（幅が分からない）と食い違うので、両方を出して CSS で隠す
+ */
+
+/* :root を付けて、各部品の display 指定より強くする */
+@media (width <= 640px) {
+  :root .only-wide {
+    display: none;
+  }
+}
+
+@media (width > 640px) {
+  :root .only-narrow {
+    display: none;
+  }
+}

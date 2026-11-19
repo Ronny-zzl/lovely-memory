@@ -1,13 +1,12 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
 import { ageOn, computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
-import { birthdayCountdown, birthdayWithAge, displayTitle, formatDate, formatMonthDay, formatPercent, todayJst } from "../format.ts";
+import { birthdayCountdown, birthdayWithAge, displayTitle, formatDate, formatMonthDay, formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./MembersPage.css";
 
 export function MembersPage() {
-  const { artist, events, allStats, isHeld } = useArtistData();
-  const today = todayJst();
+  const { artist, events, allStats, isHeld, today } = useArtistData();
   const members = useMemo(() => computeMemberStats({ artist, events, stats: allStats, held: isHeld }), [artist, events, allStats, isHeld]);
   const assumed = events.filter((e) => isLiveEvent(e) && isHeld(e) && e.membersSource === "assumed").length;
 

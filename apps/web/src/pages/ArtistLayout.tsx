@@ -3,7 +3,8 @@ import { Link, Navigate, NavLink, Outlet, useLocation, useNavigation, useOutletC
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { PageSkeleton } from "../components/PageSkeleton.tsx";
-import { findArtist, loadArtistData, type ArtistData } from "../data.ts";
+import { artistDataOn, findArtist, loadArtistData, type ArtistData } from "../data.ts";
+import { useToday } from "../hydration.ts";
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
 
 export function ArtistLayout() {
@@ -62,7 +63,7 @@ export function ArtistLayout() {
 }
 
 function ArtistOutlet({ artist }: { artist: ArtistConfig }) {
-  const data = use(loadArtistData(artist));
+  const data = artistDataOn(use(loadArtistData(artist)), useToday());
   return <Outlet context={data} />;
 }
 

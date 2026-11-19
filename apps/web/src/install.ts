@@ -25,16 +25,19 @@ let installed = false;
 const listeners = new Set<() => void>();
 const notify = () => listeners.forEach((l) => l());
 
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault(); // ブラウザ任せのミニバナーは出さず、ボタンから出す
-  deferred = e as InstallPromptEvent;
-  notify();
-});
-window.addEventListener("appinstalled", () => {
-  installed = true;
-  deferred = undefined;
-  notify();
-});
+// ビルド時の描画では window が無い
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault(); // ブラウザ任せのミニバナーは出さず、ボタンから出す
+    deferred = e as InstallPromptEvent;
+    notify();
+  });
+  window.addEventListener("appinstalled", () => {
+    installed = true;
+    deferred = undefined;
+    notify();
+  });
+}
 
 async function install() {
   const e = deferred;
@@ -56,9 +59,16 @@ function compute(): InstallState {
   return snapshot;
 }
 
+const none: InstallState = { kind: "none" };
+
 export function useInstallState(): InstallState {
-  return useSyncExternalStore((l) => {
-    listeners.add(l);
-    return () => listeners.delete(l);
-  }, compute);
+  return useSyncExternalStore(
+    (l) => {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
+    compute,
+    // ビルド時の HTML（と、それを引き継ぐ最初の描画）ではボタンを出さない
+    () => none,
+  );
 }

@@ -8,7 +8,7 @@ const DISMISS_KEY = "lovely-memory:attendance-hint-dismissed";
 /**
  * 公演一覧の上の案内。「参戦」ボタンが何をするのかを伝える。
  * action: 案内に添えるボタン（狭い画面で一覧の「参戦」ボタンを出し入れするもの）。
- * buttonsHidden: 一覧に「参戦」ボタンが出ていない（action で出す）ときは、案内の文もそれに合わせる。
+ * buttonsHidden: 狭い画面で一覧に「参戦」ボタンが出ていない（action で出す）ときは、案内の文もそれに合わせる。
  */
 export function AttendanceHint({
   artistId,
@@ -48,7 +48,8 @@ export function AttendanceHint({
   return (
     <div className="attend-hint" role="note">
       <p>
-        {buttonsHidden ? "「参戦を記録」を押してから、" : ""}行った公演の右の<span className="attend-hint-sample">＋ 参戦</span>を押すと、
+        {buttonsHidden && <span className="only-narrow">「参戦を記録」を押してから、</span>}行った公演の右の
+        <span className="attend-hint-sample">＋ 参戦</span>を押すと、
         <Link to={`/${artistId}/attendance`}>参戦記録</Link>で生で聴いた曲・まだ聴いていない曲がわかります。
         <Link to={`/${artistId}/attendance`}>eventernote から読み込む</Link>こともできます。
         {action && <span className="attend-hint-action">{action}</span>}

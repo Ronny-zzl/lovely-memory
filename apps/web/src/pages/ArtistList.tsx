@@ -3,7 +3,8 @@ import { Link } from "react-router";
 import { isLiveEvent, type ArtistConfig } from "@lovely-memory/core/runtime";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
-import { artists, loadArtistData } from "../data.ts";
+import { artistDataOn, artists, loadArtistData, type ArtistData } from "../data.ts";
+import { useToday } from "../hydration.ts";
 import { displayTitle, formatDate, formatDayWithWeekday } from "../format.ts";
 import "./ArtistList.css";
 
@@ -53,10 +54,10 @@ export function ArtistList() {
 
 /** データを読み込んでから、数字・最新のセトリ・次の公演を添える */
 function ArtistCardWithData({ artist }: { artist: ArtistConfig }) {
-  return <ArtistCard artist={artist} data={use(loadArtistData(artist))} />;
+  return <ArtistCard artist={artist} data={artistDataOn(use(loadArtistData(artist)), useToday())} />;
 }
 
-function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: Awaited<ReturnType<typeof loadArtistData>> }) {
+function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData }) {
   const base = `/${artist.id}`;
   const latest = data?.allStats.events.reduce<(typeof data.allStats.events)[number] | undefined>(
     (a, e) => (!a || `${e.event.date}${e.event.start ?? ""}` >= `${a.event.date}${a.event.start ?? ""}` ? e : a),

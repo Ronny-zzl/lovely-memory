@@ -25,9 +25,21 @@
   white-space: nowrap;
 }
 
+/* 広い画面ではボタンだけ。狭い画面では普段は印だけ、「参戦を記録」中はボタンだけ */
+@media (width > 640px) {
+  .attend-mark {
+    display: none;
+  }
+}
+
 @media (width <= 640px) {
   .event-row-stacked .attend-mark {
     grid-row: 1;
     grid-column: 3;
+  }
+
+  .events:not(.editing) .event-list li.with-toggle .attend-toggle,
+  .events.editing .attend-mark {
+    display: none;
   }
 }

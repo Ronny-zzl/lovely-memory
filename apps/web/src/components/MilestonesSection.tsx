@@ -8,7 +8,6 @@ import {
   formatDayWithWeekday,
   formatMonthDay,
   formatPercent,
-  todayJst,
 } from "../format.ts";
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 import { MilestoneBadge } from "./MilestoneBadge.tsx";
@@ -17,7 +16,7 @@ import "./MilestonesSection.css";
 /** 最近の記録として最初から見せる日数（公演のあった日）。それより前はたたんでおく */
 const RECENT_DATES = 5;
 
-function Upcoming({ u, artistId, artistName }: { u: UpcomingMilestone; artistId: string; artistName: string }) {
+function Upcoming({ u, artistId, artistName, today }: { u: UpcomingMilestone; artistId: string; artistName: string; today: string }) {
   const song = (s: { id: string; title: string }) => (
     <Link to={`/${artistId}/songs/${s.id}`} className="trend-song">
       {s.title}
@@ -68,7 +67,7 @@ function Upcoming({ u, artistId, artistName }: { u: UpcomingMilestone; artistId:
             <strong>{u.years ? `デビュー ${u.years} 周年` : `デビュー ${u.days} 日`}</strong>
           </span>
           <span className="muted small">
-            {formatDate(u.date)}（あと {daysBetween(todayJst(), u.date)} 日）
+            {formatDate(u.date)}（あと {daysBetween(today, u.date)} 日）
           </span>
         </>
       );
@@ -118,7 +117,7 @@ function History({
 /** 傾向タブの「マイルストーン」：これから達成しそうなもの・最近達成したもの・これまでの記録 */
 export function MilestonesSection() {
   const { artist, events, allStats, milestones, isHeld } = useArtistData();
-  const today = todayJst();
+  const { today } = useArtistData();
   const live = events.filter(isLiveEvent);
   const upcoming = upcomingMilestones({ milestones, stats: allStats, liveEvents: live, since: artist.since, today, held: isHeld });
   const dates = [...new Set(milestones.achieved.map((m) => m.date))];
@@ -149,7 +148,7 @@ export function MilestonesSection() {
             ))}
             {upcoming.map((u, i) => (
               <li key={i}>
-                <Upcoming u={u} artistId={artist.id} artistName={artist.name} />
+                <Upcoming u={u} artistId={artist.id} artistName={artist.name} today={today} />
               </li>
             ))}
           </ul>

@@ -15,7 +15,6 @@ import {
   type Stats,
 } from "@lovely-memory/core/runtime";
 import { artists as configs, loaders } from "virtual:lovely-memory/artists";
-import { todayJst } from "./format.ts";
 
 /*
  * artists/<id>/ 以下のデータ。検証・既定値の補完はビルド時（plugins/artists-data.ts）に済んでいる。
@@ -28,7 +27,8 @@ export function findArtist(id: string | undefined): ArtistConfig | undefined {
   return artists.find((a) => a.id === id);
 }
 
-export type ArtistData = {
+/** 日付に関係しないデータ（読み込んだら変わらない） */
+export type ArtistBase = {
   artist: ArtistConfig;
   songs: Song[];
   /** overrides・種別判定適用済み、日付昇順 */
@@ -41,37 +41,31 @@ export type ArtistData = {
   allStats: Stats;
   /** 全イベントの曲順の傾向（1 曲目・ラスト・つながり） */
   patterns: Patterns;
-  /** 記録の節目（読み込んだ日の時点） */
+};
+
+/** ページに渡すデータ：ArtistBase と、「今日」で決まるもの */
+export type ArtistData = ArtistBase & {
+  /** 今日（JST）。ビルド時の HTML ではビルドした日（hydration.ts の useToday） */
+  today: string;
+  /** 記録の節目（today の時点） */
   milestones: Milestones;
   /** 開催済みか（前日以前、または当日でセトリ登録済み）。当日でもセトリが無ければ開催予定 */
   isHeld: HeldCheck;
 };
 
-async function load(artist: ArtistConfig): Promise<ArtistData> {
+async function load(artist: ArtistConfig): Promise<ArtistBase> {
   const loader = loaders[artist.id];
   if (!loader) throw new Error(`no data for ${artist.id}`);
   const { songs, events: rawEvents, overrides, setlists } = (await loader()).default;
   const events = resolveEvents(rawEvents, overrides, artist);
   const allStats = computeStats({ songs, events, setlists });
-  const today = todayJst();
-  const isHeld = heldCheck(
-    today,
-    setlists.map((s) => s.event),
-  );
-  const milestones = computeMilestones({
-    stats: allStats,
-    liveEvents: events.filter(isLiveEvent),
-    since: artist.since,
-    today,
-    held: isHeld,
-  });
-  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events), milestones, isHeld };
+  return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events) };
 }
 
-const cache = new Map<string, Promise<ArtistData>>();
+const cache = new Map<string, Promise<ArtistBase>>();
 
 /** React の use() に渡すため、同じアーティストには同じ Promise を返す */
-export function loadArtistData(artist: ArtistConfig): Promise<ArtistData> {
+export function loadArtistData(artist: ArtistConfig): Promise<ArtistBase> {
   let p = cache.get(artist.id);
   if (!p) {
     const promise = load(artist);
@@ -85,4 +79,29 @@ export function loadArtistData(artist: ArtistConfig): Promise<ArtistData> {
     cache.set(artist.id, p);
   }
   return p;
+}
+
+const byDay = new WeakMap<ArtistBase, Map<string, ArtistData>>();
+
+/** today の時点のデータ（開催済みか・節目）。同じ日なら同じオブジェクトを返す */
+export function artistDataOn(base: ArtistBase, today: string): ArtistData {
+  let days = byDay.get(base);
+  if (!days) byDay.set(base, (days = new Map()));
+  let data = days.get(today);
+  if (!data) {
+    const isHeld = heldCheck(
+      today,
+      base.setlists.map((s) => s.event),
+    );
+    const milestones = computeMilestones({
+      stats: base.allStats,
+      liveEvents: base.events.filter(isLiveEvent),
+      since: base.artist.since,
+      today,
+      held: isHeld,
+    });
+    data = { ...base, today, milestones, isHeld };
+    days.set(today, data);
+  }
+  return data;
 }

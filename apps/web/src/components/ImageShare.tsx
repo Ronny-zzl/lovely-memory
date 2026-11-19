@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useHydrated } from "../hydration.ts";
 import { canCopyImage, canShareFiles, copyImage, isTouchDevice, safeFileName, saveImage } from "../share-image.ts";
 import "./ShareDialog.css";
 
@@ -26,9 +27,11 @@ export function ImageShare({ src, fileName: name, alt }: { src: string; fileName
       .catch(() => setFailed(true));
   };
 
-  const touch = isTouchDevice();
+  // 端末の種類・ブラウザの機能はブラウザで調べる（ビルド時の HTML では、どちらでもない形で描く）
+  const hydrated = useHydrated();
+  const touch = hydrated && isTouchDevice();
   const canShareFile = !!blob && canShareFiles(blob);
-  const canCopy = canCopyImage();
+  const canCopy = hydrated && canCopyImage();
   // スマホは共有シート、PC はコピーを主にする
   const shareFirst = touch && canShareFile;
   const share = () => {

@@ -39,12 +39,14 @@ function write(next: Stored) {
   listeners.forEach((l) => l());
 }
 
-// 別のタブでの変更を反映する
-window.addEventListener("storage", (e) => {
-  if (e.key !== KEY) return;
-  state = read();
-  listeners.forEach((l) => l());
-});
+// 別のタブでの変更を反映する（ビルド時の描画では window が無い）
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key !== KEY) return;
+    state = read();
+    listeners.forEach((l) => l());
+  });
+}
 
 export type Attendance = {
   /** 保存している記録そのもの（バックアップ用） */
@@ -95,11 +97,18 @@ function getSnapshot(): Attendance {
   return snapshot.value;
 }
 
+// ビルド時の HTML（と、それを引き継ぐ最初の描画）は記録なしで描く。記録はこのブラウザにしか無いので
+const serverSnapshot = build(EMPTY);
+
 export function useAttendance(): Attendance {
-  return useSyncExternalStore((l) => {
-    listeners.add(l);
-    return () => listeners.delete(l);
-  }, getSnapshot);
+  return useSyncExternalStore(
+    (l) => {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
+    getSnapshot,
+    () => serverSnapshot,
+  );
 }
 
 /** eventernote の参加イベントを読み込む（サイトの API 経由） */

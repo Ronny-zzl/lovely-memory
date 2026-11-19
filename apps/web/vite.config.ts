@@ -10,7 +10,13 @@ import { siteMeta } from "./plugins/site-meta.ts";
 export default defineConfig({
   base: "/",
   // エラーの記録に、どのビルドで起きたかを残す（GitHub Actions ではコミット）
-  define: { __BUILD__: JSON.stringify(process.env.GITHUB_SHA?.slice(0, 7) ?? "local") },
+  define: {
+    __BUILD__: JSON.stringify(process.env.GITHUB_SHA?.slice(0, 7) ?? "local"),
+    // ビルドした日（JST）。ビルド時に作る HTML はこの日付で描き、ブラウザで引き継いだ後に今日の日付で描き直す（src/hydration.ts）
+    __BUILD_TODAY__: JSON.stringify(new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date())),
+    // サイトの URL（共有のリンク用）。ビルド時の HTML では location が無いので、これを使う
+    __SITE_ORIGIN__: JSON.stringify((process.env.SITE_URL ?? "https://lovely-memory.moe").replace(/\/$/, "")),
+  },
   plugins: [react(), artistsData(), apiDev(), siteMeta(), preloadRoute(), serviceWorker()],
   build: {
     rollupOptions: {
