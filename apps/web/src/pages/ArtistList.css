@@ -1,32 +1,84 @@
-/* ArtistList の見た目 */
+/* ArtistList（トップページ）の見た目 */
+
+/* トップのヘッダーはタブが無いので、下にも余白 */
+.home-hero {
+  padding-bottom: 20px;
+}
+
+/* 日本語を文節で折り返す（対応していないブラウザでは今まで通り） */
+.home-hero p {
+  margin: 0;
+  word-break: auto-phrase;
+}
+
+.home-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 文字のグラデーションを使わず、太陽・月はそれぞれの色で */
+.home-title svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.home-title .sun {
+  color: var(--sun-icon);
+}
+
+.home-title .moon {
+  color: var(--accent-2);
+}
+
+.home-lead {
+  margin: 0 0 6px;
+  font-family: var(--font-round);
+  font-weight: 800;
+}
 
 .artist-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
+  gap: 16px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .artist-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px;
+  position: relative;
+  padding: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  text-decoration: none;
-  transition: border-color 0.15s;
+  overflow: hidden;
 }
 
-.artist-card:hover {
-  border-color: var(--accent);
+/* 上端に朝から夜へのグラデーションの細い帯 */
+.artist-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--hero-bg);
+  content: "";
+}
+
+.artist-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  text-decoration: none;
 }
 
 .artist-card-name {
-  font-weight: 700;
-  font-size: var(--text-base);
+  font-family: var(--font-round);
+  font-size: var(--text-lg);
+  font-weight: 800;
+}
+
+.artist-card-head:hover .artist-card-name {
+  color: var(--accent-text);
 }
 
 .artist-card-sub {
@@ -35,11 +87,121 @@
   font-weight: 600;
 }
 
-/* トップのヘッダーはタブが無いので、下にも余白 */
-.home-hero {
-  padding-bottom: 16px;
+.artist-card-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
 }
 
-.home-hero p {
+.artist-card-members li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.artist-card-since {
+  margin: 4px 0 0;
+}
+
+.artist-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 16px 0 0;
+}
+
+.artist-card-stats div {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--row-hover);
+}
+
+.artist-card-stats dt {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.artist-card-stats dd {
   margin: 0;
+  font-family: var(--font-round);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.artist-card-events {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.artist-card-event {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.artist-card-event:hover {
+  border-color: var(--accent);
+}
+
+.artist-card-event-label {
+  width: 100%;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.artist-card-event-title {
+  font-weight: 600;
+}
+
+.artist-card-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.artist-card-links a {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+
+.artist-card-links a:hover {
+  background: var(--bar);
+}
+
+.artist-card-link-label {
+  font-family: var(--font-round);
+  font-weight: 800;
+}
+
+@media (width <= 640px) {
+  .artist-card {
+    padding: 16px 12px;
+  }
+
+  .artist-card-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 5 つ目（参戦記録）が 1 つだけ残らないよう、最後の行は横いっぱいに */
+  .artist-card-links a:last-child {
+    grid-column: span 2;
+  }
 }
