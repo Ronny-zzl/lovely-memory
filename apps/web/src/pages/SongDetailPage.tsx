@@ -41,21 +41,34 @@ const ZONES = [
 ] as const;
 
 const NEIGHBOR_SIZE = 3;
+/** 記録（節目）は新しいものをこの件数だけ出し、残りは畳む */
+const RECENT_MILESTONES = 3;
 
-function NeighborList({ title, items, pick }: { title: string; items: Transition[]; pick: (t: Transition) => Song }) {
+/** 前後に歌われた曲の列（多い順）。曲名のすぐ後ろに回数を置く */
+function NeighborList({
+  title,
+  items,
+  pick,
+  side,
+}: {
+  title: string;
+  items: Transition[];
+  pick: (t: Transition) => Song;
+  side: "before" | "after";
+}) {
   return (
-    <div className="neighbor-col">
+    <div className={`flow-col flow-${side}`}>
       <h4 className="neighbor-heading">{title}</h4>
       {items.length === 0 ? (
         <p className="muted small">—</p>
       ) : (
-        <ul className="neighbor-list">
+        <ul className="flow-list">
           {items.slice(0, NEIGHBOR_SIZE).map((t) => (
             <li key={pick(t).id}>
               <Link to={`../${pick(t).id}`} relative="path" className="trend-song">
                 {pick(t).title}
               </Link>
-              <span className="rank-count">{t.count}回</span>
+              <span className="flow-count">{t.count}回</span>
             </li>
           ))}
         </ul>
@@ -96,6 +109,21 @@ export function SongDetailPage() {
   const record = milestones.songs.get(song.id);
   const songMilestones = milestones.achieved.filter((m) => "song" in m && m.song.id === song.id).reverse();
   const eventTitle = new Map(allStats.events.map((e) => [e.event.id, displayTitle(e.event.title, artist.name)]));
+  const milestoneList = (items: typeof songMilestones) => (
+    <ul className="milestone-list">
+      {items.map((m, i) => (
+        <li key={i}>
+          <span className="event-date event-date-full">{formatDate(m.date)}</span>
+          <MilestoneBadge m={m} artistId={artist.id} showSong={false} />
+          {m.eventId && (
+            <Link to={`/${artist.id}/events/${m.eventId}`} className="muted small milestone-event">
+              {eventTitle.get(m.eventId)}
+            </Link>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
 
   const history = [...stats.performances].reverse();
   // カバー曲は歌唱回数が少なく間隔も長いので、歌唱率・出現パターン等は出さない
@@ -239,7 +267,7 @@ export function SongDetailPage() {
           )}
 
           {!isCover && record && (
-            <section className="song-section">
+            <section className="song-section song-card">
               <h3 className="section-heading">記録</h3>
               <ul className="record-facts">
                 {record.currentStreak >= STREAK_MIN && (
@@ -257,29 +285,30 @@ export function SongDetailPage() {
                   あと <strong>{record.nextCount - stats.count} 回</strong>で通算 {record.nextCount} 回目
                 </li>
               </ul>
-              {songMilestones.length > 0 && (
-                <ul className="milestone-list">
-                  {songMilestones.map((m, i) => (
-                    <li key={i}>
-                      <span className="event-date event-date-full">{formatDate(m.date)}</span>
-                      <MilestoneBadge m={m} artistId={artist.id} showSong={false} />
-                      {m.eventId && (
-                        <Link to={`/${artist.id}/events/${m.eventId}`} className="muted small milestone-event">
-                          {eventTitle.get(m.eventId)}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+              {songMilestones.length > 0 && milestoneList(songMilestones.slice(0, RECENT_MILESTONES))}
+              {songMilestones.length > RECENT_MILESTONES && (
+                <details className="older-records">
+                  <summary className="small">それ以前の記録（{songMilestones.length - RECENT_MILESTONES} 件）</summary>
+                  {milestoneList(songMilestones.slice(RECENT_MILESTONES))}
+                </details>
               )}
             </section>
           )}
 
           {!isCover && position && position.count > 0 && (
-            <section className="song-section">
+            <section className="song-section song-card">
               <h3 className="section-heading">
                 セトリでの位置<span className="muted small"> 本編 {position.count} 回</span>
               </h3>
+              {/* 本編の始まり（1 曲目）から終わり（ラスト）まで。前半・中盤・後半は朝・夕方・夜の色 */}
+              <div className="position-ends small">
+                <span>
+                  1 曲目 <strong>{position.opener}</strong> 回
+                </span>
+                <span>
+                  ラスト <strong>{position.closer}</strong> 回
+                </span>
+              </div>
               {zoned > 0 && (
                 <div className="zone-bar" role="img" aria-label={ZONES.map(([z, label]) => `${label} ${position.zones[z]}回`).join("、")}>
                   {ZONES.map(([z, label]) =>
@@ -291,12 +320,17 @@ export function SongDetailPage() {
                   )}
                 </div>
               )}
-              <p className="small muted position-stats">
-                1 曲目 {position.opener} 回 ・ ラスト {position.closer} 回{position.encore > 0 && ` ・ アンコール ${position.encore} 回`}
-              </p>
-              <div className="neighbors">
-                <NeighborList title="前に歌われた曲" items={near.before} pick={(t) => t.from} />
-                <NeighborList title="次に歌われた曲" items={near.after} pick={(t) => t.to} />
+              {position.encore > 0 && <p className="small muted position-stats">アンコール {position.encore} 回</p>}
+              <div className="flow">
+                <NeighborList title="前に歌われた曲" items={near.before} pick={(t) => t.from} side="before" />
+                <span className="flow-arrow" aria-hidden="true">
+                  →
+                </span>
+                <span className="flow-song">{song.title}</span>
+                <span className="flow-arrow" aria-hidden="true">
+                  →
+                </span>
+                <NeighborList title="次に歌われた曲" items={near.after} pick={(t) => t.to} side="after" />
               </div>
             </section>
           )}
@@ -309,12 +343,14 @@ export function SongDetailPage() {
                 const size = stageSize(p.eventId, p.stageIndex);
                 return (
                   <li key={`${p.eventId}-${p.stageIndex}-${p.position}`}>
-                    <Link to={`/${artist.id}/events/${p.eventId}`} className="event-row">
+                    <Link to={`/${artist.id}/events/${p.eventId}`} className="event-row event-row-stacked">
                       <span className="event-date event-date-full">{formatDate(p.date)}</span>
                       <span className="event-main">
                         <span className="event-title">
-                          <TypeBadges types={es.event.types} />
-                          {displayTitle(es.event.title, artist.name)}
+                          <span className="event-badges">
+                            <TypeBadges types={es.event.types} />
+                          </span>
+                          <span className="event-name">{displayTitle(es.event.title, artist.name)}</span>
                         </span>
                         <span className="event-meta">
                           {p.collab && <span className="badge collab">コラボ</span>}
