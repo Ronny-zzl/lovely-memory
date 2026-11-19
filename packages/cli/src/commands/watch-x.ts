@@ -97,7 +97,12 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
       }
       const at = jstLabel(d.post.time);
       if (d.kind === "import") {
-        console.log(`[${artistId}] 取り込み ${d.event.date} ${d.event.title} ← ${d.post.url}`);
+        const titles = (d.setlist.stages ?? [{ items: d.setlist.items ?? [] }]).flatMap((st) =>
+          st.items.map((i) => (typeof i === "string" ? i : i.song)),
+        );
+        console.log(
+          `[${artistId}] 取り込み ${d.event.date} ${d.event.title} ← ${d.post.url}（${titles.length} 曲: ${titles.join(" / ")}）`,
+        );
         if (!dryRun) await writeSetlist(artistId, d.setlist, d.event);
         imported.push(`${d.event.date} ${d.event.title}`);
         actions.push({
