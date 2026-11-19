@@ -74,6 +74,15 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
     });
     read++;
     console.log(`[${artistId}] 新しいポスト ${fresh.length} 件`);
+    for (const t of fresh)
+      console.log(
+        `  ${jstLabel(t.time)} ${t.url}  ${
+          t.text
+            .split("\n")
+            .find((l) => l.trim())
+            ?.slice(0, 40) ?? ""
+        }`,
+      );
 
     const byId = new Map([...st.tweets, ...fresh].map((t) => [t.id, t]));
     st.tweets = prune([...byId.values()], now);
