@@ -1,30 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { cardChars, drawAttendanceCard, loadCardFont, type AttendanceCardData } from "../attendance-card.ts";
-import "./AttendanceShare.css";
+import { canCopyImage, canShareFiles, copyImage, isTouchDevice, saveImage } from "../share-image.ts";
+import "./ShareDialog.css";
 
 /**
  * 参戦記録のシェア画像。
  * - スマホ：OS の共有シートに画像を添えて渡す（X・LINE などにそのまま投稿できる）
  * - PC：画像を保存して、X の投稿画面（本文入り）に手で添付してもらう
  */
-/** スマホ・タブレット（指で操作する端末）。共有シートを主に使い、PC ではクリップボードを主に使う */
-const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
-
-/** OS の共有シートに画像を渡せるか */
-function canShareFiles(blob: Blob): boolean {
-  return typeof navigator.canShare === "function" && navigator.canShare({ files: [new File([blob], "card.png", { type: "image/png" })] });
-}
-
-/** 画像をクリップボードへ。できたら true */
-async function copyImage(blob: Blob): Promise<boolean> {
-  try {
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export function AttendanceShare({
   card,
   postText,
@@ -66,17 +49,12 @@ export function AttendanceShare({
   const file = blob && new File([blob], fileName, { type: "image/png" });
   const touch = isTouchDevice();
   const canShareFile = !!blob && canShareFiles(blob);
-  const canCopy = typeof ClipboardItem !== "undefined" && !!navigator.clipboard?.write;
+  const canCopy = canCopyImage();
   // スマホは共有シート、PC はコピー＆貼り付けを主にする
   const shareFirst = touch && canShareFile;
 
   const save = () => {
-    if (!blob) return;
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(a.href);
+    if (blob) saveImage(blob, fileName);
   };
   const share = () => {
     if (file) navigator.share({ files: [file], text }).catch(() => {});
@@ -113,7 +91,7 @@ export function AttendanceShare({
       >
         <div className="share-dialog-body">
           <h3 className="section-heading">参戦記録をシェア</h3>
-          <div className="share-preview">
+          <div className="share-preview" style={{ "--share-ratio": "1200 / 675" } as CSSProperties}>
             <canvas ref={canvasRef} role="img" aria-label="参戦記録のシェア画像" />
             {!blob && <p className="muted small share-loading">画像を作っています…</p>}
           </div>

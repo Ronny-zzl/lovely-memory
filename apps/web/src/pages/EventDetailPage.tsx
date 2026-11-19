@@ -78,6 +78,16 @@ export function EventDetailPage() {
         <ShareButtons
           text={`${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」${setlist ? "のセトリ" : ""}（${artist.name}）`}
           hashtags={artist.shareHashtags}
+          // 共有画像はライブのイベントにだけある（og-pages）
+          image={
+            isLiveEvent(event)
+              ? {
+                  src: `/og/${artist.id}/events/${event.id}.png`,
+                  fileName: `${event.date} ${displayTitle(event.title, artist.name)}.png`,
+                  alt: `${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」のセットリスト`,
+                }
+              : undefined
+          }
         />
       </header>
 

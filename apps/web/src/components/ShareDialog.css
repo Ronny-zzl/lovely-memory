@@ -1,4 +1,4 @@
-/* AttendanceShare の見た目 */
+/* 画像を共有するダイアログ（AttendanceShare・ImageShare）の共通の見た目 */
 
 .share-dialog {
   width: min(720px, calc(100vw - 32px));
@@ -21,13 +21,16 @@
 .share-preview {
   position: relative;
   margin: 8px 0 12px;
-  aspect-ratio: 1200 / 675;
+
+  /* 画像の縦横比は使う側が --share-ratio で指定する */
+  aspect-ratio: var(--share-ratio);
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--row-hover);
 }
 
-.share-preview canvas {
+.share-preview canvas,
+.share-preview img {
   display: block;
   width: 100%;
   height: 100%;

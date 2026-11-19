@@ -1,11 +1,21 @@
 import { useState } from "react";
+import { ImageShare } from "./ImageShare.tsx";
 import "./ShareButtons.css";
 
 /**
  * ページの共有ボタン。X は投稿画面へのリンク（intent）なので、X のスクリプトは読み込まない。
  * リンクのコピーと、OS の共有シート（Web Share API）が使える端末では「共有」ボタンも出す（LINE などへ）。
+ * image があれば「画像」ボタンも出す（リンクを付けずに共有画像だけを投稿したいとき用）。
  */
-export function ShareButtons({ text, hashtags = [] }: { text: string; hashtags?: string[] }) {
+export function ShareButtons({
+  text,
+  hashtags = [],
+  image,
+}: {
+  text: string;
+  hashtags?: string[];
+  image?: { src: string; fileName: string; alt: string };
+}) {
   const [copied, setCopied] = useState(false);
   // 共有するのは正式ドメインのパス（クエリ・ハッシュは付けない）
   const url = location.origin + location.pathname;
@@ -45,6 +55,7 @@ export function ShareButtons({ text, hashtags = [] }: { text: string; hashtags?:
           共有
         </button>
       )}
+      {image && <ImageShare {...image} />}
     </div>
   );
 }

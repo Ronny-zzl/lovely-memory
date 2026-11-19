@@ -176,6 +176,7 @@ export function SongDetailPage() {
               : `「${song.title}」の歌唱率 ${formatPercent(stats.rate)}（${stats.events}/${stats.eligibleEvents} 公演）・歌唱 ${stats.count} 回（${artist.name}）`
           }
           hashtags={artist.shareHashtags}
+          image={{ src: `/og/${artist.id}/songs/${song.id}.png`, fileName: `${song.title}.png`, alt: `「${song.title}」の歌唱記録` }}
         />
       </header>
 
