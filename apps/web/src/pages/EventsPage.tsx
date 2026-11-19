@@ -1,11 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { eventCostume, eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
+import { useAttendance } from "../attendance.ts";
 import { AttendanceHint } from "../components/AttendanceHint.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, EVENT_TYPE_LABEL, formatDayWithWeekday } from "../format.ts";
+import { useNarrow } from "../use-narrow.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./EventsPage.css";
 
@@ -40,6 +42,11 @@ export function EventsPage() {
 
   // 選ばれた種別のどれかに該当すれば表示（主催対バンは「対バン・フェス」にも該当）
   const visible = events.filter((e) => [...selected].some((t) => eventHasType(e, t)));
+  // 「参戦」ボタンは押す機会が少ないので、狭い画面では普段は印だけ出し、記録するときだけボタンを出す
+  const narrow = useNarrow();
+  const attendance = useAttendance();
+  const [editing, setEditing] = useState(false);
+  const showToggles = !narrow || editing;
   const upcoming = visible.filter((e) => !isHeld(e));
   const past = visible.filter((e) => !upcoming.includes(e)).reverse();
 
@@ -80,8 +87,9 @@ export function EventsPage() {
             </span>
           </span>
           <MemberDots artist={artist} present={e.members} />
+          {!showToggles && attendance.isAttended(e.id) && <span className="attend-mark">✓ {isHeld(e) ? "参戦" : "予定"}</span>}
         </Link>
-        {isLiveEvent(e) && <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />}
+        {showToggles && isLiveEvent(e) && <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />}
       </li>
     );
   };
@@ -97,7 +105,23 @@ export function EventsPage() {
         ))}
       </fieldset>
 
-      <AttendanceHint artistId={artist.id} eventIds={events.filter(isLiveEvent).map((e) => e.id)} />
+      <AttendanceHint
+        artistId={artist.id}
+        eventIds={events.filter(isLiveEvent).map((e) => e.id)}
+        buttonsHidden={narrow && !editing}
+        action={
+          narrow && (
+            <button
+              type="button"
+              className={`attend-edit${editing ? " on" : ""}`}
+              aria-pressed={editing}
+              onClick={() => setEditing(!editing)}
+            >
+              {editing ? "完了" : "参戦を記録"}
+            </button>
+          )
+        }
+      />
 
       {upcoming.length > 0 && (
         <details className="upcoming">

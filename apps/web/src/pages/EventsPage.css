@@ -13,3 +13,21 @@
   cursor: pointer;
   list-style-position: inside;
 }
+
+/* 狭い画面の一覧で、ボタンの代わりに出す「✓ 参戦」の印（1 行目の右端） */
+.attend-mark {
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (width <= 640px) {
+  .event-row-stacked .attend-mark {
+    grid-row: 1;
+    grid-column: 3;
+  }
+}

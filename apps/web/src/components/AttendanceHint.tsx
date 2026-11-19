@@ -1,12 +1,26 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import { useAttendance } from "../attendance.ts";
 import "./AttendanceHint.css";
 
 const DISMISS_KEY = "lovely-memory:attendance-hint-dismissed";
 
-/** 公演一覧の上の案内。「参戦」ボタンが何をするのかを伝える */
-export function AttendanceHint({ artistId, eventIds }: { artistId: string; eventIds: number[] }) {
+/**
+ * 公演一覧の上の案内。「参戦」ボタンが何をするのかを伝える。
+ * action: 案内に添えるボタン（狭い画面で一覧の「参戦」ボタンを出し入れするもの）。
+ * buttonsHidden: 一覧に「参戦」ボタンが出ていない（action で出す）ときは、案内の文もそれに合わせる。
+ */
+export function AttendanceHint({
+  artistId,
+  eventIds,
+  action,
+  buttonsHidden = false,
+}: {
+  artistId: string;
+  eventIds: number[];
+  action?: ReactNode;
+  buttonsHidden?: boolean;
+}) {
   const attendance = useAttendance();
   const [dismissed, setDismissed] = useState(() => {
     try {
@@ -26,6 +40,7 @@ export function AttendanceHint({ artistId, eventIds }: { artistId: string; event
         </span>
         参戦 {count} 公演
         <Link to={`/${artistId}/attendance`}>参戦記録を見る →</Link>
+        {action}
       </p>
     );
   }
@@ -33,9 +48,10 @@ export function AttendanceHint({ artistId, eventIds }: { artistId: string; event
   return (
     <div className="attend-hint" role="note">
       <p>
-        行った公演の右の<span className="attend-hint-sample">＋ 参戦</span>を押すと、
+        {buttonsHidden ? "「参戦を記録」を押してから、" : ""}行った公演の右の<span className="attend-hint-sample">＋ 参戦</span>を押すと、
         <Link to={`/${artistId}/attendance`}>参戦記録</Link>で生で聴いた曲・まだ聴いていない曲がわかります。
         <Link to={`/${artistId}/attendance`}>eventernote から読み込む</Link>こともできます。
+        {action && <span className="attend-hint-action">{action}</span>}
       </p>
       <button
         type="button"
