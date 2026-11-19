@@ -69,6 +69,8 @@ export async function watchX(target: string, opts: Record<string, unknown>) {
       userId: x.userId,
       username: x.username,
       ...(st.sinceId ? { sinceId: st.sinceId } : { startTime: earliest.toISOString() }),
+      // --now で過去の時点を指定したときは、その時点までのポストだけ読む
+      ...(typeof opts.now === "string" && { endTime: now.toISOString() }),
     });
     read++;
     console.log(`[${artistId}] 新しいポスト ${fresh.length} 件`);

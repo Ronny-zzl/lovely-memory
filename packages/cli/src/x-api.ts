@@ -35,6 +35,8 @@ export async function fetchUserPosts(opts: {
   username: string;
   sinceId?: string;
   startTime?: string;
+  /** この時刻までのポストだけ（確認用に過去の時点を再現するとき） */
+  endTime?: string;
 }): Promise<CollectedTweet[]> {
   const out: CollectedTweet[] = [];
   let next: string | undefined;
@@ -42,6 +44,7 @@ export async function fetchUserPosts(opts: {
     const params = new URLSearchParams({ max_results: "100", "tweet.fields": "created_at,note_tweet", exclude: "retweets" });
     if (opts.sinceId) params.set("since_id", opts.sinceId);
     else if (opts.startTime) params.set("start_time", opts.startTime);
+    if (opts.endTime) params.set("end_time", opts.endTime);
     if (next) params.set("pagination_token", next);
     const res = await fetch(`https://api.x.com/2/users/${opts.userId}/tweets?${params.toString()}`, {
       headers: { Authorization: `Bearer ${opts.token}`, "User-Agent": "lovely-memory-bot" },
