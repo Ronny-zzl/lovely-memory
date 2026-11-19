@@ -12,8 +12,11 @@ export function ArtistLayout() {
   const { pathname } = useLocation();
   // 開くページのコードを読み込んでいる間（初めて開くタブなど）
   const loading = useNavigation().state === "loading";
-  // 最初に開いたページは、ビルド時の HTML でもう見えているので、ふわっとは出さない（サイト内で移動したときだけ）
-  const [firstPath] = useState(pathname);
+  // 最初に開いたページは、ビルド時の HTML でもう見えているので、ふわっとは出さない。
+  // 一度でもサイト内で移動したら、その後は（最初のページに戻るときも）出す
+  const [nav, setNav] = useState({ first: pathname, moved: false });
+  if (!nav.moved && pathname !== nav.first) setNav({ ...nav, moved: true });
+  const fadeIn = nav.moved || pathname !== nav.first;
   if (!artist) return <Navigate to="/" replace />;
 
   return (
@@ -55,7 +58,7 @@ export function ArtistLayout() {
       <main>
         <Suspense fallback={<PageSkeleton />}>
           {/* ページが変わるたびに中身をふわっと出す（styles/motion.css） */}
-          <div key={pathname} className={pathname === firstPath ? undefined : "page-enter"}>
+          <div key={pathname} className={fadeIn ? "page-enter" : undefined}>
             <ArtistOutlet artist={artist} />
           </div>
         </Suspense>
