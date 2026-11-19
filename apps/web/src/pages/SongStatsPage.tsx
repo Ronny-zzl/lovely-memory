@@ -26,6 +26,14 @@ type Column = {
   cell: (s: SongStats, today: string) => React.ReactNode;
 };
 
+/** 絞り込みの対象：曲名・別表記・作詞・作曲・編曲（共同名義はメンバー名も） */
+const searchTexts = (song: SongStats["song"], creditGroups: Record<string, string[]>) => {
+  const c = song.credits;
+  const credits = [c?.lyrics, c?.music, c?.arrangement].filter((t): t is string => !!t);
+  const members = Object.entries(creditGroups).flatMap(([name, people]) => (credits.some((t) => t.includes(name)) ? people : []));
+  return [song.title, ...song.aliases, ...credits, ...members];
+};
+
 /** 最後に歌われてからの日数（未披露は null） */
 const daysSince = (s: SongStats, today: string) => (s.last ? daysBetween(s.last.date, today) : null);
 
@@ -216,7 +224,7 @@ export function SongStatsPage() {
         (includeCollab || !collabOnly.has(s.song.id)) &&
         (!era || s.song.era === era) &&
         (!unit || s.song.unit === unit) &&
-        (!nq || [s.song.title, ...s.song.aliases].some((t) => normalizeTitle(t).includes(nq))),
+        (!nq || searchTexts(s.song, artist.creditGroups).some((t) => normalizeTitle(t).includes(nq))),
     );
     return filtered.sort((a, b) => {
       const va = sortValue(a, sortKey, today);
@@ -230,7 +238,7 @@ export function SongStatsPage() {
       // 同値の場合: 回数の多い順 → 発売日順
       return b.count - a.count || (a.song.release?.date ?? "9").localeCompare(b.song.release?.date ?? "9");
     });
-  }, [stats, era, unit, q, sortKey, desc, today, includeCollab, collabOnly]);
+  }, [stats, era, unit, q, sortKey, desc, today, includeCollab, collabOnly, artist.creditGroups]);
 
   // 同じイベントで 2 回歌われた曲が無いうちは「回数」と「イベント」が常に一致するので、イベント列は出さない
   const withEvents = stats.songs.some((s) => s.count !== s.events);
@@ -332,7 +340,7 @@ export function SongStatsPage() {
 
       <div className="filters only-narrow">
         <div className="filter-row">
-          <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
+          <input type="search" placeholder="曲名・作詞・作曲・編曲で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
         </div>
         <details className="filter-panel">
           <summary>
@@ -435,7 +443,7 @@ export function SongStatsPage() {
               </option>
             ))}
           </select>
-          <input type="search" placeholder="曲名で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
+          <input type="search" placeholder="曲名・作詞・作曲・編曲で絞り込み" value={q} onChange={(e) => update({ q: e.target.value })} />
         </div>
       </div>
 

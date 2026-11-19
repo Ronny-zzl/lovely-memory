@@ -28,6 +28,7 @@
   "defaultEra": "1st",
   "defaultUnit": "all",
   "shareHashtags": ["太陽月夜"],
+  "creditGroups": { "パリで食べたカマボコ": ["瀬名航", "Akki", "星銀乃丈"] },
   "sources": {
     "eventernote": { "actorId": 72524 },
     "official": { "adapter": "taiyotsukiyo", "url": "https://taiyotsukiyo.com/discography/" },

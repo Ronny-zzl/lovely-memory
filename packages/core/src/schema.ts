@@ -75,6 +75,11 @@ export const ArtistConfig = z.object({
     .default([]),
   /** 共有ボタン（X）で付けるハッシュタグ（# は付けない） */
   shareHashtags: z.array(z.string()).default([]),
+  /**
+   * 複数人の共同名義（作詞・作曲・編曲）。名義 → メンバー名。
+   * songs.json の表記は公式のまま名義で書き、楽曲の絞り込みでメンバー名からも見つかるようにする
+   */
+  creditGroups: z.record(z.string(), z.array(z.string()).min(1)).default({}),
   sources: z.object({
     eventernote: z
       .object({

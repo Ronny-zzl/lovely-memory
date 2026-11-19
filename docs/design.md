@@ -46,6 +46,7 @@
 - 用 `normalizeTitle` 照合曲名（含 `aliases`）。
 - 收录作品取发售日最早的。
 - era 由 `artist.json` 的 `eras[].since` 按发售日自动判定（翻唱曲用 `add-song --cover` 时默认为 `cover`）。
+- 多人共同名义（如「パリで食べたカマボコ」= 瀬名航・Akki・星銀乃丈）：`songs.json` 照官方写名义，`artist.json` 的 `creditGroups` 记「名义 → 成员」，楽曲页的绞り込み用成员名也能搜到。
 
 ## 3. 数据模型
 
@@ -65,7 +66,7 @@ type Song = {
   era: "1st" | "2nd";    // 一期曲 / 二期新曲
   originalUnit?: "太陽と踊れ" | "月夜に唄え" | "全体";
   release?: { date: string; title: string; type: "EP" | "single" | "digital" };
-  credits?: { lyrics?: string; music?: string; arrangement?: string; raw?: string };
+  credits?: { lyrics?: string; music?: string; arrangement?: string };
 };
 
 type EventType =
