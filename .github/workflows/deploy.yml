@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   # 同期・セトリ取り込みワークフローの commit は GITHUB_TOKEN によるもので push イベントを発火しないため、完了を受けてデプロイする
+  # （Watch X は毎時動くのでここには入れず、取り込んだときだけ workflow_dispatch でこれを起動する）
   workflow_run:
     workflows: ["Sync events", "Import setlist"]
     types: [completed]

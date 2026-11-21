@@ -23,6 +23,8 @@ on:
 permissions:
   contents: write
   issues: write
+  # GITHUB_TOKEN の push は Deploy を起動しないので、取り込んだときは Deploy を workflow_dispatch で起動する
+  actions: write
 
 concurrency:
   # 読んだポストのキャッシュを順番に引き継ぐため、同時に 1 つだけ。
@@ -74,6 +76,7 @@ jobs:
         run: pnpm -s lm validate all
 
       - name: Commit
+        id: commit
         if: steps.watch.outputs.imported != '0' && inputs.dry_run != true
         run: |
           git config user.name "github-actions[bot]"
@@ -86,10 +89,19 @@ jobs:
           git commit -F "$RUNNER_TEMP/commit-msg.txt"
           # 他のワークフローと同時に push した場合に備えて、rebase して数回試す
           for i in 1 2 3; do
-            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             sleep $((i * 5))
           done
           exit 1
+
+      - name: Deploy
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main
 
       # push できてから Issue に返信する（取り込めなかった告知の知らせも含む）
       - name: Reply to issues
