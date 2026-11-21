@@ -11,6 +11,12 @@ export const WATCH_UNTIL_NEXT_DAY = "02:00";
 export const MIN_WATCH_HOURS = 4;
 /** 開演時刻が無いイベントはこの時刻に始まったとみなす */
 const DEFAULT_START = "10:00";
+/**
+ * Webhook の購読は開演のこの時間前から開いておく。
+ * 購読を開くのは定期実行だけで、GitHub の schedule は 1 時間ごとの指定でも数時間空くことがあるため、
+ * 開演後に開くのでは間に合わない（2026-11-21 は開演 7 時間後に開き、セトリ告知を Webhook で受け取れなかった）
+ */
+export const SUBSCRIBE_HOURS_BEFORE = 24;
 /** キャッシュに残すポストの期間 */
 export const KEEP_HOURS = 36;
 
@@ -28,12 +34,16 @@ export function watchEnd(e: ResolvedEvent): Date {
  * この間だけ X を読み、Webhook の購読も開いておく。
  * 自動で取り込んだだけのセトリは、続きのポストで更新するかもしれないので「確定」に含めない。
  */
-export function pendingEvents(events: ResolvedEvent[], settled: (id: number) => boolean, now: Date): ResolvedEvent[] {
+export function pendingEvents(events: ResolvedEvent[], settled: (id: number) => boolean, now: Date, leadHours = 0): ResolvedEvent[] {
   return events.filter((e) => {
     if (!isLiveEvent(e) || settled(e.id)) return false;
-    return startOf(e).getTime() <= now.getTime() && now.getTime() <= watchEnd(e).getTime();
+    return startOf(e).getTime() - leadHours * 3_600_000 <= now.getTime() && now.getTime() <= watchEnd(e).getTime();
   });
 }
+
+/** Webhook の購読を開いておくイベント（開演の SUBSCRIBE_HOURS_BEFORE 前から、セトリを待ち終えるまで） */
+export const subscribeEvents = (events: ResolvedEvent[], settled: (id: number) => boolean, now: Date) =>
+  pendingEvents(events, settled, now, SUBSCRIBE_HOURS_BEFORE);
 
 /** 告知の識別子。続きのポストが付くと最後のポストの id が変わるので、もう一度処理される */
 export const postKey = (p: SetlistPost) => `${p.part ? `${p.id}#${p.part}` : p.id}@${p.tweets.at(-1)!.id}`;

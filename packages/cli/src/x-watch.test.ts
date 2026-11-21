@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Song, type ResolvedEvent } from "@lovely-memory/core";
 import type { CollectedTweet } from "./tweet-match.ts";
 import { postText } from "./x-api.ts";
-import { decide, pendingEvents, prune, watchEnd } from "./x-watch.ts";
+import { decide, pendingEvents, prune, subscribeEvents, watchEnd } from "./x-watch.ts";
 
 const ev = (id: number, date: string, start: string, title: string): ResolvedEvent => ({
   id,
@@ -55,6 +55,16 @@ describe("pendingEvents", () => {
     expect(watchEnd(late).toISOString()).toBe(jst("2026-11-21T03:30").toISOString());
     const fes = ev(4, "2026-11-20", "08:00", "朝から夜までのフェス");
     expect(pendingEvents([fes], () => false, jst("2026-11-20T21:30")).map((e) => e.id)).toEqual([4]);
+  });
+
+  it("opens the webhook subscription 24 hours before the start, and closes it with the watch", () => {
+    const at = (now: string, has: number[] = []) => subscribeEvents(events, (id) => has.includes(id), jst(now)).map((e) => e.id);
+    expect(at("2026-11-17T18:59")).toEqual([]);
+    expect(at("2026-11-17T19:00")).toEqual([1]);
+    expect(at("2026-11-18T22:00")).toEqual([1, 2]);
+    expect(at("2026-11-18T22:00", [1])).toEqual([2]);
+    expect(at("2026-11-19T02:01")).toEqual([2]);
+    expect(at("2026-11-20T02:01")).toEqual([]);
   });
 });
 
