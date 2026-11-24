@@ -224,11 +224,45 @@
 }
 
 /*
- * ページ全体の切り替え（theme.ts の toggleTheme）。新しいテーマが円く広がる動きは JS で付けるので、
- * ブラウザの標準のふわっとした重ね合わせは止める
+ * ページ全体の切り替え（theme.ts の toggleTheme）。新しいテーマの画面を、端がぼけた帯の形に切り抜いて、横に滑らせる。
+ * 切り抜きの画像は画面の 2.5 倍の幅で、ぼけた境目（画像の 40〜60%）が画面の半分の幅になる。
+ * 月夜は右から（位置 0% → 100%）、太陽は左から（向きを逆にした画像で 100% → 0%）
  */
-:root.theme-transition::view-transition-old(root),
-:root.theme-transition::view-transition-new(root) {
+:root.theme-transition::view-transition-old(root) {
   animation: none;
+}
+
+:root.theme-transition::view-transition-new(root) {
   mix-blend-mode: normal;
+  mask: linear-gradient(to right, transparent 40%, var(--fg) 60%) 0 0 / 250% 100% no-repeat;
+  animation: theme-wipe 0.8s cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+:root.theme-to-light::view-transition-new(root) {
+  mask-image: linear-gradient(to left, transparent 40%, var(--fg) 60%);
+  animation-direction: reverse;
+}
+
+@keyframes theme-wipe {
+  from {
+    mask-position: 0% 0;
+  }
+
+  to {
+    mask-position: 100% 0;
+  }
+}
+
+/* スイッチは塗り替えの帯に隠れないよう別に扱い、太陽と月の動きを最初から見せる */
+:root.theme-transition .theme-switch {
+  view-transition-name: theme-switch;
+}
+
+:root.theme-transition::view-transition-old(theme-switch) {
+  display: none;
+}
+
+:root.theme-transition::view-transition-group(theme-switch),
+:root.theme-transition::view-transition-new(theme-switch) {
+  animation: none;
 }

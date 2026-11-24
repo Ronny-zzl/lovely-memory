@@ -17,7 +17,7 @@ export function ThemeSwitch() {
       aria-checked={dark}
       aria-label="月夜のテーマ"
       title={theme && (dark ? "太陽のテーマにする" : "月夜のテーマにする")}
-      onClick={(e) => toggleTheme(e.currentTarget)}
+      onClick={toggleTheme}
     >
       <span className="ts-sky ts-day" aria-hidden="true">
         <svg className="ts-cloud" viewBox="0 0 24 12">

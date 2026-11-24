@@ -66,30 +66,18 @@ export function useTheme(): Theme | undefined {
 }
 
 /**
- * テーマを切り替える。対応しているブラウザでは、新しいテーマが from の位置から円く広がって画面を塗り替える。
+ * テーマを切り替える。対応しているブラウザでは、ヘッダーのグラデーションと同じ向きに、
+ * 月夜は右（夜空の側）から、太陽は左（朝の側）から、ぼかした境目でなめらかに塗り替わる（動きは ThemeSwitch.css）。
  * 「視差効果を減らす」を選んでいる人には、すぐに切り替える
  */
-export function toggleTheme(from: Element) {
+export function toggleTheme() {
   const next: Theme = currentTheme() === "dark" ? "light" : "dark";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduce || typeof document.startViewTransition !== "function") return setTheme(next);
 
-  const rect = from.getBoundingClientRect();
-  const x = rect.left + rect.width / 2;
-  const y = rect.top + rect.height / 2;
-  // いちばん遠い画面の角まで届く半径
-  const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-
   const root = document.documentElement;
-  root.classList.add("theme-transition");
+  const classes = ["theme-transition", `theme-to-${next}`];
+  root.classList.add(...classes);
   const transition = document.startViewTransition(() => setTheme(next));
-  transition.ready
-    .then(() => {
-      root.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-        { duration: 700, easing: "cubic-bezier(0.65, 0, 0.35, 1)", pseudoElement: "::view-transition-new(root)" },
-      );
-    })
-    .catch(() => {});
-  void transition.finished.finally(() => root.classList.remove("theme-transition"));
+  void transition.finished.finally(() => root.classList.remove(...classes));
 }
