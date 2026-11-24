@@ -1,6 +1,7 @@
 import { parseArgs } from "node:util";
 import { addSetlist } from "./commands/add-setlist.ts";
 import { addSong } from "./commands/add-song.ts";
+import { analytics } from "./commands/analytics.ts";
 import { errors } from "./commands/errors.ts";
 import { importComment } from "./commands/import-comment.ts";
 import { importOfficial } from "./commands/import-official.ts";
@@ -77,6 +78,9 @@ commands:
   errors             ブラウザで起きたエラー（/api/errors の記録）を、同じものをまとめて表示（artistId は all）
                      wrangler login 済みの Cloudflare アカウントから読む
                      --days <n>       直近何日分か（既定 7）
+  analytics          サイトの訪問の記録（Cloudflare Web Analytics）：日ごとの訪問・よく見られたページ・流入元・端末・表示の速さ（artistId は all）
+                     環境変数 CLOUDFLARE_ANALYTICS_TOKEN のトークンで読む（作り方は docs/maintenance.md）
+                     --days <n>       直近何日分か（既定 14、最大 31）
 `;
 
 const { positionals, values } = parseArgs({
@@ -137,6 +141,7 @@ const commands: Record<string, Command> = {
   "x-webhook": xWebhook,
   "og-pages": ogPages,
   errors,
+  analytics,
 };
 
 const run = command ? commands[command] : undefined;

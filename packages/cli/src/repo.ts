@@ -9,6 +9,13 @@ export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..
 export const ARTISTS_DIR = join(REPO_ROOT, "artists");
 
 /** 外部サービスへのリクエストに使う User-Agent（個人情報は含めない） */
+/**
+ * サイト（Pages・D1・Web Analytics）がある Cloudflare アカウント。秘密の値ではない。
+ * ログインしているアカウントが複数あると wrangler が選べないので、pnpm lm errors・analytics で指定する。
+ * apps/web/wrangler.toml は Pages の設定で account_id を書けない（wrangler pages deploy が対応していない）ので、ここに置く
+ */
+export const CLOUDFLARE_ACCOUNT_ID = "9c0edfb8170cfcd927d011f2db3934b9";
+
 export const USER_AGENT = "Mozilla/5.0 (compatible; lovely-memory-bot/0.1; setlist statistics)";
 
 export function artistPath(artistId: string, ...rest: string[]): string {

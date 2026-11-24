@@ -99,6 +99,24 @@ pnpm lm validate all --missing
 # 线上浏览器报的错误（同一错误合并，按次数排序；需要 wrangler login）
 pnpm lm errors all --days 7
 
+# 访问情况（Cloudflare Web Analytics）：每天的访问・热门页面・来源・设备・Core Web Vitals
+#   需要环境变量 CLOUDFLARE_ANALYTICS_TOKEN（见下面「访问统计的令牌」）。--days 最大 31
+pnpm lm analytics all --days 14
+
 # 改了 D1 的表结构：在 apps/web/migrations/ 加一个新的 .sql，然后
 pnpm --filter @lovely-memory/web exec wrangler d1 migrations apply lovely-memory --remote
 ```
+
+### 访问统计的令牌
+
+`pnpm lm analytics` 用一个只能读访问统计的 Cloudflare API 令牌（泄露了也改不了任何东西）。
+
+1. https://dash.cloudflare.com/profile/api-tokens →「Create Token」→ 最下面「Create Custom Token」的「Get started」。
+2. Permissions 只要一行：「Account」「Account Analytics」「Read」。Account Resources：「Include」+ 网站所在的账号（`packages/cli/src/repo.ts` 的 `CLOUDFLARE_ACCOUNT_ID`）。TTL 可以设一年左右。
+3. 创建后令牌只显示一次。在 PowerShell 里存成用户环境变量：
+   `[Environment]::SetEnvironmentVariable("CLOUDFLARE_ANALYTICS_TOKEN", "<令牌>", "User")`
+4. **完全退出 VS Code（所有窗口）再打开**，新的环境变量才会生效（只重新加载窗口不行）。
+
+- 变量名不要用 `CLOUDFLARE_API_TOKEN`：wrangler 会改用它，`pnpm lm errors`・部署相关的命令就用不了了。
+- 不要写进任何文件。泄露了在同一页面「Roll」或「Delete」即可作废。
+- 数字是 Cloudflare 抽样后的估计值（少的时候是 10 的倍数）。已排除 Cloudflare 判定为机器人的访问，但 Googlebot 这类会渲染页面的爬虫还会混进来（美国・只看 1 页・Android 或 Linux 的 Chrome 的访问基本是它们）。
