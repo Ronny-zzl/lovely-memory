@@ -285,19 +285,55 @@ try {
     }
   }
 
-  // ページのコードを読み込めないとき：エラーの画面が出て、報告が送られること
+  // ページのコードを一度だけ読み込めないとき（サイトの更新直後など）：自動で読み込み直して表示され、報告は送られないこと
+  const flaky = await browser.newContext();
+  try {
+    const p = await flaky.newPage();
+    // 最初に開いたページの間は届かず、読み込み直した後は届く（CDN の切り替わりの途中）
+    // 数えるのはページそのもの（HTML）の読み込み。framenavigated は history.replaceState でも起きるので使わない
+    let navigations = 0;
+    p.on("request", (r) => {
+      if (r.isNavigationRequest() && r.frame() === p.mainFrame()) navigations++;
+    });
+    await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => (navigations <= 1 ? route.abort() : route.continue()));
+    const reports: string[] = [];
+    await p.route("**/api/errors", (route) => {
+      reports.push(route.request().postData() ?? "");
+      return route.fulfill({ status: 204 });
+    });
+    await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
+    try {
+      // 中身はビルド時の HTML で最初から見えているので、スクリプトが引き継ぎ終わる（テーマのスイッチに title が付く）か、
+      // エラーの画面が出るまで待つ
+      await p.waitForSelector(".theme-switch[title], .route-error", { timeout: 15_000 });
+      if (navigations < 2) failures.push("ページのコードを一度読み込めないとき: 読み込み直していない");
+      if (await p.$(".route-error")) failures.push("ページのコードを一度読み込めないとき: エラーの画面が出た");
+      if (reports.length > 0) failures.push(`ページのコードを一度読み込めないとき: 報告が送られた: ${reports.join(" / ")}`);
+    } catch (e) {
+      failures.push(`ページのコードを一度読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+    }
+    checked++;
+  } finally {
+    await flaky.close();
+  }
+
+  // ページのコードをずっと読み込めないとき：一度だけ読み込み直し、それでもだめならエラーの画面が出て、報告が送られること
   const broken = await browser.newContext();
   try {
     const p = await broken.newPage();
+    let loads = 0;
+    p.on("load", () => loads++);
     await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => route.abort());
     // わざと起こしたエラーなので、報告はブラウザ側で受け止める（中身は下で確かめる。サーバーに届くと [client error] と表示されて紛らわしい）
     await p.route("**/api/errors", (route) => route.fulfill({ status: 204 }));
-    const report = p.waitForRequest((r) => r.method() === "POST" && new URL(r.url()).pathname === "/api/errors", { timeout: 10_000 });
+    const report = p.waitForRequest((r) => r.method() === "POST" && new URL(r.url()).pathname === "/api/errors", { timeout: 15_000 });
     await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
     try {
-      await p.waitForSelector(".route-error", { timeout: 10_000 });
+      await p.waitForSelector(".route-error", { timeout: 15_000 });
       const body = JSON.parse((await report).postData() ?? "{}") as { kind?: string; path?: string };
       if (body.kind !== "render" || !body.path?.endsWith("/songs")) failures.push(`エラーの報告の中身がおかしい: ${JSON.stringify(body)}`);
+      // 最初の表示 + 自動の読み込み直し 1 回（何度も読み込み直さない）
+      if (loads !== 2) failures.push(`ページのコードを読み込めないとき: 読み込み直しの回数がおかしい（ページの表示 ${loads} 回）`);
     } catch (e) {
       failures.push(`ページのコードを読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
     }

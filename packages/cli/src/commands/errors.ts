@@ -20,6 +20,13 @@ type Row = {
 
 const run = promisify(execFile);
 
+/**
+ * D1（lovely-memory）がある Cloudflare アカウント。ログインしているアカウントが複数あると wrangler が選べないので指定する。
+ * apps/web/wrangler.toml は Pages の設定で account_id を書けない（wrangler pages deploy が対応していない）ので、ここに置く。
+ * 秘密の値ではない。環境変数 CLOUDFLARE_ACCOUNT_ID があればそちらを使う
+ */
+const ACCOUNT_ID = "9c0edfb8170cfcd927d011f2db3934b9";
+
 // wrangler は --json のとき、エラーも stdout に {"error":{"text":…}} で出す
 function wranglerError(e: unknown): string {
   const { stdout = "", stderr = "" } = e as { stdout?: string; stderr?: string };
@@ -40,6 +47,7 @@ async function query(sql: string): Promise<Row[]> {
   try {
     ({ stdout } = await run("pnpm", ["exec", "wrangler", "d1", "execute", "lovely-memory", "--remote", "--json", "--command", sql], {
       cwd: join(REPO_ROOT, "apps/web"),
+      env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID || ACCOUNT_ID },
       maxBuffer: 32 * 1024 * 1024,
     }));
   } catch (e) {

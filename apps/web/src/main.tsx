@@ -54,8 +54,9 @@ if (import.meta.env.PROD && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {});
 }
 
-// 見出し・数字の丸ゴシック。定義が大きいので、描画を止めないよう後から読み込む（src/fonts.css）
-void import("./fonts.css");
+// 見出し・数字の丸ゴシック。定義が大きいので、描画を止めないよう後から読み込む（src/fonts.css）。
+// 読み込めなくても（サイトの更新直後など）端末の字体で表示できるので、エラーにしない
+import("./fonts.css").catch(() => {});
 
 // ビルド時に作った HTML（scripts/prerender.ts。#root の data-prerendered にそのパス）なら、それを引き継ぐ。
 // 無いとき（開発時・404 のページなど）や、別のパスの中身のとき（以前の /#/… のリンクでトップの HTML が来た、など）はブラウザで描き直す

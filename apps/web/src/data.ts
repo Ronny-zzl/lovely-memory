@@ -15,6 +15,7 @@ import {
   type Stats,
 } from "@lovely-memory/core/runtime";
 import { artists as configs, loaders } from "virtual:lovely-memory/artists";
+import { importOrReload } from "./chunk-reload.ts";
 
 /*
  * artists/<id>/ 以下のデータ。検証・既定値の補完はビルド時（plugins/artists-data.ts）に済んでいる。
@@ -56,7 +57,8 @@ export type ArtistData = ArtistBase & {
 async function load(artist: ArtistConfig): Promise<ArtistBase> {
   const loader = loaders[artist.id];
   if (!loader) throw new Error(`no data for ${artist.id}`);
-  const { songs, events: rawEvents, overrides, setlists } = (await loader()).default;
+  // コードを読み込めなかったら一度だけ読み込み直す（サイトの更新直後など。chunk-reload.ts）
+  const { songs, events: rawEvents, overrides, setlists } = (await importOrReload(loader)).default;
   const events = resolveEvents(rawEvents, overrides, artist);
   const allStats = computeStats({ songs, events, setlists });
   return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events) };

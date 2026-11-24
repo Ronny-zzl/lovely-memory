@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { Navigate, type RouteObject } from "react-router";
+import { importOrReload } from "./chunk-reload.ts";
 import { ArtistLayout } from "./pages/ArtistLayout.tsx";
 import { RouteError } from "./pages/RouteError.tsx";
 
@@ -8,8 +9,9 @@ import { RouteError } from "./pages/RouteError.tsx";
  * 各ページのコードは開いたときに読み込む（最初に読み込む量を減らす）。
  * 移動先のページの読み込みが終わるまで今のページを表示したままにするので、「読み込み中」は出ない
  */
+// コードを読み込めなかったら一度だけ読み込み直す（サイトの更新直後など。chunk-reload.ts）
 const page = (load: () => Promise<ComponentType>): Pick<RouteObject, "lazy"> => ({
-  lazy: async () => ({ Component: await load() }),
+  lazy: async () => ({ Component: await importOrReload(load) }),
 });
 
 export const routes: RouteObject[] = [
