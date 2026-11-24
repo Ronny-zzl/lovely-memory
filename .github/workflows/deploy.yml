@@ -13,15 +13,17 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: deploy
-  cancel-in-progress: true
-
 jobs:
   # 検査（CI と同じ内容）がすべて通ったときだけ Cloudflare Pages（https://lovely-memory.moe/）へデプロイする
   # リポジトリ変数 CLOUDFLARE_PROJECT と、シークレット CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が必要
   deploy:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # 同時に動くデプロイは 1 つ。後から来たもの（いつも最新の main をビルドする）が古いものを取り消す。
+    # ワークフロー全体ではなくジョブに付ける：上の if で飛ばされる起動（取り込みが skipped だったとき＝Issue のコメントの
+    # 編集など）は順番待ちに入らないので、進行中のデプロイを取り消さない（2026-11-25 に push のデプロイが取り消された）
+    concurrency:
+      group: deploy
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
