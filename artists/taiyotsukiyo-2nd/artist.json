@@ -2,6 +2,7 @@
   "id": "taiyotsukiyo-2nd",
   "name": "太陽と踊れ月夜に唄え",
   "subtitle": "Second Season",
+  "aliases": ["たいつき", "太陽月夜"],
   "since": "2026-09-04",
   "members": [
     { "id": "anne",  "name": "甘乃あんね", "colorName": "ベビーピンク",   "color": "#F5B5C8", "eventernoteId": 94952, "birthday": "2007-07-28" },

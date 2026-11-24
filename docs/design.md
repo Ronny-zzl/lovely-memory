@@ -217,3 +217,10 @@ lovely-memory/
 - 访问统计：Cloudflare Web Analytics（在 Pages 项目的 Metrics 里开启，部署时由 Cloudflare 自动在 HTML 里插入 beacon 脚本，只对 `Accept: text/html` 的请求插入；数据 POST 到 `/cdn-cgi/rum`）。不用 Cookie。代码里没有相关设置。
 - 添加到主屏幕（PWA）：`apps/web/public/manifest.webmanifest` + 图标 `apps/web/public/icons/`（由 `tools/icons/icon.html` 经 `tools/icons/render.sh` 生成，512px 兼作 maskable，图案在中央安全区内）。iOS 用 `apple-touch-icon`（180px）。离线：构建时生成 `sw.js`（`apps/web/plugins/service-worker.ts`）。页面优先联网、断网时用缓存（没缓存过的页面用壳 `shell.html` 在浏览器端渲染）；`/assets/`（带哈希）先查缓存，构建时全部预缓存，所以打开过一次就能离线看所有页面。缓存按版本分开，保留最近 2 个版本。分享卡片图片（`/og/`）不缓存。冒烟测试里有离线检查。
 - 曲・公演页面的分享卡片：部署时 `pnpm lm og-pages all` 给每个页面的 `<path>.html`（预渲染好的 HTML；没有时用壳）写入 title・description・og:*，并生成 `og/<path>.png`（`packages/cli/src/og/cards.ts` 的 HTML 用 Chrome 截图，`playwright-core` + 系统 Chrome）。Cloudflare Pages 对 `/a/b` 返回 `a/b.html`（不加末尾斜杠）。列表页（楽曲・公演・傾向・メンバー）只换标题和说明，图片用全站通用的。此步骤失败也不影响部署（`continue-on-error`）。
+- 搜索引擎（SEO）：同样由 `og-pages` 给每页写入（`packages/cli/src/og/meta.ts`）。
+  - `<link rel="canonical">`：pages.dev、带筛选参数等访问都归到同一个 URL。站内 JS 跳转到正式域名之外的保险。
+  - 结构化数据（JSON-LD）：首页是 `WebSite`（让 Google 把站名显示为「ラブリィメモリー」），其余页是 `BreadcrumbList`（ラブリィメモリー › <组合> 楽曲 › 曲名）。
+  - 标题把会被搜索的词放前面：曲「<曲名> 歌唱率・セトリ」、活动「<活动名> セトリ（日期）」（还没有歌单时不带「セトリ」）。
+  - 粉丝常用的简称写在 `artist.json` 的 `aliases`（「たいつき」「太陽月夜」）：放进首页标题、首页和列表页的说明，以及首页 `WebSite` 的 `about`（`MusicGroup` 的 `alternateName`）。曲・活动页的说明以内容为主，不加。
+  - `sitemap.xml` 带 `lastmod`：列表页和首页是最新歌单的日期，曲是最后一次演唱的日期，活动是有歌单时的活动日期。参戦記録页内容只在浏览器里，不写 lastmod。
+  - `/<组合>` 只是跳到 `/<组合>/songs`：预渲染时写 `_redirects`（301），不放进 sitemap，canonical 指向 songs。Pages 的 `_redirects` 只对不经过 Worker 的路径生效（`_routes.json` 只包含 `/api/*`・`/assets/*`，所以可以）。

@@ -33,6 +33,8 @@ export const ArtistConfig = z.object({
   name: z.string(),
   /** 同じグループの中の「期」などを区別するための表示用サブタイトル */
   subtitle: z.string().optional(),
+  /** ファンがよく使う略称（検索エンジン向けにトップ・一覧ページのタイトルや説明に入れる） */
+  aliases: z.array(z.string()).optional(),
   /** この日以降のイベントのみを対象にする */
   since: isoDate.optional(),
   until: isoDate.optional(),

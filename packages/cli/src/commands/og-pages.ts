@@ -20,13 +20,21 @@ import {
 } from "@lovely-memory/core";
 import { eventCard, songCard } from "../og/cards.ts";
 import { jstDateDaysAgo } from "./sync.ts";
-import { pageHtml, sitemap, type PageMeta } from "../og/meta.ts";
+import { breadcrumbs, pageHtml, sitemap, type PageMeta } from "../og/meta.ts";
 import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs, REPO_ROOT, siteUrl } from "../repo.ts";
 
 const SITE_NAME = "ラブリィメモリー";
 
 type Card = { file: string; html: string };
-type Page = { path: string; meta: PageMeta };
+type Page = {
+  /** サイト内のパス（先頭の / なし。トップは ""） */
+  path: string;
+  meta: PageMeta;
+  /** sitemap.xml の lastmod（中身が最後に変わった日） */
+  lastmod?: string;
+  /** sitemap.xml に載せない（別のページへ移るだけのページ） */
+  noSitemap?: boolean;
+};
 
 /**
  * 曲・イベントなどのページごとに OGP 用の meta を HTML（<path>.html）に入れ、画像（og/…png）をビルド結果に追加する。
@@ -45,14 +53,45 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
       : [artistArg];
   const pages: Page[] = [];
   const cards: Card[] = [];
+  const artists: ArtistConfig[] = [];
   for (const id of ids) {
-    const r = await collect(await loadArtist(id), site, host);
+    const artist = await loadArtist(id);
+    const r = await collect(artist, site, host);
+    artists.push(artist);
     pages.push(...r.pages);
     cards.push(...r.cards);
   }
+  // トップ：サイト名を検索結果に出すための WebSite の構造化データも入れる
+  // 略称（たいつき など）でも見つかるよう、タイトルに添える
+  const names = artists.map((a) => (a.aliases?.length ? `${a.name}（${a.aliases.join("・")}）` : a.name)).join("・");
+  const fullNames = artists.map(nameWithAliases).join("・");
+  pages.unshift({
+    path: "",
+    meta: {
+      title: `${SITE_NAME} — ${names}のセトリ記録・集計`,
+      description: `${fullNames}のライブのセットリストを記録・集計する非公式ファンサイト。曲ごとの歌唱率や初披露、イベントごとのセトリを見られます。`,
+      url: site,
+      structuredData: [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE_NAME,
+          url: site,
+          inLanguage: "ja",
+          // 何についてのサイトか（グループの正式名と略称）
+          about: artists.map((a) => ({
+            "@type": "MusicGroup",
+            name: a.name,
+            ...(a.aliases?.length ? { alternateName: a.aliases } : {}),
+          })),
+        },
+      ],
+    },
+    lastmod: latest(pages.map((p) => p.lastmod)),
+  });
 
   for (const p of pages) {
-    const file = join(dist, `${p.path}.html`);
+    const file = join(dist, p.path ? `${p.path}.html` : "index.html");
     await mkdir(dirname(file), { recursive: true });
     // ビルド時に中身を描いた HTML（apps/web/scripts/prerender.ts）があれば、それに meta を入れる。
     // 無ければ中身の無いアプリの枠（shell.html。無い古いビルドでは index.html）を型にする
@@ -62,7 +101,10 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
   console.log(`pages: ${pages.length}`);
 
   // 検索エンジン向けの全ページ一覧（robots.txt から参照。画像の生成より先に書き、そちらが失敗しても残るようにする）
-  await writeFile(join(dist, "sitemap.xml"), sitemap([site, ...pages.map((p) => p.meta.url)]));
+  await writeFile(
+    join(dist, "sitemap.xml"),
+    sitemap(pages.filter((p) => !p.noSitemap).map((p) => ({ url: p.meta.url, lastmod: p.lastmod }))),
+  );
 
   if (opts["skip-images"]) return;
   const targets = opts.only ? cards.filter((c) => c.file.includes(opts.only!)) : cards;
@@ -90,28 +132,55 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     ),
   });
 
-  const name = artist.subtitle ? `${artist.name}（${artist.subtitle}）` : artist.name;
+  // 一覧ページの説明の主語（サブタイトル付き）。略称でも見つかるよう添える（曲・イベントのページは内容の説明を優先して入れない）
+  const listName = nameWithAliases(artist);
+  // 検索結果では先頭しか見えないので、探される言葉（曲名・イベント名・「セトリ」）を前に置く
   const title = (t?: string) => (t ? `${t} — ${artist.name} | ${SITE_NAME}` : `${artist.name} | ${SITE_NAME}`);
   const url = (path: string) => `${site}${path}`;
   const pages: Page[] = [];
   const cards: Card[] = [];
+  // 中身はセトリが増えたときに変わる。一覧は最新のセトリの日、曲は最後に歌われた日、イベントはその日
+  const latestSetlist = latest(stats.events.map((e) => e.event.date));
+  // パンくず：ラブリィメモリー › <グループ> 楽曲 › 曲名
+  const crumbs = (section: string, label: string, leaf?: { name: string; url: string }) =>
+    breadcrumbs([
+      { name: SITE_NAME, url: site },
+      { name: `${artist.name} ${label}`, url: url(`${artist.id}/${section}`) },
+      ...(leaf ? [leaf] : []),
+    ]);
 
   // 一覧ページはサイト共通の画像のまま、タイトルと説明だけ変える
-  const sections: Array<[string, string, string]> = [
-    ["", "", `${name}のライブのセットリストを記録・集計。曲ごとの歌唱率や初披露、イベントごとのセトリを見られます。`],
-    ["songs", "楽曲", `${name}の楽曲ごとの歌唱回数・歌唱率・初披露日・最後に歌われた日。`],
-    ["events", "イベント", `${name}のイベント一覧とセットリスト（${stats.events.length} イベント）。`],
-    ["trends", "傾向", `${name}のセトリの傾向。1 曲目・ラストになりやすい曲、定番の流れ、よく続けて歌われる曲。`],
-    ["members", "メンバー", `${name}のメンバーごとの出演率と欠席したイベント。`],
+  // グループのトップ（/<id>）は楽曲のページへ移るだけ（_redirects）。正規の URL は楽曲のページにして、sitemap には載せない
+  pages.push({
+    path: artist.id,
+    meta: {
+      title: title(),
+      description: `${listName}のライブのセットリストを記録・集計。曲ごとの歌唱率や初披露、イベントごとのセトリを見られます。`,
+      url: url(`${artist.id}/songs`),
+    },
+    noSitemap: true,
+  });
+
+  // [パス, パンくずの名前, タイトル, 説明]
+  const sections: Array<[string, string, string, string]> = [
+    ["songs", "楽曲", "楽曲・歌唱率", `${listName}の楽曲ごとの歌唱回数・歌唱率・初披露日・最後に歌われた日。`],
+    ["events", "イベント", "イベント・セトリ一覧", `${listName}のイベント一覧とセットリスト（${stats.events.length} イベント）。`],
+    ["trends", "傾向", "セトリの傾向", `${listName}のセトリの傾向。1 曲目・ラストになりやすい曲、定番の流れ、よく続けて歌われる曲。`],
+    ["members", "メンバー", "メンバー・出演記録", `${listName}のメンバーごとの出演率と欠席したイベント。`],
     [
       "attendance",
       "参戦記録",
-      `${name}の参戦記録。参戦したイベントと、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`,
+      "参戦記録",
+      `${listName}の参戦記録。参戦したイベントと、生で聴いた曲・まだ聴いていない曲（eventernote の参加イベントから読み込めます）。`,
     ],
   ];
-  for (const [path, label, description] of sections) {
-    const p = path ? `${artist.id}/${path}` : artist.id;
-    pages.push({ path: p, meta: { title: title(label || undefined), description, url: url(p) } });
+  for (const [section, label, heading, description] of sections) {
+    const p = `${artist.id}/${section}`;
+    pages.push({
+      path: p,
+      meta: { title: title(heading), description, url: url(p), structuredData: [crumbs(section, label)] },
+      lastmod: section === "attendance" ? undefined : latestSetlist,
+    });
   }
 
   for (const s of stats.songs) {
@@ -129,7 +198,15 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
           : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} イベント）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
     pages.push({
       path: p,
-      meta: { title: title(s.song.title), description, url: url(p), image: url(img), imageAlt: `「${s.song.title}」の歌唱記録` },
+      meta: {
+        title: title(`${s.song.title} 歌唱率・セトリ`),
+        description,
+        url: url(p),
+        image: url(img),
+        imageAlt: `「${s.song.title}」の歌唱記録`,
+        structuredData: [crumbs("songs", "楽曲", { name: s.song.title, url: url(p) })],
+      },
+      lastmod: s.last?.date,
     });
     cards.push({ file: img, html: songCard(artist, s, position, role, host) });
   }
@@ -143,15 +220,18 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     const description = songTitles.length
       ? `${head}のセットリスト（${songTitles.length} 曲）: ${songTitles.join(" / ")}`
       : `${head}${e.venue ? ` @ ${e.venue.name}` : ""}`;
+    const eventTitle = displayTitle(e.title, artist.name);
     pages.push({
       path: p,
       meta: {
-        title: title(`${formatDate(e.date)} ${displayTitle(e.title, artist.name)}`),
+        title: title(`${eventTitle}${sl ? " セトリ" : ""}（${formatDate(e.date)}）`),
         description,
         url: url(p),
         image: url(img),
         imageAlt: `${head}のセットリスト`,
+        structuredData: [crumbs("events", "イベント", { name: eventTitle, url: url(p) })],
       },
+      lastmod: sl ? e.date : undefined,
     });
     const highlights = {
       milestones: milestones.achieved.filter((m) => m.eventId === e.id),
@@ -160,6 +240,20 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
     cards.push({ file: img, html: eventCard(artist, e, sl, host, highlights) });
   }
   return { pages, cards };
+}
+
+/** 「太陽と踊れ月夜に唄え（Second Season / たいつき・太陽月夜）」の形 */
+function nameWithAliases(a: ArtistConfig): string {
+  const extra = [a.subtitle, a.aliases?.join("・")].filter(Boolean).join(" / ");
+  return extra ? `${a.name}（${extra}）` : a.name;
+}
+
+/** いちばん新しい日付（YYYY-MM-DD。無ければ undefined） */
+function latest(dates: Array<string | undefined>): string | undefined {
+  return dates
+    .filter((d): d is string => !!d)
+    .sort()
+    .at(-1);
 }
 
 async function renderCards(cards: Card[], dist: string): Promise<void> {

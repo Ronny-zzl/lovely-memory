@@ -67,8 +67,11 @@ await writeFile(join(dist, "shell.html"), template);
 await writeFile(join(dist, "404.html"), template);
 
 const paths = await server.paths();
-// グループのトップ（/<id>）は楽曲のページへ移るだけなので、型のまま置く（ブラウザで移動する）
-for (const id of new Set(paths.map((p) => p.split("/")[1]).filter(Boolean))) await write(`/${id}`, template);
+// グループのトップ（/<id>）は楽曲のページへ移るだけ。Cloudflare Pages が _redirects で恒久的に移動させる
+// （検索エンジンに中身の無いページとして載らないように）。開発時の preview など _redirects が効かないとき用に、型も置く（ブラウザで移動する）
+const ids = [...new Set(paths.map((p) => p.split("/")[1]).filter(Boolean))];
+for (const id of ids) await write(`/${id}`, template);
+await writeFile(join(dist, "_redirects"), ids.map((id) => `/${id} /${id}/songs 301\n`).join(""));
 
 for (const path of paths) {
   const body = await server.render(path);
