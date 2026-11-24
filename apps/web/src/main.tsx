@@ -6,6 +6,7 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { findArtist, loadArtistData } from "./data.ts";
 import { routes } from "./routes.tsx";
+import { installThemeSync } from "./theme.ts";
 // サイト全体で使う見た目（ページ・部品ごとのものは、それぞれの .tsx の隣の .css）
 import "./styles/tokens.css";
 import "./styles/base.css";
@@ -21,6 +22,9 @@ import "./styles/motion.css";
 
 // 起きたエラーをサイトに送る（読み込みの途中で起きたものも拾えるよう、最初に）
 installErrorReporting();
+
+// テーマ：端末の設定の変更・別のタブでの切り替えに付いていく
+installThemeSync();
 
 // 以前の hash ルーティング（/#/artist/...）のリンクを通常のパスに置き換える
 if (location.hash.startsWith("#/")) {

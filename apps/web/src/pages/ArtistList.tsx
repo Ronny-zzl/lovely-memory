@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { isLiveEvent, type ArtistConfig } from "@lovely-memory/core/runtime";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
+import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
 import { artistDataOn, artists, loadArtistData, type ArtistData } from "../data.ts";
 import { useToday } from "../hydration.ts";
 import { displayTitle, formatDate, formatDayWithWeekday } from "../format.ts";
@@ -21,7 +22,10 @@ export function ArtistList() {
     <div className="page">
       <header className="site-header hero">
         <div className="hero-card home-hero">
-          <InstallButton />
+          <div className="hero-actions">
+            <InstallButton />
+            <ThemeSwitch />
+          </div>
           <h1 className="site-title home-title">
             <span className="sun">
               <SunIcon />

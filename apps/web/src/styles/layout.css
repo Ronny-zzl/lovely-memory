@@ -20,9 +20,15 @@
   box-shadow: var(--shadow-hero);
 }
 
-.hero-card .install {
+/* 右上：ホーム画面に追加・テーマの切り替え */
+.hero-actions {
+  position: absolute;
   top: 12px;
   right: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ロゴ（トップへのリンク）：☀ ラブリィメモリー ☾ */
@@ -127,8 +133,12 @@
 }
 
 /* トップページはタイトルが先頭行にあるので、ボタンと重ならないよう右を空ける */
-.install + .site-title {
-  padding-right: 10rem;
+.hero-actions + .site-title {
+  padding-right: 64px;
+}
+
+.hero-actions:has(.install) + .site-title {
+  padding-right: 14rem;
 }
 
 @media (width <= 640px) {
@@ -144,8 +154,19 @@
     padding: 12px 12px 0;
   }
 
-  .hero-card .install {
+  .hero-actions {
     top: 8px;
     right: 8px;
+  }
+
+  /* 狭い画面でボタンが 2 つ並ぶときは、タイトルを狭めずにその上の行に置く */
+  .hero-actions:has(.install) {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+  }
+
+  .hero-actions:has(.install) + .site-title {
+    padding-right: 0;
   }
 }

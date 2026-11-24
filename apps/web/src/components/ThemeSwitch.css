@@ -1,0 +1,234 @@
+/* ThemeSwitch の見た目。昼（太陽）→ 夜（月夜）は :root[data-theme="dark"] で切り替える */
+
+/* 月の欠け具合（0 = 満ちた太陽、1 = 三日月）。数値として登録して、なめらかに動かす */
+@property --ts-crater {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.theme-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--sun-border);
+  border-radius: var(--radius-pill);
+  background: none;
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.theme-switch:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+/* 空：昼と夜の 2 枚を重ねて、見えるほうを入れ替える（グラデーションは直接は動かせないため） */
+.ts-sky {
+  position: absolute;
+  inset: 0;
+}
+
+.ts-day {
+  background: var(--sun-bg);
+}
+
+.ts-night {
+  background: var(--moon-bg);
+  opacity: 0;
+}
+
+.ts-cloud {
+  position: absolute;
+  right: 5px;
+  bottom: 3px;
+  width: 18px;
+  height: 9px;
+  color: var(--surface);
+}
+
+.ts-star {
+  position: absolute;
+  color: var(--moon-fg);
+  opacity: 0;
+  transform: scale(0);
+}
+
+.ts-star-0 {
+  top: 5px;
+  left: 8px;
+  width: 7px;
+  height: 7px;
+}
+
+.ts-star-1 {
+  top: 15px;
+  left: 16px;
+  width: 5px;
+  height: 5px;
+}
+
+.ts-star-2 {
+  top: 4px;
+  left: 20px;
+  width: 4px;
+  height: 4px;
+}
+
+/* 太陽／月の玉（光の筋は太陽のときだけ） */
+.ts-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  color: var(--sun-icon);
+}
+
+.ts-rays {
+  position: absolute;
+  inset: -2px;
+  width: 26px;
+  height: 26px;
+}
+
+.ts-orb {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: currentcolor;
+  box-shadow: var(--shadow-sun);
+
+  /* 右上から影の円がかかって、三日月に欠ける */
+  mask: radial-gradient(
+    circle 7px at calc(140% - var(--ts-crater) * 65%) calc(-40% + var(--ts-crater) * 65%),
+    transparent 98%,
+    var(--fg) 100%
+  );
+}
+
+/* 夜 */
+:root[data-theme="dark"] .theme-switch {
+  border-color: var(--moon-border);
+}
+
+:root[data-theme="dark"] .ts-day {
+  opacity: 0;
+}
+
+:root[data-theme="dark"] .ts-night {
+  opacity: 1;
+}
+
+:root[data-theme="dark"] .ts-cloud {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+:root[data-theme="dark"] .ts-star {
+  opacity: 1;
+  transform: none;
+}
+
+:root[data-theme="dark"] .ts-knob {
+  color: var(--moon-icon);
+  transform: translateX(24px) rotate(360deg);
+}
+
+:root[data-theme="dark"] .ts-rays {
+  opacity: 0;
+  transform: scale(0.4) rotate(-90deg);
+}
+
+:root[data-theme="dark"] .ts-orb {
+  --ts-crater: 1;
+
+  box-shadow: var(--shadow-moon);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ts-sky {
+    transition: opacity 0.5s ease;
+  }
+
+  .ts-cloud {
+    transition:
+      transform 0.5s ease,
+      opacity 0.3s ease;
+  }
+
+  /* 星は少しずつ遅れて、ぽんと出る */
+  .ts-star {
+    transition:
+      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.3s ease;
+  }
+
+  :root[data-theme="dark"] .ts-star-0 {
+    transition-delay: 0.25s;
+  }
+
+  :root[data-theme="dark"] .ts-star-1 {
+    transition-delay: 0.35s;
+  }
+
+  :root[data-theme="dark"] .ts-star-2 {
+    transition-delay: 0.45s;
+  }
+
+  /* 玉は転がりながら移って、少し行き過ぎて戻る */
+  .ts-knob {
+    transition:
+      transform 0.6s cubic-bezier(0.34, 1.4, 0.64, 1),
+      color 0.5s ease;
+  }
+
+  .ts-rays {
+    transition:
+      transform 0.5s ease,
+      opacity 0.3s ease;
+  }
+
+  .ts-orb {
+    transition:
+      --ts-crater 0.6s ease,
+      box-shadow 0.5s ease;
+  }
+
+  /* 触れると、太陽は光の筋が回り、夜は星がまたたく */
+  .theme-switch:hover .ts-rays {
+    transform: rotate(45deg);
+  }
+
+  :root[data-theme="dark"] .theme-switch:hover .ts-star {
+    animation: ts-twinkle 0.9s ease-in-out infinite alternate;
+  }
+
+  :root[data-theme="dark"] .theme-switch:hover .ts-star-1 {
+    animation-delay: 0.3s;
+  }
+
+  :root[data-theme="dark"] .theme-switch:hover .ts-star-2 {
+    animation-delay: 0.6s;
+  }
+
+  @keyframes ts-twinkle {
+    to {
+      opacity: 0.3;
+      transform: scale(0.6);
+    }
+  }
+}
+
+/*
+ * ページ全体の切り替え（theme.ts の toggleTheme）。新しいテーマが円く広がる動きは JS で付けるので、
+ * ブラウザの標準のふわっとした重ね合わせは止める
+ */
+:root.theme-transition::view-transition-old(root),
+:root.theme-transition::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}

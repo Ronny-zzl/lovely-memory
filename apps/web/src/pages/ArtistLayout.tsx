@@ -3,6 +3,7 @@ import { Link, Navigate, NavLink, Outlet, useLocation, useNavigation, useOutletC
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { PageSkeleton } from "../components/PageSkeleton.tsx";
+import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
 import { artistDataOn, findArtist, loadArtistData, type ArtistData } from "../data.ts";
 import { useToday } from "../hydration.ts";
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
@@ -23,7 +24,10 @@ export function ArtistLayout() {
     <div className="page">
       <header className="site-header hero">
         <div className="hero-card">
-          <InstallButton />
+          <div className="hero-actions">
+            <InstallButton />
+            <ThemeSwitch />
+          </div>
           <Link to="/" className="brand">
             <span className="sun">
               <SunIcon />

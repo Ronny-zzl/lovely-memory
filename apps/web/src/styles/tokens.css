@@ -39,6 +39,10 @@
   --hero-card: rgb(255 255 255 / 94%);
   --shadow-hero: 0 8px 24px rgb(30 20 60 / 18%);
 
+  /* テーマ切り替えスイッチの太陽・月の光 */
+  --shadow-sun: 0 0 6px 1px rgb(255 179 65 / 70%);
+  --shadow-moon: 0 0 6px 1px rgb(255 227 154 / 50%);
+
   /* 色 */
   --bg: #fbfaf7;
   --surface: #fff;
@@ -91,44 +95,46 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #14131a;
-    --surface: #1c1b24;
-    --fg: #ece9f2;
-    --muted: #a19cae;
-    --border: #2e2c3a;
-    --accent: #f0a050;
-    --accent-2: #9aa8f0;
-    --accent-soft: #33261a;
-    --accent-text: var(--accent);
-    --accent-fill: var(--accent);
-    --accent-fill-hover: #f5b26c;
-    --on-accent-fill: #1d1b22;
-    --error: #ff8a80;
-    --ok: #7bd18f;
-    --x-bg: #eff3f4;
-    --x-bg-hover: #d7dbdc;
-    --x-fg: #0f1419;
-    --bar: #6b4a2a;
-    --row-hover: #23222d;
-    --badge-1st: #2a2d48;
-    --badge-1st-fg: #b7c1f5;
-    --badge-2nd: #43301d;
-    --badge-2nd-fg: #f6c48f;
-    --badge-cover: #1f3326;
-    --badge-cover-fg: #9fd7ad;
-    --sun-bg: linear-gradient(120deg, #4a3310 0%, #5c3a12 100%);
-    --sun-fg: #ffd98f;
-    --sun-icon: #ffb341;
-    --sun-border: #6e4a18;
-    --moon-border: #4b4f8f;
-    --hero-bg: linear-gradient(105deg, #5a4426 0%, #6e4a2e 24%, #7a4a44 42%, #5c3a64 50%, #33295e 58%, #1f1c4a 74%, #131536 100%);
-    --hero-card: rgb(28 27 36 / 92%);
-    --shadow-hero: 0 8px 24px rgb(0 0 0 / 40%);
-    --tieup-bg: #45202f;
-    --tieup-fg: #f6a3c6;
+/*
+ * 月夜（dark）のテーマ。<html data-theme> は index.html のスクリプトが最初の描画の前に決める
+ * （端末の設定、またはヘッダーのスイッチで選んだもの。theme.ts）
+ */
+:root[data-theme="dark"] {
+  --bg: #14131a;
+  --surface: #1c1b24;
+  --fg: #ece9f2;
+  --muted: #a19cae;
+  --border: #2e2c3a;
+  --accent: #f0a050;
+  --accent-2: #9aa8f0;
+  --accent-soft: #33261a;
+  --accent-text: var(--accent);
+  --accent-fill: var(--accent);
+  --accent-fill-hover: #f5b26c;
+  --on-accent-fill: #1d1b22;
+  --error: #ff8a80;
+  --ok: #7bd18f;
+  --x-bg: #eff3f4;
+  --x-bg-hover: #d7dbdc;
+  --x-fg: #0f1419;
+  --bar: #6b4a2a;
+  --row-hover: #23222d;
+  --badge-1st: #2a2d48;
+  --badge-1st-fg: #b7c1f5;
+  --badge-2nd: #43301d;
+  --badge-2nd-fg: #f6c48f;
+  --badge-cover: #1f3326;
+  --badge-cover-fg: #9fd7ad;
+  --sun-bg: linear-gradient(120deg, #4a3310 0%, #5c3a12 100%);
+  --sun-fg: #ffd98f;
+  --sun-icon: #ffb341;
+  --sun-border: #6e4a18;
+  --moon-border: #4b4f8f;
+  --hero-bg: linear-gradient(105deg, #5a4426 0%, #6e4a2e 24%, #7a4a44 42%, #5c3a64 50%, #33295e 58%, #1f1c4a 74%, #131536 100%);
+  --hero-card: rgb(28 27 36 / 92%);
+  --shadow-hero: 0 8px 24px rgb(0 0 0 / 40%);
+  --tieup-bg: #45202f;
+  --tieup-fg: #f6a3c6;
 
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
