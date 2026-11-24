@@ -114,7 +114,8 @@ export function successReply(artistId: string, eventId: number, setlist: Setlist
   const site = siteUrl();
   const page = site ? `${site}${artistId}/events/${eventId}` : undefined;
   return [
-    `${lead} ${countSongs(setlist)} 曲を取り込みました${setlist.source ? `（出典: ${setlist.source}）` : ""}`,
+    // URL は <> で囲む（直後の全角の「）」まで GitHub がリンクに含めてしまうため）
+    `${lead} ${countSongs(setlist)} 曲を取り込みました${setlist.source ? `（出典: <${setlist.source}>）` : ""}`,
     "",
     renderSetlist(setlist),
     warnings.length > 0 && `\n${warnings.map((w) => `- ⚠️ ${w}`).join("\n")}`,
