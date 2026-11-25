@@ -7,17 +7,18 @@
       "title": "初恋の合図",
       "kind": "digital"
     },
+    "credits": {
+      "lyrics": "宮崎 大",
+      "music": "竹内亮太郎",
+      "arrangement": "桑田健吾"
+    },
     "tieups": [
       {
         "type": "anime",
         "work": "ネコのクラちゃん 〜クラレ王国 大陸のLutte Amor〜",
         "role": "オープニングテーマ"
       }
-    ],
-    "credits": {
-      "lyrics": "宮崎 大",
-      "music": "竹内亮太郎"
-    }
+    ]
   },
   {
     "id": "s003",
