@@ -28,6 +28,8 @@
   --row-hover: #f8f1f7;
   --tieup-bg: #e0f1fb;
   --tieup-fg: #1a5f8a;
+  --badge-2nd: #fde4ef;
+  --badge-2nd-fg: #b0245c;
 }
 
 :root[data-theme="dark"]:has(.page[data-artist="miline-hearts"]),
@@ -51,6 +53,8 @@
   --hero-card: rgb(27 28 43 / 92%);
   --tieup-bg: #13314a;
   --tieup-fg: #9fd3ff;
+  --badge-2nd: #43202f;
+  --badge-2nd-fg: #ffa8cb;
 }
 
 /* 団体名：ロゴと同じ「紺の文字に白とピンクの縁取り」 */
@@ -191,4 +195,64 @@
 /* ロゴの両脇（ハートと王冠）。太陽・月の色の代わりに */
 .page[data-artist="miline-hearts"] .brand .sun {
   color: var(--accent);
+}
+
+/*
+ * 太陽・月の意匠の代わり（--sun-* / --moon-* はテーマ切り替えのスイッチでも使うので、変数ごとは変えない）
+ * - 曲の「セトリでの位置」：前半・中盤・後半を、空色 → ピンク → 紺（ロゴの文字の色）
+ * - 節目（通算 N 回目のイベントなど）のバッジ：ピンク
+ * - 傾向の「1 曲目」のアイコン：ピンクのハート
+ */
+.page[data-artist="miline-hearts"] .zone-early {
+  background: linear-gradient(120deg, #e3f2fc 0%, #c6e6f8 100%);
+  color: #1a5f8a;
+}
+
+.page[data-artist="miline-hearts"] .zone-middle {
+  background: linear-gradient(120deg, #fde7f0 0%, #f9cfe0 100%);
+  color: #a3235a;
+}
+
+.page[data-artist="miline-hearts"] .zone-late {
+  background:
+    radial-gradient(circle, rgb(255 255 255 / 22%) 0 0.8px, transparent 1.2px) 0 0 / 7px 7px,
+    linear-gradient(120deg, #1d3f8f 0%, #2d3a8c 100%);
+  color: #fff;
+}
+
+.page[data-artist="miline-hearts"] .milestone-event-count,
+.page[data-artist="miline-hearts"] .milestone-total-songs,
+.page[data-artist="miline-hearts"] .milestone-debut-days {
+  background: linear-gradient(120deg, #fff0f6 0%, #fdd9e8 100%);
+  color: #a3235a;
+  border-color: #f6b6cf;
+}
+
+.page[data-artist="miline-hearts"] .rank-sun .rank-icon {
+  color: var(--accent);
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .zone-early {
+  background: linear-gradient(120deg, #13314a 0%, #18405e 100%);
+  color: #9fd3ff;
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .zone-middle {
+  background: linear-gradient(120deg, #43202f 0%, #55253b 100%);
+  color: #ffb3d2;
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .zone-late {
+  background:
+    radial-gradient(circle, rgb(255 255 255 / 18%) 0 0.8px, transparent 1.2px) 0 0 / 7px 7px,
+    linear-gradient(120deg, #1d3f8f 0%, #2b2f7a 100%);
+  color: #fff;
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .milestone-event-count,
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .milestone-total-songs,
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .milestone-debut-days {
+  background: linear-gradient(120deg, #4a2238 0%, #5c2448 100%);
+  color: #ffd0e4;
+  border-color: #6e3552;
 }

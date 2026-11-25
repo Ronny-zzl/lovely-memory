@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import type { Song, SongPosition } from "@lovely-memory/core/runtime";
 import { CostumesSection } from "../components/CostumesSection.tsx";
 import { MilestonesSection } from "../components/MilestonesSection.tsx";
-import { MoonIcon, SunIcon } from "../components/Icons.tsx";
+import { brandIcons } from "../components/Icons.tsx";
 import { formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./TrendsPage.css";
@@ -25,11 +25,12 @@ function PositionRanking({
   pick,
 }: {
   title: string;
-  /** 1 曲目は朝（太陽）、ラストは夜（月） */
+  /** 1 曲目は朝（太陽）、ラストは夜（月）。グループによっては別の飾り（brandIcons） */
   icon: "sun" | "moon";
   positions: SongPosition[];
   pick: (p: SongPosition) => number;
 }) {
+  const [FirstIcon, LastIcon] = brandIcons(useArtistData().artist.id);
   const ranked = positions
     .filter((p) => pick(p) > 0)
     .sort((a, b) => pick(b) - pick(a) || pick(b) / b.count - pick(a) / a.count)
@@ -37,7 +38,7 @@ function PositionRanking({
   return (
     <section className="trend-card">
       <h3 className={`section-heading rank-heading rank-${icon}`}>
-        <span className="rank-icon">{icon === "sun" ? <SunIcon /> : <MoonIcon />}</span>
+        <span className="rank-icon">{icon === "sun" ? <FirstIcon /> : <LastIcon />}</span>
         {title}
       </h3>
       <ol className="rank-list">
