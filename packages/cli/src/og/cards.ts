@@ -1,6 +1,7 @@
 /*
  * 共有カード（OGP 画像, 1200×630）の HTML。Chrome でスクリーンショットして PNG にする。
  * 見た目はサイト全体の画像（tools/og/og.html）と揃える：左が朝の光、右が夜空。
+ * グループごとに見た目を変えるときは THEMES に足す（サイトの apps/web/src/styles/themes.css と揃える）。
  */
 import {
   creditParts,
@@ -32,6 +33,84 @@ export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;")
 
 const SUN = `<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.4" fill="currentColor"/><g stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><line x1="8" y1="1" x2="8" y2="2.8"/><line x1="8" y1="13.2" x2="8" y2="15"/><line x1="1" y1="8" x2="2.8" y2="8"/><line x1="13.2" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.3" y2="4.3"/><line x1="11.7" y1="11.7" x2="12.95" y2="12.95"/><line x1="3.05" y1="12.95" x2="4.3" y2="11.7"/><line x1="11.7" y1="4.3" x2="12.95" y2="3.05"/></g></svg>`;
 const MOON = `<svg viewBox="0 0 16 16"><path d="M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z" fill="currentColor"/></svg>`;
+
+const HEART_PATH = "M8 14s-5.2-3.2-6.4-6.4A3.4 3.4 0 0 1 8 4.4a3.4 3.4 0 0 1 6.4 3.2C13.2 10.8 8 14 8 14Z";
+const HEART = `<svg viewBox="0 0 16 16"><path d="${HEART_PATH}" fill="currentColor"/></svg>`;
+const CROWN = `<svg viewBox="0 0 16 16"><path d="M2 5.2l3.2 2.6L8 3.4l2.8 4.4L14 5.2l-1.3 6.6H3.3Z" fill="currentColor"/><rect x="3.3" y="12.6" width="9.4" height="1.6" rx=".8" fill="currentColor"/></svg>`;
+
+/** 文字の縁取り（text-shadow を円周に並べる）。内側から順に [太さ, 色] */
+function outline(rings: Array<[number, string]>, drop: string): string {
+  const parts = rings.flatMap(([r, color]) => {
+    const n = Math.max(8, Math.round(r * 4));
+    return Array.from({ length: n }, (_, i) => {
+      const a = (2 * Math.PI * i) / n;
+      return `${(r * Math.cos(a)).toFixed(2)}px ${(r * Math.sin(a)).toFixed(2)}px 0 ${color}`;
+    });
+  });
+  return [...parts, drop].join(",");
+}
+
+/** 散らしたハート（背景に敷き詰める 1 枚分） */
+const heartsTile = (color: string, opacities: number[]) =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='96' viewBox='0 0 160 96'><g fill='${color}'>${[
+      [18, 14, 0.75, -12],
+      [104, 8, 0.5, 14],
+      [130, 54, 0.9, 10],
+      [62, 60, 0.45, -8],
+    ]
+      .map(
+        ([x, y, k, r], i) =>
+          `<path opacity='${opacities[i]}' transform='translate(${x} ${y}) scale(${k! * 1.5}) rotate(${r} 8 8)' d='${HEART_PATH}'/>`,
+      )
+      .join("")}</g></svg>`,
+  )}")`;
+
+/** レースのハート（ロゴの意匠） */
+const laceHeart = (color: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'><g fill='none' stroke='${color}' stroke-linecap='round'><path stroke-width='6' stroke-dasharray='0 9' d='M60 100S10 68 10 36A24 24 0 0 1 60 22a24 24 0 0 1 50 14c0 32-50 64-50 64z'/><path stroke-width='2' d='M60 92S18 64 18 37A17 17 0 0 1 60 27a17 17 0 0 1 42 10c0 27-42 55-42 55z'/></g></svg>`,
+  )}")`;
+
+type Theme = { icons: [string, string]; css: string };
+
+/** グループごとの見た目。無いグループは太陽と月（CSS のまま） */
+const THEMES: Record<string, Theme> = {
+  // Mi'Line Hearts：ロゴ・告知画像の「空色とピンクの斜めの光（網点つき）に白いハート」、紺の文字にピンクの縁取り
+  "miline-hearts": {
+    icons: [HEART, CROWN],
+    css: `
+body { color: #22263f; background:
+  radial-gradient(circle, rgb(255 255 255 / .55) 0 1.8px, transparent 2.4px) 0 0 / 15px 15px,
+  linear-gradient(115deg, #bfe3f7 0%, #d9ecfa 30%, #f9d3e3 62%, #f6b6cf 100%); }
+.stars { opacity: 1; background:
+  repeating-conic-gradient(from 0deg at 0% 100%, rgb(255 255 255 / .38) 0 4deg, transparent 4deg 10deg),
+  ${heartsTile("#fff", [0.85, 0.7, 0.9, 0.6])} 0 0 / 280px 168px; }
+.card { z-index: 0; box-shadow: 0 18px 50px rgb(40 50 110 / .18); }
+.card::after { content: ""; position: absolute; top: 26px; right: 34px; width: 150px; height: 138px; transform: rotate(8deg); z-index: -1;
+  background: ${laceHeart("#f4a3c4")} center / contain no-repeat; opacity: .5; pointer-events: none; }
+.footer { color: #1d3f8f; text-shadow: ${outline([[2, "#fff"]], "0 2px 8px rgb(255 255 255 / .8)")}; }
+.footer .sun { color: #e8508c; filter: drop-shadow(0 0 4px #fff); }
+.footer .moon { color: #1d3f8f; filter: drop-shadow(0 0 4px #fff); }
+.group, .ev-date, .credit b { color: #1d3f8f; }
+.group small { color: #8f84a8; }
+.song-title { background: none; color: #1d3f8f; padding-left: 10px;
+  text-shadow: ${outline(
+    [
+      [3, "#fff"],
+      [6, "#f27aa9"],
+      [9, "#f27aa9"],
+    ],
+    "0 12px 0 #f6b1cb",
+  )}; }
+.stat { background: #f7f2fa; }
+.badge.role, .badge.ms { background: #fde4ef; color: #b8245f; }
+.badge.tieup { background: #e0f1fb; color: #1a5f8a; }
+.setlist .debut, .setlist .stage { color: #d23a78; }
+.setlist .ms { color: #1a5f8a; }
+`,
+  },
+};
 
 const CSS = `
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -137,13 +216,15 @@ for (const el of document.querySelectorAll(".fit")) {
 }
 `;
 
-function page(body: string, host: string | undefined): string {
+function page(artist: ArtistConfig, body: string, host: string | undefined): string {
+  const theme = THEMES[artist.id];
+  const [left, right] = theme?.icons ?? [SUN, MOON];
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=block" rel="stylesheet">
-<style>${CSS}</style></head><body>
+<style>${CSS}${theme?.css ?? ""}</style></head><body>
 <div class="stars"></div>
 <div class="card">${body}</div>
-<div class="footer"><span class="brand"><span class="sun">${SUN}</span>ラブリィメモリー<span class="moon">${MOON}</span></span>${host ? `<span class="host">${esc(host)}</span>` : ""}</div>
+<div class="footer"><span class="brand"><span class="sun">${left}</span>ラブリィメモリー<span class="moon">${right}</span></span>${host ? `<span class="host">${esc(host)}</span>` : ""}</div>
 <script>window.__fit = () => { ${FIT_SCRIPT} };</script>
 </body></html>`;
 }
@@ -207,6 +288,7 @@ export function songCard(
     .map((p) => `<span class="cr">${esc(p.roles)}：<b>${esc(p.name)}</b></span>`)
     .join(" ");
   return page(
+    artist,
     `${groupLine(artist)}
 <div class="song-title fit" data-min="40">${esc(song.title)}</div>
 ${credits ? `<p class="credit fit" data-min="18">${credits}</p>` : ""}
@@ -302,6 +384,7 @@ export function eventCard(
     : `<p class="empty">${total === 0 ? "セトリは登録されていません" : ""}</p>`;
 
   return page(
+    artist,
     `<div class="ev-date">${event.date.slice(0, 4)}.${esc(formatDayWithWeekday(event.date))}${event.venue ? `<span class="venue">${esc(event.venue.name)}</span>` : ""}</div>
 <div class="ev-title fit" data-min="26">${esc(displayTitle(event.title, artist.name))}</div>
 <div class="ev-meta"><div class="badges">${types}</div><div class="dots">${dots}</div></div>
