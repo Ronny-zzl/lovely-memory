@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router";
 import { Fragment } from "react";
-import { ageOn, birthdayMembers, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
+import { ageOn, birthdayMembers, membersOn, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
@@ -32,7 +32,8 @@ export function EventDetailPage() {
   const next = idx >= 0 && idx < live.length - 1 ? live[idx + 1] : undefined;
 
   const memberName = new Map(artist.members.map((m) => [m.id, m.name]));
-  const absent = artist.members.filter((m) => !event.members.includes(m.id));
+  // その日に在籍していたメンバーのうち、出演しなかった人
+  const absent = membersOn(artist.members, event.date).filter((m) => !event.members.includes(m.id));
   const times = [event.open && `開場 ${event.open}`, event.start && `開演 ${event.start}`].filter(Boolean).join(" / ");
   const enUrl = eventernoteUrl(event.id);
   const multiStage = (setlist?.stages.length ?? 0) > 1;
@@ -72,7 +73,7 @@ export function EventDetailPage() {
             <div>
               <dt>出演</dt>
               <dd className="event-detail-members">
-                <MemberDots artist={artist} present={event.members} />
+                <MemberDots artist={artist} present={event.members} date={event.date} />
                 {event.membersSource === "assumed" ? (
                   <span className="muted small">出演メンバー情報なし（全員出演として表示）</span>
                 ) : absent.length ? (
@@ -166,7 +167,7 @@ export function EventDetailPage() {
                               {e.with && <span className="item-with">with {e.with.join("・")}</span>}
                               {partial && (
                                 <span className="item-members" title={e.members.map((m) => memberName.get(m)).join("・")}>
-                                  <MemberDots artist={artist} present={e.members} />
+                                  <MemberDots artist={artist} present={e.members} date={event.date} />
                                 </span>
                               )}
                             </li>

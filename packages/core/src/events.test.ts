@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { eventHasType, inferEventTypes, isLiveEvent, resolveEvents } from "./events.ts";
+import { eventHasType, inferEventTypes, isLiveEvent, membersOn, resolveEvents } from "./events.ts";
 import { ArtistConfig, Overrides, type Event } from "./schema.ts";
 
 const artist = ArtistConfig.parse({
@@ -108,5 +108,16 @@ describe("resolveEvents", () => {
       title: "修正後タイトル",
     });
     expect(r.find((e) => e.id === -1)!.types).toEqual(["oneman"]);
+  });
+});
+
+describe("membersOn", () => {
+  it("lists only the members in the group on that day", () => {
+    const members = [{ id: "a" }, { id: "b", since: "2026-09-15" }, { id: "c", until: "2026-11-29" }];
+    const ids = (date: string) => membersOn(members, date).map((m) => m.id);
+    expect(ids("2026-09-14")).toEqual(["a", "c"]);
+    expect(ids("2026-09-15")).toEqual(["a", "b", "c"]);
+    expect(ids("2026-11-29")).toEqual(["a", "b", "c"]);
+    expect(ids("2026-11-30")).toEqual(["a", "b"]);
   });
 });

@@ -1,4 +1,4 @@
-import type { ArtistConfig, Event, EventType, Overrides } from "./schema.ts";
+import type { ArtistConfig, Event, EventType, Member, Overrides } from "./schema.ts";
 
 export type ResolvedEvent = Event & {
   /** イベント種別（1 つ以上）。例: 単独公演かつフリーライブ */
@@ -40,6 +40,11 @@ export function eventHasType(e: Pick<ResolvedEvent, "types">, t: EventType): boo
   return e.types.some((x) => x === t || EVENT_TYPE_PARENT[x] === t);
 }
 
+/** date の日に在籍していたメンバー（途中加入・卒業・休止を考慮。member の since・until） */
+export function membersOn<M extends Pick<Member, "since" | "until">>(members: M[], date: string): M[] {
+  return members.filter((m) => (!m.since || m.since <= date) && (!m.until || date <= m.until));
+}
+
 /** ライブを伴うイベントか（特典会のみのイベントはセトリが存在しない） */
 export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
   return e.types.some((t) => t !== "tokuten");
@@ -51,9 +56,6 @@ export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
  */
 export function resolveEvents(events: Event[], overrides: Overrides, artist: ArtistConfig): ResolvedEvent[] {
   const memberByEnId = new Map(artist.members.filter((m) => m.eventernoteId !== undefined).map((m) => [m.eventernoteId!, m.id]));
-  // その日に在籍していたメンバー（途中加入・卒業・休止を考慮）
-  const membersOn = (date: string) =>
-    artist.members.filter((m) => (!m.since || m.since <= date) && (!m.until || date <= m.until)).map((m) => m.id);
 
   const merged: Array<Event & { types?: EventType[] }> = [...events, ...overrides.extraEvents];
   const out: ResolvedEvent[] = [];
@@ -75,7 +77,9 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
     } else {
       const listed = ev.performers.map((p) => memberByEnId.get(p)).filter((x): x is string => !!x);
       // 個人名の登録が無ければ、その日に在籍していた全員が出演したものとみなす
-      members = listed.length ? artist.members.map((m) => m.id).filter((m) => listed.includes(m)) : membersOn(ev.date);
+      members = listed.length
+        ? artist.members.map((m) => m.id).filter((m) => listed.includes(m))
+        : membersOn(artist.members, ev.date).map((m) => m.id);
       membersSource = listed.length ? "eventernote" : "assumed";
     }
 

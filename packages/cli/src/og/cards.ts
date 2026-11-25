@@ -10,6 +10,7 @@ import {
   formatDayWithWeekday,
   formatPercent,
   isLightColor,
+  membersOn,
   POSITION_ROLE_LABEL,
   tieupLabels,
   tieupText,
@@ -259,7 +260,8 @@ export function eventCard(
     if ("song" in m && text) songMarks.set(m.song.id, [...(songMarks.get(m.song.id) ?? []), text]);
   }
   const types = event.types.map((t) => `<span class="badge type">${esc(EVENT_TYPE_LABEL[t])}</span>`).join("") + eventBadges.join("");
-  const dots = artist.members
+  // その日に在籍していたメンバーだけ（加入前・卒業や休止の後は出さない）
+  const dots = membersOn(artist.members, event.date)
     .map((m) => `<span style="${dotCss(m.color)}"${event.members.includes(m.id) ? "" : ` class="absent"`}></span>`)
     .join("");
 
