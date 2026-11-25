@@ -85,5 +85,13 @@
     "id": "s010",
     "title": "We are Mi'Line Hearts",
     "note": "未発売"
+  },
+  {
+    "id": "s011",
+    "title": "しゅがぴゅあ",
+    "era": "cover",
+    "cover": {
+      "artist": "ピュアリーモンスター"
+    }
   }
 ]

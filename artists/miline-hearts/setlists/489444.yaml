@@ -11,5 +11,15 @@ stages:
       - 初恋の合図
       - ミライライン
   - name: コラボステージ
+    collab: true
     items:
-      - "?"
+      - song: しゅがぴゅあ
+        members:
+          - momoko
+          - natsu
+        with:
+          - 塙有咲
+          - 勝野里奈
+          - 菅原もも
+          - 白城もえの
+          - 西門志織
