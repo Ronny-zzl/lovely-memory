@@ -23,7 +23,13 @@ export function InstallButton() {
 
   return (
     <div className="install" ref={ref}>
-      <button type="button" className="install-button" onClick={onClick} aria-expanded={state.kind === "ios" ? help : undefined}>
+      <button
+        type="button"
+        className="install-button"
+        onClick={onClick}
+        aria-label="ホーム画面に追加"
+        aria-expanded={state.kind === "ios" ? help : undefined}
+      >
         <svg viewBox="0 0 16 16" aria-hidden="true">
           <path
             d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"
@@ -34,7 +40,7 @@ export function InstallButton() {
             strokeLinejoin="round"
           />
         </svg>
-        ホーム画面に追加
+        <span className="install-label">ホーム画面に追加</span>
       </button>
       {help && (
         <div className="install-help" role="dialog" aria-label="ホーム画面に追加する方法">

@@ -159,8 +159,8 @@
     right: 8px;
   }
 
-  /* 狭い画面でボタンが 2 つ並ぶときは、タイトルを狭めずにその上の行に置く */
-  .hero-actions:has(.install) {
+  /* トップページ：狭い画面でボタンが 2 つ並ぶときは、タイトルを狭めずにその上の行に置く */
+  .hero-actions:has(.install):has(+ .site-title) {
     position: static;
     justify-content: flex-end;
     margin-bottom: 8px;
@@ -168,5 +168,14 @@
 
   .hero-actions:has(.install) + .site-title {
     padding-right: 0;
+  }
+
+  /* グループのページ：先頭行（ロゴ）は短いので、ボタンは右上のまま。「ホーム画面に追加」はアイコンだけにして幅を空ける */
+  .hero-actions:not(:has(+ .site-title)) .install-label {
+    display: none;
+  }
+
+  .hero-actions:not(:has(+ .site-title)) .install-button {
+    padding: 6px 8px;
   }
 }

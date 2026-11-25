@@ -172,6 +172,11 @@
 }
 
 @media (width <= 640px) {
+  /* 狭い画面では枠を細く（中身の幅を取りすぎないように。ほかのグループの 8px よりは少し太く） */
+  .page[data-artist="miline-hearts"] .hero {
+    padding: 12px;
+  }
+
   .page[data-artist="miline-hearts"] .hero-card::before {
     right: 8px;
     width: 96px;
