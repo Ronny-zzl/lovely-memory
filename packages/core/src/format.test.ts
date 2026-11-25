@@ -13,7 +13,9 @@ describe("isLightColor", () => {
 
 describe("displayTitle", () => {
   it("drops the group name at the start, unless it is part of the title", () => {
-    expect(displayTitle("太陽と踊れ月夜に唄え TAIBAN LIVE「日進月歩」vol.16", "太陽と踊れ月夜に唄え")).toBe("TAIBAN LIVE「日進月歩」vol.16");
+    expect(displayTitle("太陽と踊れ月夜に唄え TAIBAN LIVE「日進月歩」vol.16", "太陽と踊れ月夜に唄え")).toBe(
+      "TAIBAN LIVE「日進月歩」vol.16",
+    );
     expect(displayTitle("太陽と踊れ月夜に唄え単独公演「LOVEが目印♡」", "太陽と踊れ月夜に唄え")).toBe("単独公演「LOVEが目印♡」");
     const box = "Mi'Line Hearts Presents　\"Mi'Line BOX vol.1\"〜何度だって待ち合わせしよう〜";
     expect(displayTitle(box, "Mi'Line Hearts")).toBe(box);
