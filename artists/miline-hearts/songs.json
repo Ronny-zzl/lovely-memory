@@ -3,9 +3,9 @@
     "id": "s002",
     "title": "初恋の合図",
     "release": {
-      "date": "2026-11-11",
-      "title": "Love & Hearts",
-      "kind": "album"
+      "date": "2026-07-11",
+      "title": "初恋の合図",
+      "kind": "digital"
     },
     "tieups": [
       {
@@ -13,7 +13,11 @@
         "work": "ネコのクラちゃん 〜クラレ王国 大陸のLutte Amor〜",
         "role": "オープニングテーマ"
       }
-    ]
+    ],
+    "credits": {
+      "lyrics": "宮崎 大",
+      "music": "竹内亮太郎"
+    }
   },
   {
     "id": "s003",
@@ -22,6 +26,10 @@
       "date": "2026-11-11",
       "title": "Love & Hearts",
       "kind": "album"
+    },
+    "credits": {
+      "lyrics": "クチナシ",
+      "music": "クチナシ"
     }
   },
   {
@@ -31,6 +39,10 @@
       "date": "2026-11-11",
       "title": "Love & Hearts",
       "kind": "album"
+    },
+    "credits": {
+      "lyrics": "武田全弘",
+      "music": "武田全弘"
     }
   },
   {
@@ -40,6 +52,10 @@
       "date": "2026-11-11",
       "title": "Love & Hearts",
       "kind": "album"
+    },
+    "credits": {
+      "lyrics": "Ash inoue",
+      "music": "Ash inoue"
     }
   },
   {
@@ -49,6 +65,10 @@
       "date": "2026-11-11",
       "title": "Love & Hearts",
       "kind": "album"
+    },
+    "credits": {
+      "lyrics": "Ash inoue",
+      "music": "Ash inoue"
     }
   },
   {
@@ -58,6 +78,10 @@
       "date": "2026-11-11",
       "title": "Love & Hearts",
       "kind": "album"
+    },
+    "credits": {
+      "lyrics": "武田全弘",
+      "music": "武田全弘"
     }
   },
   {
@@ -67,6 +91,10 @@
       "date": "2026-11-11",
       "title": "Love & Hearts",
       "kind": "album"
+    },
+    "credits": {
+      "lyrics": "中村彼方",
+      "music": "岩越涼大"
     }
   },
   {
