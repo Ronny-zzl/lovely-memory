@@ -4,9 +4,10 @@
   "aliases": ["ミラインハーツ", "みらーつ"],
   "since": "2026-07-11",
   "draft": true,
+  "ignoredTracks": ["Welcome to Mi'Line Hearts"],
   "members": [
     { "id": "natsu",  "name": "天ヶ瀬なつ", "colorName": "赤",   "color": "#E60033", "eventernoteId": 78286, "birthday": "2009-08-16" },
-    { "id": "rei",    "name": "中島 怜",   "colorName": "白",   "color": "#FFFFFF", "eventernoteId": 72566, "birthday": "2004-11-27", "until": "2026-11-29" },
+    { "id": "rei",    "name": "中島 怜",   "colorName": "白",   "color": "#FFFFFF", "eventernoteId": 72566, "birthday": "2004-11-27", "until": "2026-11-29", "untilLabel": "活動休止中" },
     { "id": "momoko", "name": "西尾桃子", "colorName": "桃色", "color": "#F7A6C9", "eventernoteId": 65984, "birthday": "2002-09-15" },
     { "id": "ako",    "name": "水浦愛心", "colorName": "水色", "color": "#8FD3F5", "eventernoteId": 94710, "birthday": "2003-10-28", "since": "2026-09-15" }
   ],

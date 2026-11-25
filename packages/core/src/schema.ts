@@ -29,6 +29,8 @@ export const Member = z.object({
   since: isoDate.optional(),
   /** 最後に活動した日（卒業・休止）。この日より後のイベントには出演していないものとして扱う */
   until: isoDate.optional(),
+  /** until を過ぎた後、名前の横に出す言葉（例: 活動休止中・卒業）。無ければ「活動終了」 */
+  untilLabel: z.string().optional(),
 });
 export type Member = z.infer<typeof Member>;
 
@@ -47,6 +49,10 @@ export const ArtistConfig = z.object({
    * ビルド時に INCLUDE_DRAFTS=1 のときだけ含める
    */
   draft: z.boolean().optional(),
+  /**
+   * 曲として扱わない収録曲（入場 SE・インスト・ボイスドラマなど）。Wikipedia・公式サイトから曲を取り込むときに足さない
+   */
+  ignoredTracks: z.array(z.string()).optional(),
   members: z.array(Member),
   /**
    * 楽曲の系統（例: 1期曲 / 2期曲 / カバー）。songs.json の era はこの id を参照する。

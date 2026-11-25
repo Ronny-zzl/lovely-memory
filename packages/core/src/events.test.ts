@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { eventHasType, inferEventTypes, isLiveEvent, membersOn, resolveEvents } from "./events.ts";
+import { eventHasType, inferEventTypes, isLiveEvent, membersOn, memberStatus, orderMembers, resolveEvents } from "./events.ts";
 import { ArtistConfig, Overrides, type Event } from "./schema.ts";
 
 const artist = ArtistConfig.parse({
@@ -119,5 +119,21 @@ describe("membersOn", () => {
     expect(ids("2026-09-15")).toEqual(["a", "b", "c"]);
     expect(ids("2026-11-29")).toEqual(["a", "b", "c"]);
     expect(ids("2026-11-30")).toEqual(["a", "b"]);
+  });
+});
+
+describe("memberStatus", () => {
+  it("labels members only after their last day", () => {
+    const rei = { until: "2026-11-29", untilLabel: "活動休止中" };
+    expect(memberStatus(rei, "2026-11-29")).toBeUndefined();
+    expect(memberStatus(rei, "2026-11-30")).toBe("活動休止中");
+    expect(memberStatus({ until: "2026-01-01" }, "2026-11-30")).toBe("活動終了");
+    expect(memberStatus({}, "2026-11-30")).toBeUndefined();
+  });
+
+  it("orders inactive members last, keeping the rest in order", () => {
+    const ms = [{ id: "a" }, { id: "b", until: "2026-11-29" }, { id: "c" }];
+    expect(orderMembers(ms, "2026-11-29").map((m) => m.id)).toEqual(["a", "b", "c"]);
+    expect(orderMembers(ms, "2026-11-30").map((m) => m.id)).toEqual(["a", "c", "b"]);
   });
 });

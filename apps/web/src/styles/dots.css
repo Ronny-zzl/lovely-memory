@@ -20,3 +20,15 @@
   border: 1.5px solid;
   box-shadow: none;
 }
+
+/* 名前の横の「活動休止中」など（MemberStatus） */
+.member-status {
+  margin-left: 4px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  white-space: nowrap;
+}

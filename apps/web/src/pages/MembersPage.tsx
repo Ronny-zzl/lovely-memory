@@ -1,14 +1,20 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
-import { ageOn, computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
+import { ageOn, computeMemberStats, isLiveEvent, orderMembers, nextBirthday, upcomingBirthdays } from "@lovely-memory/core/runtime";
 import { birthdayCountdown, birthdayWithAge, displayTitle, formatDate, formatMonthDay, formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./MembersPage.css";
 import { dotStyle, lineColor } from "../member-color.ts";
+import { MemberStatus } from "../components/MemberStatus.tsx";
 
 export function MembersPage() {
   const { artist, events, allStats, isHeld, today } = useArtistData();
-  const members = useMemo(() => computeMemberStats({ artist, events, stats: allStats, held: isHeld }), [artist, events, allStats, isHeld]);
+  // 活動していないメンバー（活動休止中など）は後ろに
+  const members = useMemo(() => {
+    const stats = computeMemberStats({ artist, events, stats: allStats, held: isHeld });
+    const order = orderMembers(artist.members, today);
+    return [...stats].sort((a, b) => order.indexOf(a.member) - order.indexOf(b.member));
+  }, [artist, events, allStats, isHeld, today]);
   const assumed = events.filter((e) => isLiveEvent(e) && isHeld(e) && e.membersSource === "assumed").length;
 
   const soonest = upcomingBirthdays(artist.members, today)[0];
@@ -29,6 +35,7 @@ export function MembersPage() {
             <h2 className="member-name">
               <span className="dot" style={dotStyle(s.member.color)} />
               {s.member.name}
+              <MemberStatus member={s.member} today={today} />
               {s.member.birthday && <span className="member-age">{ageOn(s.member.birthday, today)}歳</span>}
               {s.member.colorName && <span className="muted small">{s.member.colorName}</span>}
             </h2>

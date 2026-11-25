@@ -305,6 +305,22 @@ export function SetlistEditorPage() {
                             ))}
                           </div>
                           <p className="muted small">一部のメンバーだけで歌った曲のときだけ選んでください（全員なら選ばない）。</p>
+                          {i < st.items.length - 1 && (
+                            // 途中から登場するメンバーがいるときなど、続く何曲かが同じメンバーのときに
+                            <button
+                              type="button"
+                              className="share-button editor-copy-members"
+                              onClick={() =>
+                                setItems(si, (items) =>
+                                  items.map((x, j) =>
+                                    j === i + 1 ? { ...x, members: [...r.members], open: true } : j === i ? { ...x, open: false } : x,
+                                  ),
+                                )
+                              }
+                            >
+                              次の曲も同じメンバーにする
+                            </button>
+                          )}
                         </div>
                       )}
                     </li>

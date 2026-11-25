@@ -182,6 +182,10 @@
   margin: 0;
 }
 
+.editor-copy-members {
+  justify-self: start;
+}
+
 /* 曲の候補・入力欄 */
 .setlist-editor input[type="text"],
 .setlist-editor input[type="search"],

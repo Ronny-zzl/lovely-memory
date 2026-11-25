@@ -1,14 +1,5 @@
 [
   {
-    "id": "s001",
-    "title": "Welcome to Mi'Line Hearts",
-    "release": {
-      "date": "2026-11-11",
-      "title": "Love & Hearts",
-      "kind": "album"
-    }
-  },
-  {
     "id": "s002",
     "title": "初恋の合図",
     "release": {

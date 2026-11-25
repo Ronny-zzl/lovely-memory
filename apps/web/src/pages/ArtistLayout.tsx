@@ -6,12 +6,14 @@ import { PageSkeleton } from "../components/PageSkeleton.tsx";
 import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
 import { artistDataOn, findArtist, loadArtistData, type ArtistData } from "../data.ts";
 import { useToday } from "../hydration.ts";
-import type { ArtistConfig } from "@lovely-memory/core/runtime";
+import { orderMembers, type ArtistConfig } from "@lovely-memory/core/runtime";
 import { dotStyle } from "../member-color.ts";
+import { MemberStatus } from "../components/MemberStatus.tsx";
 
 export function ArtistLayout() {
   const artist = findArtist(useParams().artistId);
   const { pathname } = useLocation();
+  const today = useToday();
   // 開くページのコードを読み込んでいる間（初めて開くタブなど）
   const loading = useNavigation().state === "loading";
   // 最初に開いたページは、ビルド時の HTML でもう見えているので、ふわっとは出さない。
@@ -43,10 +45,11 @@ export function ArtistLayout() {
             {artist.subtitle && <span className="subtitle">{artist.subtitle}</span>}
           </h1>
           <ul className="member-legend">
-            {artist.members.map((m) => (
+            {orderMembers(artist.members, today).map((m) => (
               <li key={m.id}>
                 <span className="dot" style={dotStyle(m.color)} />
                 {m.name}
+                <MemberStatus member={m} today={today} />
               </li>
             ))}
           </ul>

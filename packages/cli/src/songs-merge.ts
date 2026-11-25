@@ -45,7 +45,10 @@ export function mergeTracks(songs: Song[], tracks: ImportedTrack[], opts: MergeO
   let added = 0;
   const updatedIds = new Set<string>();
 
+  // 曲として扱わない収録曲（artist.json の ignoredTracks）
+  const ignored = new Set((opts.artist.ignoredTracks ?? []).map(normalizeTitle));
   for (const t of sorted) {
+    if (ignored.has(normalizeTitle(t.title))) continue;
     const existing = index.get(normalizeTitle(t.title));
     if (!existing) {
       const song: Song = {

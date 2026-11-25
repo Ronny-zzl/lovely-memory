@@ -45,6 +45,16 @@ export function membersOn<M extends Pick<Member, "since" | "until">>(members: M[
   return members.filter((m) => (!m.since || m.since <= date) && (!m.until || date <= m.until));
 }
 
+/** today の時点で活動していないメンバーの、名前の横に出す言葉（until を過ぎていれば untilLabel。まだなら undefined） */
+export function memberStatus(member: Pick<Member, "until" | "untilLabel">, today: string): string | undefined {
+  return member.until && member.until < today ? (member.untilLabel ?? "活動終了") : undefined;
+}
+
+/** 一覧に並べる順：活動中のメンバーを元の順で先に、活動していないメンバー（memberStatus がある）を後ろに */
+export function orderMembers<M extends Pick<Member, "until" | "untilLabel">>(members: M[], today: string): M[] {
+  return [...members.filter((m) => !memberStatus(m, today)), ...members.filter((m) => memberStatus(m, today))];
+}
+
 /** ライブを伴うイベントか（特典会のみのイベントはセトリが存在しない） */
 export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
   return e.types.some((t) => t !== "tokuten");

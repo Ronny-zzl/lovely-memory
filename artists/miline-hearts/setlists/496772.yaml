@@ -2,9 +2,16 @@
 
 event: 496772
 items:
-  - Welcome to Mi'Line Hearts
-  - 初恋の合図
-  - 無限大アップデート
+  - song: 初恋の合図
+    members:
+      - natsu
+      - rei
+      - momoko
+  - song: 無限大アップデート
+    members:
+      - natsu
+      - rei
+      - momoko
   - We are Mi'Line Hearts
   - 積極的ヒロイン+♡
   - 僕と君の特別

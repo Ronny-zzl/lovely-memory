@@ -1,6 +1,6 @@
 import { Suspense, use } from "react";
 import { Link } from "react-router";
-import { isLiveEvent, type ArtistConfig } from "@lovely-memory/core/runtime";
+import { isLiveEvent, orderMembers, type ArtistConfig } from "@lovely-memory/core/runtime";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
@@ -9,6 +9,7 @@ import { useToday } from "../hydration.ts";
 import { displayTitle, formatDate, formatDayWithWeekday } from "../format.ts";
 import "./ArtistList.css";
 import { dotStyle } from "../member-color.ts";
+import { MemberStatus } from "../components/MemberStatus.tsx";
 
 const SECTIONS = [
   { path: "songs", label: "楽曲", note: "歌唱率・回数" },
@@ -64,6 +65,7 @@ function ArtistCardWithData({ artist }: { artist: ArtistConfig }) {
 
 function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData }) {
   const base = `/${artist.id}`;
+  const today = useToday();
   const latest = data?.allStats.events.reduce<(typeof data.allStats.events)[number] | undefined>(
     (a, e) => (!a || `${e.event.date}${e.event.start ?? ""}` >= `${a.event.date}${a.event.start ?? ""}` ? e : a),
     undefined,
@@ -87,10 +89,11 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
         {artist.draft && <span className="badge artist-card-draft">下書き（非公開）</span>}
       </Link>
       <ul className="artist-card-members">
-        {artist.members.map((m) => (
+        {orderMembers(artist.members, today).map((m) => (
           <li key={m.id}>
             <span className="dot" style={dotStyle(m.color)} />
             {m.name}
+            <MemberStatus member={m} today={today} />
           </li>
         ))}
       </ul>

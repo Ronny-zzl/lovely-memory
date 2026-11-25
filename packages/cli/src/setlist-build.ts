@@ -97,7 +97,8 @@ export function setlistPath(artistId: string, eventId: number): string {
 }
 
 export async function writeSetlist(artistId: string, setlist: Setlist, event: ResolvedEvent): Promise<string> {
-  const doc = new YAML.Document(setlist);
+  // 同じ配列（メンバーなど）を使い回しても &a1 / *a1 の参照にせず、毎回書き出す（手で読み書きしやすいように）
+  const doc = new YAML.Document(setlist, { aliasDuplicateObjects: false });
   doc.commentBefore = ` ${event.date} ${event.title}`;
   await mkdir(artistPath(artistId, "setlists"), { recursive: true });
   const path = setlistPath(artistId, event.id);
