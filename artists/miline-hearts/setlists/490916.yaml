@@ -1,0 +1,20 @@
+# 2026-09-27 純情アフィリア主催ライブ Magical Songs Welcome to Magical Songs
+
+event: 490916
+completeness: partial
+stages:
+  - name: コラボステージ
+    collab: true
+    items:
+      - song: ニーハイ・エゴイスト
+        members:
+          - momoko
+          - natsu
+        with:
+          - 寺坂ユミ
+          - 渚カオリ
+          - 小宮山アサミ
+          - 皐月ユナ
+          - 田原和夏
+          - 都木渚沙
+          - 汐森すみれ
