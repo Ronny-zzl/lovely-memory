@@ -81,6 +81,11 @@
   color: var(--accent-text);
 }
 
+/* 確認用プレビューにだけ出る、記録がまだ揃っていないアーティストの印 */
+.artist-card-draft {
+  align-self: center;
+}
+
 .artist-card-sub {
   color: var(--accent-text);
   font-size: var(--text-sm);

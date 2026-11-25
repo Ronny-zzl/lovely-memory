@@ -4,6 +4,7 @@ import { ageOn, computeMemberStats, isLiveEvent, nextBirthday, upcomingBirthdays
 import { birthdayCountdown, birthdayWithAge, displayTitle, formatDate, formatMonthDay, formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./MembersPage.css";
+import { dotStyle, lineColor } from "../member-color.ts";
 
 export function MembersPage() {
   const { artist, events, allStats, isHeld, today } = useArtistData();
@@ -17,16 +18,16 @@ export function MembersPage() {
       {soonest && (
         <p className="next-birthday">
           <span aria-hidden="true">🎂</span> 次の誕生日：
-          <span className="dot" style={{ background: soonest.member.color }} />
+          <span className="dot" style={dotStyle(soonest.member.color)} />
           <strong>{soonest.member.name}</strong> {formatMonthDay(soonest.date)}
           <span className={soonest.days === 0 ? "birthday-today" : "muted"}>（{birthdayWithAge(soonest)}）</span>
         </p>
       )}
       <ul className="member-cards">
         {members.map((s) => (
-          <li key={s.member.id} className="member-card" style={{ "--member": s.member.color } as React.CSSProperties}>
+          <li key={s.member.id} className="member-card" style={{ "--member": lineColor(s.member.color) } as React.CSSProperties}>
             <h2 className="member-name">
-              <span className="dot" style={{ background: s.member.color }} />
+              <span className="dot" style={dotStyle(s.member.color)} />
               {s.member.name}
               {s.member.birthday && <span className="member-age">{ageOn(s.member.birthday, today)}歳</span>}
               {s.member.colorName && <span className="muted small">{s.member.colorName}</span>}

@@ -66,6 +66,18 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
   --command "SELECT at, event_type, post_id, dispatched, substr(text, 1, 40) FROM x_events ORDER BY at DESC LIMIT 20"
 ```
 
+## 下书き（非公开）的团体：预览版
+
+记录还不完整、暂不公开的团体，在 `artist.json` 里设 `"draft": true`（例：`miline-hearts`）。
+
+- **正式版**（https://lovely-memory.moe/）的构建完全不包含它：页面、数据、分享图、sitemap 都没有。也不会为它开歌单 Issue
+- **预览版**：`deploy.yml` 在正式版部署完后，用 `INCLUDE_DRAFTS=1` 再构建一次（包括 smoke），部署到 Cloudflare Pages 的 `draft` 分支 → **https://draft.lovely-memory.pages.dev**。首页上草稿团体排在后面，带「下書き（非公開）」标签
+- 本地：`INCLUDE_DRAFTS=1 pnpm build`，或 `INCLUDE_DRAFTS=1 pnpm --filter @lovely-memory/web dev`
+- 数据本身在公开仓库里（`artists/<id>/`），所以「非公开」的意思是「不在网站上公开」
+- 公开时：删掉 `draft`，正常部署即可
+
+**预览版的访问保护（Cloudflare Access）**：Cloudflare 后台 → Workers & Pages → `lovely-memory` → Settings → General → 「Access policy」里对预览部署启用 → 在 Zero Trust 里把策略改成只允许自己的邮箱（登录方式：邮箱一次性验证码）。正式版（`main`）不受影响。
+
 ## 手动操作
 
 ```sh

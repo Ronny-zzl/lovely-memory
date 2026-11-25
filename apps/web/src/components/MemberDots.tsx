@@ -1,4 +1,5 @@
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
+import { dotStyle, lineColor } from "../member-color.ts";
 
 /** メンバーカラーの丸を並べる。出演していないメンバーは白抜き */
 export function MemberDots({ artist, present }: { artist: ArtistConfig; present: string[] }) {
@@ -16,7 +17,7 @@ export function MemberDots({ artist, present }: { artist: ArtistConfig; present:
         <span
           key={m.id}
           className={set.has(m.id) ? "dot" : "dot dot-absent"}
-          style={set.has(m.id) ? { background: m.color } : { borderColor: m.color }}
+          style={set.has(m.id) ? dotStyle(m.color) : { borderColor: lineColor(m.color) }}
         />
       ))}
     </span>

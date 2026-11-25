@@ -56,11 +56,18 @@ export function artistsData(): Plugin {
           .filter((d) => d.isDirectory() && existsSync(join(ARTISTS_DIR, d.name, "artist.json")))
           .map((d) => d.name)
           .sort();
-        const configs = ids.map((artistId) => {
-          const path = join(ARTISTS_DIR, artistId, "artist.json");
-          return parseFile(path, (r) => ArtistConfig.parse(r), readJson(path));
-        });
-        const loaders = ids.map((a) => `${JSON.stringify(a)}: () => import(${JSON.stringify(ARTIST_PREFIX + a)})`);
+        // 下書きのアーティスト（artist.json の draft）は、INCLUDE_DRAFTS=1 のとき（確認用のプレビュー）だけ含める。
+        // 公開サイトのビルドには、ページもデータも入らない
+        const includeDrafts = process.env.INCLUDE_DRAFTS === "1";
+        const configs = ids
+          .map((artistId) => {
+            const path = join(ARTISTS_DIR, artistId, "artist.json");
+            return parseFile(path, (r) => ArtistConfig.parse(r), readJson(path));
+          })
+          .filter((c) => includeDrafts || !c.draft)
+          // 下書きは公開中のアーティストの後ろに（トップの並び。smoke テストも先頭の公開中のアーティストで見て回る）
+          .sort((a, b) => Number(!!a.draft) - Number(!!b.draft));
+        const loaders = configs.map((c) => `${JSON.stringify(c.id)}: () => import(${JSON.stringify(ARTIST_PREFIX + c.id)})`);
         return `export const artists = ${JSON.stringify(configs)};\nexport const loaders = {${loaders.join(",")}};\n`;
       }
 

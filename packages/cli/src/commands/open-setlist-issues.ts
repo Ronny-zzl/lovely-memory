@@ -42,6 +42,8 @@ export async function openSetlistIssues(target: string, opts: Record<string, unk
   let created = 0;
   for (const artistId of ids) {
     const artist = await loadArtist(artistId);
+    // 下書きのアーティストのセトリは、プレビューの入力画面から入れる（Issue は作らない）
+    if (artist.draft) continue;
     const events = resolveEvents(await loadEvents(artistId), await loadOverrides(artistId), artist).filter(
       (e) =>
         isLiveEvent(e) &&

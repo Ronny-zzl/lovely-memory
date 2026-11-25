@@ -25,6 +25,10 @@ export const Member = z.object({
   eventernoteId: z.number().int().optional(),
   /** 生年月日（公式プロフィール）。表示は月日と、次の誕生日までの日数 */
   birthday: isoDate.optional(),
+  /** 加入日（途中加入のメンバー）。この日より前のイベントには出演していないものとして扱う */
+  since: isoDate.optional(),
+  /** 最後に活動した日（卒業・休止）。この日より後のイベントには出演していないものとして扱う */
+  until: isoDate.optional(),
 });
 export type Member = z.infer<typeof Member>;
 
@@ -38,6 +42,11 @@ export const ArtistConfig = z.object({
   /** この日以降のイベントのみを対象にする */
   since: isoDate.optional(),
   until: isoDate.optional(),
+  /**
+   * 下書き（記録がまだ揃っていない）。公開サイトのビルドには含めず、確認用のプレビュー（Cloudflare Access で保護）にだけ出す。
+   * ビルド時に INCLUDE_DRAFTS=1 のときだけ含める
+   */
+  draft: z.boolean().optional(),
   members: z.array(Member),
   /**
    * 楽曲の系統（例: 1期曲 / 2期曲 / カバー）。songs.json の era はこの id を参照する。

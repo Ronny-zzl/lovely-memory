@@ -8,6 +8,7 @@ import { artistDataOn, artists, loadArtistData, type ArtistData } from "../data.
 import { useToday } from "../hydration.ts";
 import { displayTitle, formatDate, formatDayWithWeekday } from "../format.ts";
 import "./ArtistList.css";
+import { dotStyle } from "../member-color.ts";
 
 const SECTIONS = [
   { path: "songs", label: "楽曲", note: "歌唱率・回数" },
@@ -83,11 +84,12 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
       <Link to={base} className="artist-card-head">
         <span className="artist-card-name">{artist.name}</span>
         {artist.subtitle && <span className="artist-card-sub">{artist.subtitle}</span>}
+        {artist.draft && <span className="badge artist-card-draft">下書き（非公開）</span>}
       </Link>
       <ul className="artist-card-members">
         {artist.members.map((m) => (
           <li key={m.id}>
-            <span className="dot" style={{ background: m.color }} />
+            <span className="dot" style={dotStyle(m.color)} />
             {m.name}
           </li>
         ))}

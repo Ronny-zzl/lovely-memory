@@ -201,6 +201,8 @@ lovely-memory/
   - 改动不应改变外观时，用 `pnpm visual shoot <目录>` 在改动前后各截一次图，再用 `pnpm visual compare <前> <后> <差异目录>` 逐像素比较（12 个页面 × 浅色/深色 × 手机/桌面）。
 - 页面代码按路由懒加载（`main.tsx` 的 `lazy`）；首次打开时先加载当前页面的代码再渲染，切换页面时在新页面加载完成之前保持显示旧页面。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
 - 普通路径路由（`createBrowserRouter`，路由表在 `src/routes.tsx`）。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。
+- **下書き（非公开）的团体**：`artist.json` 的 `draft: true`。`plugins/artists-data.ts` 只在 `INCLUDE_DRAFTS=1` 时包含（排在公开团体之后），`og-pages` 也一样，`open-setlist-issues` 不为它开 Issue。`deploy.yml` 另外构建一份包含草稿的预览版，部署到 Pages 的 `draft` 分支（Cloudflare Access 保护）。详见 `docs/maintenance.md`。
+- 成员的 `since`／`until`（加入日・最后活动日）：eventernote 上没有个人出演记录时「假定当天在籍的全员出演」，成员页的出演率・缺席也只算在籍期间。白色等很浅的成员颜色（`isLightColor`）在浅色背景上看不见，圆点加描边、线条改用灰色（`src/member-color.ts`，分享图同样处理）。
 - **构建时预渲染**：`pnpm build` = ① `vite build`（浏览器用，`dist/`）② `vite build --ssr src/entry-server.tsx --outDir dist-ssr`（构建时渲染用）③ `scripts/prerender.ts`：用 React 的 `prerender`（`react-dom/static`）+ React Router 的 `createStaticHandler` 把全部页面（首页・各标签页・全曲・全公演，约 100 页）渲染成完整 HTML，写成 `dist/<path>.html`（首页是 `index.html`）。
   - HTML 的模板是 `dist/index.html`（`#root` 里是加载中的占位块）；替换 `#root` 里 `<!--app-->`〜`<!--/app-->` 之间的内容，`#root` 加上 `data-prerendered="<path>"`，并把该页面需要的 CSS・JS 直接写成 `<link>`（`preload-route` 插件输出的 `route-assets.json`，用完即删）。
   - 浏览器端（`main.tsx`）：`data-prerendered` 和当前路径一致时 `hydrateRoot` 接管，否则 `createRoot` 从头渲染（开发时、404 页、旧的 `/#/...` 链接等）。

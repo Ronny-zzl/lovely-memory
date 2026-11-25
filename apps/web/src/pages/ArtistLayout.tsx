@@ -7,6 +7,7 @@ import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
 import { artistDataOn, findArtist, loadArtistData, type ArtistData } from "../data.ts";
 import { useToday } from "../hydration.ts";
 import type { ArtistConfig } from "@lovely-memory/core/runtime";
+import { dotStyle } from "../member-color.ts";
 
 export function ArtistLayout() {
   const artist = findArtist(useParams().artistId);
@@ -44,7 +45,7 @@ export function ArtistLayout() {
           <ul className="member-legend">
             {artist.members.map((m) => (
               <li key={m.id}>
-                <span className="dot" style={{ background: m.color }} />
+                <span className="dot" style={dotStyle(m.color)} />
                 {m.name}
               </li>
             ))}

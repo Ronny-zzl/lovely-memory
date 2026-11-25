@@ -116,3 +116,17 @@ export const birthdayCountdown = (days: number) => (days === 0 ? "今日が誕�
 /** 「20歳の誕生日・あと 98 日」（当日は「今日が20歳の誕生日！」） */
 export const birthdayWithAge = (b: { days: number; age: number }) =>
   b.days === 0 ? `今日が${b.age}歳の誕生日！` : `${b.age}歳の誕生日・${birthdayCountdown(b.days)}`;
+
+/**
+ * 白に近い色か（メンバーカラーが白のときなど）。明るい背景の上では見えないので、点に縁を付けたり線を灰色にしたりする。
+ * 相対輝度（WCAG）が 0.8 を超えるもの
+ */
+export function isLightColor(hex: string): boolean {
+  const m = hex.match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+  if (!m) return false;
+  const lin = (c: string) => {
+    const v = parseInt(c, 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * lin(m[1]!) + 0.7152 * lin(m[2]!) + 0.0722 * lin(m[3]!) > 0.8;
+}

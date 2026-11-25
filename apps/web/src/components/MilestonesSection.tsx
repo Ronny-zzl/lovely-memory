@@ -12,6 +12,7 @@ import {
 import { useArtistData } from "../pages/ArtistLayout.tsx";
 import { MilestoneBadge } from "./MilestoneBadge.tsx";
 import "./MilestonesSection.css";
+import { dotStyle } from "../member-color.ts";
 
 /** 最近の記録として最初から見せる日数（イベントのあった日）。それより前はたたんでおく */
 const RECENT_DATES = 5;
@@ -138,7 +139,7 @@ export function MilestonesSection() {
               <li key={b.member.id}>
                 <span>
                   <span aria-hidden="true">🎂 </span>
-                  <span className="dot" style={{ background: b.member.color }} />
+                  <span className="dot" style={dotStyle(b.member.color)} />
                   <strong>{b.member.name}</strong>の{b.age}歳の誕生日
                 </span>
                 <span className="muted small">

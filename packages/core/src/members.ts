@@ -44,13 +44,15 @@ export function computeMemberStats({ artist, events, stats, held: isHeld }: Memb
   }
 
   return artist.members.map((member) => {
-    const absences = held.filter((e) => !e.members.includes(member.id));
-    const appearances = held.length - absences.length;
+    // 在籍していた期間（加入〜卒業・休止）のイベントだけを数える。加入前のイベントは「欠席」ではない
+    const during = held.filter((e) => (!member.since || member.since <= e.date) && (!member.until || e.date <= member.until));
+    const absences = during.filter((e) => !e.members.includes(member.id));
+    const appearances = during.length - absences.length;
     return {
       member,
       appearances,
-      total: held.length,
-      rate: held.length ? appearances / held.length : 0,
+      total: during.length,
+      rate: during.length ? appearances / during.length : 0,
       absences,
       performances: performances.get(member.id) ?? 0,
     };

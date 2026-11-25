@@ -58,6 +58,22 @@ describe("computeMemberStats", () => {
     expect(b!.absences.map((e) => e.id)).toEqual([2]);
   });
 
+  it("counts only the events while the member was in the group", () => {
+    const joined = ArtistConfig.parse({ ...artist, members: [artist.members[0], { ...artist.members[1], since: "2026-09-15" }] });
+    const [, late] = computeMemberStats({
+      artist: joined,
+      events,
+      stats,
+      held: heldCheck(
+        "2026-11-18",
+        setlists.map((s) => s.event),
+      ),
+    });
+    // 加入（9/15）前の e1・e2 は数えない：e4 だけ
+    expect(late).toMatchObject({ appearances: 1, total: 1 });
+    expect(late!.absences).toEqual([]);
+  });
+
   it("counts performances using per-item members", () => {
     // a: e1 の X と Y、e2 の X / b: e1 の X のみ（Y は a だけ）
     expect(a!.performances).toBe(3);

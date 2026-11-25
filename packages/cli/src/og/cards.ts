@@ -9,6 +9,7 @@ import {
   formatDate,
   formatDayWithWeekday,
   formatPercent,
+  isLightColor,
   POSITION_ROLE_LABEL,
   tieupLabels,
   tieupText,
@@ -21,6 +22,10 @@ import {
   type SongPosition,
   type SongStats,
 } from "@lovely-memory/core";
+
+/** メンバーの色の点。白に近い色は白いカードの上で見えないので縁を付ける */
+const dotCss = (color: string | undefined) =>
+  `background:${esc(color ?? "#ccc")}${color && isLightColor(color) ? ";box-shadow:0 0 0 2px rgb(0 0 0 / .3)" : ""}`;
 
 export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -243,8 +248,7 @@ export function eventCard(
   // イベント全体の節目（通算 N 回目のイベントなど）と誕生日は、種別の隣にバッジで
   const eventBadges = [
     ...highlights.birthdays.map(
-      (b) =>
-        `<span class="badge bday"><i style="background:${esc(b.member.color ?? "#ccc")}"></i>${esc(b.member.name)} ${b.age}歳の誕生日</span>`,
+      (b) => `<span class="badge bday"><i style="${dotCss(b.member.color)}"></i>${esc(b.member.name)} ${b.age}歳の誕生日</span>`,
     ),
     ...highlights.milestones.filter((m) => !("song" in m)).map((m) => `<span class="badge ms">${esc(milestoneText(m))}</span>`),
   ];
@@ -256,7 +260,7 @@ export function eventCard(
   }
   const types = event.types.map((t) => `<span class="badge type">${esc(EVENT_TYPE_LABEL[t])}</span>`).join("") + eventBadges.join("");
   const dots = artist.members
-    .map((m) => `<span style="background:${esc(m.color ?? "#ccc")}"${event.members.includes(m.id) ? "" : ` class="absent"`}></span>`)
+    .map((m) => `<span style="${dotCss(m.color)}"${event.members.includes(m.id) ? "" : ` class="absent"`}></span>`)
     .join("");
 
   // ステージが複数あるときはステージ名を見出しとして挟む
@@ -274,7 +278,7 @@ export function eventCard(
       const mdots = partial
         ? `<span class="mdots">${artist.members
             .filter((m) => e.members.includes(m.id))
-            .map((m) => `<span style="background:${esc(m.color ?? "#ccc")}"></span>`)
+            .map((m) => `<span style="${dotCss(m.color)}"></span>`)
             .join("")}</span>`
         : "";
       const marks = songMarks.get(e.song.id);

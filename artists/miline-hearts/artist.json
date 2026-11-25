@@ -1,0 +1,30 @@
+{
+  "id": "miline-hearts",
+  "name": "Mi'Line Hearts",
+  "aliases": ["ミラインハーツ", "みらーつ"],
+  "since": "2026-07-11",
+  "draft": true,
+  "members": [
+    { "id": "natsu",  "name": "天ヶ瀬なつ", "colorName": "赤",   "color": "#E60033", "eventernoteId": 78286, "birthday": "2009-08-16" },
+    { "id": "rei",    "name": "中島 怜",   "colorName": "白",   "color": "#FFFFFF", "eventernoteId": 72566, "birthday": "2004-11-27", "until": "2026-11-29" },
+    { "id": "momoko", "name": "西尾桃子", "colorName": "桃色", "color": "#F7A6C9", "eventernoteId": 65984, "birthday": "2002-09-15" },
+    { "id": "ako",    "name": "水浦愛心", "colorName": "水色", "color": "#8FD3F5", "eventernoteId": 94710, "birthday": "2003-10-28", "since": "2026-09-15" }
+  ],
+  "eras": [{ "id": "original", "label": "オリジナル" }, { "id": "cover", "label": "カバー曲" }],
+  "defaultEra": "original",
+  "shareHashtags": [],
+  "sources": {
+    "eventernote": { "actorId": 93358 },
+    "wikipedia": { "lang": "ja", "title": "Mi'Line Hearts" }
+  },
+  "eventTypeRules": [
+    { "pattern": "チェキ会|特典会", "type": "tokuten" },
+    { "pattern": "発売記念イベント|リリースイベント|リリイベ", "type": ["release", "free"] },
+    { "pattern": "リリース記念", "type": "release" },
+    { "pattern": "フリーライブ|フリーミニライブ|FREE LIVE|フリーLIVE", "type": "free" },
+    { "pattern": "無銭", "type": ["external", "free"] },
+    { "pattern": "Mi'Line BOX", "type": "taiban" },
+    { "pattern": "ONE MAN|ONE-MAN|ワンマン|Our Melody", "type": "oneman" }
+  ],
+  "defaultEventType": "external"
+}

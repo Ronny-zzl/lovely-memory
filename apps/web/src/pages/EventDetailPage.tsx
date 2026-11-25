@@ -9,6 +9,7 @@ import { TypeBadges } from "../components/TypeBadges.tsx";
 import { displayTitle, eventernoteUrl, formatDate, formatDayWithWeekday } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./EventDetailPage.css";
+import { dotStyle } from "../member-color.ts";
 
 export function EventDetailPage() {
   const { artist, events, allStats, milestones, isHeld } = useArtistData();
@@ -118,7 +119,7 @@ export function EventDetailPage() {
                 <span className="milestone-icon" aria-hidden="true">
                   🎂
                 </span>
-                <span className="dot" style={{ background: m.color }} />
+                <span className="dot" style={dotStyle(m.color)} />
                 {m.name}の{ageOn(m.birthday!, event.date)}歳の誕生日
               </span>
             ))}

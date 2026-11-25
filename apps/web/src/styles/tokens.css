@@ -22,6 +22,9 @@
 
   /* 影 */
   --shadow-dot: 0 0 0 1px rgb(0 0 0 / 8%);
+
+  /* 白に近いメンバーカラーの点（明るい背景の上でも縁が見えるように） */
+  --shadow-dot-light: 0 0 0 1px rgb(0 0 0 / 35%);
   --shadow-popover: 0 8px 24px rgb(0 0 0 / 15%);
   --backdrop: rgb(0 0 0 / 50%);
 

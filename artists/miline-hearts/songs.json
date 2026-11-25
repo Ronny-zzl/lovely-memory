@@ -1,0 +1,98 @@
+[
+  {
+    "id": "s001",
+    "title": "Welcome to Mi'Line Hearts",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s002",
+    "title": "初恋の合図",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ネコのクラちゃん 〜クラレ王国 大陸のLutte Amor〜",
+        "role": "オープニングテーマ"
+      }
+    ]
+  },
+  {
+    "id": "s003",
+    "title": "恋色パステル",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s004",
+    "title": "無限大アップデート",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s005",
+    "title": "好きで好きで好きで好きです！",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s006",
+    "title": "Our Melody",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s007",
+    "title": "僕と君の特別",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s008",
+    "title": "ミライライン",
+    "release": {
+      "date": "2026-11-11",
+      "title": "Love & Hearts",
+      "kind": "album"
+    }
+  },
+  {
+    "id": "s009",
+    "title": "積極的ヒロイン+♡",
+    "tieups": [
+      {
+        "type": "game",
+        "work": "Sanrio Kawaii Me Live!",
+        "role": "収録曲"
+      }
+    ],
+    "note": "未発売（ゲーム『Sanrio Kawaii Me Live!』収録曲）"
+  },
+  {
+    "id": "s010",
+    "title": "We are Mi'Line Hearts",
+    "note": "未発売"
+  }
+]

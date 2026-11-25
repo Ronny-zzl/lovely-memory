@@ -71,6 +71,20 @@ describe("resolveEvents", () => {
     expect(r.find((e) => e.id === 4)).toMatchObject({ members: ["a", "b"], membersSource: "assumed" });
   });
 
+  it("assumes only the members in the group on that day (joined later / left earlier)", () => {
+    const changing = ArtistConfig.parse({
+      ...artist,
+      members: [
+        { id: "a", name: "A", color: "#000000" },
+        { id: "b", name: "B", color: "#111111", since: "2026-11-08" },
+        { id: "c", name: "C", color: "#222222", until: "2026-11-30" },
+      ],
+    });
+    const r = resolveEvents(events, Overrides.parse({}), changing);
+    expect(r.find((e) => e.id === 3)).toMatchObject({ members: ["a", "b", "c"], membersSource: "assumed" });
+    expect(r.find((e) => e.id === 4)).toMatchObject({ members: ["a", "b"], membersSource: "assumed" });
+  });
+
   it("keeps eventernote performers when an override only changes other fields", () => {
     const ov = Overrides.parse({ events: { "2": { types: ["free"] } } });
     const r = resolveEvents(events, ov, artist);

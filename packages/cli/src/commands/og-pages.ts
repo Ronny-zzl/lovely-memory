@@ -56,6 +56,8 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
   const artists: ArtistConfig[] = [];
   for (const id of ids) {
     const artist = await loadArtist(id);
+    // 下書きのアーティストは公開サイトに無い（INCLUDE_DRAFTS=1 のプレビューのビルドだけ）
+    if (artist.draft && process.env.INCLUDE_DRAFTS !== "1") continue;
     const r = await collect(artist, site, host);
     artists.push(artist);
     pages.push(...r.pages);

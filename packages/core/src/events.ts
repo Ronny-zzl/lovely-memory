@@ -9,7 +9,7 @@ export type ResolvedEvent = Event & {
    * members の根拠。
    * - override: overrides.json で指定
    * - eventernote: eventernote の出演者欄に個人名の登録があった
-   * - assumed: 個人名の登録が無いため全員出演とみなした
+   * - assumed: 個人名の登録が無いため、その日に在籍していた全員の出演とみなした
    */
   membersSource: "override" | "eventernote" | "assumed";
   note?: string;
@@ -51,7 +51,9 @@ export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
  */
 export function resolveEvents(events: Event[], overrides: Overrides, artist: ArtistConfig): ResolvedEvent[] {
   const memberByEnId = new Map(artist.members.filter((m) => m.eventernoteId !== undefined).map((m) => [m.eventernoteId!, m.id]));
-  const allMembers = artist.members.map((m) => m.id);
+  // その日に在籍していたメンバー（途中加入・卒業・休止を考慮）
+  const membersOn = (date: string) =>
+    artist.members.filter((m) => (!m.since || m.since <= date) && (!m.until || date <= m.until)).map((m) => m.id);
 
   const merged: Array<Event & { types?: EventType[] }> = [...events, ...overrides.extraEvents];
   const out: ResolvedEvent[] = [];
@@ -72,7 +74,8 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
       membersSource = "override";
     } else {
       const listed = ev.performers.map((p) => memberByEnId.get(p)).filter((x): x is string => !!x);
-      members = listed.length ? allMembers.filter((m) => listed.includes(m)) : allMembers;
+      // 個人名の登録が無ければ、その日に在籍していた全員が出演したものとみなす
+      members = listed.length ? artist.members.map((m) => m.id).filter((m) => listed.includes(m)) : membersOn(ev.date);
       membersSource = listed.length ? "eventernote" : "assumed";
     }
 
