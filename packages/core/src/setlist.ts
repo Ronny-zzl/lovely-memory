@@ -8,3 +8,6 @@ export function setlistStages(s: Setlist): SetlistStage[] {
 export function itemSong(item: SetlistItem): string {
   return typeof item === "string" ? item : item.song;
 }
+
+/** 曲名を思い出せない曲（セトリの中の位置だけ分かっている）。曲としては数えない */
+export const UNKNOWN_SONG = "?";

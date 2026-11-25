@@ -185,6 +185,10 @@ export function EventDetailPage() {
       )}
 
       <p className="event-links small">
+        {/* 入力画面（プレビュー版だけ） */}
+        {__EDITOR__ && isLiveEvent(event) && (
+          <Link to={`/${artist.id}/edit/${event.id}`}>{setlist ? "セトリを直す" : "セトリを入力する"}</Link>
+        )}
         {setlist?.source && (
           <a href={setlist.source} target="_blank" rel="noopener noreferrer">
             セトリ告知ポスト

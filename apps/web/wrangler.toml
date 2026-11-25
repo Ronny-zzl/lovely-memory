@@ -15,3 +15,8 @@ migrations_dir = "migrations"
 # 秘密の値（X_WEBHOOK_SECRET・GITHUB_DISPATCH_TOKEN）は wrangler pages secret put で設定する（ここには書かない）
 [vars]
 GITHUB_REPOSITORY = "Ronny-zzl/lovely-memory"
+
+# 入力画面（/api/edit）：プレビュー版を守る Cloudflare Access のチームと、そのアプリケーションの AUD タグ。
+# Access の署名付きトークンを確かめるのに使う（秘密ではない）
+ACCESS_TEAM_DOMAIN = "https://lovely-memory-pages.cloudflareaccess.com"
+ACCESS_AUD = "082ecd3a90cadb6fff2191ce9c177a8ac381540b0a4dd7de4add42e25c3dd899"

@@ -76,6 +76,18 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 - 数据本身在公开仓库里（`artists/<id>/`），所以「非公开」的意思是「不在网站上公开」
 - 公开时：删掉 `draft`，正常部署即可
 
+### 录入界面（只在预览版）
+
+没有官方歌单告知的团体，在预览版上手动录入：页头的「入力」标签 → 已举行活动的一览（未入力／一部だけ／曲順不明／入力済み）→ 选活动。
+
+- 点曲目的标签按顺序加入；用搜索框找（别名也行）；找不到时可以「＋ 新しい曲として追加」；想不起来的曲用「？」
+- 每首曲：↑↓ 调顺序・EN（安可）・「…」写备注、选只有部分成员唱的成员・✕ 删除
+- 记录的完整度：全部齐全／只有一部分（`completeness: partial`）／曲目齐全但顺序不明（`unordered`）。不完整的歌单计入歌唱次数・歌唱率，但不用于 1 曲目・ラスト・衔接（「?」也一样）
+- 输入途中会自动存在浏览器里，下次打开可以「続きから」
+- 保存：`POST /api/edit`（Worker 验证 Access 的签名令牌 `Cf-Access-Jwt-Assertion`；没有令牌的请求，比如对正式版的直接请求，一律拒绝）→ 启动 `apply-edit.yml`（`workflow_dispatch`）→ `pnpm lm apply-edit` 校验（曲名统一成 songs.json 的正式写法、新曲加进 songs.json）后提交 → Deploy 重新部署正式版和预览版。数分钟后反映
+- 已入力的歌单也可以从同一界面修改（公演详情页的「セトリを直す」）
+- 需要：预览环境的 secret `GITHUB_DISPATCH_TOKEN`（`wrangler pages secret put GITHUB_DISPATCH_TOKEN --project-name lovely-memory --env preview`，和正式环境用同一个 token），`wrangler.toml` 的 `ACCESS_TEAM_DOMAIN`・`ACCESS_AUD`
+
 **预览版的访问保护（Cloudflare Access）**：Cloudflare 后台 → Workers & Pages → `lovely-memory` → Settings → General → 「Access policy」里对预览部署启用 → 在 Zero Trust 里把策略改成只允许自己的邮箱（登录方式：邮箱一次性验证码）。正式版（`main`）不受影响。
 
 ## 手动操作

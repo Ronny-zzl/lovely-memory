@@ -3,7 +3,7 @@ import type { EventSetlist } from "./stats.ts";
 
 /*
  * セトリの曲順から読み取れる傾向。
- * - コラボステージ（他グループの企画）は対象外
+ * - コラボステージ（他グループの企画）と、記録が揃っていないセトリ（completeness・思い出せない曲）は対象外
  * - 「本編」はアンコール以外の曲。1 曲目・ラスト・前半/中盤/後半は本編の中での位置で判定する
  * - つながり（A → B）・決まった流れは、同じステージの本編どうし・アンコールどうしで連続した曲。
  *   本編ラスト → アンコール 1 曲目は数えない
@@ -47,9 +47,13 @@ export type Patterns = {
 
 type Stage = Song[];
 
-/** コラボ以外のステージを、本編とアンコールに分けた曲の並び */
+/**
+ * コラボ以外のステージを、本編とアンコールに分けた曲の並び。
+ * 記録が揃っていないセトリ（一部だけ・曲順不明・思い出せない曲がある）は、位置もつながりも正しくないので使わない
+ */
 function blocks(events: EventSetlist[], encore: boolean): Stage[] {
   return events
+    .filter((e) => !e.completeness && e.unknownSongs === 0)
     .flatMap((e) => e.stages.filter((s) => !s.collab).map((s) => s.entries.filter((x) => x.encore === encore).map((x) => x.song)))
     .filter((s) => s.length > 0);
 }

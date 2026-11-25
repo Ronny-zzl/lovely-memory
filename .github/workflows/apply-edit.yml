@@ -1,0 +1,61 @@
+name: Apply edit
+
+# 入力画面（プレビュー版のサイト）から送られたセトリを書き込む。
+# サイトの /api/edit（Cloudflare Access の認証を確かめる Worker）が workflow_dispatch で起動する。
+# 書き込んだら main にコミットし、Deploy ワークフロー（workflow_run）が公開サイトとプレビューをビルドし直す
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: "セトリの内容（JSON。packages/core/src/edit.ts の EditPayload）"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  # 続けて保存したときは順番に書き込む
+  group: apply-edit
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      # Node のバージョンは mise.toml で管理
+      - uses: jdx/mise-action@v5
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+
+      - name: Apply
+        env:
+          # 入力はシェルに展開せず、環境変数経由でファイルに書く（コマンドインジェクション対策）
+          PAYLOAD: ${{ inputs.payload }}
+        run: |
+          printf '%s' "$PAYLOAD" > "$RUNNER_TEMP/payload.json"
+          pnpm -s lm apply-edit --file "$RUNNER_TEMP/payload.json" --commit-msg "$RUNNER_TEMP/commit-msg.txt"
+
+      - name: Validate
+        run: pnpm -s lm validate all
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artists
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -F "$RUNNER_TEMP/commit-msg.txt"
+          # 他のワークフローと同時に push した場合に備えて、rebase して数回試す
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

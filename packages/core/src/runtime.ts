@@ -3,6 +3,7 @@
  * データの検証はビルド時（apps/web の Vite プラグイン）に済ませるので、ブラウザでは不要。
  */
 export type * from "./schema.ts";
+export type * from "./edit.ts";
 export * from "./setlist.ts";
 export * from "./text.ts";
 export * from "./events.ts";

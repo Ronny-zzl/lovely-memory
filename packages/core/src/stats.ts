@@ -1,6 +1,6 @@
 import type { ResolvedEvent } from "./events.ts";
 import type { Setlist, Song } from "./schema.ts";
-import { itemSong, setlistStages } from "./setlist.ts";
+import { itemSong, setlistStages, UNKNOWN_SONG } from "./setlist.ts";
 import { findSong } from "./setlist-text.ts";
 
 /** 1 回の歌唱 */
@@ -39,6 +39,10 @@ export type EventSetlist = {
   event: ResolvedEvent;
   source?: string;
   note?: string;
+  /** 記録の揃い具合（Setlist の completeness） */
+  completeness?: "partial" | "unordered";
+  /** 曲名を思い出せない曲（"?"）の数 */
+  unknownSongs: number;
   stages: Array<{ name?: string; note?: string; collab: boolean; members: string[]; entries: SetlistEntry[] }>;
 };
 
@@ -99,6 +103,7 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
     const setlist = setlistByEvent.get(event.id)!;
     // stageIndex は除外後の並びでの位置（EventSetlist.stages の添字と一致させる）
     const kept = setlistStages(setlist).filter((st) => includeCollab || !st.collab);
+    let unknownSongs = 0;
     const stages = kept.map((stage, stageIndex) => {
       const collab = stage.collab ?? false;
       const stageMembers = stage.members ?? event.members;
@@ -111,6 +116,11 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
         // アンコールが 1 曲だけなら EN、複数なら EN1・EN2…
         const no = encore ? (encores > 1 ? `EN${++encoreNo}` : "EN") : `M${i + 1}`;
         const title = itemSong(item);
+        // 曲名を思い出せない曲は、曲順の位置だけ占めて数えない
+        if (title === UNKNOWN_SONG) {
+          unknownSongs++;
+          return;
+        }
         const song = findSong(songs, { label: title, title });
         if (!song) {
           unresolved.push({ eventId: event.id, title });
@@ -146,7 +156,7 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
       });
       return { name: stage.name, note: stage.note, collab, members: stageMembers, entries };
     });
-    return { event, source: setlist.source, note: setlist.note, stages };
+    return { event, source: setlist.source, note: setlist.note, completeness: setlist.completeness, unknownSongs, stages };
   });
 
   const eventIndex = new Map(targets.map((e, i) => [e.id, i]));

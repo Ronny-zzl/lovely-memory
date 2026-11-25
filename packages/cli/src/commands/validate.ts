@@ -1,5 +1,5 @@
 import { readdir } from "node:fs/promises";
-import { findSong, isLiveEvent, normalizeTitle, resolveEvents, Setlist, setlistStages } from "@lovely-memory/core";
+import { findSong, UNKNOWN_SONG, isLiveEvent, normalizeTitle, resolveEvents, Setlist, setlistStages } from "@lovely-memory/core";
 import { ARTISTS_DIR, loadArtist, loadEvents, loadOverrides, loadSetlistFiles, loadSongs } from "../repo.ts";
 import { jstDateDaysAgo } from "./sync.ts";
 
@@ -75,6 +75,8 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
       }
       for (const item of stage.items) {
         const title = typeof item === "string" ? item : item.song;
+        // 曲名を思い出せない曲（"?"）は songs.json に無くてよい
+        if (title === UNKNOWN_SONG) continue;
         const song = findSong(songs, { label: title, title });
         if (!song) err(`setlists/${f.file}: 曲「${title}」が songs.json にない`);
         else if (song.title !== title) warns.push(`setlists/${f.file}: 「${title}」は正式表記「${song.title}」に揃えると良い`);

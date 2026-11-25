@@ -33,6 +33,13 @@ export const routes: RouteObject[] = [
           { path: "trends", ...page(() => import("./pages/TrendsPage.tsx").then((m) => m.TrendsPage)) },
           { path: "members", ...page(() => import("./pages/MembersPage.tsx").then((m) => m.MembersPage)) },
           { path: "attendance", ...page(() => import("./pages/AttendancePage.tsx").then((m) => m.AttendancePage)) },
+          // 入力画面（プレビュー版だけ）
+          ...(__EDITOR__
+            ? [
+                { path: "edit", ...page(() => import("./pages/EditIndexPage.tsx").then((m) => m.EditIndexPage)) },
+                { path: "edit/:eventId", ...page(() => import("./pages/SetlistEditorPage.tsx").then((m) => m.SetlistEditorPage)) },
+              ]
+            : []),
         ],
       },
     ],

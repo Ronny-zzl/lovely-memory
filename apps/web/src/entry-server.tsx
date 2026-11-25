@@ -15,6 +15,8 @@ export async function paths(): Promise<string[]> {
     const base = `/${artist.id}`;
     const data = await loadArtistData(artist);
     out.push(`${base}/songs`, `${base}/events`, `${base}/trends`, `${base}/members`, `${base}/attendance`);
+    // 入力画面の一覧（プレビュー版だけ。各イベントの入力画面はブラウザで描く）
+    if (__EDITOR__) out.push(`${base}/edit`);
     out.push(...data.songs.map((s) => `${base}/songs/${s.id}`));
     out.push(...data.events.map((e) => `${base}/events/${e.id}`));
   }

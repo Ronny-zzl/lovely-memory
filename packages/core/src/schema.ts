@@ -294,6 +294,13 @@ export const Setlist = z
     event: z.number().int(),
     source: z.string().url().optional(),
     note: z.string().optional(),
+    /**
+     * 記録の揃い具合（公式の告知が無く、ファンの記憶などから入れたとき）。無ければ全曲・曲順とも揃っている。
+     * - partial: 一部の曲だけ（抜けがある）
+     * - unordered: 曲は揃っているが曲順が分からない
+     * どちらも歌唱回数・歌唱率には数え、曲順の傾向（1 曲目・ラスト・つながり）には使わない
+     */
+    completeness: z.enum(["partial", "unordered"]).optional(),
     items: z.array(SetlistItem).optional(),
     stages: z.array(SetlistStage).optional(),
   })

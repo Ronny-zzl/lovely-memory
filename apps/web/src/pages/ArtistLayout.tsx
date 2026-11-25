@@ -56,6 +56,7 @@ export function ArtistLayout() {
             <NavLink to="trends">傾向</NavLink>
             <NavLink to="members">メンバー</NavLink>
             <NavLink to="attendance">参戦記録</NavLink>
+            {__EDITOR__ && <NavLink to="edit">入力</NavLink>}
           </nav>
         </div>
       </header>

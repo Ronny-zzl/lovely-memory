@@ -37,6 +37,28 @@ describe("zoneOf", () => {
   });
 });
 
+describe("incomplete setlists", () => {
+  it("counts their songs but leaves them out of positions and transitions", () => {
+    const extra = [
+      Setlist.parse({ event: 6, completeness: "partial", items: ["F", "A"] }),
+      Setlist.parse({ event: 7, items: ["F", "?", "A"] }),
+    ];
+    const s = computeStats({ songs, events: [1, 2, 3, 4, 5, 6, 7].map(ev), setlists: [...setlists, ...extra] });
+    const e7 = s.events.find((e) => e.event.id === 7)!;
+    expect(e7.unknownSongs).toBe(1);
+    // "?" は数えないが、A の位置は 3 曲目のまま
+    expect(e7.stages[0]!.entries.map((x) => [x.song.title, x.no])).toEqual([
+      ["F", "M1"],
+      ["A", "M3"],
+    ]);
+    expect(s.unresolved).toEqual([]);
+    expect(s.songs.find((x) => x.song.title === "F")!.count).toBe(3);
+    const p = computePatterns(s.events);
+    expect(p.stages).toBe(patterns.stages);
+    expect(p.transitions.some((t) => t.from.title === "F" && t.to.title === "A")).toBe(false);
+  });
+});
+
 describe("computePatterns", () => {
   it("counts positions in the main set, excluding collab stages", () => {
     expect(patterns.stages).toBe(5);

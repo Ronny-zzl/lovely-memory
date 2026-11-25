@@ -16,3 +16,6 @@ declare const __BUILD_TODAY__: string;
 
 /** サイトの URL の origin（末尾の / なし。vite.config.ts の define） */
 declare const __SITE_ORIGIN__: string;
+
+/** 入力画面を含むか（INCLUDE_DRAFTS=1 のプレビュー版のビルド。vite.config.ts の define） */
+declare const __EDITOR__: boolean;

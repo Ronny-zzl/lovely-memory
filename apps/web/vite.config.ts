@@ -12,6 +12,8 @@ export default defineConfig(({ isSsrBuild }) => ({
   // エラーの記録に、どのビルドで起きたかを残す（GitHub Actions ではコミット）
   define: {
     __BUILD__: JSON.stringify(process.env.GITHUB_SHA?.slice(0, 7) ?? "local"),
+    // 入力画面（下書きを含むプレビュー版だけ。公開サイトのビルドにはコードも入らない）
+    __EDITOR__: JSON.stringify(process.env.INCLUDE_DRAFTS === "1"),
     // ビルドした日（JST）。ビルド時に作る HTML はこの日付で描き、ブラウザで引き継いだ後に今日の日付で描き直す（src/hydration.ts）
     __BUILD_TODAY__: JSON.stringify(new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date())),
     // サイトの URL（共有のリンク用）。ビルド時の HTML では location が無いので、これを使う

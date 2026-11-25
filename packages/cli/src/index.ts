@@ -1,5 +1,6 @@
 import { parseArgs } from "node:util";
 import { addSetlist } from "./commands/add-setlist.ts";
+import { applyEdit } from "./commands/apply-edit.ts";
 import { addSong } from "./commands/add-song.ts";
 import { analytics } from "./commands/analytics.ts";
 import { errors } from "./commands/errors.ts";
@@ -52,6 +53,8 @@ commands:
                      list | register --url <url> | revalidate --id <id> | delete --id <id>
   reply-issues       watch-x の返信をセトリ入力用 Issue にコメントする（GitHub Actions 用、artistId 不要）
                      --file <actions.json>
+  apply-edit         入力画面から送られたセトリ（JSON）を確かめて書き込む（GitHub Actions 用、artistId 不要）
+                     --file <payload.json>  --commit-msg <path>
   validate           データ全体の整合性チェック（artistId に all 可）
                      --missing      セトリ未入力の終了済みイベントと、出典（source）の無いセトリを一覧表示
   import-official    公式サイトのディスコグラフィから songs.json を更新（公式の値を優先）
@@ -123,7 +126,7 @@ const [command, artistId] = positionals;
 
 type Command = (id: string, opts: Record<string, any>) => Promise<void>;
 /** artistId を取らないコマンド（対象は引数のファイルなどから決まる） */
-const NO_ARTIST = new Set(["import-comment", "reply-issues"]);
+const NO_ARTIST = new Set(["import-comment", "apply-edit", "reply-issues"]);
 const commands: Record<string, Command> = {
   sync,
   "list-events": listEvents,
@@ -136,6 +139,7 @@ const commands: Record<string, Command> = {
   "add-song": addSong,
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,
+  "apply-edit": applyEdit as Command,
   "watch-x": watchX,
   "reply-issues": replyIssues as Command,
   "x-webhook": xWebhook,
