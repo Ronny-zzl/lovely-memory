@@ -90,13 +90,64 @@
     "id": "s011",
     "title": "しゅがぴゅあ",
     "era": "cover",
-    "cover": {
-      "artist": "ピュアリーモンスター"
-    },
     "credits": {
       "lyrics": "錦織孝宏",
       "music": "錦織孝宏",
       "arrangement": "錦織孝宏"
-    }
+    },
+    "cover": {
+      "artist": "ピュアリーモンスター",
+      "release": {
+        "date": "2026-04-14"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ネコのクラちゃん 〜クラレ王国 大陸のLutte Amor〜",
+        "role": "オープニングテーマ"
+      }
+    ]
+  },
+  {
+    "id": "s012",
+    "title": "おジャ魔女カーニバル!!",
+    "era": "cover",
+    "credits": {
+      "lyrics": "大森祥子",
+      "music": "池毅",
+      "arrangement": "坂本昌之"
+    },
+    "cover": {
+      "artist": "MAHO堂",
+      "release": {
+        "date": "1999-03-05"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "おジャ魔女どれみ",
+        "role": "オープニングテーマ"
+      }
+    ]
+  },
+  {
+    "id": "s013",
+    "title": "初恋リバイバル",
+    "era": "cover",
+    "credits": {
+      "lyrics": "磯野涼",
+      "music": "磯野涼",
+      "arrangement": "磯野涼"
+    },
+    "cover": {
+      "artist": "iLiFE!",
+      "release": {
+        "date": "2022-08-27",
+        "title": "アイドルライフスターターパック"
+      }
+    },
+    "note": "原曲は妄愛グラビティ"
   }
 ]
