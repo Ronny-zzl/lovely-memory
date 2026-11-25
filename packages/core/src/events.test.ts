@@ -46,8 +46,10 @@ describe("inferEventTypes", () => {
     expect(eventHasType({ types: ["release", "free"] }, "free")).toBe(true);
   });
 
-  it("treats tokuten-only events as non-live", () => {
+  it("treats tokuten / talk-only events as non-live", () => {
     expect(isLiveEvent({ types: ["tokuten"] })).toBe(false);
+    expect(isLiveEvent({ types: ["talk"] })).toBe(false);
+    expect(isLiveEvent({ types: ["tokuten", "talk"] })).toBe(false);
     expect(isLiveEvent({ types: ["release", "tokuten"] })).toBe(true);
   });
 });

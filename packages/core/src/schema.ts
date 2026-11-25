@@ -14,6 +14,7 @@ export const EventType = z.enum([
   "release", // リリースイベント（ミニライブ）
   "free", // フリーライブ
   "tokuten", // チェキ会など、ライブなし → 統計対象外
+  "talk", // トークステージ・トークショーなど、ライブなし → 統計対象外
 ]);
 export type EventType = z.infer<typeof EventType>;
 

@@ -100,7 +100,7 @@ export function MembersPage() {
         ))}
       </ul>
       <p className="muted small note">
-        開催済みのライブ（特典会のみのイベントを除く）が対象。出演メンバーは eventernote の出演者情報と手動修正に基づく。
+        開催済みのライブ（特典会・トークだけのイベントを除く）が対象。出演メンバーは eventernote の出演者情報と手動修正に基づく。
         {assumed > 0 && `出演者情報の無い ${assumed} イベントは全員出演として数えている。`}
         「歌唱」はセトリ登録済みのイベントで参加した曲数。
       </p>

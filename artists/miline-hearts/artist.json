@@ -20,6 +20,7 @@
   },
   "eventTypeRules": [
     { "pattern": "チェキ会|特典会", "type": "tokuten" },
+    { "pattern": "トークステージ|トークショー|トークイベント", "type": "talk" },
     { "pattern": "発売記念イベント|リリースイベント|リリイベ", "type": ["release", "free"] },
     { "pattern": "リリース記念", "type": "release" },
     { "pattern": "フリーライブ|フリーミニライブ|FREE LIVE|フリーLIVE", "type": "free" },

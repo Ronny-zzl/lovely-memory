@@ -11,7 +11,7 @@ import { useSearchParamsAfterHydration } from "../hydration.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./EventsPage.css";
 
-const ALL_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
+const ALL_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free", "talk", "tokuten"];
 const DEFAULT_HIDDEN: EventType[] = ["tokuten"];
 
 export function EventsPage() {

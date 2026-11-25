@@ -18,7 +18,10 @@ export type ResolvedEvent = Event & {
 };
 
 /** 表示・保存時の種別の並び順 */
-const TYPE_ORDER: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten"];
+const TYPE_ORDER: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten", "talk"];
+
+/** ライブが無い種別（特典会・トーク）。セトリが無く、統計にも入れない */
+const NON_LIVE_TYPES = new Set<EventType>(["tokuten", "talk"]);
 
 /** 種別の包含関係（子 → 親）。主催対バンは対バンの一種 */
 export const EVENT_TYPE_PARENT: Partial<Record<EventType, EventType>> = { taiban: "external" };
@@ -55,9 +58,9 @@ export function orderMembers<M extends Pick<Member, "until" | "untilLabel">>(mem
   return [...members.filter((m) => !memberStatus(m, today)), ...members.filter((m) => memberStatus(m, today))];
 }
 
-/** ライブを伴うイベントか（特典会のみのイベントはセトリが存在しない） */
+/** ライブを伴うイベントか（特典会・トークだけのイベントはセトリが存在しない） */
 export function isLiveEvent(e: Pick<ResolvedEvent, "types">): boolean {
-  return e.types.some((t) => t !== "tokuten");
+  return e.types.some((t) => !NON_LIVE_TYPES.has(t));
 }
 
 /**

@@ -33,7 +33,9 @@
   color: var(--badge-2nd-fg);
 }
 
-.type-tokuten {
+/* ライブの無いイベント（特典会・トーク） */
+.type-tokuten,
+.type-talk {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);

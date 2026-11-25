@@ -57,7 +57,7 @@ export async function importSetlists(artistId: string, opts: Record<string, unkn
       const cands =
         r.kind === "ambiguous"
           ? r.candidates.map((e) => `      ${e.id}  ${e.date} ${e.start ?? "--:--"} ${e.title}`).join("\n")
-          : "      （候補なし: events.json に無い・since 範囲外・特典会のみ など）";
+          : "      （候補なし: events.json に無い・since 範囲外・ライブの無いイベント など）";
       todoLines.push(`  "${keyOf(p)}"  ${label}\n    ${p.url}\n${cands}`);
       continue;
     }
