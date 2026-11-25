@@ -3,8 +3,16 @@
 event: 490208
 source: https://www.tiktok.com/@miline.hearts/video/7687967546577882389
 items:
-  - 初恋の合図
-  - 無限大アップデート
+  - song: 初恋の合図
+    members:
+      - momoko
+      - rei
+      - natsu
+  - song: 無限大アップデート
+    members:
+      - natsu
+      - rei
+      - momoko
   - 積極的ヒロイン+♡
   - We are Mi'Line Hearts
   - 僕と君の特別
