@@ -81,7 +81,7 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
   const latestSongs = latest?.stages.reduce((n, st) => n + st.entries.length, 0);
 
   return (
-    <article className="artist-card">
+    <article className="artist-card" data-artist={artist.id}>
       {/* グループのページ（/:artistId → 楽曲へ）。smoke テストはこのリンクからグループを見つける */}
       <Link to={base} className="artist-card-head">
         <span className="artist-card-name">{artist.name}</span>

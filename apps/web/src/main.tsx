@@ -9,6 +9,7 @@ import { routes } from "./routes.tsx";
 import { installThemeSync } from "./theme.ts";
 // サイト全体で使う見た目（ページ・部品ごとのものは、それぞれの .tsx の隣の .css）
 import "./styles/tokens.css";
+import "./styles/themes.css";
 import "./styles/base.css";
 import "./styles/layout.css";
 import "./styles/dots.css";

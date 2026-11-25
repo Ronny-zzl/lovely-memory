@@ -39,7 +39,7 @@ pnpm visual shoot <dir> / pnpm visual compare <前> <后> <差异>   # 截图逐
 ## CSS
 
 - 全站共用的在 `apps/web/src/styles/`（`main.tsx` 引入），只属于某个页面或组件的放在它的 `.tsx` 旁边、由它引入。
-- 颜色・字号・圆角・阴影只用 `styles/tokens.css` 的变量；间距只用 0・2・4・6・8・10・12・16・20・24・32・64px（stylelint 检查）。
+- 颜色・字号・圆角・阴影只用 `styles/tokens.css` 的变量；间距只用 0・2・4・6・8・10・12・16・20・24・32・64px（stylelint 检查）。团体专属的配色写在 `styles/themes.css`（按 `.page[data-artist]` 覆盖 tokens 的变量）。
 - 文字颜色要满足 4.5:1 对比度（橙色文字用 `--accent-text`，橙底用 `--accent-fill` + `--on-accent-fill`）。
 - 不应改变外观的改动（重构等），改动前后用 `pnpm visual` 截图对比；有意改外观时，把变化的截图给用户确认。
 

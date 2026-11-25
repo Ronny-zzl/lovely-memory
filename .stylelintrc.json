@@ -25,7 +25,7 @@
   },
   "overrides": [
     {
-      "files": ["**/styles/tokens.css"],
+      "files": ["**/styles/tokens.css", "**/styles/themes.css"],
       "rules": {
         "color-no-hex": null,
         "function-disallowed-list": null,

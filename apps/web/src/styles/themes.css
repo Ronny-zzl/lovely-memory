@@ -1,0 +1,194 @@
+/*
+ * グループごとの色。tokens.css の変数を、そのグループのページ（.page[data-artist]）を開いている間だけ上書きする。
+ * トップページのカード（.artist-card[data-artist]）にも同じ色を使う。
+ * 色を足すときは tokens.css と同じく、文字の色が 4.5:1 以上になるように。
+ */
+
+/*
+ * Mi'Line Hearts：ロゴ・告知画像の「空色とピンクの斜めの光（網点つき）に、白いハート」。
+ * 主な色はピンク、2 つめの色はロゴの文字の紺
+ */
+:root:has(.page[data-artist="miline-hearts"]),
+.artist-card[data-artist="miline-hearts"] {
+  --hero-bg:
+    radial-gradient(circle, rgb(255 255 255 / 55%) 0 1.1px, transparent 1.5px) 0 0 / 9px 9px,
+    linear-gradient(115deg, #bfe3f7 0%, #d9ecfa 30%, #f9d3e3 62%, #f6b6cf 100%);
+  --hero-stars: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='96' viewBox='0 0 160 96'%3E%3Cg fill='%23fff'%3E%3Cpath opacity='.85' transform='translate(18 14) scale(.75) rotate(-12 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3Cpath opacity='.7' transform='translate(104 8) scale(.5) rotate(14 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3Cpath opacity='.9' transform='translate(130 54) scale(.9) rotate(10 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3Cpath opacity='.6' transform='translate(62 60) scale(.45) rotate(-8 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3C/g%3E%3C/svg%3E");
+  --shadow-hero: 0 8px 24px rgb(40 50 110 / 16%);
+  --hero-card: rgb(255 255 255 / 96%);
+  --bg: #fbfaff;
+  --border: #e8e2ee;
+  --accent: #e8508c; /* ハートのピンク */
+  --accent-2: #1d3f8f; /* ロゴの文字の紺 */
+  --accent-soft: #fde4ef;
+  --accent-text: #b8245f;
+  --accent-fill: #c42e6a;
+  --accent-fill-hover: #a3235a;
+  --bar: #f5b3cd;
+  --row-hover: #f8f1f7;
+  --tieup-bg: #e0f1fb;
+  --tieup-fg: #1a5f8a;
+}
+
+:root[data-theme="dark"]:has(.page[data-artist="miline-hearts"]),
+:root[data-theme="dark"] .artist-card[data-artist="miline-hearts"] {
+  --hero-bg:
+    radial-gradient(circle, rgb(255 255 255 / 9%) 0 1.1px, transparent 1.5px) 0 0 / 9px 9px,
+    linear-gradient(115deg, #1b2d5c 0%, #24305f 30%, #4a2650 62%, #5c2448 100%);
+  --hero-stars: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='96' viewBox='0 0 160 96'%3E%3Cg fill='%23ff9fc6'%3E%3Cpath opacity='.45' transform='translate(18 14) scale(.75) rotate(-12 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3Cpath opacity='.35' transform='translate(104 8) scale(.5) rotate(14 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3Cpath opacity='.5' transform='translate(130 54) scale(.9) rotate(10 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3Cpath opacity='.3' transform='translate(62 60) scale(.45) rotate(-8 12 12)' d='M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z'/%3E%3C/g%3E%3C/svg%3E");
+  --shadow-hero: 0 8px 24px rgb(0 0 0 / 40%);
+  --bg: #13141f;
+  --surface: #1b1c2b;
+  --border: #2d2e45;
+  --row-hover: #23243a;
+  --accent: #ff8fbf;
+  --accent-2: #9cc2ff;
+  --accent-soft: #3a1f30;
+  --accent-text: var(--accent);
+  --accent-fill: var(--accent);
+  --accent-fill-hover: #ffaad0;
+  --bar: #6e3552;
+  --hero-card: rgb(27 28 43 / 92%);
+  --tieup-bg: #13314a;
+  --tieup-fg: #9fd3ff;
+}
+
+/* 団体名：ロゴと同じ「紺の文字に白とピンクの縁取り」 */
+.page[data-artist="miline-hearts"] .site-title {
+  padding: 0 0 4px 6px;
+  background: none;
+  color: #1d3f8f;
+  letter-spacing: 0.02em;
+  text-shadow:
+    1.5px 0 0 #fff,
+    1.06px 1.06px 0 #fff,
+    0 1.5px 0 #fff,
+    -1.06px 1.06px 0 #fff,
+    -1.5px 0 0 #fff,
+    -1.06px -1.06px 0 #fff,
+    0 -1.5px 0 #fff,
+    1.06px -1.06px 0 #fff,
+    3px 0 0 #f27aa9,
+    2.6px 1.5px 0 #f27aa9,
+    1.5px 2.6px 0 #f27aa9,
+    0 3px 0 #f27aa9,
+    -1.5px 2.6px 0 #f27aa9,
+    -2.6px 1.5px 0 #f27aa9,
+    -3px 0 0 #f27aa9,
+    -2.6px -1.5px 0 #f27aa9,
+    -1.5px -2.6px 0 #f27aa9,
+    0 -3px 0 #f27aa9,
+    1.5px -2.6px 0 #f27aa9,
+    2.6px -1.5px 0 #f27aa9,
+    4.5px 0 0 #f27aa9,
+    4.16px 1.72px 0 #f27aa9,
+    3.18px 3.18px 0 #f27aa9,
+    1.72px 4.16px 0 #f27aa9,
+    0 4.5px 0 #f27aa9,
+    -1.72px 4.16px 0 #f27aa9,
+    -3.18px 3.18px 0 #f27aa9,
+    -4.16px 1.72px 0 #f27aa9,
+    -4.5px 0 0 #f27aa9,
+    -4.16px -1.72px 0 #f27aa9,
+    -3.18px -3.18px 0 #f27aa9,
+    -1.72px -4.16px 0 #f27aa9,
+    0 -4.5px 0 #f27aa9,
+    1.72px -4.16px 0 #f27aa9,
+    3.18px -3.18px 0 #f27aa9,
+    4.16px -1.72px 0 #f27aa9,
+    0 6px 0 #f6b1cb;
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .site-title {
+  color: #f4f6ff;
+  text-shadow:
+    1.5px 0 0 #1d3f8f,
+    1.06px 1.06px 0 #1d3f8f,
+    0 1.5px 0 #1d3f8f,
+    -1.06px 1.06px 0 #1d3f8f,
+    -1.5px 0 0 #1d3f8f,
+    -1.06px -1.06px 0 #1d3f8f,
+    0 -1.5px 0 #1d3f8f,
+    1.06px -1.06px 0 #1d3f8f,
+    3px 0 0 #e8508c,
+    2.6px 1.5px 0 #e8508c,
+    1.5px 2.6px 0 #e8508c,
+    0 3px 0 #e8508c,
+    -1.5px 2.6px 0 #e8508c,
+    -2.6px 1.5px 0 #e8508c,
+    -3px 0 0 #e8508c,
+    -2.6px -1.5px 0 #e8508c,
+    -1.5px -2.6px 0 #e8508c,
+    0 -3px 0 #e8508c,
+    1.5px -2.6px 0 #e8508c,
+    2.6px -1.5px 0 #e8508c,
+    4.5px 0 0 #e8508c,
+    4.16px 1.72px 0 #e8508c,
+    3.18px 3.18px 0 #e8508c,
+    1.72px 4.16px 0 #e8508c,
+    0 4.5px 0 #e8508c,
+    -1.72px 4.16px 0 #e8508c,
+    -3.18px 3.18px 0 #e8508c,
+    -4.16px 1.72px 0 #e8508c,
+    -4.5px 0 0 #e8508c,
+    -4.16px -1.72px 0 #e8508c,
+    -3.18px -3.18px 0 #e8508c,
+    -1.72px -4.16px 0 #e8508c,
+    0 -4.5px 0 #e8508c,
+    1.72px -4.16px 0 #e8508c,
+    3.18px -3.18px 0 #e8508c,
+    4.16px -1.72px 0 #e8508c,
+    0 6px 0 #6e2a52;
+}
+
+/* ヘッダーを目立たせる：枠を太く、告知画像の斜めの光、カードの右にレースのハート */
+.page[data-artist="miline-hearts"] .hero {
+  padding: 20px;
+  background:
+    repeating-conic-gradient(from 0deg at 0% 100%, rgb(255 255 255 / 38%) 0 4deg, transparent 4deg 10deg),
+    var(--hero-stars),
+    var(--hero-bg);
+}
+
+.page[data-artist="miline-hearts"] .hero-card {
+  isolation: isolate;
+}
+
+.page[data-artist="miline-hearts"] .hero-card::before {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 12px;
+  z-index: -1;
+  width: 130px;
+  height: 120px;
+  transform: rotate(8deg);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'%3E%3Cg fill='none' stroke='%23f4a3c4' stroke-linecap='round'%3E%3Cpath stroke-width='6' stroke-dasharray='0 9' d='M60 100S10 68 10 36A24 24 0 0 1 60 22a24 24 0 0 1 50 14c0 32-50 64-50 64z'/%3E%3Cpath stroke-width='2' d='M60 92S18 64 18 37A17 17 0 0 1 60 27a17 17 0 0 1 42 10c0 27-42 55-42 55z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0.45;
+}
+
+@media (width <= 640px) {
+  .page[data-artist="miline-hearts"] .hero-card::before {
+    right: 8px;
+    width: 96px;
+    height: 88px;
+    opacity: 0.3;
+  }
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .hero {
+  background:
+    repeating-conic-gradient(from 0deg at 0% 100%, rgb(255 255 255 / 7%) 0 4deg, transparent 4deg 10deg),
+    var(--hero-stars),
+    var(--hero-bg);
+}
+
+:root[data-theme="dark"] .page[data-artist="miline-hearts"] .hero-card::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'%3E%3Cg fill='none' stroke='%23e8508c' stroke-linecap='round'%3E%3Cpath stroke-width='6' stroke-dasharray='0 9' d='M60 100S10 68 10 36A24 24 0 0 1 60 22a24 24 0 0 1 50 14c0 32-50 64-50 64z'/%3E%3Cpath stroke-width='2' d='M60 92S18 64 18 37A17 17 0 0 1 60 27a17 17 0 0 1 42 10c0 27-42 55-42 55z'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.35;
+}
+
+/* ロゴの両脇（ハートと王冠）。太陽・月の色の代わりに */
+.page[data-artist="miline-hearts"] .brand .sun {
+  color: var(--accent);
+}

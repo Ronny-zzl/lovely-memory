@@ -1,6 +1,6 @@
 import { Suspense, use, useState } from "react";
 import { Link, Navigate, NavLink, Outlet, useLocation, useNavigation, useOutletContext, useParams } from "react-router";
-import { MoonIcon, SunIcon } from "../components/Icons.tsx";
+import { brandIcons } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { PageSkeleton } from "../components/PageSkeleton.tsx";
 import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
@@ -22,9 +22,10 @@ export function ArtistLayout() {
   if (!nav.moved && pathname !== nav.first) setNav({ ...nav, moved: true });
   const fadeIn = nav.moved || pathname !== nav.first;
   if (!artist) return <Navigate to="/" replace />;
+  const [LeftIcon, RightIcon] = brandIcons(artist.id);
 
   return (
-    <div className="page">
+    <div className="page" data-artist={artist.id}>
       <header className="site-header hero">
         <div className="hero-card">
           <div className="hero-actions">
@@ -33,11 +34,11 @@ export function ArtistLayout() {
           </div>
           <Link to="/" className="brand">
             <span className="sun">
-              <SunIcon />
+              <LeftIcon />
             </span>
             ラブリィメモリー
             <span className="moon">
-              <MoonIcon />
+              <RightIcon />
             </span>
           </Link>
           <h1 className="site-title">
