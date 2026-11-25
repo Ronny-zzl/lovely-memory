@@ -56,6 +56,8 @@ export function formatDayWithWeekday(iso: string): string {
 /** イベント名の先頭に付いているグループ名を省く（一覧を短くするため） */
 export function displayTitle(title: string, artistName: string): string {
   const t = title.startsWith(artistName) ? title.slice(artistName.length).replace(/^[\s　/／:：-]+/, "") : title;
+  // 「〇〇 Presents …」「〇〇主催 …」のようにグループ名が文の一部になっているものは、そのまま残す
+  if (/^(presents?\b|pre\.|プレゼンツ|主催|企画)/i.test(t)) return title;
   return t || title;
 }
 
