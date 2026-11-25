@@ -43,6 +43,7 @@ export async function applyEdit(_target: string | undefined, opts: Record<string
   const unknown: string[] = [];
   const stages = payload.stages.map((st) => ({
     ...(st.name?.trim() && { name: st.name.trim() }),
+    ...(st.collab && { collab: true }),
     items: st.items.map((it): SetlistItem => {
       let title = it.song.trim();
       if (title !== UNKNOWN_SONG) {
@@ -55,6 +56,7 @@ export async function applyEdit(_target: string | undefined, opts: Record<string
         ...(it.encore && { encore: true }),
         ...(it.note?.trim() && { note: it.note.trim() }),
         ...(it.members?.length && { members: it.members }),
+        ...(it.with?.length && { with: it.with.map((w) => w.trim()).filter(Boolean) }),
       };
       return Object.keys(extra).length ? { song: title, ...extra } : title;
     }),

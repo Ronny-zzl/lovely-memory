@@ -82,6 +82,7 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 
 - 点曲目的标签按顺序加入；用搜索框找（别名也行）；找不到时可以「＋ 新しい曲として追加」；想不起来的曲用「？」
 - 每首曲：↑↓ 调顺序・EN（安可）・「…」写备注、选只有部分成员唱的成员・✕ 删除
+- 「ステージを分ける」可以分多个舞台（2 部制・别舞台等）；有多个舞台时，用「ここに追加」选择点曲目时加到哪个舞台。舞台勾选「コラボ」= 和其他团体的コラボステージ（`collab: true`），这时每首曲的「…」里可以写一起唱的人（`with`，用「、」分隔）。新加的舞台会插在末尾的コラボステージ前面
 - 记录的完整度：全部齐全／只有一部分（`completeness: partial`）／曲目齐全但顺序不明（`unordered`）。不完整的歌单计入歌唱次数・歌唱率，但不用于 1 曲目・ラスト・衔接（「?」也一样）
 - 输入途中会自动存在浏览器里，下次打开可以「続きから」
 - 保存：`POST /api/edit`（Worker 验证 Access 的签名令牌 `Cf-Access-Jwt-Assertion`；没有令牌的请求，比如对正式版的直接请求，一律拒绝）→ 启动 `apply-edit.yml`（`workflow_dispatch`）→ `pnpm lm apply-edit` 校验（曲名统一成 songs.json 的正式写法、新曲加进 songs.json）后提交 → Deploy 重新部署正式版和预览版。数分钟后反映

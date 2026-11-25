@@ -11,8 +11,8 @@ import "./EditPages.css";
  * 入力の途中はこのブラウザに自動で残し（localStorage）、保存したら消す。
  */
 
-type Row = { key: number; song: string; encore: boolean; note: string; members: string[]; open: boolean };
-type StageState = { name: string; items: Row[] };
+type Row = { key: number; song: string; encore: boolean; note: string; members: string[]; with: string; open: boolean };
+type StageState = { name: string; collab: boolean; items: Row[] };
 type Completeness = "" | "partial" | "unordered";
 type Draft = { stages: StageState[]; completeness: Completeness; source: string; note: string };
 
@@ -23,23 +23,41 @@ const row = (song: string, extra: Partial<Row> = {}): Row => ({
   encore: false,
   note: "",
   members: [],
+  with: "",
   open: false,
   ...extra,
 });
 
 function fromSetlist(s: Setlist | undefined): Draft {
-  if (!s) return { stages: [{ name: "", items: [] }], completeness: "", source: "", note: "" };
+  if (!s) return { stages: [{ name: "", collab: false, items: [] }], completeness: "", source: "", note: "" };
   return {
     stages: setlistStages(s).map((st) => ({
       name: st.name ?? "",
+      collab: !!st.collab,
       items: st.items.map((it) =>
-        typeof it === "string" ? row(it) : row(it.song, { encore: !!it.encore, note: it.note ?? "", members: it.members ?? [] }),
+        typeof it === "string"
+          ? row(it)
+          : row(it.song, { encore: !!it.encore, note: it.note ?? "", members: it.members ?? [], with: (it.with ?? []).join("、") }),
       ),
     })),
     completeness: s.completeness ?? "",
     source: s.source ?? "",
     note: s.note ?? "",
   };
+}
+
+/** 「A、B・C, D」→ ["A", "B", "C", "D"] */
+const splitNames = (s: string) =>
+  s
+    .split(/[、,，・\n]/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+/** 新しいステージを入れる位置。最後にコラボステージが並んでいれば、その前（コラボはふつう最後なので） */
+function insertAt(stages: StageState[]): number {
+  let at = stages.length;
+  while (at > 0 && stages[at - 1]!.collab) at--;
+  return at;
 }
 
 const draftKey = (artistId: string, eventId: number) => `lovely-memory:edit:${artistId}:${eventId}`;
@@ -54,6 +72,7 @@ export function SetlistEditorPage() {
   const [draft, setDraft] = useState<Draft>(() => fromSetlist(existing));
   const [saved, setSaved] = useState<Draft | undefined>();
   const [q, setQ] = useState("");
+  const [targetStage, setTargetStage] = useState<number | undefined>();
   const [state, setState] = useState<{ kind: "idle" | "saving" | "done" | "error"; message?: string }>({ kind: "idle" });
 
   // 前回の入力途中の内容（保存前に閉じたとき）。この画面はビルド時の HTML を作らない（ブラウザだけで描く）ので、
@@ -62,7 +81,13 @@ export function SetlistEditorPage() {
     if (typeof window === "undefined") return undefined;
     try {
       const raw = localStorage.getItem(key);
-      return raw ? (JSON.parse(raw) as Draft) : undefined;
+      if (!raw) return undefined;
+      // 古い形（コラボ欄が無いころ）の下書きも読めるように
+      const d = JSON.parse(raw) as Draft;
+      return {
+        ...d,
+        stages: d.stages.map((st) => ({ ...st, collab: !!st.collab, items: st.items.map((r) => ({ ...r, with: r.with ?? "" })) })),
+      };
     } catch {
       return undefined;
     }
@@ -96,9 +121,10 @@ export function SetlistEditorPage() {
   const candidates = nq ? ranked.filter((s) => [s.title, ...s.aliases].some((t) => normalizeTitle(t).includes(nq))) : ranked;
   const exact = q.trim() ? findSong(songs, { label: q.trim(), title: q.trim() }) : undefined;
 
-  const last = draft.stages.length - 1;
+  // 曲を足す先のステージ（選んでいなければ最後のステージ）
+  const target = targetStage !== undefined && targetStage < draft.stages.length ? targetStage : draft.stages.length - 1;
   const add = (title: string) => {
-    setItems(last, (items) => [...items, row(title)]);
+    setItems(target, (items) => [...items, row(title)]);
     setQ("");
   };
 
@@ -114,11 +140,13 @@ export function SetlistEditorPage() {
       event: event.id,
       stages: draft.stages.map((st) => ({
         ...(st.name.trim() && { name: st.name.trim() }),
+        ...(st.collab && { collab: true }),
         items: st.items.map((r) => ({
           song: r.song,
           ...(r.encore && { encore: true }),
           ...(r.note.trim() && { note: r.note.trim() }),
           ...(r.members.length > 0 && { members: r.members }),
+          ...(st.collab && splitNames(r.with).length > 0 && { with: splitNames(r.with) }),
         })),
       })),
       ...(draft.completeness && { completeness: draft.completeness }),
@@ -200,8 +228,8 @@ export function SetlistEditorPage() {
         let encoreNo = 0;
         const encores = st.items.filter((r) => r.encore).length;
         return (
-          <section key={si} className="editor-stage">
-            {draft.stages.length > 1 && (
+          <section key={si} className={draft.stages.length > 1 && si === target ? "editor-stage target" : "editor-stage"}>
+            {(draft.stages.length > 1 || st.name || st.collab) && (
               <div className="editor-stage-head">
                 <input
                   type="text"
@@ -211,11 +239,32 @@ export function SetlistEditorPage() {
                     update((d) => ({ ...d, stages: d.stages.map((x, i) => (i === si ? { ...x, name: e.target.value } : x)) }))
                   }
                 />
+                <label className="chip">
+                  <input
+                    type="checkbox"
+                    checked={st.collab}
+                    onChange={() => update((d) => ({ ...d, stages: d.stages.map((x, i) => (i === si ? { ...x, collab: !x.collab } : x)) }))}
+                  />
+                  コラボ
+                </label>
+                {draft.stages.length > 1 && (
+                  <button
+                    type="button"
+                    className={si === target ? "share-button primary" : "share-button"}
+                    aria-pressed={si === target}
+                    onClick={() => setTargetStage(si)}
+                  >
+                    {si === target ? "曲の追加先" : "ここに追加"}
+                  </button>
+                )}
                 {st.items.length === 0 && (
                   <button
                     type="button"
                     className="share-button"
-                    onClick={() => update((d) => ({ ...d, stages: d.stages.filter((_, i) => i !== si) }))}
+                    onClick={() => {
+                      update((d) => ({ ...d, stages: d.stages.filter((_, i) => i !== si) }));
+                      setTargetStage(undefined);
+                    }}
                   >
                     ステージを消す
                   </button>
@@ -253,6 +302,9 @@ export function SetlistEditorPage() {
                             </span>
                           )}
                           {r.note && <span className="muted small"> {r.note}</span>}
+                          {st.collab && splitNames(r.with).length > 0 && (
+                            <span className="muted small"> with {splitNames(r.with).length} 人</span>
+                          )}
                         </span>
                         <span className="editor-row-actions">
                           <button type="button" aria-label="上へ" disabled={i === 0} onClick={() => move(i - 1)}>
@@ -305,6 +357,14 @@ export function SetlistEditorPage() {
                             ))}
                           </div>
                           <p className="muted small">一部のメンバーだけで歌った曲のときだけ選んでください（全員なら選ばない）。</p>
+                          {st.collab && (
+                            <input
+                              type="text"
+                              placeholder="一緒に歌った人（「、」区切り）"
+                              value={r.with}
+                              onChange={(e) => set({ with: e.target.value })}
+                            />
+                          )}
                           {i < st.items.length - 1 && (
                             // 途中から登場するメンバーがいるときなど、続く何曲かが同じメンバーのときに
                             <button
@@ -354,7 +414,11 @@ export function SetlistEditorPage() {
         <button
           type="button"
           className="share-button editor-add-stage"
-          onClick={() => update((d) => ({ ...d, stages: [...d.stages, { name: "", items: [] }] }))}
+          onClick={() => {
+            const at = insertAt(draft.stages);
+            update((d) => ({ ...d, stages: [...d.stages.slice(0, at), { name: "", collab: false, items: [] }, ...d.stages.slice(at)] }));
+            setTargetStage(at);
+          }}
         >
           ＋ ステージを分ける（2 部制・別ステージなど）
         </button>

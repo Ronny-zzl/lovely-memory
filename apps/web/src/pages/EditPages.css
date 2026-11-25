@@ -70,15 +70,21 @@
   background: var(--surface);
 }
 
+.editor-stage.target {
+  border-color: var(--accent);
+}
+
 .editor-stage-head {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
   padding: 4px 0 8px;
 }
 
-.editor-stage-head input {
+.editor-stage-head input[type="text"] {
   flex: 1;
-  min-width: 0;
+  min-width: 12em;
 }
 
 .editor-empty {
