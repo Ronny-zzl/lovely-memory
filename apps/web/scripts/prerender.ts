@@ -69,7 +69,10 @@ await writeFile(join(dist, "404.html"), template);
 const paths = await server.paths();
 // グループのトップ（/<id>）は楽曲のページへ移るだけ。Cloudflare Pages が _redirects で恒久的に移動させる
 // （検索エンジンに中身の無いページとして載らないように）。開発時の preview など _redirects が効かないとき用に、型も置く（ブラウザで移動する）
-const ids = [...new Set(paths.map((p) => p.split("/")[1]).filter(Boolean))];
+// グループは下にページ（/<id>/songs など）のあるもの。/privacy のような 1 段だけのページは移動させない
+const ids = [...new Set(paths.filter((p) => p.split("/").length > 2).map((p) => p.split("/")[1]!))];
+const clash = ids.filter((id) => paths.includes(`/${id}`));
+if (clash.length) throw new Error(`中身のあるページを _redirects で移動させようとしている: ${clash.join(", ")}`);
 for (const id of ids) await write(`/${id}`, template);
 await writeFile(join(dist, "_redirects"), ids.map((id) => `/${id} /${id}/songs 301\n`).join(""));
 
