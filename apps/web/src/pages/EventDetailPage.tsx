@@ -34,10 +34,12 @@ export function EventDetailPage() {
   const next = idx >= 0 && idx < live.length - 1 ? live[idx + 1] : undefined;
 
   const memberName = new Map(artist.members.map((m) => [m.id, m.name]));
-  // 出演するメンバーが初めから一部だけのイベントなら、その人たちだけを並べる
-  const lineup = event.partialLineup ? event.members : undefined;
   // その日に在籍していたメンバーのうち、出演しなかった人
   const absent = membersOn(artist.members, event.date).filter((m) => !event.members.includes(m.id));
+  // 出演するメンバーが初めから一部だけのイベント（生誕など）と、ライブの無いイベント（トーク・特典会。もともと全員とは限らない）は、
+  // 出演した人だけを並べ、欠席とは書かない
+  const lineupOnly = event.partialLineup || !isLiveEvent(event);
+  const lineup = lineupOnly && absent.length ? event.members : undefined;
   const times = [event.open && `開場 ${event.open}`, event.start && `開演 ${event.start}`].filter(Boolean).join(" / ");
   const enUrl = eventernoteUrl(event.id);
   const multiStage = (setlist?.stages.length ?? 0) > 1;
@@ -78,12 +80,13 @@ export function EventDetailPage() {
               <dt>出演</dt>
               <dd className="event-detail-members">
                 <MemberDots artist={artist} present={event.members} date={event.date} lineup={lineup} />
-                {event.partialLineup ? (
-                  <span className="small muted">
-                    {event.members.map((id) => memberName.get(id)).join("・")}（一部のメンバーのイベント）
-                  </span>
-                ) : event.membersSource === "assumed" ? (
+                {event.membersSource === "assumed" ? (
                   <span className="muted small">出演メンバー情報なし（全員出演として表示）</span>
+                ) : lineupOnly && absent.length ? (
+                  <span className="small muted">
+                    {event.members.map((id) => memberName.get(id)).join("・")}
+                    {event.partialLineup && "（一部のメンバーのイベント）"}
+                  </span>
                 ) : absent.length ? (
                   <span className="small">欠席: {absent.map((m) => m.name).join("・")}</span>
                 ) : (

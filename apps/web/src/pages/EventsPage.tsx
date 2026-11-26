@@ -86,7 +86,12 @@ export function EventsPage() {
               {costume?.special && <span className="costume-badge">{costume.name}</span>}
             </span>
           </span>
-          <MemberDots artist={artist} present={e.members} date={e.date} lineup={e.partialLineup ? e.members : undefined} />
+          <MemberDots
+            artist={artist}
+            present={e.members}
+            date={e.date}
+            lineup={e.partialLineup || !isLiveEvent(e) ? e.members : undefined}
+          />
           {attendance.isAttended(e.id) && <span className="attend-mark">✓ {isHeld(e) ? "参戦" : "予定"}</span>}
         </Link>
         {isLiveEvent(e) && <AttendanceToggle eventId={e.id} upcoming={!isHeld(e)} />}
