@@ -14,6 +14,7 @@ const ev = (i: number): ResolvedEvent => ({
   types: ["external"],
   members: [],
   membersSource: "assumed",
+  partialLineup: false,
 });
 
 // イベント 0..11（12 イベント）。A は毎回、B は 0 と 9 だけ（9 回ぶり）、C は 0..4（5 連続）

@@ -15,6 +15,7 @@ const ev = (id: number): ResolvedEvent => ({
   types: ["external"],
   members: [],
   membersSource: "assumed",
+  partialLineup: false,
 });
 
 const setlists = [

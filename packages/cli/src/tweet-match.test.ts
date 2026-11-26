@@ -11,6 +11,7 @@ const ev = (id: number, date: string, start: string, title: string, type: Resolv
   performers: [],
   members: [],
   membersSource: "assumed",
+  partialLineup: false,
 });
 
 // JST の日時から ISO(UTC) を作る

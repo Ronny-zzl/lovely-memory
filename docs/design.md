@@ -88,6 +88,8 @@ type Event = {
   open?: string; start?: string; end?: string;
   performers: number[];  // eventernote 的 actor id
   types: EventType[];    // 可多个（如 单独公演+Free Live）。按 eventTypeRules 推断（命中的全部），overrides 的 types 整体替换
+  partialLineup: boolean; // 出演成员本来就只有一部分的活动（生日活动・公开录音的各部等）。按 artist.json 的 partialLineupRules（标题正则），
+                          // overrides 的 partialLineup 可单独改。没上场的成员不算缺席，也不计入出演率的分母；成员的点只显示出演者
 };
 
 // artists/<id>/setlists/<eventId>.yaml（由 `pnpm lm add-setlist` 从推文生成）

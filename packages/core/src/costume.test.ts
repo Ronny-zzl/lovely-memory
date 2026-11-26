@@ -21,6 +21,7 @@ const ev = (id: number, date: string, extra: Partial<ResolvedEvent> = {}): Resol
   types: ["external"],
   members: [],
   membersSource: "assumed",
+  partialLineup: false,
   ...extra,
 });
 

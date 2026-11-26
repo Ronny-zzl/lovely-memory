@@ -15,6 +15,11 @@ export type ResolvedEvent = Event & {
   note?: string;
   /** overrides で指定した衣装（指定が無ければ eventCostume で既定を求める） */
   costume?: string;
+  /**
+   * 出演するメンバーが初めから一部だけのイベント（生誕・公開録音の各部など。artist.json の partialLineupRules か overrides）。
+   * 出演しなかったメンバーは欠席ではない
+   */
+  partialLineup: boolean;
 };
 
 /** 表示・保存時の種別の並び順 */
@@ -76,7 +81,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
   for (const base of merged) {
     const ov = overrides.events[String(base.id)] ?? {};
     if (ov.hidden) continue;
-    const { types: ovTypes, members: ovMembers, hidden: _h, note, costume, ...fields } = ov;
+    const { types: ovTypes, members: ovMembers, hidden: _h, note, costume, partialLineup, ...fields } = ov;
     const ev = { ...base, ...fields } as Event & { types?: EventType[] };
 
     if (artist.since && ev.date < artist.since) continue;
@@ -103,6 +108,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
       membersSource,
       note,
       costume,
+      partialLineup: partialLineup ?? artist.partialLineupRules.some((r) => new RegExp(r, "i").test(ev.title)),
     });
   }
 

@@ -14,6 +14,7 @@ const ev = (id: number, date: string, type: ResolvedEvent["types"][number] = "on
   types: [type],
   members: ["x", "y"],
   membersSource: "assumed",
+  partialLineup: false,
 });
 
 // e1: A B / e2(2ステージ): [A C] [A] / e3: セトリ無し / e4(release): B

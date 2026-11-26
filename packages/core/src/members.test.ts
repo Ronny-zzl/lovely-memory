@@ -23,6 +23,7 @@ const ev = (id: number, date: string, members: string[], types: ResolvedEvent["t
   types,
   members,
   membersSource: "eventernote",
+  partialLineup: false,
 });
 
 const events = [
@@ -51,6 +52,24 @@ describe("computeMemberStats", () => {
     expect(a).toMatchObject({ appearances: 2, total: 3 });
     expect(b).toMatchObject({ appearances: 2, total: 3 });
     expect(a!.rate).toBeCloseTo(2 / 3);
+  });
+
+  it("does not count members who were never scheduled for a partial-lineup event (birthday events etc.)", () => {
+    const partial = { ...ev(6, "2026-10-10", ["a"]), partialLineup: true };
+    const withPartial = [...events, partial];
+    const [pa, pb] = computeMemberStats({
+      artist,
+      events: withPartial,
+      stats: computeStats({ songs, events: withPartial, setlists }),
+      held: heldCheck(
+        "2026-11-18",
+        setlists.map((s) => s.event),
+      ),
+    });
+    // a は出演として数える。b は欠席にも分母にも入れない
+    expect(pa).toMatchObject({ appearances: 3, total: 4 });
+    expect(pb).toMatchObject({ appearances: 2, total: 3 });
+    expect(pb!.absences.map((e) => e.id)).toEqual([2]);
   });
 
   it("lists absences in date order", () => {

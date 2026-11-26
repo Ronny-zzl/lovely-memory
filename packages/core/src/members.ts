@@ -44,8 +44,14 @@ export function computeMemberStats({ artist, events, stats, held: isHeld }: Memb
   }
 
   return artist.members.map((member) => {
-    // 在籍していた期間（加入〜卒業・休止）のイベントだけを数える。加入前のイベントは「欠席」ではない
-    const during = held.filter((e) => (!member.since || member.since <= e.date) && (!member.until || e.date <= member.until));
+    // 在籍していた期間（加入〜卒業・休止）のイベントだけを数える。加入前のイベントは「欠席」ではない。
+    // 出演するメンバーが初めから一部だけのイベント（生誕など）は、出演した人だけ数える（出なかった人は欠席ではない）
+    const during = held.filter(
+      (e) =>
+        (!member.since || member.since <= e.date) &&
+        (!member.until || e.date <= member.until) &&
+        (!e.partialLineup || e.members.includes(member.id)),
+    );
     const absences = during.filter((e) => !e.members.includes(member.id));
     const appearances = during.length - absences.length;
     return {

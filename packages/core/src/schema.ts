@@ -141,6 +141,11 @@ export const ArtistConfig = z.object({
    * イベント種別の推定ルール。タイトルにマッチしたルールの種別をすべて付ける（形式・料金・目的は両立しうるため）。
    * どれにも当たらなければ defaultEventType
    */
+  /**
+   * 出演するメンバーが初めから一部だけのイベント（生誕・バースデーイベント、公開録音の各部など）のタイトルの正規表現。
+   * 当たったイベントでは、出演しなかったメンバーを「欠席」に数えない（出演率の分母にも入れない）。個別には overrides の partialLineup
+   */
+  partialLineupRules: z.array(z.string()).default([]),
   eventTypeRules: z
     .array(
       z.object({
@@ -254,6 +259,8 @@ export const EventOverride = Event.partial()
     note: z.string().optional(),
     /** このイベントの衣装（artist.json の costumes の id）。通常衣装でないときに指定する */
     costume: slug.optional(),
+    /** 出演するメンバーが初めから一部だけか（artist.json の partialLineupRules の判定を上書き） */
+    partialLineup: z.boolean().optional(),
   });
 export type EventOverride = z.infer<typeof EventOverride>;
 

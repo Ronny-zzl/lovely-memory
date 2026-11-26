@@ -363,7 +363,9 @@ export function eventCard(
   }
   const types = event.types.map((t) => `<span class="badge type">${esc(EVENT_TYPE_LABEL[t])}</span>`).join("") + eventBadges.join("");
   // その日に在籍していたメンバーだけ（加入前・卒業や休止の後は出さない）
+  // 出演するメンバーが初めから一部だけのイベントなら、出演した人だけ
   const dots = membersOn(artist.members, event.date)
+    .filter((m) => !event.partialLineup || event.members.includes(m.id))
     .map((m) => `<span style="${dotCss(m.color)}"${event.members.includes(m.id) ? "" : ` class="absent"`}></span>`)
     .join("");
 

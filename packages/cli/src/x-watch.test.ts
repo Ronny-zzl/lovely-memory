@@ -13,6 +13,7 @@ const ev = (id: number, date: string, start: string, title: string): ResolvedEve
   performers: [],
   members: [],
   membersSource: "assumed",
+  partialLineup: false,
 });
 const jst = (s: string) => new Date(`${s}:00+09:00`);
 const tw = (id: string, at: string, text: string): CollectedTweet => ({

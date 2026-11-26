@@ -93,6 +93,22 @@ describe("resolveEvents", () => {
     expect(r.find((e) => e.id === 2)).toMatchObject({ types: ["free"], members: ["a"], membersSource: "eventernote" });
   });
 
+  it("marks partial-lineup events by title rule, overridable per event", () => {
+    const a = ArtistConfig.parse({ ...artist, partialLineupRules: ["バースデーイベント"] });
+    const out = resolveEvents(
+      [ev(10, "2026-10-01", "ユイナ バースデーイベント 昼の部"), ev(11, "2026-10-02", "ライブ"), ev(12, "2026-10-03", "公開録音 1部")],
+      Overrides.parse({ events: { "10": { partialLineup: false }, "12": { partialLineup: true } } }),
+      a,
+    );
+    expect(out.map((e) => [e.id, e.partialLineup])).toEqual([
+      [10, false],
+      [11, false],
+      [12, true],
+    ]);
+    const byRule = resolveEvents([ev(13, "2026-10-04", "チョコ バースデーイベント")], Overrides.parse({}), a);
+    expect(byRule[0]!.partialLineup).toBe(true);
+  });
+
   it("applies overrides and extra events", () => {
     const ov = Overrides.parse({
       events: {
