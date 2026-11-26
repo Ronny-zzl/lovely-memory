@@ -78,7 +78,9 @@ type EventType =
   | "external"   // 外部拼盘・fes
   | "release"    // 发售纪念活动（mini live）
   | "free"       // 免费 live
-  | "tokuten";   // 只有切奇会等，没有演出 → 不计入歌单统计
+  | "guest"      // 活动出演（「イベント出演」）：在没有其他团体同台的场合出演（体育比赛・地方节庆等），既不是拼盘也不是专场
+  | "tokuten"    // 只有切奇会等，没有演出 → 不计入歌单统计
+  | "talk";      // 讲话・舞台挨拶等，没有演出 → 不计入歌单统计
 
 type Event = {
   id: number;            // eventernote 的 event id

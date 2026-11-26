@@ -28,6 +28,12 @@
   color: var(--badge-cover-fg);
 }
 
+/* イベント出演（スポーツの試合・地元のお祭りなど） */
+.type-guest {
+  background: var(--tieup-bg);
+  color: var(--tieup-fg);
+}
+
 .type-free {
   background: var(--accent-soft);
   color: var(--badge-2nd-fg);

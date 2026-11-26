@@ -23,7 +23,7 @@ export type ResolvedEvent = Event & {
 };
 
 /** 表示・保存時の種別の並び順 */
-const TYPE_ORDER: EventType[] = ["oneman", "taiban", "external", "release", "free", "tokuten", "talk"];
+const TYPE_ORDER: EventType[] = ["oneman", "taiban", "external", "guest", "release", "free", "tokuten", "talk"];
 
 /** ライブが無い種別（特典会・トーク）。セトリが無く、統計にも入れない */
 const NON_LIVE_TYPES = new Set<EventType>(["tokuten", "talk"]);

@@ -34,12 +34,13 @@ export const EVENT_TYPE_LABEL: Record<EventType, string> = {
   external: "対バン・フェス",
   release: "リリイベ",
   free: "フリーライブ",
+  guest: "イベント出演",
   tokuten: "特典会",
   talk: "トーク",
 };
 
 /** セトリが存在しうる種別（tokuten・talk はライブが無いので除外） */
-export const LIVE_EVENT_TYPES: EventType[] = ["oneman", "taiban", "external", "release", "free"];
+export const LIVE_EVENT_TYPES: EventType[] = ["oneman", "taiban", "external", "guest", "release", "free"];
 
 export const formatDate = (iso: string) => iso.replaceAll("-", ".");
 
