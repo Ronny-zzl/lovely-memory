@@ -29,7 +29,7 @@ pnpm lm import-setlists taiyotsukiyo-2nd --file ~/Downloads/tweets-taiyototsukiy
 | ✔ 登録 | 已写入 `setlists/<eventId>.yaml`（`source` 为推文 URL） | — |
 | = 既に登録済み | 该活动已有歌单 | 需要覆盖时加 `--force` |
 | ⚠ 本文が途中で切れている | 推文被折叠，正文不完整 | 回到第 1 步的 6，补全后重新导出 |
-| ✗ songs.json に無い曲 | 曲名对不上 | 写法不同 → 在 songs.json 的 `aliases` 中添加；新曲・翻唱 → `pnpm lm add-song`；或加 `--add-unknown` 自动登记 |
+| ✗ songs.json に無い曲 | 曲名对不上 | 写法不同 → 在 songs.json 的 `aliases` 中添加；新曲・翻唱 → `pnpm lm song <团体> <曲名> --new`；或加 `--add-unknown` 自动登记 |
 | ? イベントを特定できない | 无法唯一确定对应的活动 | 在生成的 `setlist-map.json` 中填写活动 ID（或 `"skip"`）后重新运行 |
 
 `setlist-map.json` 生成在 JSON 文件所在的目录，可以用 `--map` 指定其它位置。键为推文 ID（一条推文包含多部时为 `推文ID#部`）。

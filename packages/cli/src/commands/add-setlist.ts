@@ -57,7 +57,7 @@ export async function addSetlist(artistId: string, opts: Record<string, unknown>
   if (!result.setlist) {
     throw new Error(
       `songs.json に無い曲があります:\n${result.unknown.map((u) => `  - ${u}`).join("\n")}\n` +
-        `表記ゆれなら songs.json の aliases に追加、新曲・カバーなら pnpm lm add-song で登録するか --add-unknown を付けて再実行してください`,
+        `表記ゆれなら songs.json の aliases に追加、新曲・カバーなら pnpm lm song <artistId> <曲名> --new で登録するか --add-unknown を付けて再実行してください`,
     );
   }
 

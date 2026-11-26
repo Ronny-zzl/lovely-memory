@@ -1,7 +1,7 @@
 import { parseArgs } from "node:util";
 import { addSetlist } from "./commands/add-setlist.ts";
 import { applyEdit } from "./commands/apply-edit.ts";
-import { addSong } from "./commands/add-song.ts";
+import { song } from "./commands/song.ts";
 import { analytics } from "./commands/analytics.ts";
 import { errors } from "./commands/errors.ts";
 import { importComment } from "./commands/import-comment.ts";
@@ -71,13 +71,15 @@ commands:
                      --dist <dir>     ビルド結果（既定 apps/web/dist）
                      --skip-images    HTML だけ作る
                      --only <文字列>  画像をパスに含むものだけ描画（確認用）
-  add-song           曲を 1 曲追加（カバー曲・未発売曲など）
-                     --title <曲名>  (必須)
-                     --cover <原曲アーティスト>
-                     --unit <unitId> --era <eraId>
-                     --credits "作詞：A　作曲・編曲：B"
-                     --alias <別表記>  (複数可)
-                     --note <メモ>
+  song               曲を登録する・直す：pnpm lm song <artistId> <曲名|id> [options]
+                     --new            新しく登録（無いときに打ち間違いで別の曲ができないよう必須）
+                     --credits "編曲：X"  (書いた役割だけ上書き)
+                     --release-date / --release-title / --release-kind
+                     --cover <原曲アーティスト> --cover-title --cover-release-date --cover-release-title
+                     --tieup "anime|作品名|オープニングテーマ"  (複数可)
+                     --alias <別表記> (複数可) --note --era --unit --rename <新しい曲名>
+                     --unset <項目>  (複数可。credits.arrangement・release・tieups など)
+                     --dry-run        変更を表示するだけ
   errors             ブラウザで起きたエラー（/api/errors の記録）を、同じものをまとめて表示（artistId は all）
                      wrangler login 済みの Cloudflare アカウントから読む
                      --days <n>       直近何日分か（既定 7）
@@ -92,11 +94,21 @@ const { positionals, values } = parseArgs({
     era: { type: "string" },
     file: { type: "string" },
     "dry-run": { type: "boolean" },
+    new: { type: "boolean" },
     title: { type: "string" },
     cover: { type: "string" },
     unit: { type: "string" },
     credits: { type: "string" },
     alias: { type: "string", multiple: true },
+    tieup: { type: "string", multiple: true },
+    unset: { type: "string", multiple: true },
+    rename: { type: "string" },
+    "release-date": { type: "string" },
+    "release-title": { type: "string" },
+    "release-kind": { type: "string" },
+    "cover-title": { type: "string" },
+    "cover-release-date": { type: "string" },
+    "cover-release-title": { type: "string" },
     note: { type: "string" },
     type: { type: "string" },
     full: { type: "boolean" },
@@ -136,7 +148,7 @@ const commands: Record<string, Command> = {
   "import-official": importOfficial,
   "import-wikipedia": importWikipedia,
   "import-youtube": importYoutube as Command,
-  "add-song": addSong,
+  song,
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,
   "apply-edit": applyEdit as Command,
@@ -154,7 +166,8 @@ if (!run || (!artistId && !NO_ARTIST.has(command!))) {
   process.exit(1);
 }
 try {
-  await run(artistId!, values);
+  // artistId の後ろの引数（song の曲名など）
+  await run(artistId!, { ...values, args: positionals.slice(2) });
 } catch (e) {
   console.error(`error: ${e instanceof Error ? e.message : String(e)}`);
   process.exit(1);

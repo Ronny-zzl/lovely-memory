@@ -68,7 +68,9 @@ export async function importYoutube(artistId: string, opts: { "dry-run"?: boolea
     console.log(`+ ${a.song.title}  ${a.kind} ${date}${a.label ? `（${a.label}）` : ""}  ${a.video.id}`);
   }
   for (const u of plan.unmatched) {
-    console.log(`? 曲が決まりません（songs.json に無い曲なら add-song してから再実行）: ${u.kind} ${u.video.id} ${u.video.title}`);
+    console.log(
+      `? 曲が決まりません（songs.json に無い曲なら pnpm lm song … --new で登録してから再実行）: ${u.kind} ${u.video.id} ${u.video.title}`,
+    );
   }
 
   if (added === 0) {

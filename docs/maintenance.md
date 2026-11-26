@@ -101,7 +101,12 @@ pbpaste | pnpm lm add-setlist taiyotsukiyo-2nd --date 2026-11-18 --source <推�
 #   artists/<id>/overrides.json 的 "events": { "<eventId>": { "types": [...], "members": [...] } }
 
 # 翻唱曲・未发行曲
-pnpm lm add-song taiyotsukiyo-2nd --title "曲名" --cover "原唱"
+pnpm lm song taiyotsukiyo-2nd "曲名" --new --cover "原唱"
+
+# 已登记的曲：补・改信息（作词作曲、发行、原曲、タイアップ 等）。先加 --dry-run 看会改什么
+pnpm lm song miline-hearts 初恋の合図 --credits "編曲：桑田健吾" --release-date 2026-07-11 --release-title 初恋の合図 --release-kind digital
+pnpm lm song miline-hearts しゅがぴゅあ --cover-release-date 2026-04-14 --tieup "anime|ネコのクラちゃん|オープニングテーマ"
+pnpm lm song miline-hearts 初恋の合図 --unset credits.arrangement
 
 # 衣装：artist.json 的 costumes 里登记。没有单独指定的公演，自动算作「当时最新的常规衣装」（since 最晚且不晚于公演日、不是 special 的那件）
 #   换了新的常规衣装：在 costumes 加一行 { "id": "...", "name": "…衣装", "since": "开始穿的日期" }
@@ -114,7 +119,7 @@ pnpm lm add-song taiyotsukiyo-2nd --title "曲名" --cover "原唱"
 
 # 曲页面的视频：官方 YouTube 出了新的 MV・ライブ映像・Dance Practice・歌割動画后
 #   用 yt-dlp 读频道的「動画」页（没装的话用 uvx yt-dlp，需要 uv），只追加还没登记的视频
-#   显示「? 曲が決まりません」的是 songs.json 里没有的曲：先 add-song，再运行一次
+#   显示「? 曲が決まりません」的是 songs.json 里没有的曲：先 `pnpm lm song <团体> <曲名> --new`，再运行一次
 pnpm lm import-youtube taiyotsukiyo-2nd --dry-run
 pnpm lm import-youtube taiyotsukiyo-2nd
 

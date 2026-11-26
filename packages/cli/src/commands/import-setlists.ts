@@ -92,7 +92,7 @@ export async function importSetlists(artistId: string, opts: Record<string, unkn
   section("= 既に登録済み（上書きは --force）", exists);
   section("⚠ 本文が途中で切れている → ポストを開いて全文を収集し直してください", truncated);
   section(
-    "✗ songs.json に無い曲 → aliases に追加 / pnpm lm add-song / --add-unknown",
+    "✗ songs.json に無い曲 → aliases に追加 / pnpm lm song <artistId> <曲名> --new / --add-unknown",
     [...unknownSongs].map(([s, w]) => `  ${s}\n    ${w.join("\n    ")}`),
   );
   section(`? イベントを特定できない → ${mapPath} にイベント id か "skip" を書いて再実行`, todoLines);

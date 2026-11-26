@@ -19,7 +19,7 @@
 | 歌单 | 官方 X（Twitter）发布的推文 | 人工粘贴推文 → 脚本解析成 yaml |
 | 曲目列表・制作人员 | 官网 Discography | `pnpm lm import-official`，官网为准（覆盖） |
 | 曲目列表（补充） | ja.wikipedia | `pnpm lm import-wikipedia`，只补空字段（维基没有更新二期的信息） |
-| 翻唱曲・未发行曲 | 人工 | `pnpm lm add-song --title … [--cover 原唱]` |
+| 翻唱曲・未发行曲 | 人工 | `pnpm lm song <团体> <曲名> --new [--cover 原唱]` |
 | 曲页面的视频 | 官方 YouTube（`artist.json` 的 `sources.youtube.channelId`） | `pnpm lm import-youtube`（yt-dlp，按标题里「」『』中的曲名对应） |
 
 ### eventernote 抓取说明（实测，2026-11-17）
@@ -46,7 +46,7 @@
 
 - 用 `normalizeTitle` 照合曲名（含 `aliases`）。
 - 收录作品取发售日最早的。
-- era 由 `artist.json` 的 `eras[].since` 按发售日自动判定（翻唱曲用 `add-song --cover` 时默认为 `cover`）。
+- era 由 `artist.json` 的 `eras[].since` 按发售日自动判定（翻唱曲用 `song --new --cover` 时默认为 `cover`）。
 - 多人共同名义（如「パリで食べたカマボコ」= 瀬名航・Akki・星銀乃丈）：`songs.json` 照官方写名义，`artist.json` 的 `creditGroups` 记「名义 → 成员」，楽曲页的绞り込み用成员名也能搜到。
 
 ## 3. 数据模型
