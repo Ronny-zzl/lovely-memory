@@ -20,5 +20,10 @@ describe("displayTitle", () => {
     const box = "Mi'Line Hearts Presents　\"Mi'Line BOX vol.1\"〜何度だって待ち合わせしよう〜";
     expect(displayTitle(box, "Mi'Line Hearts")).toBe(box);
     expect(displayTitle("Mi'Line Hearts主催ライブ", "Mi'Line Hearts")).toBe("Mi'Line Hearts主催ライブ");
+    // 合同のイベント（「× 相手」で始まってしまう）
+    const joint = "前橋ウィッチーズ × LINKL PLANET 昼公演「ミラクル魔女修行！」";
+    expect(displayTitle(joint, "前橋ウィッチーズ")).toBe(joint);
+    expect(displayTitle("前橋ウィッチーズ x ARCANA PROJECT", "前橋ウィッチーズ")).toBe("前橋ウィッチーズ x ARCANA PROJECT");
+    expect(displayTitle("前橋ウィッチーズ xmas ライブ", "前橋ウィッチーズ")).toBe("xmas ライブ");
   });
 });
