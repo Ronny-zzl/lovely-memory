@@ -36,7 +36,9 @@ async function eventernoteAttended(request: Request, user: string): Promise<Resp
   if (hit) return hit;
 
   try {
-    const result = await fetchAttended(user, { since, userAgent: USER_AGENT, maxPages: 10, delayMs: 500 });
+    // 1 ページ 30 件。参加イベントの多い人でも読み切れるよう 40 ページ（1200 件）まで
+    // （Workers の 1 リクエストあたりの外部リクエストの上限 50 の内側）。since より前に来たらそこで止まる
+    const result = await fetchAttended(user, { since, userAgent: USER_AGENT, maxPages: 40, delayMs: 300 });
     const res = json({ user, ...result }, 200, CACHE_SECONDS);
     await cache?.put(key, res.clone());
     return res;

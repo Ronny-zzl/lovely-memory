@@ -16,6 +16,11 @@ describe("backup", () => {
     expect(parseBackup(`  ${code.slice(0, 20)}\n${code.slice(20)}\n`)).toEqual(data);
   });
 
+  it("keeps the note that the eventernote import was incomplete", () => {
+    const partial: AttendanceData = { manual: {}, eventernote: { ...data.eventernote!, incompleteBefore: "2026-03-21" } };
+    expect(parseBackup(JSON.stringify(toBackup(partial)))).toEqual(partial);
+  });
+
   it("rejects other data with a clear message", () => {
     expect(() => parseBackup("LM1.abc")).toThrow(BackupError);
     expect(() => parseBackup(`{"app":"other"}`)).toThrow("ラブリィメモリーの参戦記録ではありません");

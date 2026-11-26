@@ -44,6 +44,13 @@ function EventernoteSection() {
           </a>{" "}
           の参加イベントを読み込み済み
           <span className="muted">（{new Date(link.syncedAt).toLocaleString("ja-JP", { dateStyle: "short", timeStyle: "short" })}）</span>
+          {link.incompleteBefore && (
+            <span className="error">
+              {" "}
+              参加イベントが多いため、{link.incompleteBefore.replaceAll("-", ".")}{" "}
+              より前は読み込めていません（その分は手で印を付けてください）。
+            </span>
+          )}
           <span className="attend-actions">
             <button type="button" className="share-button" disabled={busy} onClick={() => void load(link.user)}>
               {busy ? "読み込み中…" : "再読み込み"}

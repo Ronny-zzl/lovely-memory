@@ -4,7 +4,8 @@
  * - 引き継ぎコード: "LM1." + JSON を base64url にしたもの（LINE やメモで別の端末に貼り付ける用）
  */
 
-export type EventernoteLink = { user: string; ids: number[]; syncedAt: string };
+/** incompleteBefore：参加イベントが多くて読み切れなかったとき、読めた中でいちばん古い日（これより前は入っていない） */
+export type EventernoteLink = { user: string; ids: number[]; syncedAt: string; incompleteBefore?: string };
 export type AttendanceData = { manual: Record<string, boolean>; eventernote?: EventernoteLink };
 
 type BackupV1 = {
@@ -78,7 +79,12 @@ export function parseBackup(text: string): AttendanceData {
   const en = b.eventernote;
   const eventernote =
     en && typeof en.user === "string" && isIdList(en.ids) && typeof en.syncedAt === "string"
-      ? { user: en.user, ids: en.ids, syncedAt: en.syncedAt }
+      ? {
+          user: en.user,
+          ids: en.ids,
+          syncedAt: en.syncedAt,
+          ...(typeof en.incompleteBefore === "string" && { incompleteBefore: en.incompleteBefore }),
+        }
       : undefined;
   return { manual, eventernote };
 }

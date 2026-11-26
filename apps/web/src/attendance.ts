@@ -116,7 +116,19 @@ export function useAttendance(): Attendance {
 /** eventernote の参加イベントを読み込む（サイトの API 経由） */
 export async function fetchEventernote(user: string, since: string): Promise<EventernoteLink> {
   const res = await fetch(`/api/eventernote/${encodeURIComponent(user)}?since=${since}`);
-  const body = (await res.json().catch(() => ({}))) as { error?: string; user?: string; events?: Array<{ id: number }> };
+  const body = (await res.json().catch(() => ({}))) as {
+    error?: string;
+    user?: string;
+    events?: Array<{ id: number; date: string }>;
+    truncated?: boolean;
+  };
   if (!res.ok || !body.events) throw new Error(body.error ?? `読み込みに失敗しました（HTTP ${res.status}）`);
-  return { user: body.user ?? user, ids: body.events.map((e) => e.id), syncedAt: new Date().toISOString() };
+  // 読み切れなかったときは、読めた中でいちばん古い日を残す（それより前の参加は入っていない）
+  const oldest = body.events.map((e) => e.date).sort()[0];
+  return {
+    user: body.user ?? user,
+    ids: body.events.map((e) => e.id),
+    syncedAt: new Date().toISOString(),
+    ...(body.truncated && oldest && { incompleteBefore: oldest }),
+  };
 }
