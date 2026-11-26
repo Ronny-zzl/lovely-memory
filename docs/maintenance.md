@@ -93,6 +93,10 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 **预览版的访问保护（Cloudflare Access）**：Cloudflare 后台 → Workers & Pages → `lovely-memory` → Settings → General → 「Access policy」里对预览部署启用 → 在 Zero Trust 里把策略改成只允许自己的邮箱。正式版（`main`）不受影响。
 - 登录方式：Google。Zero Trust「集成 → 身份提供程序」添加 Google（Google Cloud 的 OAuth 客户端，类型 Web application，重定向 URI 填 `https://lovely-memory-pages.cloudflareaccess.com/cdn-cgi/access/callback`），应用的「登录方法」只选 Google 并打开「应用即时身份验证」（直接跳到谷歌登录）。Worker 只验证 Access 的令牌，和登录方式无关，换登录方式不用改代码
 - 退出登录：打开 `https://draft.lovely-memory.pages.dev/cdn-cgi/access/logout`
+- Google Cloud 的 OAuth 应用要「发布」（In production）：处于 Testing 时只有 Test users 能登录
+- 邀请别人：预览版的 `/invite`（录入一览页有链接，只有管理者能用）。输入对方的谷歌邮箱 →「招待する」→ 把生成的文字发给对方。「外す」会把人从名单去掉并立刻结束对方的登录。被邀请的人和管理者一样能录入、保存歌单
+  - 原理：被邀请的人放在 Zero Trust 的「访问组」（Access groups）里，应用的 Allow 策略包含这个组；`/api/access`（`worker/access.ts`）验证 Access 令牌、确认是管理者后，用 Cloudflare API 读写这个组的邮箱列表。管理者自己的邮箱直接写在策略里（不放进组，免得在页面上把自己删掉）
+  - 需要：预览环境的 secret（`wrangler pages secret put <名字> --project-name lovely-memory --env preview`）：`ACCESS_ADMIN_EMAILS`（管理者邮箱，逗号分隔）、`CF_API_TOKEN`（自定义令牌，权限只给 Account → 「Access: Organizations, Identity Providers, and Groups」Edit）、`CF_ACCOUNT_ID`、`ACCESS_GROUP_ID`（访问组的 ID）。都不写进仓库
 
 ## 手动操作
 

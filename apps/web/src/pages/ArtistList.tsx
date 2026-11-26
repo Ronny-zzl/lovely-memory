@@ -54,6 +54,9 @@ export function ArtistList() {
           ))}
         </ul>
       </main>
+      <footer className="home-footer small">
+        <Link to="/privacy">プライバシーポリシー</Link>
+      </footer>
     </div>
   );
 }

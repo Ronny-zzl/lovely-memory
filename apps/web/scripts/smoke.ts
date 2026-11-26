@@ -157,6 +157,8 @@ try {
   const artists = await hrefs(page, ".artist-list a.artist-card-head");
   if (artists.length === 0) failures.push("/: アーティストが 1 件も表示されていない");
 
+  await visit(page, "/privacy", ".privacy section");
+
   /** アーティストごとの曲・イベントのページ（後の確認で使う） */
   const found = new Map<string, { songs: string[]; events: string[] }>();
   for (const artist of artists) {

@@ -44,5 +44,10 @@ export const routes: RouteObject[] = [
       },
     ],
   },
+  { path: "/privacy", ...page(() => import("./pages/PrivacyPage.tsx").then((m) => m.PrivacyPage)), errorElement: <RouteError /> },
+  // プレビュー版への招待（プレビュー版だけ。使えるのは管理者だけ：worker/access.ts）
+  ...(__EDITOR__
+    ? [{ path: "/invite", ...page(() => import("./pages/InvitePage.tsx").then((m) => m.InvitePage)), errorElement: <RouteError /> }]
+    : []),
   { path: "*", element: <Navigate to="/" replace /> },
 ];

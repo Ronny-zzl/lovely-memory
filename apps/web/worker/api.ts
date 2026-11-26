@@ -4,11 +4,12 @@
  */
 import { AttendedError, fetchAttended, USERNAME_PATTERN } from "@lovely-memory/eventernote/attended";
 import { receiveError, type D1 } from "./errors.ts";
+import { handleAccess, type AccessEnv } from "./access.ts";
 import { handleEdit, type EditEnv } from "./edit.ts";
 import { handleXWebhook, type XWebhookEnv } from "./x-webhook.ts";
 
 /** Pages のバインディング（wrangler.toml）。開発時・プレビュー（vite）には無い */
-export type ApiEnv = { DB?: D1 } & XWebhookEnv & EditEnv;
+export type ApiEnv = { DB?: D1 } & XWebhookEnv & EditEnv & AccessEnv;
 
 const USER_AGENT = "Mozilla/5.0 (compatible; lovely-memory-bot/0.1; setlist statistics)";
 /** 同じユーザーを短時間に何度も読みに行かないよう、結果をこの秒数だけキャッシュする */
@@ -59,6 +60,7 @@ export async function handleApi(request: Request, env: ApiEnv = {}): Promise<Res
   }
   if (url.pathname === "/api/x-webhook") return handleXWebhook(request, env);
   if (url.pathname === "/api/edit") return handleEdit(request, env);
+  if (url.pathname === "/api/access") return handleAccess(request, env);
   if (request.method !== "GET") return json({ error: "method not allowed" }, 405);
   const m = url.pathname.match(/^\/api\/eventernote\/([^/]+)\/?$/);
   if (m) return eventernoteAttended(request, decodeURIComponent(m[1]!));

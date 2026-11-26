@@ -62,6 +62,13 @@ export async function verifyAccessJwt(token: string, team: string, aud: string, 
   }
 }
 
+/** リクエストに付いた Access のトークンから、ログインしたメールアドレス。無い・正しくなければ undefined */
+export async function accessEmail(request: Request, env: Pick<EditEnv, "ACCESS_TEAM_DOMAIN" | "ACCESS_AUD">): Promise<string | undefined> {
+  const token = request.headers.get("cf-access-jwt-assertion");
+  if (!token || !env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD) return undefined;
+  return verifyAccessJwt(token, env.ACCESS_TEAM_DOMAIN, env.ACCESS_AUD);
+}
+
 /** テスト用：覚えた公開鍵を捨てる */
 export const resetAccessKeys = () => {
   certs = undefined;
@@ -79,8 +86,7 @@ export async function handleEdit(request: Request, env: EditEnv): Promise<Respon
   if (!env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD || !env.GITHUB_DISPATCH_TOKEN || !env.GITHUB_REPOSITORY) {
     return json({ error: "not configured" }, 503);
   }
-  const token = request.headers.get("cf-access-jwt-assertion");
-  const email = token ? await verifyAccessJwt(token, env.ACCESS_TEAM_DOMAIN, env.ACCESS_AUD) : undefined;
+  const email = await accessEmail(request, env);
   if (!email) return json({ error: "ログインが必要です（プレビュー版から開いてください）" }, 401);
 
   const body = await request.text();

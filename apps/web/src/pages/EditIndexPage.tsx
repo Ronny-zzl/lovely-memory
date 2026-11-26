@@ -42,6 +42,7 @@ export function EditIndexPage() {
       <p className="muted small">
         開催済みのライブ {held.length} 件のうち、未完成（未入力・一部だけ・曲順不明） {unfinished.length} 件（うち未入力 {missing.length}{" "}
         件）。イベントを選ぶとセトリを入力・修正できます（保存すると数分でサイトに反映されます）。
+        <Link to="/invite">ほかの人を招待する</Link>
       </p>
       <fieldset className="chips" aria-label="表示するイベント">
         {FILTERS.map(([v, label]) => (

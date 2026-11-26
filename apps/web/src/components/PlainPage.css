@@ -1,0 +1,10 @@
+/* 文章だけのページ（PlainPage）の本文 */
+.plain-page {
+  display: grid;
+  gap: 12px;
+  max-width: 640px;
+}
+
+.plain-page p {
+  margin: 0;
+}

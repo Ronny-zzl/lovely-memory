@@ -1,0 +1,14 @@
+/* プライバシーポリシー（PrivacyPage） */
+.privacy section {
+  display: grid;
+  gap: 4px;
+}
+
+.privacy .section-heading {
+  margin: 0;
+}
+
+/* 日本語を文節で折り返す（対応していないブラウザでは今まで通り） */
+.privacy p {
+  word-break: auto-phrase;
+}

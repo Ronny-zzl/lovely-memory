@@ -210,3 +210,12 @@
     grid-column: span 2;
   }
 }
+
+.home-footer {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.home-footer a {
+  color: var(--muted);
+}

@@ -10,7 +10,8 @@ import { routes } from "./routes.tsx";
 
 /** HTML を作るページのパス（トップ・各グループのタブ・全曲・全イベント） */
 export async function paths(): Promise<string[]> {
-  const out = ["/"];
+  const out = ["/", "/privacy"];
+  if (__EDITOR__) out.push("/invite");
   for (const artist of artists) {
     const base = `/${artist.id}`;
     const data = await loadArtistData(artist);
