@@ -87,6 +87,18 @@ describe("computeStats", () => {
     expect(noCollab.events.find((e) => e.event.id === 4)!.stages).toHaveLength(1);
   });
 
+  it("keeps songs sung at non-live events (talk etc.) as records only, not counted", () => {
+    const withTalk = [...events, ev(5, "2026-09-01", "talk")];
+    const st = computeStats({ songs, events: withTalk, setlists: [...setlists, Setlist.parse({ event: 5, items: ["D", "A"] })] });
+    expect(st.events.map((e) => e.event.id)).toEqual([1, 2, 4]);
+    expect(st.offRecord.map((e) => e.event.id)).toEqual([5]);
+    // トークの日（9/1）は数えない：A の初披露は 9/4 のまま、D は未披露
+    const [a, , , d] = st.songs;
+    expect(a!.first?.eventId).toBe(1);
+    expect(d!.count).toBe(0);
+    expect(st.offRecord[0]!.stages[0]!.entries.every((e) => !e.debut)).toBe(true);
+  });
+
   it("applies the event filter before computing", () => {
     const onlyOneman = computeStats({ songs, events, setlists, filter: (e) => e.types.includes("oneman") });
     expect(onlyOneman.events.map((e) => e.event.id)).toEqual([1]);

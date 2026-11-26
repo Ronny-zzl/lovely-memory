@@ -24,7 +24,9 @@ export function EventDetailPage() {
     );
   }
 
-  const setlist = allStats.events.find((e) => e.event.id === id);
+  // ライブの無いイベント（トークなど）で歌われた曲は、記録として表示するだけ（集計には数えない）
+  const offRecord = allStats.offRecord.find((e) => e.event.id === id);
+  const setlist = allStats.events.find((e) => e.event.id === id) ?? offRecord;
   // 前後のイベント（特典会を除く）
   const live = events.filter(isLiveEvent);
   const idx = live.findIndex((e) => e.id === id);
@@ -192,6 +194,9 @@ export function EventDetailPage() {
             </div>
           ))}
           {setlist.note && <p className="setlist-note small">{setlist.note}</p>}
+          {offRecord && (
+            <p className="setlist-note small muted">ライブの無いイベントで歌われた曲の記録です（歌唱回数などの集計には含めていません）。</p>
+          )}
         </section>
       ) : (
         <p className="muted empty-setlist">{!isLiveEvent(event) ? "ライブの無いイベントです" : "セトリはまだ登録されていません"}</p>
@@ -204,7 +209,7 @@ export function EventDetailPage() {
         )}
         {setlist?.source && (
           <a href={setlist.source} target="_blank" rel="noopener noreferrer">
-            セトリ告知ポスト
+            {/^https:\/\/(x|twitter)\.com\//.test(setlist.source) ? "セトリ告知ポスト" : "出典"}
           </a>
         )}
         {enUrl && (

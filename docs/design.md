@@ -100,6 +100,8 @@ type Setlist = {
   items?: SetlistItem[];
   stages?: Array<{ name?: string; members?: string[]; items: SetlistItem[] }>;
 };
+// 没有 live 的活动（talk 等）也可以有歌单：作为「在那里唱过的歌」的记录显示在活动页，
+// 但不计入歌唱次数・首次演唱・曲顺等统计（computeStats 的 offRecord）
 type SetlistItem = string | {
   song: string;          // 曲名（正式表记）
   members?: string[];    // 只在部分成员演唱时填写

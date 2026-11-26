@@ -1,4 +1,4 @@
-import type { ResolvedEvent } from "./events.ts";
+import { isLiveEvent, type ResolvedEvent } from "./events.ts";
 import type { Setlist, Song } from "./schema.ts";
 import { itemSong, setlistStages, UNKNOWN_SONG } from "./setlist.ts";
 import { findSong } from "./setlist-text.ts";
@@ -71,8 +71,12 @@ export type SongStats = {
 };
 
 export type Stats = {
-  /** 集計対象（セトリ入力済み）イベント、日付昇順 */
+  /** 集計対象（セトリ入力済みのライブ）イベント、日付昇順 */
   events: EventSetlist[];
+  /**
+   * ライブの無いイベント（トークなど）で歌われた曲の記録（誕生日の歌など）。ページに表示するだけで、歌唱回数・初披露・曲順などには数えない
+   */
+  offRecord: EventSetlist[];
   totalStages: number;
   totalPerformances: number;
   /** songs.json の全曲（未披露曲を含む） */
@@ -98,8 +102,12 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
   const debuted = new Set<string>();
   const perfBySong = new Map<string, Performance[]>(songs.map((s) => [s.id, []]));
 
-  const targets = events.filter((e) => setlistByEvent.has(e.id) && (!filter || filter(e)));
-  const eventSetlists: EventSetlist[] = targets.map((event) => {
+  const withSetlist = events.filter((e) => setlistByEvent.has(e.id) && (!filter || filter(e)));
+  // 数えるのはライブだけ。トークなどで歌われた曲は記録として別に持つ
+  const targets = withSetlist.filter(isLiveEvent);
+  const counted = new Set(targets.map((e) => e.id));
+  const allSetlists: EventSetlist[] = withSetlist.map((event) => {
+    const count = counted.has(event.id);
     const setlist = setlistByEvent.get(event.id)!;
     // stageIndex は除外後の並びでの位置（EventSetlist.stages の添字と一致させる）
     const kept = setlistStages(setlist).filter((st) => includeCollab || !st.collab);
@@ -126,8 +134,8 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
           unresolved.push({ eventId: event.id, title });
           return;
         }
-        const debut = !debuted.has(song.id);
-        debuted.add(song.id);
+        const debut = count && !debuted.has(song.id);
+        if (count) debuted.add(song.id);
         const entry: SetlistEntry = {
           song,
           position: i + 1,
@@ -139,26 +147,28 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
           with: obj?.with,
         };
         entries.push(entry);
-        perfBySong.get(song.id)!.push({
-          eventId: event.id,
-          date: event.date,
-          stageIndex,
-          stageName: stage.name,
-          position: entry.position,
-          no,
-          encore: entry.encore,
-          note: entry.note,
-          members: entry.members,
-          debut,
-          collab,
-          with: entry.with,
-        });
+        if (count)
+          perfBySong.get(song.id)!.push({
+            eventId: event.id,
+            date: event.date,
+            stageIndex,
+            stageName: stage.name,
+            position: entry.position,
+            no,
+            encore: entry.encore,
+            note: entry.note,
+            members: entry.members,
+            debut,
+            collab,
+            with: entry.with,
+          });
       });
       return { name: stage.name, note: stage.note, collab, members: stageMembers, entries };
     });
     return { event, source: setlist.source, note: setlist.note, completeness: setlist.completeness, unknownSongs, stages };
   });
 
+  const eventSetlists = allSetlists.filter((e) => counted.has(e.event.id));
   const eventIndex = new Map(targets.map((e, i) => [e.id, i]));
   const total = targets.length;
 
@@ -188,6 +198,7 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
 
   return {
     events: eventSetlists,
+    offRecord: allSetlists.filter((e) => !counted.has(e.event.id)),
     totalStages: eventSetlists.reduce((n, e) => n + e.stages.length, 0),
     totalPerformances: eventSetlists.reduce((n, e) => n + e.stages.reduce((m, s) => m + s.entries.length, 0), 0),
     songs: songStats,

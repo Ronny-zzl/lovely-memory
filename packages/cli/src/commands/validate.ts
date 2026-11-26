@@ -65,7 +65,7 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
     if (f.file.replace(/\.ya?ml$/, "") !== String(sl.event)) err(`setlists/${f.file}: ファイル名と event (${sl.event}) が一致しない`);
     const ev = eventById.get(sl.event);
     if (!ev) err(`setlists/${f.file}: event ${sl.event} が見つからない（events.json / overrides / since を確認）`);
-    else if (!isLiveEvent(ev)) warns.push(`setlists/${f.file}: ライブの無いイベント（特典会・トーク）にセトリがある`);
+    // ライブの無いイベント（トークなど）のセトリは、そこで歌われた曲の記録として置いてよい（集計には数えない：computeStats の offRecord）
 
     for (const [si, stage] of setlistStages(sl).entries()) {
       for (const m of stage.members ?? []) if (!memberIds.has(m)) err(`setlists/${f.file}: stage ${si} の member "${m}" が不明`);
