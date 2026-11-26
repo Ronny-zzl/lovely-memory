@@ -39,6 +39,14 @@ describe("入力画面で開いて、そのまま保存し直しても変わら�
     expect(setlist).toEqual(original);
   });
 
+  it("セトリの途中のコラボの曲（一緒に歌った人つき）も残る", () => {
+    const original = Setlist.parse({
+      event: 1,
+      items: ["曲A", { song: "曲B", collab: true, with: ["他のグループ"], members: ["a"] }, "曲C"],
+    });
+    expect(roundTrip(original, "x", []).setlist).toEqual(original);
+  });
+
   it("名前の無いステージ 1 つでも、コラボの印などがあれば stages のまま", () => {
     const original = Setlist.parse({ event: 1, stages: [{ collab: true, items: ["曲A"] }] });
     expect(roundTrip(original, "x", []).setlist).toEqual(original);

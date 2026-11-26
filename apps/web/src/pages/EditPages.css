@@ -285,3 +285,7 @@
     animation: none;
   }
 }
+
+.editor-collab {
+  justify-self: start;
+}

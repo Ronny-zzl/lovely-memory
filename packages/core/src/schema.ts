@@ -286,6 +286,11 @@ export const SetlistItemDetail = z.object({
   note: z.string().optional(),
   /** 一緒に歌った他グループの出演者（コラボステージなど） */
   with: z.array(z.string()).optional(),
+  /**
+   * 他グループと一緒に歌った曲（グループのセトリの途中のコラボ）。ステージごとコラボなら stage の collab。
+   * 歌唱回数などの集計ではコラボステージと同じ扱い（外せる）。曲順（1 曲目・ラスト・つながり）にはそのまま入れる
+   */
+  collab: z.boolean().optional(),
 });
 export type SetlistItemDetail = z.infer<typeof SetlistItemDetail>;
 export const SetlistItem = z.union([z.string(), SetlistItemDetail]);

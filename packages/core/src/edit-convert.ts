@@ -20,6 +20,8 @@ export type DraftRow = {
   members: string[];
   /** 一緒に歌った人（「、」区切りで入力） */
   with: string;
+  /** 他グループと一緒に歌った曲（セトリの途中のコラボ。ステージごとコラボなら DraftStage の collab） */
+  collab: boolean;
   open: boolean;
   /** 入力画面で直せない項目（そのまま戻す） */
   rest: Rest;
@@ -36,6 +38,7 @@ export const draftRow = (song: string, extra: Partial<DraftRow> = {}): DraftRow 
   note: "",
   members: [],
   with: "",
+  collab: false,
   open: false,
   rest: {},
   ...extra,
@@ -69,7 +72,8 @@ export function setlistToDraft(s: Setlist | undefined): Draft {
               note: it.note ?? "",
               members: it.members ?? [],
               with: (it.with ?? []).join("、"),
-              rest: omit(it, ["song", "encore", "note", "members", "with"]),
+              collab: !!it.collab,
+              rest: omit(it, ["song", "encore", "note", "members", "with", "collab"]),
             }),
       ),
     })),
@@ -89,7 +93,7 @@ export function upgradeDraft(d: Draft): Draft {
       ...st,
       collab: !!st.collab,
       rest: st.rest ?? {},
-      items: st.items.map((r) => ({ ...r, with: r.with ?? "", rest: r.rest ?? {} })),
+      items: st.items.map((r) => ({ ...r, with: r.with ?? "", collab: !!r.collab, rest: r.rest ?? {} })),
     })),
   };
 }
@@ -109,8 +113,9 @@ export function draftToPayload(d: Draft, artist: string, event: number, newSongs
         ...(r.encore && { encore: true }),
         ...(r.note.trim() && { note: r.note.trim() }),
         ...(r.members.length > 0 && { members: r.members }),
-        // コラボステージでないなら一緒に歌った人は無い
-        ...(st.collab && splitNames(r.with).length > 0 && { with: splitNames(r.with) }),
+        ...(r.collab && !st.collab && { collab: true }),
+        // コラボでないなら一緒に歌った人は無い
+        ...((st.collab || r.collab) && splitNames(r.with).length > 0 && { with: splitNames(r.with) }),
       })),
     })),
     ...(d.completeness && { completeness: d.completeness }),

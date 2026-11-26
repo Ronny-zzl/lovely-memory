@@ -254,7 +254,8 @@ export function SetlistEditorPage() {
                             </span>
                           )}
                           {r.note && <span className="muted small"> {r.note}</span>}
-                          {st.collab && splitNames(r.with).length > 0 && (
+                          {r.collab && !st.collab && <span className="badge collab editor-new">コラボ</span>}
+                          {(st.collab || r.collab) && splitNames(r.with).length > 0 && (
                             <span className="muted small"> with {splitNames(r.with).length} 人</span>
                           )}
                         </span>
@@ -309,7 +310,13 @@ export function SetlistEditorPage() {
                             ))}
                           </div>
                           <p className="muted small">一部のメンバーだけで歌った曲のときだけ選んでください（全員なら選ばない）。</p>
-                          {st.collab && (
+                          {!st.collab && (
+                            <label className="chip editor-collab">
+                              <input type="checkbox" checked={r.collab} onChange={() => set({ collab: !r.collab })} />
+                              コラボ（他のグループと一緒に歌った）
+                            </label>
+                          )}
+                          {(st.collab || r.collab) && (
                             <input
                               type="text"
                               placeholder="一緒に歌った人（「、」区切り）"

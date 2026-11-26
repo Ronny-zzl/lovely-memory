@@ -6,6 +6,7 @@ import {
   positionRole,
   isLiveEvent,
   normalizeTitle,
+  setlistStages,
   type EventType,
   type SongStats,
 } from "@lovely-memory/core/runtime";
@@ -182,7 +183,10 @@ export function SongStatsPage() {
   const sortKey = (params.get("sort") as SortKey) ?? "rate";
   // コラボステージ（他グループ主催の企画など）は既定で集計しない
   const includeCollab = params.get("collab") === "1";
-  const hasCollab = setlists.some((s) => s.stages?.some((st) => st.collab));
+  // コラボステージ、またはセトリの途中のコラボの曲があるか
+  const hasCollab = setlists.some((s) =>
+    setlistStages(s).some((st) => st.collab || st.items.some((it) => typeof it !== "string" && it.collab)),
+  );
   // コラボステージでしか歌われていない曲（除外時は一覧からも外す）
   const collabOnly = useMemo(
     () => new Set(allStats.songs.filter((s) => s.count > 0 && s.performances.every((p) => p.collab)).map((s) => s.song.id)),

@@ -73,7 +73,7 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
   const next = data?.events.filter((e) => isLiveEvent(e) && !data.isHeld(e)).sort((a, b) => a.date.localeCompare(b.date))[0];
   // 楽曲ページの既定（コラボステージを含めない）と同じ数え方
   const performances = data?.allStats.events.reduce(
-    (n, e) => n + e.stages.filter((st) => !st.collab).reduce((m, st) => m + st.entries.length, 0),
+    (n, e) => n + e.stages.filter((st) => !st.collab).reduce((m, st) => m + st.entries.filter((x) => !x.collab).length, 0),
     0,
   );
   const played = data?.allStats.songs.filter((s) => !s.song.cover && s.count > 0).length;

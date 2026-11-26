@@ -99,6 +99,20 @@ describe("computeStats", () => {
     expect(st.offRecord[0]!.stages[0]!.entries.every((e) => !e.debut)).toBe(true);
   });
 
+  it("treats a collab song in the middle of a setlist like a collab stage (left out unless included), keeping positions", () => {
+    const sl = [Setlist.parse({ event: 1, items: ["A", { song: "C", collab: true, with: ["他のグループ"] }, "B"] })];
+    const withCollab = computeStats({ songs, events, setlists: sl });
+    expect(withCollab.events[0]!.stages[0]!.entries.map((e) => [e.no, e.collab])).toEqual([
+      ["M1", false],
+      ["M2", true],
+      ["M3", false],
+    ]);
+    expect(withCollab.songs[2]!.performances[0]!.collab).toBe(true);
+    const without = computeStats({ songs, events, setlists: sl, includeCollab: false });
+    expect(without.events[0]!.stages[0]!.entries.map((e) => e.no)).toEqual(["M1", "M3"]);
+    expect(without.songs[2]!.count).toBe(0);
+  });
+
   it("applies the event filter before computing", () => {
     const onlyOneman = computeStats({ songs, events, setlists, filter: (e) => e.types.includes("oneman") });
     expect(onlyOneman.events.map((e) => e.event.id)).toEqual([1]);

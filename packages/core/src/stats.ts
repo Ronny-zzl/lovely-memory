@@ -18,7 +18,7 @@ export type Performance = {
   members: string[];
   /** 記録上の初披露（この曲が最初に現れた歌唱） */
   debut: boolean;
-  /** コラボステージでの歌唱 */
+  /** コラボでの歌唱（コラボステージ、またはセトリの途中のコラボの曲） */
   collab: boolean;
   with?: string[];
 };
@@ -33,6 +33,8 @@ export type SetlistEntry = {
   members: string[];
   debut: boolean;
   with?: string[];
+  /** 他グループとのコラボ（コラボステージ、またはセトリの途中のコラボの曲） */
+  collab: boolean;
 };
 
 export type EventSetlist = {
@@ -124,6 +126,8 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
         // アンコールが 1 曲だけなら EN、複数なら EN1・EN2…
         const no = encore ? (encores > 1 ? `EN${++encoreNo}` : "EN") : `M${i + 1}`;
         const title = itemSong(item);
+        // セトリの途中のコラボの曲は、コラボを含めないときは数えない（曲順の位置は占める）
+        if (obj?.collab && !includeCollab) return;
         // 曲名を思い出せない曲は、曲順の位置だけ占めて数えない
         if (title === UNKNOWN_SONG) {
           unknownSongs++;
@@ -145,6 +149,7 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
           members: obj?.members ?? stageMembers,
           debut,
           with: obj?.with,
+          collab: collab || !!obj?.collab,
         };
         entries.push(entry);
         if (count)
@@ -159,7 +164,7 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
             note: entry.note,
             members: entry.members,
             debut,
-            collab,
+            collab: entry.collab,
             with: entry.with,
           });
       });
