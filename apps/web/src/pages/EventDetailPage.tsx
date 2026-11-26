@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router";
 import { Fragment } from "react";
-import { ageOn, birthdayMembers, membersOn, eventCostume, isLiveEvent } from "@lovely-memory/core/runtime";
+import { ageOn, birthdayMembers, membersOn, eventCostume, isLiveEvent, setlistPostText } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
@@ -98,6 +98,12 @@ export function EventDetailPage() {
         <ShareButtons
           text={`${formatDate(event.date)}「${displayTitle(event.title, artist.name)}」${setlist ? "のセトリ" : ""}（${artist.name}）`}
           hashtags={artist.shareHashtags}
+          copyText={
+            setlist && {
+              label: "セトリをコピー",
+              text: () => setlistPostText(artist, setlist),
+            }
+          }
           // 共有画像はライブのイベントにだけある（og-pages）
           image={
             isLiveEvent(event)

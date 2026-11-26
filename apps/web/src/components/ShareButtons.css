@@ -16,3 +16,8 @@
 .share-buttons .share-x:hover {
   background: var(--x-bg-hover);
 }
+
+.share-note {
+  flex-basis: 100%;
+  margin: 0;
+}

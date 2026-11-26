@@ -16,3 +16,4 @@ export * from "./milestones.ts";
 export * from "./birthdays.ts";
 export * from "./theme.ts";
 export * from "./edit-convert.ts";
+export * from "./setlist-post.ts";

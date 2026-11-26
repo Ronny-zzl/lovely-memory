@@ -14,7 +14,8 @@
   ],
   "eras": [{ "id": "original", "label": "オリジナル" }, { "id": "cover", "label": "カバー曲" }],
   "defaultEra": "original",
-  "shareHashtags": [],
+  "shareHashtags": ["みらーつ"],
+  "setlistHashtags": ["みらーつセトリ"],
   "sources": {
     "eventernote": { "actorId": 93358 },
     "wikipedia": { "lang": "ja", "title": "Mi'Line Hearts" }
