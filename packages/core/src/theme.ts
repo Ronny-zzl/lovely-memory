@@ -6,22 +6,53 @@
  * ブラウザでも使うので zod は使わない。
  */
 
-export const ARTIST_THEMES = ["sun-moon", "hearts"] as const;
+export const ARTIST_THEMES = ["sun-moon", "hearts", "rainbow"] as const;
 /**
  * - sun-moon：太陽と月（左が朝の光、右が夜空）。太陽と踊れ月夜に唄え
  * - hearts：空色とピンクの網点にハート、紺の文字にピンクの縁取り。Mi'Line Hearts のロゴ・告知画像から
+ * - rainbow：淡い虹色（ピンク→黄→若草→空色→薄紫）に桜の花びら、メンバーカラー 5 色の輪、ピンクの縁取りの白い文字
  */
 export type ArtistTheme = (typeof ARTIST_THEMES)[number];
 export const DEFAULT_THEME: ArtistTheme = "sun-moon";
 
 /** ロゴ「ラブリィメモリー」の両脇などに置く飾り */
-export type MotifIcon = "sun" | "moon" | "heart" | "crown";
+export type MotifIcon = "sun" | "moon" | "heart" | "crown" | "flower";
 
 /** テーマごとの飾り：[先頭（1 曲目・ロゴの左）, 末尾（ラスト・ロゴの右）] */
 export const THEME_ICONS: Record<ArtistTheme, [MotifIcon, MotifIcon]> = {
   "sun-moon": ["sun", "moon"],
   hearts: ["heart", "crown"],
+  rainbow: ["flower", "flower"],
 };
+
+/** 桜の花びら 1 枚（中心 (cx, cy) から angle の向きに長さ r。先に切れ込み）の path */
+function petalPath(cx: number, cy: number, r: number, angle: number): string {
+  // 上向き（-y）の花びらを、中心のまわりに回す
+  const pts: Array<[number, number]> = [
+    [-0.46 * r, -0.29 * r],
+    [-0.43 * r, -0.8 * r],
+    [-0.23 * r, -0.94 * r],
+    [0, -0.8 * r],
+    [0.23 * r, -0.94 * r],
+    [0.43 * r, -0.8 * r],
+    [0.46 * r, -0.29 * r],
+  ];
+  const a = (angle * Math.PI) / 180;
+  const [s, c] = [Math.sin(a), Math.cos(a)];
+  const p = ([x, y]: [number, number]) => `${(cx + x * c - y * s).toFixed(2)} ${(cy + x * s + y * c).toFixed(2)}`;
+  const [c1, c2, l1, n, r1, c3, c4] = pts.map(p);
+  return `M${cx} ${cy}C${c1} ${c2} ${l1}L${n}L${r1}C${c3} ${c4} ${cx} ${cy}Z`;
+}
+/** 散らす花びら 1 枚（16×16） */
+export const PETAL_PATH = petalPath(8, 15, 14, 0);
+/** 背景に散らす花びらの並び（160×96 の 1 枚分）：[x, y, 大きさ, 回転, 不透明度]。サイト（themes.css）と共有画像で同じ */
+export const PETALS: Array<[number, number, number, number, number]> = [
+  [14, 10, 0.9, -25, 0.9],
+  [92, 6, 0.6, 40, 0.75],
+  [128, 46, 1, 15, 0.9],
+  [58, 58, 0.55, -60, 0.7],
+  [20, 70, 0.7, 70, 0.8],
+];
 
 /**
  * 共有画像に描く飾りの形（16×16）。塗りつぶす path と、線（太陽の光）
@@ -46,6 +77,8 @@ export const SHARE_ICON_SHAPES: Record<MotifIcon, { paths: string[]; rays?: Arra
   crown: {
     paths: ["M2 5.2l3.2 2.6L8 3.4l2.8 4.4L14 5.2l-1.3 6.6H3.3Z", "M4.1 12.6h7.8a.8.8 0 0 1 0 1.6H4.1a.8.8 0 0 1 0-1.6Z"],
   },
+  // 桜（花びら 5 枚）
+  flower: { paths: [0, 72, 144, 216, 288].map((deg) => petalPath(8, 8.4, 7.4, deg)) },
 };
 
 /** レースのハート（120×110、ロゴの意匠）：[点線の外周, 内側の線] */
@@ -69,8 +102,8 @@ export type ShareHeading =
 export type ShareTheme = {
   /** 背景のグラデーション（CSS の角度と、位置 0〜1 と色） */
   background: { angle: number; stops: Array<[number, string]> };
-  /** 背景の飾り：星（sun-moon）、または網点・斜めの光・ハート（hearts） */
-  decoration: "stars" | "hearts";
+  /** 背景の飾り：星（sun-moon）、網点・斜めの光・ハート（hearts）、桜の花びら（rainbow） */
+  decoration: "stars" | "hearts" | "petals";
   /** 白いカードの影の色 */
   cardShadow: string;
   heading: ShareHeading;
@@ -88,6 +121,8 @@ export type ShareTheme = {
   icons: [{ color: string; glow?: string; glowBlur?: number }, { color: string; glow?: string; glowBlur?: number }];
   /** カードの右上に置くレースのハートの色（無ければ置かない） */
   lace?: string;
+  /** カードの右上に置く、色を並べた輪（メンバーカラーなど。無ければ置かない） */
+  ring?: string[];
 };
 
 export const SHARE_THEMES: Record<ArtistTheme, ShareTheme> = {
@@ -153,5 +188,40 @@ export const SHARE_THEMES: Record<ArtistTheme, ShareTheme> = {
       { color: "#1d3f8f", glow: "#fff", glowBlur: 4 },
     ],
     lace: "#f4a3c4",
+  },
+  rainbow: {
+    background: {
+      angle: 100,
+      stops: [
+        [0, "#fde0ef"],
+        [0.22, "#ffe6d6"],
+        [0.42, "#fff3c4"],
+        [0.6, "#e3f5d6"],
+        [0.8, "#d9f1fd"],
+        [1, "#e9e1fa"],
+      ],
+    },
+    decoration: "petals",
+    cardShadow: "rgba(160,133,215,.22)",
+    heading: {
+      kind: "outline",
+      fill: "#fff",
+      rings: [
+        [3, "#fa7abc"],
+        [6, "#fa7abc"],
+        [8, "#fa7abc"],
+      ],
+      drop: [11, "#d9c8f5"],
+    },
+    ink: "#4b3d63",
+    inkSoft: "#8e83a3",
+    accent: "#d63f8c",
+    boxFill: "rgba(250, 122, 188, 0.08)",
+    footer: { color: "#c8327f", hostColor: "#c8327f", shadow: "rgba(255,255,255,.8)", shadowY: 2, shadowBlur: 8, outline: "#fff" },
+    icons: [
+      { color: "#fa7abc", glow: "#fff", glowBlur: 4 },
+      { color: "#a085d7", glow: "#fff", glowBlur: 4 },
+    ],
+    ring: ["#fa7abc", "#ffb400", "#82d25a", "#28c3ff", "#a085d7"],
   },
 };

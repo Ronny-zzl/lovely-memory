@@ -1,4 +1,4 @@
-import { THEME_ICONS, type ArtistTheme, type MotifIcon } from "@lovely-memory/core/runtime";
+import { SHARE_ICON_SHAPES, THEME_ICONS, type ArtistTheme, type MotifIcon } from "@lovely-memory/core/runtime";
 
 /** 太陽と月の意匠（ユニットのタグ・サイトのロゴ）。色は currentColor */
 
@@ -43,7 +43,25 @@ export function CrownIcon() {
   );
 }
 
-const MOTIF_ICONS: Record<MotifIcon, () => React.JSX.Element> = { sun: SunIcon, moon: MoonIcon, heart: HeartIcon, crown: CrownIcon };
+/** 桜（rainbow テーマ）。形は共有画像と同じ */
+export function FlowerIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      {SHARE_ICON_SHAPES.flower.paths.map((d) => (
+        <path key={d} d={d} fill="currentColor" />
+      ))}
+      <circle cx="8" cy="8.4" r="1.3" fill="#fff" opacity="0.85" />
+    </svg>
+  );
+}
+
+const MOTIF_ICONS: Record<MotifIcon, () => React.JSX.Element> = {
+  sun: SunIcon,
+  moon: MoonIcon,
+  heart: HeartIcon,
+  crown: CrownIcon,
+  flower: FlowerIcon,
+};
 
 /** テーマの飾り：[先頭（ロゴの左・1 曲目）, 末尾（ロゴの右・ラスト）]（@lovely-memory/core の THEME_ICONS） */
 export function themeIcons(theme: ArtistTheme): [() => React.JSX.Element, () => React.JSX.Element] {

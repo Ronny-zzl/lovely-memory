@@ -25,6 +25,8 @@ import {
   type SongPosition,
   type SongStats,
   LACE_HEART_PATHS,
+  PETAL_PATH,
+  PETALS,
   SHARE_ICON_SHAPES,
   SHARE_THEMES,
   THEME_ICONS,
@@ -84,6 +86,14 @@ const laceHeart = (color: string) =>
     `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'><g fill='none' stroke='${color}' stroke-linecap='round'><path stroke-width='6' stroke-dasharray='0 9' d='${LACE_HEART_PATHS[0]}'/><path stroke-width='2' d='${LACE_HEART_PATHS[1]}'/></g></svg>`,
   );
 
+/** 散らした桜の花びら（背景に敷き詰める 1 枚分。サイトの themes.css と同じ並び） */
+const petalsTile = (color: string) =>
+  svgUrl(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='96' viewBox='0 0 160 96'><g fill='${color}'>${PETALS.map(
+      ([x, y, k, r, o]) => `<path opacity='${o}' transform='translate(${x} ${y}) scale(${k}) rotate(${r} 8 8)' d='${PETAL_PATH}'/>`,
+    ).join("")}</g></svg>`,
+  );
+
 const stopsCss = (stops: Array<[number, string]>) => stops.map(([o, c]) => `${c} ${Math.round(o * 100)}%`).join(", ");
 
 /** テーマ（@lovely-memory/core の SHARE_THEMES）の色・飾りの CSS */
@@ -98,7 +108,10 @@ function themeCss(t: ShareTheme): string {
   radial-gradient(circle at 97% 40%, #fff 0 1.2px, transparent 2px),
   radial-gradient(circle at 63% 96%, #fffbe6 0 1.2px, transparent 2px),
   radial-gradient(circle at 92% 4%, #fff 0 1.2px, transparent 2px); }`
-      : `body { background:
+      : t.decoration === "petals"
+        ? `body { background: ${bg}; }
+.stars { opacity: 1; background: ${petalsTile("#f9a8cf")} 0 0 / 280px 168px; }`
+        : `body { background:
   radial-gradient(circle, rgb(255 255 255 / .55) 0 1.8px, transparent 2.4px) 0 0 / 15px 15px,
   ${bg}; }
 .stars { opacity: 1; background:
@@ -115,7 +128,14 @@ function themeCss(t: ShareTheme): string {
   const footerShadow = `0 ${f.shadowY}px ${f.shadowBlur}px ${f.shadow}`;
   return `
 ${deco}
-.card { box-shadow: 0 18px 50px ${t.cardShadow};${t.lace ? " z-index: 0;" : ""} }
+.card { box-shadow: 0 18px 50px ${t.cardShadow};${t.lace || t.ring ? " z-index: 0;" : ""} }
+${
+  t.ring
+    ? `.card::after { content: ""; position: absolute; top: 30px; right: 40px; width: 140px; height: 140px; border-radius: 50%; z-index: -1;
+  background: conic-gradient(${t.ring.map((c, i) => `${c} ${i * (100 / t.ring!.length)}% ${(i + 1) * (100 / t.ring!.length)}%`).join(", ")});
+  mask: radial-gradient(circle, transparent 0 56%, #000 57%); opacity: .25; pointer-events: none; }`
+    : ""
+}
 ${
   t.lace
     ? `.card::after { content: ""; position: absolute; top: 26px; right: 34px; width: 150px; height: 138px; transform: rotate(8deg); z-index: -1;

@@ -65,8 +65,9 @@ export function artistsData(): Plugin {
             return parseFile(path, (r) => ArtistConfig.parse(r), readJson(path));
           })
           .filter((c) => includeDrafts || !c.draft)
-          // 下書きは公開中のアーティストの後ろに（トップの並び。smoke テストも先頭の公開中のアーティストで見て回る）
-          .sort((a, b) => Number(!!a.draft) - Number(!!b.draft));
+          // 下書きは公開中のアーティストの後ろに（トップの並び。smoke テストも先頭の公開中のアーティストで見て回る）。
+          // その中では artist.json の order（小さいほど前）、同じならディレクトリ名の順
+          .sort((a, b) => Number(!!a.draft) - Number(!!b.draft) || a.order - b.order);
         const loaders = configs.map((c) => `${JSON.stringify(c.id)}: () => import(${JSON.stringify(ARTIST_PREFIX + c.id)})`);
         return `export const artists = ${JSON.stringify(configs)};\nexport const loaders = {${loaders.join(",")}};\n`;
       }

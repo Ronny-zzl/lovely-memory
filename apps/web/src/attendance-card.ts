@@ -5,6 +5,8 @@
  */
 import {
   LACE_HEART_PATHS,
+  PETAL_PATH,
+  PETALS,
   SHARE_ICON_SHAPES,
   SHARE_THEMES,
   THEME_ICONS,
@@ -134,6 +136,26 @@ function decorate(ctx: CanvasRenderingContext2D, t: ShareTheme, W: number, H: nu
     }
     return;
   }
+  if (t.decoration === "petals") {
+    // 桜の花びら（OGP と同じ 280×168 の繰り返し）
+    const petal = new Path2D(PETAL_PATH);
+    const k = 280 / 160;
+    ctx.fillStyle = "#f9a8cf";
+    for (let ty = 0; ty < H; ty += 168)
+      for (let tx = 0; tx < W; tx += 280)
+        for (const [x, y, s, r, op] of PETALS) {
+          ctx.save();
+          ctx.globalAlpha = op;
+          ctx.translate(tx + x * k, ty + y * k);
+          ctx.scale(k * s, k * s);
+          ctx.translate(8, 8);
+          ctx.rotate((r * Math.PI) / 180);
+          ctx.translate(-8, -8);
+          ctx.fill(petal);
+          ctx.restore();
+        }
+    return;
+  }
   // 網点
   ctx.fillStyle = "rgba(255,255,255,.55)";
   for (let y = 7.5; y < H; y += 15)
@@ -176,6 +198,23 @@ function decorate(ctx: CanvasRenderingContext2D, t: ShareTheme, W: number, H: nu
         ctx.fill(heart);
         ctx.restore();
       }
+}
+
+/** カードの右上の、色を並べた輪（メンバーカラーなど）。上から時計回り */
+function colorRing(ctx: CanvasRenderingContext2D, colors: string[], right: number, top: number) {
+  const r = 70;
+  const width = r * 0.44;
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  ctx.lineWidth = width;
+  colors.forEach((c, i) => {
+    const from = -Math.PI / 2 + (i * 2 * Math.PI) / colors.length;
+    ctx.strokeStyle = c;
+    ctx.beginPath();
+    ctx.arc(right - r, top + r, r - width / 2, from, from + (2 * Math.PI) / colors.length);
+    ctx.stroke();
+  });
+  ctx.restore();
 }
 
 /** カードの右上のレースのハート */
@@ -260,6 +299,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   ctx.fill();
   ctx.restore();
   if (t.lace) laceHeart(ctx, t.lace, cx + cw - 34, cy + 26);
+  if (t.ring) colorRing(ctx, t.ring, cx + cw - 40, cy + 30);
 
   const px = cx + 48;
   const inner = cw - 96;

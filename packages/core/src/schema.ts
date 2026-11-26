@@ -52,6 +52,8 @@ export const ArtistConfig = z.object({
    * ビルド時に INCLUDE_DRAFTS=1 のときだけ含める
    */
   draft: z.boolean().optional(),
+  /** トップページなどでの並び順（小さいほど前。同じならディレクトリ名の順。下書きはいつも公開中のグループの後ろ） */
+  order: z.number().int().default(0),
   /** 見た目（サイトの配色・共有画像）。theme.ts。無ければ sun-moon（太陽と月） */
   theme: z.enum(ARTIST_THEMES).default("sun-moon"),
   /**

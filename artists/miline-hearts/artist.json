@@ -1,6 +1,7 @@
 {
   "id": "miline-hearts",
   "name": "Mi'Line Hearts",
+  "order": 2,
   "aliases": ["ミラインハーツ", "みらーつ"],
   "since": "2026-07-11",
   "draft": true,

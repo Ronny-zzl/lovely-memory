@@ -263,3 +263,203 @@
   color: #ffd0e4;
   border-color: #6e3552;
 }
+
+
+/*
+ * rainbow：淡い虹色（ピンク→黄→若草→空色→薄紫）に桜の花びら。メンバーカラー 5 色の輪と、ピンクの縁取りの白い文字（ロゴ）。
+ * 主な色はピンク、2 つめの色は紫
+ */
+:root:has(.page[data-artist-theme="rainbow"]),
+.artist-card[data-artist-theme="rainbow"] {
+  --hero-bg: linear-gradient(100deg, #fde0ef 0%, #ffe6d6 22%, #fff3c4 42%, #e3f5d6 60%, #d9f1fd 80%, #e9e1fa 100%);
+  --hero-stars: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%2796%27%20viewBox%3D%270%200%20160%2096%27%3E%3Cg%20fill%3D%27%23f9a8cf%27%3E%3Cpath%20opacity%3D%270.9%27%20transform%3D%27translate(14%2010)%20scale(0.9)%20rotate(-25%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.75%27%20transform%3D%27translate(92%206)%20scale(0.6)%20rotate(40%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.9%27%20transform%3D%27translate(128%2046)%20scale(1)%20rotate(15%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.7%27%20transform%3D%27translate(58%2058)%20scale(0.55)%20rotate(-60%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.8%27%20transform%3D%27translate(20%2070)%20scale(0.7)%20rotate(70%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --shadow-hero: 0 8px 24px rgb(160 133 215 / 22%);
+  --hero-card: rgb(255 255 255 / 96%);
+  --bg: #fdfbfd;
+  --border: #ece3ee;
+  --accent: #f05fa6; /* ロゴのピンク */
+  --accent-2: #7a5cc4; /* 紫 */
+  --accent-soft: #fde4f1;
+  --accent-text: #c8327f;
+  --accent-fill: #c8327f;
+  --accent-fill-hover: #a82868;
+  --bar: #f9b6d8;
+  --row-hover: #fbf3f8;
+  --tieup-bg: #dcf3ff;
+  --tieup-fg: #0b6a94;
+  --badge-2nd: #fde4f1;
+  --badge-2nd-fg: #b02a70;
+}
+
+:root[data-theme="dark"]:has(.page[data-artist-theme="rainbow"]),
+:root[data-theme="dark"] .artist-card[data-artist-theme="rainbow"] {
+  --hero-bg: linear-gradient(100deg, #4a2340 0%, #4a3326 22%, #45401f 42%, #263f2b 60%, #1d3a4c 80%, #33285a 100%);
+  --hero-stars: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%2796%27%20viewBox%3D%270%200%20160%2096%27%3E%3Cg%20fill%3D%27%237a4d6c%27%3E%3Cpath%20opacity%3D%270.9%27%20transform%3D%27translate(14%2010)%20scale(0.9)%20rotate(-25%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.75%27%20transform%3D%27translate(92%206)%20scale(0.6)%20rotate(40%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.9%27%20transform%3D%27translate(128%2046)%20scale(1)%20rotate(15%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.7%27%20transform%3D%27translate(58%2058)%20scale(0.55)%20rotate(-60%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3Cpath%20opacity%3D%270.8%27%20transform%3D%27translate(20%2070)%20scale(0.7)%20rotate(70%208%208)%27%20d%3D%27M8%2015C1.56%2010.94%201.98%203.80%204.78%201.84L8.00%203.80L11.22%201.84C14.02%203.80%2014.44%2010.94%208%2015Z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --shadow-hero: 0 8px 24px rgb(0 0 0 / 40%);
+  --bg: #16131b;
+  --surface: #1e1a25;
+  --border: #322b3c;
+  --row-hover: #262030;
+  --accent: #ff8cc6;
+  --accent-2: #c3aef5;
+  --accent-soft: #3d2030;
+  --accent-text: var(--accent);
+  --accent-fill: var(--accent);
+  --accent-fill-hover: #ffa8d4;
+  --bar: #6e3556;
+  --hero-card: rgb(30 26 37 / 92%);
+  --tieup-bg: #12334a;
+  --tieup-fg: #8fd8ff;
+  --badge-2nd: #43202f;
+  --badge-2nd-fg: #ffa8cb;
+}
+
+/* 団体名：ロゴと同じ「白い文字にピンクの縁取り」、下にメンバーカラー 5 色の線 */
+.page[data-artist-theme="rainbow"] .site-title {
+  padding: 0 0 10px 6px;
+  background: linear-gradient(90deg, #fa7abc 0 20%, #ffb400 0 40%, #82d25a 0 60%, #28c3ff 0 80%, #a085d7 0) left bottom / 160px 4px no-repeat;
+  background-clip: border-box;
+  color: #fff;
+  letter-spacing: 0.02em;
+  text-shadow:
+    2px 0 0 #fa7abc,
+    1.41px 1.41px 0 #fa7abc,
+    0 2px 0 #fa7abc,
+    -1.41px 1.41px 0 #fa7abc,
+    -2px 0 0 #fa7abc,
+    -1.41px -1.41px 0 #fa7abc,
+    0 -2px 0 #fa7abc,
+    1.41px -1.41px 0 #fa7abc,
+    3.5px 0 0 #fa7abc,
+    3.03px 1.75px 0 #fa7abc,
+    1.75px 3.03px 0 #fa7abc,
+    0 3.5px 0 #fa7abc,
+    -1.75px 3.03px 0 #fa7abc,
+    -3.03px 1.75px 0 #fa7abc,
+    -3.5px 0 0 #fa7abc,
+    -3.03px -1.75px 0 #fa7abc,
+    -1.75px -3.03px 0 #fa7abc,
+    0 -3.5px 0 #fa7abc,
+    1.75px -3.03px 0 #fa7abc,
+    3.03px -1.75px 0 #fa7abc,
+    0 5px 0 #d9c8f5;
+}
+
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .site-title {
+  text-shadow:
+    2px 0 0 #d6408e,
+    1.41px 1.41px 0 #d6408e,
+    0 2px 0 #d6408e,
+    -1.41px 1.41px 0 #d6408e,
+    -2px 0 0 #d6408e,
+    -1.41px -1.41px 0 #d6408e,
+    0 -2px 0 #d6408e,
+    1.41px -1.41px 0 #d6408e,
+    3.5px 0 0 #d6408e,
+    3.03px 1.75px 0 #d6408e,
+    1.75px 3.03px 0 #d6408e,
+    0 3.5px 0 #d6408e,
+    -1.75px 3.03px 0 #d6408e,
+    -3.03px 1.75px 0 #d6408e,
+    -3.5px 0 0 #d6408e,
+    -3.03px -1.75px 0 #d6408e,
+    -1.75px -3.03px 0 #d6408e,
+    0 -3.5px 0 #d6408e,
+    1.75px -3.03px 0 #d6408e,
+    3.03px -1.75px 0 #d6408e,
+    0 5px 0 #4a3570;
+}
+
+/* 枠を太くして花びらを見せる（狭い画面では細く） */
+.page[data-artist-theme="rainbow"] .hero {
+  padding: 20px;
+}
+
+/* カードの右下に、メンバーカラー 5 色の輪（ロゴ・メニューのボタンの意匠） */
+.page[data-artist-theme="rainbow"] .hero-card {
+  isolation: isolate;
+}
+
+.page[data-artist-theme="rainbow"] .hero-card::before {
+  content: "";
+  position: absolute;
+  right: 24px;
+  bottom: 16px;
+  z-index: -1;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(#fa7abc 0 20%, #ffb400 0 40%, #82d25a 0 60%, #28c3ff 0 80%, #a085d7 0);
+  mask: radial-gradient(circle, transparent 0 56%, #000 57%);
+  opacity: 0.22;
+}
+
+@media (width <= 640px) {
+  .page[data-artist-theme="rainbow"] .hero {
+    padding: 12px;
+  }
+
+  .page[data-artist-theme="rainbow"] .hero-card::before {
+    right: 12px;
+    width: 84px;
+    height: 84px;
+    opacity: 0.16;
+  }
+}
+
+/* ロゴの両脇の桜（ピンクと紫）・1 曲目の桜 */
+.page[data-artist-theme="rainbow"] .brand .motif-start,
+.page[data-artist-theme="rainbow"] .rank-first .rank-icon {
+  color: #fa7abc;
+}
+
+.page[data-artist-theme="rainbow"] .brand .motif-end {
+  color: #a085d7;
+}
+
+/* セトリでの位置：空色 → 黄 → 紫。節目のバッジはピンク */
+.page[data-artist-theme="rainbow"] .zone-early {
+  background: linear-gradient(120deg, #e2f6ff 0%, #c4ebfd 100%);
+  color: #0b6a94;
+}
+
+.page[data-artist-theme="rainbow"] .zone-middle {
+  background: linear-gradient(120deg, #fff6d6 0%, #ffe7a3 100%);
+  color: #8a5a00;
+}
+
+.page[data-artist-theme="rainbow"] .zone-late {
+  background: linear-gradient(120deg, #a085d7 0%, #7a5cc4 100%);
+  color: #fff;
+}
+
+.page[data-artist-theme="rainbow"] .milestone-event-count,
+.page[data-artist-theme="rainbow"] .milestone-total-songs,
+.page[data-artist-theme="rainbow"] .milestone-debut-days {
+  background: linear-gradient(120deg, #fff0f7 0%, #fdd8ea 100%);
+  color: #a82868;
+  border-color: #f9b6d8;
+}
+
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .zone-early {
+  background: linear-gradient(120deg, #12334a 0%, #18405e 100%);
+  color: #8fd8ff;
+}
+
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .zone-middle {
+  background: linear-gradient(120deg, #3f3414 0%, #4d3f15 100%);
+  color: #ffd877;
+}
+
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .zone-late {
+  background: linear-gradient(120deg, #4b3a78 0%, #3c2d66 100%);
+  color: #fff;
+}
+
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .milestone-event-count,
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .milestone-total-songs,
+:root[data-theme="dark"] .page[data-artist-theme="rainbow"] .milestone-debut-days {
+  background: linear-gradient(120deg, #4a2238 0%, #5c2448 100%);
+  color: #ffd0e4;
+  border-color: #6e3552;
+}
