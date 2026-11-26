@@ -191,6 +191,11 @@ export const Song = z.object({
       release: z.object({ date: isoDate, title: z.string().optional(), url: z.string().url().optional() }).optional(),
     })
     .optional(),
+  /**
+   * 歌ではないパフォーマンス（ダンスなど）。セトリには順番どおりに出すが、歌唱回数・歌唱率・総歌唱数・
+   * 1 曲目／ラスト／つながりなどの集計には数えない（曲のページでは披露の記録を見られる）
+   */
+  kind: z.enum(["dance"]).optional(),
   /** アニメ主題歌などのタイアップ */
   tieups: z
     .array(

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import { eventCostume, eventHasType, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
+import { eventCostume, eventHasType, isDance, isLiveEvent, type EventType, type ResolvedEvent } from "@lovely-memory/core/runtime";
 import { useAttendance } from "../attendance.ts";
 import { AttendanceHint } from "../components/AttendanceHint.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
@@ -58,7 +58,8 @@ export function EventsPage() {
 
   const row = (e: ResolvedEvent) => {
     const sl = setlistByEvent.get(e.id);
-    const entries = sl?.stages.flatMap((s) => s.entries) ?? [];
+    // 曲数・初披露はダンスなど歌ではないものを数えない
+    const entries = sl?.stages.flatMap((s) => s.entries).filter((x) => !isDance(x.song)) ?? [];
     const debuts = entries.filter((x) => x.debut).length;
     const costume = eventCostume(artist, e, isHeld(e));
     return (

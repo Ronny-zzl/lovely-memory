@@ -100,6 +100,8 @@ type Setlist = {
   items?: SetlistItem[];
   stages?: Array<{ name?: string; members?: string[]; items: SetlistItem[] }>;
 };
+// songs.json 的 kind: "dance"（舞蹈等不是唱歌的表演）：歌单里按顺序显示（带「ダンス」标记），
+// 但不计入歌唱次数・歌唱率・总演唱数・成员演唱数・1 曲目／ラスト；曲间衔接在舞蹈处断开。曲目一览单独列在「ダンス」栏
 // 没有 live 的活动（talk 等）也可以有歌单：作为「在那里唱过的歌」的记录显示在活动页，
 // 但不计入歌唱次数・首次演唱・曲顺等统计（computeStats 的 offRecord）
 type SetlistItem = string | {

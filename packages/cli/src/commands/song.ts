@@ -16,8 +16,9 @@ import { nextSongId, songIndex } from "../songs-merge.ts";
  *   --cover <原曲アーティスト> --cover-title <原曲名> --cover-release-date <YYYY-MM-DD> --cover-release-title <収録作品>
  *   --tieup "anime|作品名|オープニングテーマ"  （複数可。同じ種類・作品があれば役割を上書き、無ければ足す）
  *   --alias <別表記>（複数可、足す）  --note <メモ>  --era <eraId>  --unit <unitId>  --rename <新しい曲名>
+ *   --kind dance  歌ではないパフォーマンス（ダンスなど。歌の集計に数えない）
  *   --unset <項目>（複数可）  credits / credits.lyrics / credits.music / credits.arrangement / release / cover /
- *                             cover.title / cover.release / tieups / aliases / note / unit
+ *                             cover.title / cover.release / tieups / aliases / note / unit / kind
  *
  * 何が変わるかを表示する。--dry-run なら書き込まない。
  */
@@ -73,6 +74,7 @@ export type SongChanges = {
   era?: string;
   unit?: string;
   rename?: string;
+  kind?: string;
   unset?: string[];
 };
 
@@ -89,6 +91,7 @@ const UNSETTABLE = [
   "aliases",
   "note",
   "unit",
+  "kind",
 ] as const;
 
 function changesFromOptions(opts: Record<string, unknown>): SongChanges {
@@ -115,6 +118,7 @@ function changesFromOptions(opts: Record<string, unknown>): SongChanges {
     era: str("era"),
     unit: str("unit"),
     rename: str("rename"),
+    kind: str("kind"),
     unset: list("unset"),
   };
 }
@@ -161,6 +165,7 @@ export function applySongChanges(song: Song, c: SongChanges, artist: Pick<Artist
   }
   if (c.aliases?.length) s.aliases = [...new Set([...((s.aliases as string[]) ?? []), ...c.aliases.map((a) => a.trim())])];
   if (c.note !== undefined) s.note = c.note;
+  if (c.kind) s.kind = c.kind;
   if (c.era) {
     if (!artist.eras.some((e) => e.id === c.era)) throw new Error(`unknown era: ${c.era}`);
     s.era = c.era;

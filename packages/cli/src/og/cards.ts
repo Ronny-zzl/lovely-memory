@@ -16,6 +16,7 @@ import {
   tieupLabels,
   tieupText,
   milestoneText,
+  isDance,
   type ArtistConfig,
   type EventSetlist,
   type Member,
@@ -263,7 +264,9 @@ export function songCard(
   const { song } = s;
   const era = artist.eras.find((e) => e.id === song.era && e.id !== artist.defaultEra);
   const unit = artist.units.find((u) => u.id === song.unit && u.id !== artist.defaultUnit);
+  const dance = isDance(song);
   const badges = [
+    dance && `<span class="badge type">ダンス</span>`,
     era && `<span class="badge era-${esc(era.id)}">${esc(era.label)}</span>`,
     unit &&
       (unit.motif
@@ -277,10 +280,10 @@ export function songCard(
   let stats: string[];
   if (s.count === 0) {
     stats = [];
-  } else if (song.cover) {
-    // カバー曲は歌唱率を出さない（サイトと同じ）
+  } else if (song.cover || dance) {
+    // カバー曲・ダンスは歌唱率を出さない（サイトと同じ）
     stats = [
-      stat(`${s.count}<small>回</small>`, "歌唱回数"),
+      stat(`${s.count}<small>回</small>`, dance ? "披露回数" : "歌唱回数"),
       stat(formatDate(s.first!.date), "初披露", "date"),
       stat(formatDate(s.last!.date), "最終", "date"),
     ];
@@ -297,7 +300,7 @@ export function songCard(
     ...song.tieups.map((t) => `<span>${esc(tieupText(t))}</span>`),
     song.cover
       ? `<span>カバー曲 ・ 原曲: ${esc(song.cover.artist)}${song.cover.title ? `「${esc(song.cover.title)}」` : ""}</span>`
-      : position && position.count > 0
+      : !dance && position && position.count > 0
         ? // 「ラスト定番」などのバッジがあっても回数は出す（サイトの「セトリでの位置」と同じ）
           `<span class="muted">1 曲目 ${position.opener} 回 ・ ラスト ${position.closer} 回${position.encore > 0 ? ` ・ アンコール ${position.encore} 回` : ""}</span>`
         : "",

@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router";
 import { Fragment } from "react";
-import { ageOn, birthdayMembers, membersOn, eventCostume, isLiveEvent, setlistPostText } from "@lovely-memory/core/runtime";
+import { ageOn, birthdayMembers, membersOn, eventCostume, isDance, isLiveEvent, setlistPostText } from "@lovely-memory/core/runtime";
 import { MemberDots } from "../components/MemberDots.tsx";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { AttendanceToggle } from "../components/AttendanceToggle.tsx";
@@ -176,6 +176,7 @@ export function EventDetailPage() {
                                   初披露
                                 </span>
                               )}
+                              {isDance(e.song) && <span className="badge">ダンス</span>}
                               {e.collab && !stage.collab && <span className="badge collab">コラボ</span>}
                               {e.song.cover && <span className="item-note">カバー（原曲: {e.song.cover.artist}）</span>}
                               {e.note && <span className="item-note">{e.note}</span>}

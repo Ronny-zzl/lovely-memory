@@ -71,6 +71,13 @@ describe("applySongChanges", () => {
     expect(() => applySongChanges(base, { era: "3rd" }, artist)).toThrow(/unknown era/);
   });
 
+  it("ダンスにできる（ほかの値はスキーマで弾く）。--unset kind で戻せる", () => {
+    const d = applySongChanges(base, { kind: "dance" }, artist);
+    expect(d.kind).toBe("dance");
+    expect(applySongChanges(d, { unset: ["kind"] }, artist).kind).toBeUndefined();
+    expect(() => applySongChanges(base, { kind: "song" }, artist)).toThrow(/kind/);
+  });
+
   it("元の曲は変えない", () => {
     const before = JSON.stringify(base);
     applySongChanges(base, { credits: "編曲：C", unset: ["tieups"] }, artist);

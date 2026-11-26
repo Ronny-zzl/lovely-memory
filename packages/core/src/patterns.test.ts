@@ -113,3 +113,26 @@ describe("positionRole", () => {
     expect(positionRole(at("C"), { minCount: 2 })).toBeUndefined();
   });
 });
+
+describe("dances (Song kind)", () => {
+  // X はダンス：1 曲目・ラストには数えず、前後の曲（A と B）はつながっていない
+  const withDance = [...songs, Song.parse({ id: "s9", title: "X", kind: "dance" })];
+  const st = computeStats({
+    songs: withDance,
+    events: [ev(1), ev(2)],
+    setlists: [Setlist.parse({ event: 1, items: ["X", "A", "B"] }), Setlist.parse({ event: 2, items: ["A", "X", "B"] })],
+  });
+  const p = computePatterns(st.events);
+
+  it("are left out of totals and positions", () => {
+    expect(st.totalPerformances).toBe(4);
+    expect(p.positions.find((x) => x.song.title === "X")).toBeUndefined();
+    expect(p.positions.find((x) => x.song.title === "A")!.opener).toBe(2);
+  });
+
+  it("break the flow: songs on either side are not counted as consecutive", () => {
+    const ab = p.transitions.find((t) => t.from.title === "A" && t.to.title === "B");
+    expect(ab?.count).toBe(1);
+    expect(p.transitions.some((t) => t.from.title === "X" || t.to.title === "X")).toBe(false);
+  });
+});

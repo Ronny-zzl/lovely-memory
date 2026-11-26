@@ -1,6 +1,6 @@
 import { Suspense, use } from "react";
 import { Link } from "react-router";
-import { isLiveEvent, orderMembers, type ArtistConfig } from "@lovely-memory/core/runtime";
+import { isDance, isLiveEvent, orderMembers, type ArtistConfig } from "@lovely-memory/core/runtime";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
@@ -73,12 +73,13 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
   const next = data?.events.filter((e) => isLiveEvent(e) && !data.isHeld(e)).sort((a, b) => a.date.localeCompare(b.date))[0];
   // 楽曲ページの既定（コラボステージを含めない）と同じ数え方
   const performances = data?.allStats.events.reduce(
-    (n, e) => n + e.stages.filter((st) => !st.collab).reduce((m, st) => m + st.entries.filter((x) => !x.collab).length, 0),
+    (n, e) =>
+      n + e.stages.filter((st) => !st.collab).reduce((m, st) => m + st.entries.filter((x) => !x.collab && !isDance(x.song)).length, 0),
     0,
   );
-  const played = data?.allStats.songs.filter((s) => !s.song.cover && s.count > 0).length;
-  const songTotal = data?.songs.filter((s) => !s.cover).length;
-  const latestSongs = latest?.stages.reduce((n, st) => n + st.entries.length, 0);
+  const played = data?.allStats.songs.filter((s) => !s.song.cover && !isDance(s.song) && s.count > 0).length;
+  const songTotal = data?.songs.filter((s) => !s.cover && !isDance(s)).length;
+  const latestSongs = latest?.stages.reduce((n, st) => n + st.entries.filter((x) => !isDance(x.song)).length, 0);
 
   return (
     <article className="artist-card" data-artist-theme={artist.theme}>

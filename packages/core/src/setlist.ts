@@ -1,4 +1,4 @@
-import type { Setlist, SetlistItem, SetlistStage } from "./schema.ts";
+import type { Setlist, SetlistItem, SetlistStage, Song } from "./schema.ts";
 
 /** items / stages の書き分けを吸収して常にステージ配列で返す */
 export function setlistStages(s: Setlist): SetlistStage[] {
@@ -11,3 +11,6 @@ export function itemSong(item: SetlistItem): string {
 
 /** 曲名を思い出せない曲（セトリの中の位置だけ分かっている）。曲としては数えない */
 export const UNKNOWN_SONG = "?";
+
+/** 歌ではないパフォーマンス（ダンスなど。Song の kind）。歌の集計には数えない */
+export const isDance = (song: Pick<Song, "kind">) => song.kind === "dance";

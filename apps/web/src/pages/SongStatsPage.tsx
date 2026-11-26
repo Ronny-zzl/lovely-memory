@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Link } from "react-router";
 import {
   computeStats,
   eventHasType,
   positionRole,
   isLiveEvent,
+  isDance,
   normalizeTitle,
   setlistStages,
   type EventType,
@@ -224,8 +225,9 @@ export function SongStatsPage() {
     const nq = normalizeTitle(q);
     const filtered = stats.songs.filter(
       (s) =>
-        // カバー曲は歌唱回数が少なく間隔も長いので、統計表ではなく下の「カバー曲」欄に出す
+        // カバー曲は歌唱回数が少なく間隔も長いので、統計表ではなく下の「カバー曲」欄に出す。ダンスは「ダンス」欄に
         !s.song.cover &&
+        !isDance(s.song) &&
         (includeCollab || !collabOnly.has(s.song.id)) &&
         (!era || s.song.era === era) &&
         (!unit || s.song.unit === unit) &&
@@ -249,14 +251,16 @@ export function SongStatsPage() {
   const withEvents = stats.songs.some((s) => s.count !== s.events);
   const columns: Column[] = [countColumn(withEvents), ...(withEvents ? [EVENTS] : []), ...COLUMNS_BEFORE];
 
-  const played = stats.songs.filter((s) => !s.song.cover && s.count > 0).length;
+  const played = stats.songs.filter((s) => !s.song.cover && !isDance(s.song) && s.count > 0).length;
   // 未披露曲は既定で畳む。曲名で検索しているときは、探している曲が隠れないよう常に表示
   const unplayedCount = rows.filter((s) => s.count === 0).length;
   const showUnplayed = params.get("unplayed") === "1" || q !== "";
   const visibleRows = showUnplayed ? rows : rows.filter((s) => s.count > 0);
-  const songTotal = songs.filter((s) => !s.cover && (includeCollab || !collabOnly.has(s.id))).length;
-  // カバー曲は全イベントの記録を表示する（上の絞り込みとは独立）。最近歌われた順
-  const covers = allStats.songs.filter((s) => s.song.cover).sort((a, b) => (b.last?.date ?? "").localeCompare(a.last?.date ?? ""));
+  const songTotal = songs.filter((s) => !s.cover && !isDance(s) && (includeCollab || !collabOnly.has(s.id))).length;
+  // カバー曲・ダンスは全イベントの記録を表示する（上の絞り込みとは独立）。最近披露した順
+  const recent = (a: SongStats, b: SongStats) => (b.last?.date ?? "").localeCompare(a.last?.date ?? "");
+  const covers = allStats.songs.filter((s) => s.song.cover && !isDance(s.song)).sort(recent);
+  const dances = allStats.songs.filter((s) => isDance(s.song)).sort(recent);
   // カバー曲だけの区分は選択肢に出さない
   const eraOptions = artist.eras.filter((e) => songs.some((s) => s.era === e.id && !s.cover));
   // 既定の区分・ユニット（artist.json の defaultEra / defaultUnit）はバッジを省略する
@@ -538,39 +542,71 @@ export function SongStatsPage() {
           </tbody>
         </table>
       </div>
-      {covers.length > 0 && (
-        <section className="covers">
-          <h3 className="section-heading">
-            カバー曲<span className="muted small"> {covers.length} 曲（全イベントの記録）</span>
-          </h3>
-          <ul className="cover-list">
-            {covers.map((s) => (
-              <li key={s.song.id}>
-                <span className="cover-head">
-                  <Link to={s.song.id} className="song-title">
-                    {s.song.title}
-                  </Link>
-                  <span className="muted small">原曲: {s.song.cover!.artist}</span>
-                </span>
-                <span className="cover-dates">
-                  {s.performances.length === 0 && <span className="muted small">未披露</span>}
-                  {s.performances.map((p) => (
-                    <Link key={`${p.eventId}-${p.stageIndex}-${p.position}`} to={`/${artist.id}/events/${p.eventId}`} className="date-chip">
-                      {formatDate(p.date)}
-                      {p.collab && <span className="badge collab">コラボ</span>}
-                    </Link>
-                  ))}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <PerformanceList
+        title="カバー曲"
+        sub={`${covers.length} 曲（全イベントの記録）`}
+        items={covers}
+        artistId={artist.id}
+        detail={(s) => <>原曲: {s.song.cover!.artist}</>}
+      />
+      <PerformanceList
+        title="ダンス"
+        sub={`${dances.length} 曲（歌唱の集計には含めていません）`}
+        items={dances}
+        artistId={artist.id}
+        detail={(s) => s.song.note}
+      />
 
       <p className="muted small note">
         集計対象はセトリを登録済みのイベントのみ（{stats.events.length} / {events.filter(isLiveEvent).length} イベント）。
         「歌唱率」は初披露以降のイベントのうち歌唱した割合、「前回から」は最後に歌われてから今日までの日数。
       </p>
+    </section>
+  );
+}
+
+/** カバー曲・ダンスの欄：曲名と、披露したイベントの日付 */
+function PerformanceList({
+  title,
+  sub,
+  items,
+  artistId,
+  detail,
+}: {
+  title: string;
+  sub: string;
+  items: SongStats[];
+  artistId: string;
+  detail: (s: SongStats) => ReactNode;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <section className="covers">
+      <h3 className="section-heading">
+        {title}
+        <span className="muted small"> {sub}</span>
+      </h3>
+      <ul className="cover-list">
+        {items.map((s) => (
+          <li key={s.song.id}>
+            <span className="cover-head">
+              <Link to={s.song.id} className="song-title">
+                {s.song.title}
+              </Link>
+              {detail(s) && <span className="muted small">{detail(s)}</span>}
+            </span>
+            <span className="cover-dates">
+              {s.performances.length === 0 && <span className="muted small">未披露</span>}
+              {s.performances.map((p) => (
+                <Link key={`${p.eventId}-${p.stageIndex}-${p.position}`} to={`/${artistId}/events/${p.eventId}`} className="date-chip">
+                  {formatDate(p.date)}
+                  {p.collab && <span className="badge collab">コラボ</span>}
+                </Link>
+              ))}
+            </span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

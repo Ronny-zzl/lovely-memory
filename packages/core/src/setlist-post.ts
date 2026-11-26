@@ -2,6 +2,7 @@
  * イベントのセトリを、X などに貼るための文字にする（イベントのページの「セトリをコピー」）。
  */
 import { displayTitle, formatDate } from "./format.ts";
+import { isDance } from "./setlist.ts";
 import type { ArtistConfig } from "./schema.ts";
 import type { EventSetlist, SetlistEntry } from "./stats.ts";
 
@@ -16,7 +17,7 @@ export function setlistPostText(artist: ArtistConfig, setlist: EventSetlist): st
     const who = [partial ? e.members.map(name).join("・") : "", e.with?.length ? `with ${e.with.join("・")}` : ""]
       .filter(Boolean)
       .join(" ");
-    const extra = [who, e.note ?? ""].filter(Boolean).join("／");
+    const extra = [isDance(e.song) ? "ダンス" : "", who, e.note ?? ""].filter(Boolean).join("／");
     return `${e.no} ${e.song.title}${extra ? `（${extra}）` : ""}`;
   };
 

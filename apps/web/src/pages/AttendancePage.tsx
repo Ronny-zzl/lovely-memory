@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import { isLiveEvent, type ResolvedEvent, type Song } from "@lovely-memory/core/runtime";
+import { isDance, isLiveEvent, type ResolvedEvent, type Song } from "@lovely-memory/core/runtime";
 import type { AttendanceCardData } from "../attendance-card.ts";
 import { fetchEventernote, useAttendance } from "../attendance.ts";
 import { AttendanceBackup } from "../components/AttendanceBackup.tsx";
@@ -115,6 +115,7 @@ export function AttendancePage() {
       if (!ids.has(es.event.id)) continue;
       for (const st of es.stages) {
         for (const x of st.entries) {
+          if (isDance(x.song)) continue; // 聴いた「曲」なので、ダンスなど歌ではないものは数えない
           total++;
           const h = bySong.get(x.song.id);
           if (h) h.count++;
@@ -126,11 +127,13 @@ export function AttendancePage() {
     const heard = all.filter((h) => !h.song.cover);
     const heardCovers = all.filter((h) => h.song.cover).sort((a, b) => a.first.date.localeCompare(b.first.date));
     // 披露されたことのあるオリジナル曲のうち、まだ聴いていないもの（歌唱率の高い順＝次に聴けそうな順）
-    const notHeard = allStats.songs.filter((s) => s.count > 0 && !s.song.cover && !bySong.has(s.song.id)).sort((a, b) => b.rate - a.rate);
+    const notHeard = allStats.songs
+      .filter((s) => s.count > 0 && !s.song.cover && !isDance(s.song) && !bySong.has(s.song.id))
+      .sort((a, b) => b.rate - a.rate);
     return { heard, heardCovers, notHeard, total };
   }, [past, allStats]);
 
-  const sung = allStats.songs.filter((s) => s.count > 0 && !s.song.cover).length;
+  const sung = allStats.songs.filter((s) => s.count > 0 && !s.song.cover && !isDance(s.song)).length;
   // シェア画像の中身（変わったときだけ描き直す）
   const card = useMemo<AttendanceCardData>(
     () => ({

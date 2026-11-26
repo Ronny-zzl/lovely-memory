@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { formatCredits, neighbors, positionRole, STREAK_MIN, type Song, type Transition } from "@lovely-memory/core/runtime";
+import { formatCredits, isDance, neighbors, positionRole, STREAK_MIN, type Song, type Transition } from "@lovely-memory/core/runtime";
 import { MilestoneBadge } from "../components/MilestoneBadge.tsx";
 import { ShareButtons } from "../components/ShareButtons.tsx";
 import { SongVideos } from "../components/SongVideos.tsx";
@@ -108,8 +108,9 @@ export function SongDetailPage() {
   );
 
   const history = [...stats.performances].reverse();
-  // カバー曲は歌唱回数が少なく間隔も長いので、歌唱率・出現パターン等は出さない
-  const isCover = !!song.cover;
+  // カバー曲は歌唱回数が少なく間隔も長いので、歌唱率・出現パターン等は出さない。ダンスなど歌ではないものも同じ
+  const dance = isDance(song);
+  const isCover = !!song.cover || dance;
 
   return (
     <article className="song-detail">
@@ -120,6 +121,7 @@ export function SongDetailPage() {
       <header className="song-detail-header">
         <h2 className="song-detail-title">
           {song.title}
+          {isDance(song) && <span className="badge">ダンス</span>}
           {era && <span className={`badge era-${era.id}`}>{era.label}</span>}
           {unit && <UnitTag unit={unit} />}
           {tieupLabels(song.tieups).map((l) => (
@@ -181,8 +183,8 @@ export function SongDetailPage() {
         {song.note && <p className="small">{song.note}</p>}
         <ShareButtons
           text={
-            stats.count === 0 || song.cover
-              ? `「${song.title}」の歌唱記録（${artist.name}）`
+            stats.count === 0 || isCover
+              ? `「${song.title}」の${dance ? "披露" : "歌唱"}記録（${artist.name}）`
               : `「${song.title}」の歌唱率 ${formatPercent(stats.rate)}（${stats.events}/${stats.eligibleEvents} イベント）・歌唱 ${stats.count} 回（${artist.name}）`
           }
           hashtags={artist.shareHashtags}
@@ -200,7 +202,7 @@ export function SongDetailPage() {
           <div className={isCover ? "summary" : "summary summary-4"}>
             <div className="stat">
               <span className="stat-value">{stats.count}</span>
-              <span className="stat-label">歌唱回数</span>
+              <span className="stat-label">{dance ? "披露回数" : "歌唱回数"}</span>
             </div>
             {!isCover && (
               <div className="stat">
@@ -323,7 +325,7 @@ export function SongDetailPage() {
           )}
 
           <section className="song-section">
-            <h3 className="section-heading">歌唱履歴</h3>
+            <h3 className="section-heading">{dance ? "披露履歴" : "歌唱履歴"}</h3>
             <ul className="event-list">
               {history.map((p) => {
                 const es = eventSetlists.get(p.eventId)!;

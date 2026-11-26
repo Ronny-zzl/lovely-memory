@@ -1,6 +1,6 @@
 import { isLiveEvent, type ResolvedEvent } from "./events.ts";
 import type { Setlist, Song } from "./schema.ts";
-import { itemSong, setlistStages, UNKNOWN_SONG } from "./setlist.ts";
+import { isDance, itemSong, setlistStages, UNKNOWN_SONG } from "./setlist.ts";
 import { findSong } from "./setlist-text.ts";
 
 /** 1 回の歌唱 */
@@ -205,7 +205,11 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
     events: eventSetlists,
     offRecord: allSetlists.filter((e) => !counted.has(e.event.id)),
     totalStages: eventSetlists.reduce((n, e) => n + e.stages.length, 0),
-    totalPerformances: eventSetlists.reduce((n, e) => n + e.stages.reduce((m, s) => m + s.entries.length, 0), 0),
+    // 総歌唱数にダンスなど歌ではないものは入れない
+    totalPerformances: eventSetlists.reduce(
+      (n, e) => n + e.stages.reduce((m, s) => m + s.entries.filter((x) => !isDance(x.song)).length, 0),
+      0,
+    ),
     songs: songStats,
     unresolved,
   };

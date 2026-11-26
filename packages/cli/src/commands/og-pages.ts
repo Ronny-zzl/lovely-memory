@@ -9,6 +9,7 @@ import {
   computePatterns,
   computeStats,
   heldCheck,
+  isDance,
   displayTitle,
   formatDate,
   formatPercent,
@@ -197,9 +198,11 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
       tieup +
       (s.count === 0
         ? `「${s.song.title}」はまだ歌われていません（${artist.name}）。`
-        : s.song.cover
-          ? `「${s.song.title}」（カバー曲・原曲: ${s.song.cover.artist}）の歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。`
-          : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} イベント）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
+        : isDance(s.song)
+          ? `「${s.song.title}」（ダンス）の披露 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。`
+          : s.song.cover
+            ? `「${s.song.title}」（カバー曲・原曲: ${s.song.cover.artist}）の歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。`
+            : `「${s.song.title}」の歌唱率 ${formatPercent(s.rate)}（${s.events}/${s.eligibleEvents} イベント）・歌唱 ${s.count} 回。初披露 ${formatDate(s.first!.date)}・最終 ${formatDate(s.last!.date)}。${role === "closer" ? "ラスト定番曲。" : role === "opener" ? "1 曲目の定番曲。" : ""}`);
     pages.push({
       path: p,
       meta: {

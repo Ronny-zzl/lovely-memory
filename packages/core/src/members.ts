@@ -1,3 +1,4 @@
+import { isDance } from "./setlist.ts";
 import { isLiveEvent, type HeldCheck, type ResolvedEvent } from "./events.ts";
 import type { ArtistConfig, Member } from "./schema.ts";
 import type { Stats } from "./stats.ts";
@@ -38,6 +39,7 @@ export function computeMemberStats({ artist, events, stats, held: isHeld }: Memb
     if (!isHeld(es.event)) continue;
     for (const stage of es.stages) {
       for (const entry of stage.entries) {
+        if (isDance(entry.song)) continue; // 歌唱数なのでダンスは数えない
         for (const m of entry.members) performances.set(m, (performances.get(m) ?? 0) + 1);
       }
     }

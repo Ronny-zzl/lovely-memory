@@ -1,3 +1,4 @@
+import { isDance } from "./setlist.ts";
 import type { Song } from "./schema.ts";
 import type { EventSetlist } from "./stats.ts";
 
@@ -51,10 +52,23 @@ type Stage = Song[];
  * コラボ以外のステージを、本編とアンコールに分けた曲の並び。
  * 記録が揃っていないセトリ（一部だけ・曲順不明・思い出せない曲がある）は、位置もつながりも正しくないので使わない
  */
-function blocks(events: EventSetlist[], encore: boolean): Stage[] {
+function blocks(events: EventSetlist[], encore: boolean, splitAtDance = false): Stage[] {
   return events
     .filter((e) => !e.completeness && e.unknownSongs === 0)
-    .flatMap((e) => e.stages.filter((s) => !s.collab).map((s) => s.entries.filter((x) => x.encore === encore).map((x) => x.song)))
+    .flatMap((e) =>
+      e.stages
+        .filter((s) => !s.collab)
+        .flatMap((s) => {
+          const songs = s.entries.filter((x) => x.encore === encore).map((x) => x.song);
+          // ダンスなど歌ではないものは数えない。つながりを数えるときは、その前後を別の並びにする（前後の曲は続いていない）
+          if (!splitAtDance) return [songs.filter((x) => !isDance(x))];
+          const runs: Song[][] = [[]];
+          for (const x of songs)
+            if (isDance(x)) runs.push([]);
+            else runs.at(-1)!.push(x);
+          return runs;
+        }),
+    )
     .filter((s) => s.length > 0);
 }
 
@@ -68,7 +82,7 @@ export function computePatterns(events: EventSetlist[], options: { minChainCount
   const { minChainCount = 3, minChainLength = 3 } = options;
   const stages = blocks(events, false);
   // つながり・流れは本編とアンコールのそれぞれの中で数える
-  const runs = [...stages, ...blocks(events, true)];
+  const runs = [...blocks(events, false, true), ...blocks(events, true, true)];
 
   const positions = new Map<string, SongPosition>();
   const pos = (song: Song) => {
@@ -86,7 +100,8 @@ export function computePatterns(events: EventSetlist[], options: { minChainCount
       if (z) p.zones[z]++;
     });
   }
-  for (const e of events) for (const s of e.stages) if (!s.collab) for (const x of s.entries) if (x.encore) pos(x.song).encore++;
+  for (const e of events)
+    for (const s of e.stages) if (!s.collab) for (const x of s.entries) if (x.encore && !isDance(x.song)) pos(x.song).encore++;
 
   const pairs = new Map<string, Transition>();
   const hasNext = new Map<string, number>();

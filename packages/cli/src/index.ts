@@ -81,6 +81,7 @@ commands:
                      --cover <原曲アーティスト> --cover-title --cover-release-date --cover-release-title
                      --tieup "anime|作品名|オープニングテーマ"  (複数可)
                      --alias <別表記> (複数可) --note --era --unit --rename <新しい曲名>
+                     --kind dance     歌ではないパフォーマンス（歌の集計に数えない）
                      --unset <項目>  (複数可。credits.arrangement・release・tieups など)
                      --dry-run        変更を表示するだけ
   errors             ブラウザで起きたエラー（/api/errors の記録）を、同じものをまとめて表示（artistId は all）
@@ -106,6 +107,7 @@ const { positionals, values } = parseArgs({
     tieup: { type: "string", multiple: true },
     unset: { type: "string", multiple: true },
     rename: { type: "string" },
+    kind: { type: "string" },
     since: { type: "string" },
     "release-date": { type: "string" },
     "release-title": { type: "string" },

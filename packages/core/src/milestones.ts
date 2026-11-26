@@ -1,3 +1,4 @@
+import { isDance } from "./setlist.ts";
 import type { HeldCheck, ResolvedEvent } from "./events.ts";
 import type { Song } from "./schema.ts";
 import type { Stats } from "./stats.ts";
@@ -90,6 +91,8 @@ export function computeMilestones({
   const songs = new Map<string, SongRecord>();
 
   for (const s of stats.songs) {
+    // ダンスなど歌ではないものに、歌の節目（通算 N 回目・連続）は付けない
+    if (isDance(s.song)) continue;
     const perf = s.performances;
     // 通算回数（1 イベントで複数回歌われたら、それぞれ数える）
     perf.forEach((p, i) => {
@@ -133,7 +136,7 @@ export function computeMilestones({
   // 通算歌唱数（セトリのあるイベントの全歌唱）
   let total = 0;
   for (const es of stats.events) {
-    const n = es.stages.reduce((m, st) => m + st.entries.length, 0);
+    const n = es.stages.reduce((m, st) => m + st.entries.filter((x) => !isDance(x.song)).length, 0);
     for (let k = total + 1; k <= total + n; k++) {
       if (isTotalSongsMilestone(k)) achieved.push({ kind: "total-songs", date: es.event.date, eventId: es.event.id, count: k });
     }
@@ -203,7 +206,7 @@ export function upcomingMilestones({
 
   const songItems: UpcomingMilestone[] = [];
   for (const s of stats.songs) {
-    if (s.count === 0 || s.song.cover) continue;
+    if (s.count === 0 || s.song.cover || isDance(s.song)) continue;
     const rec = milestones.songs.get(s.song.id)!;
     const remaining = rec.nextCount - s.count;
     if (remaining <= maxRemaining) songItems.push({ kind: "song-count", song: s.song, count: rec.nextCount, remaining, rate: s.rate });
