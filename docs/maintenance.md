@@ -90,7 +90,9 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 - 已入力的歌单也可以从同一界面修改（公演详情页的「セトリを直す」）
 - 需要：预览环境的 secret `GITHUB_DISPATCH_TOKEN`（`wrangler pages secret put GITHUB_DISPATCH_TOKEN --project-name lovely-memory --env preview`，和正式环境用同一个 token），`wrangler.toml` 的 `ACCESS_TEAM_DOMAIN`・`ACCESS_AUD`
 
-**预览版的访问保护（Cloudflare Access）**：Cloudflare 后台 → Workers & Pages → `lovely-memory` → Settings → General → 「Access policy」里对预览部署启用 → 在 Zero Trust 里把策略改成只允许自己的邮箱（登录方式：邮箱一次性验证码）。正式版（`main`）不受影响。
+**预览版的访问保护（Cloudflare Access）**：Cloudflare 后台 → Workers & Pages → `lovely-memory` → Settings → General → 「Access policy」里对预览部署启用 → 在 Zero Trust 里把策略改成只允许自己的邮箱。正式版（`main`）不受影响。
+- 登录方式：Google。Zero Trust「集成 → 身份提供程序」添加 Google（Google Cloud 的 OAuth 客户端，类型 Web application，重定向 URI 填 `https://lovely-memory-pages.cloudflareaccess.com/cdn-cgi/access/callback`），应用的「登录方法」只选 Google 并打开「应用即时身份验证」（直接跳到谷歌登录）。Worker 只验证 Access 的令牌，和登录方式无关，换登录方式不用改代码
+- 退出登录：打开 `https://draft.lovely-memory.pages.dev/cdn-cgi/access/logout`
 
 ## 手动操作
 
