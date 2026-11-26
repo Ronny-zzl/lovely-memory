@@ -181,6 +181,12 @@ export function SongDetailPage() {
           </p>
         )}
         {song.note && <p className="small">{song.note}</p>}
+        {/* 曲の情報の入力画面（プレビュー版だけ） */}
+        {__EDITOR__ && (
+          <p className="small">
+            <Link to="edit">曲の情報を直す</Link>
+          </p>
+        )}
         <ShareButtons
           text={
             stats.count === 0 || isCover

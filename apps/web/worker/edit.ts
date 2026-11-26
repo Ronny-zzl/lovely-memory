@@ -2,6 +2,7 @@
  * 入力画面（プレビュー版のサイト）からのセトリの保存。POST /api/edit
  * - プレビュー版は Cloudflare Access で守られていて、通ったリクエストには Access の署名付きトークン（JWT）が付く。
  *   その署名・宛先（aud）・発行元・期限を確かめ、無い・正しくないものは断る（公開サイトへの直接のリクエストなど）
+ * - 曲の情報の入力画面（type: "song"）も同じ口で受ける
  * - 中身は GitHub Actions の apply-edit.yml に渡す（そこで packages/core の EditPayload で確かめて書き込み、コミットする）
  */
 export type EditEnv = {
@@ -78,6 +79,8 @@ export const resetAccessKeys = () => {
 function looksLikePayload(v: unknown): boolean {
   if (!v || typeof v !== "object") return false;
   const o = v as Record<string, unknown>;
+  // 曲の情報の入力画面から（packages/core の SongEditPayload）
+  if (o.type === "song") return typeof o.artist === "string" && typeof o.id === "string";
   return typeof o.artist === "string" && typeof o.event === "number" && Array.isArray(o.stages);
 }
 
@@ -97,7 +100,7 @@ export async function handleEdit(request: Request, env: EditEnv): Promise<Respon
   } catch {
     return json({ error: "JSON ではありません" }, 400);
   }
-  if (!looksLikePayload(parsed)) return json({ error: "セトリの形になっていません" }, 400);
+  if (!looksLikePayload(parsed)) return json({ error: "セトリ・曲の情報の形になっていません" }, 400);
 
   const res = await fetch(`https://api.github.com/repos/${env.GITHUB_REPOSITORY}/actions/workflows/${WORKFLOW}/dispatches`, {
     method: "POST",

@@ -1,0 +1,57 @@
+/* 曲の情報の入力画面（SongEditorPage。プレビュー版だけ）。入力欄の形は EditPages.css の .setlist-editor と同じ */
+.song-editor-section {
+  display: grid;
+  gap: 8px;
+}
+
+.song-editor-section .section-heading,
+.song-editor-section p {
+  margin: 0;
+}
+
+.song-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px 12px;
+}
+
+.song-field {
+  display: grid;
+  gap: 2px;
+}
+
+.song-editor select {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+
+/* タイアップ 1 件：種類・作品名・使われ方・リンク・消す */
+.song-tieup {
+  display: grid;
+  grid-template-columns: auto 2fr 2fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (width <= 640px) {
+  .song-tieup {
+    grid-template-columns: auto 1fr;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .song-tieup input {
+    grid-column: 1 / -1;
+  }
+
+  .song-tieup button {
+    grid-row: 1;
+    grid-column: 2;
+    justify-self: end;
+  }
+}

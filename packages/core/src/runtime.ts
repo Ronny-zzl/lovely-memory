@@ -4,6 +4,7 @@
  */
 export type * from "./schema.ts";
 export type * from "./edit.ts";
+export type * from "./song-edit.ts";
 export * from "./setlist.ts";
 export * from "./text.ts";
 export * from "./events.ts";
@@ -17,3 +18,4 @@ export * from "./birthdays.ts";
 export * from "./theme.ts";
 export * from "./edit-convert.ts";
 export * from "./setlist-post.ts";
+export * from "./song-edit-convert.ts";

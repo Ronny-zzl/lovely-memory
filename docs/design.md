@@ -216,7 +216,7 @@ lovely-memory/
 - 普通路径路由（`createBrowserRouter`，路由表在 `src/routes.tsx`）。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。
 - 首页等的团体顺序：`artist.json` 的 `order`（越小越靠前，默认 0，同值按目录名）；草稿团体总在公开团体之后。
 - **下書き（非公开）的团体**：`artist.json` 的 `draft: true`。`plugins/artists-data.ts` 只在 `INCLUDE_DRAFTS=1` 时包含（排在公开团体之后），`og-pages` 也一样，`open-setlist-issues` 不为它开 Issue。`deploy.yml` 用和正式版并行的 `preview` 任务另外构建一份包含草稿的预览版，部署到 Pages 的 `draft` 分支（Cloudflare Access 保护）。详见 `docs/maintenance.md`。
-- 录入界面（只在预览版，编译开关 `__EDITOR__` = `INCLUDE_DRAFTS`，正式版不含其代码）：`/:artist/edit`・`/:artist/edit/:eventId`。保存经 `/api/edit`（Access JWT 验证，`worker/edit.ts`）→ `apply-edit.yml` → `pnpm lm apply-edit`（`EditPayload`：`packages/core/src/edit.ts`）。
+- 录入界面（只在预览版，编译开关 `__EDITOR__` = `INCLUDE_DRAFTS`，正式版不含其代码）：`/:artist/edit`・`/:artist/edit/:eventId`。保存经 `/api/edit`（Access JWT 验证，`worker/edit.ts`）→ `apply-edit.yml` → `pnpm lm apply-edit`（`EditPayload`：`packages/core/src/edit.ts`）。曲的信息的录入界面 `/:artist/songs/:songId/edit` 也走同一个 `/api/edit`，payload 带 `type: "song"`（`SongEditPayload`：`packages/core/src/song-edit.ts`，曲 ⇄ 表单 ⇄ payload 的转换在 `song-edit-convert.ts`，测试确认全部曲往返不变）。
   - `EditPayload` 用 zod 从歌单的 schema（`SetlistFields`・`SetlistStage`・`SetlistItemDetail`）`.extend()`／`.omit()` 派生，只追加长度上限和 `artist`・`newSongs`。歌单加字段时录入格式自动跟上，不要再单独写一份。
   - 歌单 ⇄ 录入界面的草稿 ⇄ 发送内容 的转换在 `packages/core/src/edit-convert.ts`（浏览器和 CLI 共用）。界面编辑不了的字段放在草稿的 `rest` 里，保存时原样放回。
   - `apply-edit.test.ts` 用仓库里全部歌单做往返测试（歌单 → 草稿 → 发送内容 → 歌单 不变），保存时丢字段的问题会在这里被发现。歌单的 `completeness`（partial／unordered）和曲名不明的 `"?"`：计入歌唱次数，不用于曲顺的倾向。

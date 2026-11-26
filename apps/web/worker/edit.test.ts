@@ -83,6 +83,14 @@ describe("POST /api/edit", () => {
     expect(JSON.parse(dispatched[0]!.body)).toEqual({ ref: "main", inputs: { payload: JSON.stringify(PAYLOAD) } });
   });
 
+  it("also accepts song info from the song entry form", async () => {
+    const dispatched = stubFetch();
+    const song = { type: "song", artist: "maebashi-witches", id: "s001", tieups: [], aliases: [] };
+    expect((await post(JSON.stringify(song), await valid()))!.status).toBe(202);
+    expect(JSON.parse(dispatched[0]!.body)).toEqual({ ref: "main", inputs: { payload: JSON.stringify(song) } });
+    expect((await post(JSON.stringify({ type: "song", artist: "x" }), await valid()))!.status).toBe(400);
+  });
+
   it("refuses requests without a valid Access token (e.g. to the public site)", async () => {
     const dispatched = stubFetch();
     expect((await post(JSON.stringify(PAYLOAD)))!.status).toBe(401);

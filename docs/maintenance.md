@@ -88,6 +88,7 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 - 保存：`POST /api/edit`（Worker 验证 Access 的签名令牌 `Cf-Access-Jwt-Assertion`；没有令牌的请求，比如对正式版的直接请求，一律拒绝）→ 启动 `apply-edit.yml`（`workflow_dispatch`）→ `pnpm lm apply-edit` 校验（曲名统一成 songs.json 的正式写法、新曲加进 songs.json）后提交 → Deploy 重新部署正式版和预览版。数分钟后反映
 - 保存后界面显示上线进度：Worker 返回受理时间，界面每 5 秒读一次 `/version.json`，出现受理时间之后的 commit 的部署就显示「反映されました」。5 分钟还没上线会提示去看 Actions（apply-edit・Deploy）
 - 已入力的歌单也可以从同一界面修改（公演详情页的「セトリを直す」）
+- 曲的信息（作词・作曲・编曲、发行、原曲、タイアップ、别名、备注）：曲页面的「曲の情報を直す」（`/:artist/songs/:songId/edit`）。保存走同一条路（`/api/edit` → `apply-edit.yml`），整项替换，空了就删。曲名・区分・ユニット・视频不在这里改（曲名关系到歌单的匹配，用 `pnpm lm song --rename`）
 - 需要：预览环境的 secret `GITHUB_DISPATCH_TOKEN`（`wrangler pages secret put GITHUB_DISPATCH_TOKEN --project-name lovely-memory --env preview`，和正式环境用同一个 token），`wrangler.toml` 的 `ACCESS_TEAM_DOMAIN`・`ACCESS_AUD`
 
 **预览版的访问保护（Cloudflare Access）**：Cloudflare 后台 → Workers & Pages → `lovely-memory` → Settings → General → 「Access policy」里对预览部署启用 → 在 Zero Trust 里把策略改成只允许自己的邮箱。正式版（`main`）不受影响。

@@ -196,6 +196,7 @@
 .setlist-editor input[type="text"],
 .setlist-editor input[type="search"],
 .setlist-editor input[type="url"],
+.setlist-editor input[type="date"],
 .setlist-editor textarea {
   width: 100%;
   padding: 6px 12px;

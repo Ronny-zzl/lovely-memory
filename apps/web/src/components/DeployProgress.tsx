@@ -13,7 +13,17 @@ const POLL_MS = 5_000;
  * 保存を受け付けた時刻（at、サーバーの時計）より後のコミットから作られたサイトが出たら「反映された」とする。
  * 書き込み（apply-edit）のコミットは受け付けの後にできるので、それを含むデプロイが済んだということ。
  */
-export function DeployProgress({ at, actions, href }: { at: string; actions?: string; href: string }) {
+export function DeployProgress({
+  at,
+  actions,
+  href,
+  linkLabel = "イベントのページを見る",
+}: {
+  at: string;
+  actions?: string;
+  href: string;
+  linkLabel?: string;
+}) {
   const since = Date.parse(at);
   const [now, setNow] = useState(() => Date.now());
   const [live, setLive] = useState<number>();
@@ -48,7 +58,7 @@ export function DeployProgress({ at, actions, href }: { at: string; actions?: st
   if (live) {
     return (
       <p className="small deploy-progress done" role="status">
-        ✓ サイトに反映されました（{elapsed(live)}）。<a href={href}>イベントのページを見る</a>
+        ✓ サイトに反映されました（{elapsed(live)}）。<a href={href}>{linkLabel}</a>
       </p>
     );
   }

@@ -38,6 +38,7 @@ export const routes: RouteObject[] = [
             ? [
                 { path: "edit", ...page(() => import("./pages/EditIndexPage.tsx").then((m) => m.EditIndexPage)) },
                 { path: "edit/:eventId", ...page(() => import("./pages/SetlistEditorPage.tsx").then((m) => m.SetlistEditorPage)) },
+                { path: "songs/:songId/edit", ...page(() => import("./pages/SongEditorPage.tsx").then((m) => m.SongEditorPage)) },
               ]
             : []),
         ],

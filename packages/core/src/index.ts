@@ -13,3 +13,5 @@ export * from "./theme.ts";
 export * from "./edit-convert.ts";
 export * from "./setlist-post.ts";
 export * from "./edit.ts";
+export * from "./song-edit.ts";
+export * from "./song-edit-convert.ts";
