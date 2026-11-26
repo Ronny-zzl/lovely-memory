@@ -268,19 +268,18 @@ export type Overrides = z.infer<typeof Overrides>;
  * 1 曲分。曲名だけなら文字列で書ける。
  * 初披露かどうかは記録せず、集計時に「最初に歌われたイベント」として算出する。
  */
-export const SetlistItem = z.union([
-  z.string(),
-  z.object({
-    song: z.string(),
-    /** 一部メンバーのみで歌唱した場合（member id） */
-    members: z.array(slug).optional(),
-    encore: z.boolean().optional(),
-    /** short ver. / メドレー など */
-    note: z.string().optional(),
-    /** 一緒に歌った他グループの出演者（コラボステージなど） */
-    with: z.array(z.string()).optional(),
-  }),
-]);
+export const SetlistItemDetail = z.object({
+  song: z.string(),
+  /** 一部メンバーのみで歌唱した場合（member id） */
+  members: z.array(slug).optional(),
+  encore: z.boolean().optional(),
+  /** short ver. / メドレー など */
+  note: z.string().optional(),
+  /** 一緒に歌った他グループの出演者（コラボステージなど） */
+  with: z.array(z.string()).optional(),
+});
+export type SetlistItemDetail = z.infer<typeof SetlistItemDetail>;
+export const SetlistItem = z.union([z.string(), SetlistItemDetail]);
 export type SetlistItem = z.infer<typeof SetlistItem>;
 
 export const SetlistStage = z.object({
@@ -298,23 +297,26 @@ export const SetlistStage = z.object({
 });
 export type SetlistStage = z.infer<typeof SetlistStage>;
 
-/** ステージが 1 つなら items を直接、複数なら stages に書く */
-export const Setlist = z
-  .object({
-    event: z.number().int(),
-    source: z.string().url().optional(),
-    note: z.string().optional(),
-    /**
-     * 記録の揃い具合（公式の告知が無く、ファンの記憶などから入れたとき）。無ければ全曲・曲順とも揃っている。
-     * - partial: 一部の曲だけ（抜けがある）
-     * - unordered: 曲は揃っているが曲順が分からない
-     * どちらも歌唱回数・歌唱率には数え、曲順の傾向（1 曲目・ラスト・つながり）には使わない
-     */
-    completeness: z.enum(["partial", "unordered"]).optional(),
-    items: z.array(SetlistItem).optional(),
-    stages: z.array(SetlistStage).optional(),
-  })
-  .refine((s) => (s.items === undefined) !== (s.stages === undefined), {
-    message: "items と stages のどちらか一方だけを書いてください",
-  });
+/**
+ * セトリの項目（refine の前。入力画面の EditPayload はここから作る：edit.ts）。
+ * ステージが 1 つなら items を直接、複数なら stages に書く
+ */
+export const SetlistFields = z.object({
+  event: z.number().int(),
+  source: z.string().url().optional(),
+  note: z.string().optional(),
+  /**
+   * 記録の揃い具合（公式の告知が無く、ファンの記憶などから入れたとき）。無ければ全曲・曲順とも揃っている。
+   * - partial: 一部の曲だけ（抜けがある）
+   * - unordered: 曲は揃っているが曲順が分からない
+   * どちらも歌唱回数・歌唱率には数え、曲順の傾向（1 曲目・ラスト・つながり）には使わない
+   */
+  completeness: z.enum(["partial", "unordered"]).optional(),
+  items: z.array(SetlistItem).optional(),
+  stages: z.array(SetlistStage).optional(),
+});
+
+export const Setlist = SetlistFields.refine((s) => (s.items === undefined) !== (s.stages === undefined), {
+  message: "items と stages のどちらか一方だけを書いてください",
+});
 export type Setlist = z.infer<typeof Setlist>;

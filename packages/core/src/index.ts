@@ -10,4 +10,5 @@ export * from "./format.ts";
 export * from "./milestones.ts";
 export * from "./birthdays.ts";
 export * from "./theme.ts";
+export * from "./edit-convert.ts";
 export * from "./edit.ts";

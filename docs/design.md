@@ -207,7 +207,10 @@ lovely-memory/
 - 页面代码按路由懒加载（`main.tsx` 的 `lazy`）；首次打开时先加载当前页面的代码再渲染，切换页面时在新页面加载完成之前保持显示旧页面。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
 - 普通路径路由（`createBrowserRouter`，路由表在 `src/routes.tsx`）。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。
 - **下書き（非公开）的团体**：`artist.json` 的 `draft: true`。`plugins/artists-data.ts` 只在 `INCLUDE_DRAFTS=1` 时包含（排在公开团体之后），`og-pages` 也一样，`open-setlist-issues` 不为它开 Issue。`deploy.yml` 另外构建一份包含草稿的预览版，部署到 Pages 的 `draft` 分支（Cloudflare Access 保护）。详见 `docs/maintenance.md`。
-- 录入界面（只在预览版，编译开关 `__EDITOR__` = `INCLUDE_DRAFTS`，正式版不含其代码）：`/:artist/edit`・`/:artist/edit/:eventId`。保存经 `/api/edit`（Access JWT 验证，`worker/edit.ts`）→ `apply-edit.yml` → `pnpm lm apply-edit`（`EditPayload`：`packages/core/src/edit.ts`）。歌单的 `completeness`（partial／unordered）和曲名不明的 `"?"`：计入歌唱次数，不用于曲顺的倾向。
+- 录入界面（只在预览版，编译开关 `__EDITOR__` = `INCLUDE_DRAFTS`，正式版不含其代码）：`/:artist/edit`・`/:artist/edit/:eventId`。保存经 `/api/edit`（Access JWT 验证，`worker/edit.ts`）→ `apply-edit.yml` → `pnpm lm apply-edit`（`EditPayload`：`packages/core/src/edit.ts`）。
+  - `EditPayload` 用 zod 从歌单的 schema（`SetlistFields`・`SetlistStage`・`SetlistItemDetail`）`.extend()`／`.omit()` 派生，只追加长度上限和 `artist`・`newSongs`。歌单加字段时录入格式自动跟上，不要再单独写一份。
+  - 歌单 ⇄ 录入界面的草稿 ⇄ 发送内容 的转换在 `packages/core/src/edit-convert.ts`（浏览器和 CLI 共用）。界面编辑不了的字段放在草稿的 `rest` 里，保存时原样放回。
+  - `apply-edit.test.ts` 用仓库里全部歌单做往返测试（歌单 → 草稿 → 发送内容 → 歌单 不变），保存时丢字段的问题会在这里被发现。歌单的 `completeness`（partial／unordered）和曲名不明的 `"?"`：计入歌唱次数，不用于曲顺的倾向。
 - 成员的 `since`／`until`（加入日・最后活动日）：eventernote 上没有个人出演记录时「假定当天在籍的全员出演」，成员页的出演率・缺席也只算在籍期间。白色等很浅的成员颜色（`isLightColor`）在浅色背景上看不见，圆点加描边、线条改用灰色（`src/member-color.ts`，分享图同样处理）。
 - **构建时预渲染**：`pnpm build` = ① `vite build`（浏览器用，`dist/`）② `vite build --ssr src/entry-server.tsx --outDir dist-ssr`（构建时渲染用）③ `scripts/prerender.ts`：用 React 的 `prerender`（`react-dom/static`）+ React Router 的 `createStaticHandler` 把全部页面（首页・各标签页・全曲・全公演，约 100 页）渲染成完整 HTML，写成 `dist/<path>.html`（首页是 `index.html`）。
   - HTML 的模板是 `dist/index.html`（`#root` 里是加载中的占位块）；替换 `#root` 里 `<!--app-->`〜`<!--/app-->` 之间的内容，`#root` 加上 `data-prerendered="<path>"`，并把该页面需要的 CSS・JS 直接写成 `<link>`（`preload-route` 插件输出的 `route-assets.json`，用完即删）。

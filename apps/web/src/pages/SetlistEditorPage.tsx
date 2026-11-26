@@ -1,6 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
-import { findSong, normalizeTitle, setlistStages, UNKNOWN_SONG, type EditPayload, type Setlist } from "@lovely-memory/core/runtime";
+import {
+  draftRow,
+  draftToPayload,
+  emptyStage,
+  findSong,
+  normalizeTitle,
+  setlistToDraft,
+  splitNames,
+  UNKNOWN_SONG,
+  upgradeDraft,
+  type Draft,
+  type DraftRow,
+  type DraftStage,
+} from "@lovely-memory/core/runtime";
 import { displayTitle, formatDayWithWeekday } from "../format.ts";
 import { dotStyle } from "../member-color.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
@@ -11,50 +24,8 @@ import "./EditPages.css";
  * 入力の途中はこのブラウザに自動で残し（localStorage）、保存したら消す。
  */
 
-type Row = { key: number; song: string; encore: boolean; note: string; members: string[]; with: string; open: boolean };
-type StageState = { name: string; collab: boolean; items: Row[] };
-type Completeness = "" | "partial" | "unordered";
-type Draft = { stages: StageState[]; completeness: Completeness; source: string; note: string };
-
-let nextKey = 1;
-const row = (song: string, extra: Partial<Row> = {}): Row => ({
-  key: nextKey++,
-  song,
-  encore: false,
-  note: "",
-  members: [],
-  with: "",
-  open: false,
-  ...extra,
-});
-
-function fromSetlist(s: Setlist | undefined): Draft {
-  if (!s) return { stages: [{ name: "", collab: false, items: [] }], completeness: "", source: "", note: "" };
-  return {
-    stages: setlistStages(s).map((st) => ({
-      name: st.name ?? "",
-      collab: !!st.collab,
-      items: st.items.map((it) =>
-        typeof it === "string"
-          ? row(it)
-          : row(it.song, { encore: !!it.encore, note: it.note ?? "", members: it.members ?? [], with: (it.with ?? []).join("、") }),
-      ),
-    })),
-    completeness: s.completeness ?? "",
-    source: s.source ?? "",
-    note: s.note ?? "",
-  };
-}
-
-/** 「A、B・C, D」→ ["A", "B", "C", "D"] */
-const splitNames = (s: string) =>
-  s
-    .split(/[、,，・\n]/)
-    .map((x) => x.trim())
-    .filter(Boolean);
-
 /** 新しいステージを入れる位置。最後にコラボステージが並んでいれば、その前（コラボはふつう最後なので） */
-function insertAt(stages: StageState[]): number {
+function insertAt(stages: DraftStage[]): number {
   let at = stages.length;
   while (at > 0 && stages[at - 1]!.collab) at--;
   return at;
@@ -69,7 +40,7 @@ export function SetlistEditorPage() {
   const existing = setlists.find((s) => s.event === eventId);
 
   const key = draftKey(artist.id, eventId);
-  const [draft, setDraft] = useState<Draft>(() => fromSetlist(existing));
+  const [draft, setDraft] = useState<Draft>(() => setlistToDraft(existing));
   const [saved, setSaved] = useState<Draft | undefined>();
   const [q, setQ] = useState("");
   const [targetStage, setTargetStage] = useState<number | undefined>();
@@ -82,12 +53,8 @@ export function SetlistEditorPage() {
     try {
       const raw = localStorage.getItem(key);
       if (!raw) return undefined;
-      // 古い形（コラボ欄が無いころ）の下書きも読めるように
-      const d = JSON.parse(raw) as Draft;
-      return {
-        ...d,
-        stages: d.stages.map((st) => ({ ...st, collab: !!st.collab, items: st.items.map((r) => ({ ...r, with: r.with ?? "" })) })),
-      };
+      // 古い形（コラボ欄などが無いころ）の下書きも読めるように
+      return upgradeDraft(JSON.parse(raw) as Draft);
     } catch {
       return undefined;
     }
@@ -109,7 +76,7 @@ export function SetlistEditorPage() {
     setStored(undefined);
     setDraft(f);
   };
-  const setItems = (si: number, f: (items: Row[]) => Row[]) =>
+  const setItems = (si: number, f: (items: DraftRow[]) => DraftRow[]) =>
     update((d) => ({ ...d, stages: d.stages.map((st, i) => (i === si ? { ...st, items: f(st.items) } : st)) }));
 
   // 曲の候補：よく歌われている順。検索語があれば曲名・別表記で絞る
@@ -124,7 +91,7 @@ export function SetlistEditorPage() {
   // 曲を足す先のステージ（選んでいなければ最後のステージ）
   const target = targetStage !== undefined && targetStage < draft.stages.length ? targetStage : draft.stages.length - 1;
   const add = (title: string) => {
-    setItems(target, (items) => [...items, row(title)]);
+    setItems(target, (items) => [...items, draftRow(title)]);
     setQ("");
   };
 
@@ -135,25 +102,7 @@ export function SetlistEditorPage() {
   const total = draft.stages.reduce((n, st) => n + st.items.length, 0);
 
   const save = async () => {
-    const payload: EditPayload = {
-      artist: artist.id,
-      event: event.id,
-      stages: draft.stages.map((st) => ({
-        ...(st.name.trim() && { name: st.name.trim() }),
-        ...(st.collab && { collab: true }),
-        items: st.items.map((r) => ({
-          song: r.song,
-          ...(r.encore && { encore: true }),
-          ...(r.note.trim() && { note: r.note.trim() }),
-          ...(r.members.length > 0 && { members: r.members }),
-          ...(st.collab && splitNames(r.with).length > 0 && { with: splitNames(r.with) }),
-        })),
-      })),
-      ...(draft.completeness && { completeness: draft.completeness }),
-      ...(draft.source.trim() && { source: draft.source.trim() }),
-      ...(draft.note.trim() && { note: draft.note.trim() }),
-      newSongs: newSongs.map((title) => ({ title })),
-    };
+    const payload = draftToPayload(draft, artist.id, event.id, newSongs);
     setState({ kind: "saving" });
     try {
       const res = await fetch("/api/edit", {
@@ -284,7 +233,7 @@ export function SetlistEditorPage() {
                       next.splice(to, 0, next.splice(i, 1)[0]!);
                       return next;
                     });
-                  const set = (patch: Partial<Row>) =>
+                  const set = (patch: Partial<DraftRow>) =>
                     setItems(si, (items) => items.map((x) => (x.key === r.key ? { ...x, ...patch } : x)));
                   return (
                     <li key={r.key} className={r.encore ? "encore" : undefined}>
@@ -416,7 +365,7 @@ export function SetlistEditorPage() {
           className="share-button editor-add-stage"
           onClick={() => {
             const at = insertAt(draft.stages);
-            update((d) => ({ ...d, stages: [...d.stages.slice(0, at), { name: "", collab: false, items: [] }, ...d.stages.slice(at)] }));
+            update((d) => ({ ...d, stages: [...d.stages.slice(0, at), emptyStage(), ...d.stages.slice(at)] }));
             setTargetStage(at);
           }}
         >

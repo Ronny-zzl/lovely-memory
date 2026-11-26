@@ -1,5 +1,5 @@
 import { appendFile, readFile, writeFile } from "node:fs/promises";
-import { EditPayload, findSong, normalizeTitle, resolveEvents, Setlist, Song, UNKNOWN_SONG, type SetlistItem } from "@lovely-memory/core";
+import { EditPayload, findSong, normalizeTitle, payloadToSetlist, resolveEvents, Setlist, setlistStages, Song } from "@lovely-memory/core";
 import { artistPath, loadArtist, loadEvents, loadOverrides, loadSongs, writeJson } from "../repo.ts";
 import { countSongs, writeSetlist } from "../setlist-build.ts";
 import { nextSongId, songIndex } from "../songs-merge.ts";
@@ -39,39 +39,18 @@ export async function applyEdit(_target: string | undefined, opts: Record<string
     added.push(song);
   }
 
-  // 曲名をそろえる
-  const unknown: string[] = [];
-  const stages = payload.stages.map((st) => ({
-    ...(st.name?.trim() && { name: st.name.trim() }),
-    ...(st.collab && { collab: true }),
-    items: st.items.map((it): SetlistItem => {
-      let title = it.song.trim();
-      if (title !== UNKNOWN_SONG) {
-        const song = findSong(songs, { label: title, title });
-        if (!song) unknown.push(title);
-        else title = song.title;
-      }
-      for (const m of it.members ?? []) if (!memberIds.has(m)) throw new Error(`メンバー "${m}" が ${artist.id} にいない`);
-      const extra = {
-        ...(it.encore && { encore: true }),
-        ...(it.note?.trim() && { note: it.note.trim() }),
-        ...(it.members?.length && { members: it.members }),
-        ...(it.with?.length && { with: it.with.map((w) => w.trim()).filter(Boolean) }),
-      };
-      return Object.keys(extra).length ? { song: title, ...extra } : title;
-    }),
-  }));
+  // 曲名を songs.json の表記にそろえ、セトリの形にする（入力画面で直せない項目もそのまま残る）
+  const { setlist: built, unknown } = payloadToSetlist(payload, (title) => findSong(songs, { label: title, title })?.title);
   if (unknown.length) throw new Error(`songs.json に無い曲: ${unknown.join(" / ")}（新しい曲なら newSongs に入れる）`);
-  if (stages.every((st) => st.items.length === 0)) throw new Error("曲が 1 曲も無い");
-
-  const setlist = Setlist.parse({
-    event: event.id,
-    ...(payload.source && { source: payload.source }),
-    ...(payload.note?.trim() && { note: payload.note.trim() }),
-    ...(payload.completeness && { completeness: payload.completeness }),
-    // ステージが 1 つで名前も無ければ items に直接書く
-    ...(stages.length === 1 && !stages[0]!.name ? { items: stages[0]!.items } : { stages }),
-  });
+  const setlist = Setlist.parse(built);
+  // ステージ・曲のメンバーが、このグループのメンバーか
+  const used = setlistStages(setlist).flatMap((st) => [
+    ...(st.members ?? []),
+    ...st.items.flatMap((it) => (typeof it === "string" ? [] : (it.members ?? []))),
+  ]);
+  const strangers = [...new Set(used.filter((m) => !memberIds.has(m)))];
+  if (strangers.length) throw new Error(`メンバー ${strangers.map((m) => `"${m}"`).join("・")} が ${artist.id} にいない`);
+  if (setlistStages(setlist).every((st) => st.items.length === 0)) throw new Error("曲が 1 曲も無い");
 
   if (added.length) await writeJson(artistPath(payload.artist, "songs.json"), songs);
   await writeSetlist(payload.artist, setlist, event);
