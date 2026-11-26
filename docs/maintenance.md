@@ -71,7 +71,7 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 记录还不完整、暂不公开的团体，在 `artist.json` 里设 `"draft": true`（例：`miline-hearts`）。
 
 - **正式版**（https://lovely-memory.moe/）的构建完全不包含它：页面、数据、分享图、sitemap 都没有。也不会为它开歌单 Issue
-- **预览版**：`deploy.yml` 在正式版部署完后，用 `INCLUDE_DRAFTS=1` 再构建一次（包括 smoke），部署到 Cloudflare Pages 的 `draft` 分支 → **https://draft.lovely-memory.pages.dev**。首页上草稿团体排在后面，带「下書き（非公開）」标签
+- **预览版**：`deploy.yml` 的 `preview` 任务和正式版的 `production` 任务同时进行（各自跑全部检查），用 `INCLUDE_DRAFTS=1` 构建（包括 smoke），部署到 Cloudflare Pages 的 `draft` 分支 → **https://draft.lovely-memory.pages.dev**。首页上草稿团体排在后面，带「下書き（非公開）」标签
 - 本地：`INCLUDE_DRAFTS=1 pnpm build`，或 `INCLUDE_DRAFTS=1 pnpm --filter @lovely-memory/web dev`
 - 数据本身在公开仓库里（`artists/<id>/`），所以「非公开」的意思是「不在网站上公开」
 - 公开时：删掉 `draft`，正常部署即可

@@ -14,15 +14,17 @@ permissions:
   contents: read
 
 jobs:
-  # 検査（CI と同じ内容）がすべて通ったときだけ Cloudflare Pages（https://lovely-memory.moe/）へデプロイする
+  # 公開サイト（https://lovely-memory.moe/）と確認用プレビュー（下書きも含む）を、別々のジョブで同時にビルド・デプロイする。
+  # どちらも検査（CI と同じ内容）がすべて通ったときだけデプロイする。検査は 10 秒ほどなので、ジョブを分けて順に待つより
+  # 両方で行うほうが早い（プレビューにしか無い下書きのグループの変更が、公開サイトのデプロイを待たずに出る）
   # リポジトリ変数 CLOUDFLARE_PROJECT と、シークレット CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が必要
-  deploy:
+  production:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     # 同時に動くデプロイは 1 つ。後から来たもの（いつも最新の main をビルドする）が古いものを取り消す。
     # ワークフロー全体ではなくジョブに付ける：上の if で飛ばされる起動（取り込みが skipped だったとき＝Issue のコメントの
     # 編集など）は順番待ちに入らないので、進行中のデプロイを取り消さない（2026-11-25 に push のデプロイが取り消された）
     concurrency:
-      group: deploy
+      group: deploy-production
       cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -47,12 +49,27 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           # このホストで開かれたら SITE_URL のドメインへ移動する
           PAGES_HOST: ${{ vars.CLOUDFLARE_PROJECT }}.pages.dev
+      # 共有カードの画像のキャッシュ（カードの HTML が同じなら描き直さない。og-pages.ts）
+      - name: Restore share card cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .og-cache
+          key: og-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: og-
       # 曲・イベントページごとの共有カード（HTML と画像）。失敗してもサイト共通のカードのままデプロイする
       - name: Share cards
+        id: cards
         continue-on-error: true
         run: pnpm -s lm og-pages all
         env:
           SITE_URL: ${{ vars.SITE_URL }}
+          OG_CACHE_DIR: .og-cache
+      - name: Save share card cache
+        if: steps.cards.outcome == 'success'
+        uses: actions/cache/save@v6
+        with:
+          path: .og-cache
+          key: og-${{ github.run_id }}-${{ github.run_attempt }}
       # 実際にデプロイするファイル一式を Chrome で開いて確認する
       - name: Smoke test
         run: pnpm smoke
@@ -69,20 +86,46 @@ jobs:
             exit 1
           fi
           pnpm --filter @lovely-memory/web exec wrangler pages deploy dist --project-name="$PROJECT" --branch=main --commit-dirty=true
-      # 確認用プレビュー：下書きのアーティスト（artist.json の draft）も含めてビルドし、Pages の draft ブランチへ。
-      # https://draft.<project>.pages.dev で開く。プレビューのデプロイは Cloudflare Access で保護する（Pages の設定）。
-      # 公開サイトのデプロイが済んでから行うので、こちらが失敗しても公開サイトには影響しない
+
+  # 確認用プレビュー：下書きのアーティスト（artist.json の draft）も含めてビルドし、Pages の draft ブランチへ。
+  # https://draft.<project>.pages.dev で開く。プレビューのデプロイは Cloudflare Access で保護する（Pages の設定）。
+  # 公開サイトとは別のジョブなので、こちらが失敗しても公開サイトには影響しない
+  preview:
+    if: vars.CLOUDFLARE_PROJECT != '' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    concurrency:
+      group: deploy-preview
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: jdx/mise-action@v5
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+      - name: Validate data
+        run: pnpm -s lm validate all
       - name: Build preview with drafts
-        if: vars.CLOUDFLARE_PROJECT != ''
-        run: pnpm build && pnpm smoke
+        run: pnpm build
         env:
           INCLUDE_DRAFTS: "1"
           SITE_URL: ${{ vars.SITE_URL }}
           PAGES_HOST: ${{ vars.CLOUDFLARE_PROJECT }}.pages.dev
+      - name: Smoke test
+        run: pnpm smoke
       - name: Deploy preview
-        if: vars.CLOUDFLARE_PROJECT != ''
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PROJECT: ${{ vars.CLOUDFLARE_PROJECT }}
-        run: pnpm --filter @lovely-memory/web exec wrangler pages deploy dist --project-name="$PROJECT" --branch=draft --commit-dirty=true
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID のシークレットが設定されていません"
+            exit 1
+          fi
+          pnpm --filter @lovely-memory/web exec wrangler pages deploy dist --project-name="$PROJECT" --branch=draft --commit-dirty=true

@@ -15,3 +15,6 @@ setlist-map.json
 
 # watch-x が読んだポストのキャッシュ（Actions のキャッシュに保存する）
 .x-state/
+
+# 共有カード（OGP 画像）のキャッシュ（og-pages の OG_CACHE_DIR。Actions のキャッシュに保存する）
+.og-cache/

@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import {
   ageOn,
@@ -110,8 +111,9 @@ export async function ogPages(artistArg: string, opts: { dist?: string; "skip-im
 
   if (opts["skip-images"]) return;
   const targets = opts.only ? cards.filter((c) => c.file.includes(opts.only!)) : cards;
-  await renderCards(targets, dist);
-  console.log(`images: ${targets.length}`);
+  const cacheDir = process.env.OG_CACHE_DIR ? resolve(REPO_ROOT, process.env.OG_CACHE_DIR) : undefined;
+  const { rendered } = await renderCards(targets, dist, cacheDir, !opts.only);
+  console.log(`images: ${targets.length}（描いたもの ${rendered}、${cacheDir ? `残りはキャッシュ ${cacheDir}` : "キャッシュなし"}）`);
 }
 
 async function collect(artist: ArtistConfig, site: string, host: string): Promise<{ pages: Page[]; cards: Card[] }> {
@@ -258,7 +260,31 @@ function latest(dates: Array<string | undefined>): string | undefined {
     .at(-1);
 }
 
-async function renderCards(cards: Card[], dist: string): Promise<void> {
+/**
+ * カードを PNG にする。cacheDir があれば、HTML の SHA-256 を名前にして PNG を取っておき、同じ HTML なら描かずにそれを使う
+ * （カードの見た目のコードを変えたときも HTML が変わるので描き直される）。
+ * prune なら、今回使わなかったキャッシュを消す（たまり続けないように。--only で一部だけ描くときは消さない）
+ */
+async function renderCards(cards: Card[], dist: string, cacheDir: string | undefined, prune: boolean): Promise<{ rendered: number }> {
+  const hash = (html: string) => createHash("sha256").update(html).digest("hex");
+  const todo: Card[] = [];
+  const used = new Set<string>();
+  for (const c of cards) {
+    const file = join(dist, c.file);
+    await mkdir(dirname(file), { recursive: true });
+    const cached = cacheDir ? join(cacheDir, `${hash(c.html)}.png`) : undefined;
+    if (cached) used.add(cached);
+    if (cached && existsSync(cached)) await copyFile(cached, file);
+    else todo.push(c);
+  }
+  if (todo.length) await screenshotCards(todo, dist, cacheDir ? (c: Card) => join(cacheDir, `${hash(c.html)}.png`) : undefined);
+  if (cacheDir && prune && existsSync(cacheDir)) {
+    for (const f of await readdir(cacheDir)) if (!used.has(join(cacheDir, f))) await rm(join(cacheDir, f));
+  }
+  return { rendered: todo.length };
+}
+
+async function screenshotCards(cards: Card[], dist: string, cachePath: ((c: Card) => string) | undefined): Promise<void> {
   const { chromium } = await import("playwright-core");
   // ローカルの Google Chrome（GitHub Actions の ubuntu-latest にも入っている）を使う。CHROME_PATH で上書き可
   const executablePath = process.env.CHROME_PATH;
@@ -270,8 +296,11 @@ async function renderCards(cards: Card[], dist: string): Promise<void> {
       // フォント読み込み後に文字サイズを合わせる（ブラウザ側で実行。CLI の型定義に DOM は無いので文字列で渡す）
       await page.evaluate("document.fonts.ready.then(() => window.__fit())");
       const file = join(dist, c.file);
-      await mkdir(dirname(file), { recursive: true });
       await page.screenshot({ path: file, type: "png" });
+      if (cachePath) {
+        await mkdir(dirname(cachePath(c)), { recursive: true });
+        await copyFile(file, cachePath(c));
+      }
     }
   } finally {
     await browser.close();
