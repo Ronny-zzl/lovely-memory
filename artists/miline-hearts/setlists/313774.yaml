@@ -2,8 +2,10 @@
 
 event: 313774
 source: https://x.com/MiLineHearts/status/2081965385528787412
-items:
-  - 初恋の合図
-  - Our Melody
-  - 恋色パステル
-  - 僕と君の特別
+stages:
+  - name: けやき広場特設野外ステージ
+    items:
+      - 初恋の合図
+      - Our Melody
+      - 恋色パステル
+      - 僕と君の特別
