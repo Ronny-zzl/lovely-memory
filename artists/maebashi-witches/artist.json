@@ -17,12 +17,12 @@
   "defaultEra": "original",
   "units": [
     { "id": "all",   "label": "前橋ウィッチーズ" },
-    { "id": "yuina", "label": "赤城ユイナ（春日さくら）" },
-    { "id": "azu",   "label": "新里アズ（咲川ひなの）" },
-    { "id": "kyoka", "label": "北原キョウカ（本村玲奈）" },
-    { "id": "choco", "label": "三俣チョコ（三波春香）" },
-    { "id": "mai",   "label": "上泉マイ（百瀬帆南）" },
-    { "id": "eiko",  "label": "膳栄子（芹澤優）" }
+    { "id": "yuina", "label": "赤城ユイナ（春日さくら）", "members": ["kasuga"] },
+    { "id": "azu",   "label": "新里アズ（咲川ひなの）", "members": ["sakikawa"] },
+    { "id": "kyoka", "label": "北原キョウカ（本村玲奈）", "members": ["motomura"] },
+    { "id": "choco", "label": "三俣チョコ（三波春香）", "members": ["minami"] },
+    { "id": "mai",   "label": "上泉マイ（百瀬帆南）", "members": ["momose"] },
+    { "id": "eiko",  "label": "膳栄子（芹澤優）", "members": [] }
   ],
   "defaultUnit": "all",
   "shareHashtags": ["前橋ウィッチーズ"],

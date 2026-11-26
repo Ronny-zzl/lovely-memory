@@ -15,6 +15,9 @@ async function validateOne(artistId: string, showMissing: boolean): Promise<numb
 
   if (artist.defaultEra && !eraIds.has(artist.defaultEra)) err(`artist.json: defaultEra "${artist.defaultEra}" が eras にない`);
   if (artist.defaultUnit && !unitIds.has(artist.defaultUnit)) err(`artist.json: defaultUnit "${artist.defaultUnit}" が units にない`);
+  for (const u of artist.units) {
+    for (const m of u.members ?? []) if (!memberIds.has(m)) err(`artist.json: ユニット ${u.id} のメンバー "${m}" が members にない`);
+  }
 
   // songs
   const songs = await loadSongs(artistId);

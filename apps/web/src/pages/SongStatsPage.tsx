@@ -215,10 +215,11 @@ export function SongStatsPage() {
         songs,
         events,
         setlists,
+        artist,
         includeCollab,
         filter: (e) => [...selectedTypes].some((t) => eventHasType(e, t)),
       }),
-    [songs, events, setlists, selectedTypes, includeCollab],
+    [songs, events, setlists, artist, selectedTypes, includeCollab],
   );
 
   const rows = useMemo(() => {

@@ -74,6 +74,11 @@ export const ArtistConfig = z.object({
         label: z.string(),
         /** ユニット名の印象に合わせたタグの装飾（任意） */
         motif: z.enum(["sun", "moon"]).optional(),
+        /**
+         * ユニットのメンバー（members の id。グループ外の人のユニットなら空）。出演が一部のメンバーだけのイベント（生誕など）で、
+         * このユニットの曲をその曲の歌唱率に数えるか（全員いたか）の判断に使う。無ければその日のグループ全員とみなす
+         */
+        members: z.array(slug).optional(),
       }),
     )
     .default([]),

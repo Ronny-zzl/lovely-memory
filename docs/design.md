@@ -92,6 +92,7 @@ type Event = {
   types: EventType[];    // 可多个（如 单独公演+Free Live）。按 eventTypeRules 推断（命中的全部），overrides 的 types 整体替换
   partialLineup: boolean; // 出演成员本来就只有一部分的活动（生日活动・公开录音的各部等）。按 artist.json 的 partialLineupRules（标题正则），
                           // overrides 的 partialLineup 可单独改。没上场的成员不算缺席，也不计入出演率的分母；成员的点只显示出演者
+                          // 歌唱率：这类活动只在这首歌的演唱者（artist.json units 的 members，没有则当天全员）都在场时才计入该曲的分母和分子；演唱次数照常计入
 };
 
 // artists/<id>/setlists/<eventId>.yaml（由 `pnpm lm add-setlist` 从推文生成）

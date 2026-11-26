@@ -121,7 +121,7 @@ async function collect(artist: ArtistConfig, site: string, host: string): Promis
   const songs = await loadSongs(artist.id);
   const events = resolveEvents(await loadEvents(artist.id), await loadOverrides(artist.id), artist);
   const setlists = (await loadSetlistFiles(artist.id)).map((f) => Setlist.parse(f.raw));
-  const stats = computeStats({ songs, events, setlists });
+  const stats = computeStats({ songs, events, setlists, artist });
   const patterns = computePatterns(stats.events);
   const setlistByEvent = new Map(stats.events.map((e) => [e.event.id, e]));
   // イベントカードに添える節目（サイトの「このイベントの記録」と同じ計算）

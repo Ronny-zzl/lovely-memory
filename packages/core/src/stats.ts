@@ -1,5 +1,5 @@
-import { isLiveEvent, type ResolvedEvent } from "./events.ts";
-import type { Setlist, Song } from "./schema.ts";
+import { isLiveEvent, membersOn, type ResolvedEvent } from "./events.ts";
+import type { ArtistConfig, Setlist, Song } from "./schema.ts";
 import { isDance, itemSong, setlistStages, UNKNOWN_SONG } from "./setlist.ts";
 import { findSong } from "./setlist-text.ts";
 
@@ -54,9 +54,13 @@ export type SongStats = {
   count: number;
   /** 歌唱ステージ数 */
   stages: number;
-  /** 歌唱イベント数 */
+  /** 歌唱イベント数（歌唱率の分子。eligibleEvents に入るイベントのうち歌われたもの） */
   events: number;
-  /** 初披露以降の集計対象イベント数（初披露のイベントを含む）。未披露なら 0 */
+  /**
+   * 初披露以降の集計対象イベント数（初披露のイベントを含む）。未披露なら 0。
+   * 出演が初めから一部のメンバーだけのイベント（生誕・公開録音など。partialLineup）は、その曲を歌う人が揃っていたときだけ入れる
+   * （生誕イベントで全員の曲が歌われないのは当たり前なので、分母に入れると歌唱率が下がってしまう。歌唱回数にはいつも数える）
+   */
   eligibleEvents: number;
   /**
    * 歌唱率 = events / eligibleEvents。
@@ -96,9 +100,14 @@ export type StatsInput = {
   filter?: (e: ResolvedEvent) => boolean;
   /** コラボステージを含めるか（既定 true）。false ならそのステージは無いものとして扱う */
   includeCollab?: boolean;
+  /**
+   * メンバーとユニット。出演が一部のメンバーだけのイベントを、その曲の歌唱率に数えるかの判断に使う。
+   * 無ければ、そういうイベントは歌唱率に数えない
+   */
+  artist?: Pick<ArtistConfig, "members" | "units">;
 };
 
-export function computeStats({ songs, events, setlists, filter, includeCollab = true }: StatsInput): Stats {
+export function computeStats({ songs, events, setlists, filter, includeCollab = true, artist }: StatsInput): Stats {
   const setlistByEvent = new Map(setlists.map((s) => [s.event, s]));
   const unresolved: Stats["unresolved"] = [];
   const debuted = new Set<string>();
@@ -176,6 +185,15 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
   const eventSetlists = allSetlists.filter((e) => counted.has(e.event.id));
   const eventIndex = new Map(targets.map((e, i) => [e.id, i]));
   const total = targets.length;
+  // 出演が初めから一部のメンバーだけのイベント（生誕・公開録音など）は、その曲を歌う人（ユニットのメンバー。
+  // ユニットが無ければその日の全員）が揃っていたときだけ、その曲の歌唱率に数える
+  const unitMembers = new Map((artist?.units ?? []).flatMap((u) => (u.members ? [[u.id, u.members] as const] : [])));
+  const countsFor = (song: Song, e: ResolvedEvent) => {
+    if (!e.partialLineup) return true;
+    if (!artist) return false;
+    const need = (song.unit ? unitMembers.get(song.unit) : undefined) ?? membersOn(artist.members, e.date).map((m) => m.id);
+    return need.every((m) => e.members.includes(m));
+  };
 
   const songStats: SongStats[] = songs.map((song) => {
     const performances = perfBySong.get(song.id)!;
@@ -185,14 +203,16 @@ export function computeStats({ songs, events, setlists, filter, includeCollab = 
     for (const p of performances) byYear[p.date.slice(0, 4)] = (byYear[p.date.slice(0, 4)] ?? 0) + 1;
     const first = performances[0];
     const last = performances.at(-1);
-    const eligibleEvents = first ? total - eventIndex.get(first.eventId)! : 0;
+    const eligible = first ? targets.slice(eventIndex.get(first.eventId)).filter((e) => countsFor(song, e)) : [];
+    const eligibleEvents = eligible.length;
+    const rateEvents = eligible.filter((e) => eventIds.has(e.id)).length;
     return {
       song,
       count: performances.length,
       stages: stageKeys.size,
-      events: eventIds.size,
+      events: rateEvents,
       eligibleEvents,
-      rate: eligibleEvents ? eventIds.size / eligibleEvents : 0,
+      rate: eligibleEvents ? rateEvents / eligibleEvents : 0,
       first: first && { eventId: first.eventId, date: first.date },
       last: last && { eventId: last.eventId, date: last.date },
       sinceLast: last ? total - 1 - eventIndex.get(last.eventId)! : null,

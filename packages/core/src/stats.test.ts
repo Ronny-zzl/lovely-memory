@@ -119,3 +119,51 @@ describe("computeStats", () => {
     expect(onlyOneman.songs.find((s) => s.song.id === "s1")).toMatchObject({ count: 1, rate: 1 });
   });
 });
+
+describe("events with only some members (partialLineup)", () => {
+  // e2 は y の生誕イベント（出演は y だけ）。A は全員の曲、C は y のソロ曲（ユニット y）、D は x のソロ曲
+  const evs = [
+    ev(1, "2026-09-04"),
+    { ...ev(2, "2026-09-10"), partialLineup: true, members: ["y"] },
+    ev(3, "2026-09-20"),
+    ev(4, "2026-09-30"),
+  ];
+  const sls = [
+    Setlist.parse({ event: 1, items: ["A", "C", "D"] }),
+    Setlist.parse({ event: 2, items: ["C", "A"] }),
+    Setlist.parse({ event: 3, items: ["A"] }),
+    Setlist.parse({ event: 4, items: ["B", "C"] }),
+  ];
+  const withUnits = [
+    Song.parse({ id: "s1", title: "A" }),
+    Song.parse({ id: "s2", title: "B" }),
+    Song.parse({ id: "s3", title: "C", unit: "uy" }),
+    Song.parse({ id: "s4", title: "D", unit: "ux" }),
+  ];
+  const artist = {
+    members: [
+      { id: "x", name: "X", color: "#000000" },
+      { id: "y", name: "Y", color: "#000000" },
+    ],
+    units: [
+      { id: "uy", label: "Y", members: ["y"] },
+      { id: "ux", label: "X", members: ["x"] },
+    ],
+  } as unknown as Parameters<typeof computeStats>[0]["artist"];
+  const st = computeStats({ songs: withUnits, events: evs, setlists: sls, artist });
+  const by = (id: string) => st.songs.find((s) => s.song.id === id)!;
+
+  it("count for a song only when everyone who sings it was there", () => {
+    // 全員の曲：生誕イベントは数えない（歌われていても）。歌唱回数には入る
+    expect(by("s1")).toMatchObject({ count: 3, events: 2, eligibleEvents: 3 });
+    // y のソロ曲：y の生誕イベントも数える
+    expect(by("s3")).toMatchObject({ count: 3, events: 3, eligibleEvents: 4 });
+    // x のソロ曲：x のいない y の生誕イベントは数えない
+    expect(by("s4")).toMatchObject({ count: 1, events: 1, eligibleEvents: 3 });
+  });
+
+  it("are left out of the rate when members and units are not given", () => {
+    const plain = computeStats({ songs: withUnits, events: evs, setlists: sls });
+    expect(plain.songs.find((s) => s.song.id === "s3")).toMatchObject({ events: 2, eligibleEvents: 3 });
+  });
+});

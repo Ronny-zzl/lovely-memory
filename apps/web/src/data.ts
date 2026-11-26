@@ -60,7 +60,7 @@ async function load(artist: ArtistConfig): Promise<ArtistBase> {
   // コードを読み込めなかったら一度だけ読み込み直す（サイトの更新直後など。chunk-reload.ts）
   const { songs, events: rawEvents, overrides, setlists } = (await importOrReload(loader)).default;
   const events = resolveEvents(rawEvents, overrides, artist);
-  const allStats = computeStats({ songs, events, setlists });
+  const allStats = computeStats({ songs, events, setlists, artist });
   return { artist, songs, events, setlists, allStats, patterns: computePatterns(allStats.events) };
 }
 
