@@ -71,7 +71,7 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 记录还不完整、暂不公开的团体，在 `artist.json` 里设 `"draft": true`（例：`miline-hearts`）。
 
 - **正式版**（https://lovely-memory.moe/）的构建完全不包含它：页面、数据、分享图、sitemap 都没有。也不会为它开歌单 Issue
-- **预览版**：`deploy.yml` 的 `preview` 任务和正式版的 `production` 任务同时进行（各自跑全部检查），用 `INCLUDE_DRAFTS=1` 构建（包括 smoke），部署到 Cloudflare Pages 的 `draft` 分支 → **https://draft.lovely-memory.pages.dev**。首页上草稿团体排在后面，带「下書き（非公開）」标签
+- **预览版**：`deploy.yml` 的 `preview` 任务和正式版的 `production` 任务同时进行（各自跑全部检查）。`production` 先读正式站的 `version.json`（部署时写出的 commit），如果之后的改动只有草稿团体的数据（`pnpm lm site-changes`），就跳过正式站的构建和部署；手动触发（workflow_dispatch）时总是部署。预览版用 `INCLUDE_DRAFTS=1` 构建（包括 smoke），部署到 Cloudflare Pages 的 `draft` 分支 → **https://draft.lovely-memory.pages.dev**。首页上草稿团体排在后面，带「下書き（非公開）」标签
 - 本地：`INCLUDE_DRAFTS=1 pnpm build`，或 `INCLUDE_DRAFTS=1 pnpm --filter @lovely-memory/web dev`
 - 数据本身在公开仓库里（`artists/<id>/`），所以「非公开」的意思是「不在网站上公开」
 - 公开时：删掉 `draft`，正常部署即可
@@ -86,6 +86,7 @@ pnpm --filter @lovely-memory/web exec wrangler d1 execute lovely-memory --remote
 - 记录的完整度：全部齐全／只有一部分（`completeness: partial`）／曲目齐全但顺序不明（`unordered`）。不完整的歌单计入歌唱次数・歌唱率，但不用于 1 曲目・ラスト・衔接（「?」也一样）
 - 输入途中会自动存在浏览器里，下次打开可以「続きから」
 - 保存：`POST /api/edit`（Worker 验证 Access 的签名令牌 `Cf-Access-Jwt-Assertion`；没有令牌的请求，比如对正式版的直接请求，一律拒绝）→ 启动 `apply-edit.yml`（`workflow_dispatch`）→ `pnpm lm apply-edit` 校验（曲名统一成 songs.json 的正式写法、新曲加进 songs.json）后提交 → Deploy 重新部署正式版和预览版。数分钟后反映
+- 保存后界面显示上线进度：Worker 返回受理时间，界面每 5 秒读一次 `/version.json`，出现受理时间之后的 commit 的部署就显示「反映されました」。5 分钟还没上线会提示去看 Actions（apply-edit・Deploy）
 - 已入力的歌单也可以从同一界面修改（公演详情页的「セトリを直す」）
 - 需要：预览环境的 secret `GITHUB_DISPATCH_TOKEN`（`wrangler pages secret put GITHUB_DISPATCH_TOKEN --project-name lovely-memory --env preview`，和正式环境用同一个 token），`wrangler.toml` 的 `ACCESS_TEAM_DOMAIN`・`ACCESS_AUD`
 

@@ -6,3 +6,7 @@
 # ファイル名に内容のハッシュが入っているので、変わることがない
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# どのコミットから作ったサイトか（デプロイ時に書き出す。入力画面が反映を確かめる・公開サイトのデプロイが要るかの判断に使う）
+/version.json
+  Cache-Control: no-store

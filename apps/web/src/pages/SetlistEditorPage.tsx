@@ -16,6 +16,7 @@ import {
 } from "@lovely-memory/core/runtime";
 import { displayTitle, formatDayWithWeekday } from "../format.ts";
 import { dotStyle } from "../member-color.ts";
+import { DeployProgress } from "../components/DeployProgress.tsx";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./EditPages.css";
 
@@ -44,7 +45,9 @@ export function SetlistEditorPage() {
   const [saved, setSaved] = useState<Draft | undefined>();
   const [q, setQ] = useState("");
   const [targetStage, setTargetStage] = useState<number | undefined>();
-  const [state, setState] = useState<{ kind: "idle" | "saving" | "done" | "error"; message?: string }>({ kind: "idle" });
+  const [state, setState] = useState<{ kind: "idle" | "saving" | "done" | "error"; message?: string; at?: string; actions?: string }>({
+    kind: "idle",
+  });
 
   // 前回の入力途中の内容（保存前に閉じたとき）。この画面はビルド時の HTML を作らない（ブラウザだけで描く）ので、
   // 最初の描画で localStorage を読んでよい
@@ -110,7 +113,7 @@ export function SetlistEditorPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      const body = (await res.json().catch(() => ({}))) as { error?: string; at?: string; actions?: string };
       if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
       try {
         localStorage.removeItem(key);
@@ -119,7 +122,7 @@ export function SetlistEditorPage() {
       }
       setTouched(false);
       setSaved(draft);
-      setState({ kind: "done" });
+      setState({ kind: "done", at: body.at, actions: body.actions });
     } catch (e) {
       setState({
         kind: "error",
@@ -419,11 +422,15 @@ export function SetlistEditorPage() {
         >
           {state.kind === "saving" ? "保存しています…" : `保存する（${total} 曲）`}
         </button>
-        {state.kind === "done" && saved === draft && (
-          <p className="small" role="status">
-            ✓ 保存しました。数分でサイトに反映されます。
-          </p>
-        )}
+        {state.kind === "done" &&
+          saved === draft &&
+          (state.at ? (
+            <DeployProgress at={state.at} actions={state.actions} href={`/${artist.id}/events/${event.id}`} />
+          ) : (
+            <p className="small" role="status">
+              ✓ 保存しました。数分でサイトに反映されます。
+            </p>
+          ))}
         {state.kind === "error" && (
           <p className="small error" role="alert">
             {state.message}

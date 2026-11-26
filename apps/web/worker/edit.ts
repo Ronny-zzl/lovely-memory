@@ -105,5 +105,6 @@ export async function handleEdit(request: Request, env: EditEnv): Promise<Respon
     body: JSON.stringify({ ref: "main", inputs: { payload: JSON.stringify(parsed) } }),
   });
   if (!res.ok) return json({ error: `保存の処理を始められませんでした（GitHub ${res.status}）` }, 502);
-  return json({ ok: true }, 202);
+  // at：受け付けた時刻（サーバーの時計）。入力画面はこれより後のコミットがサイトに出たら「反映された」とする（version.json）
+  return json({ ok: true, at: new Date().toISOString(), actions: `https://github.com/${env.GITHUB_REPOSITORY}/actions` }, 202);
 }

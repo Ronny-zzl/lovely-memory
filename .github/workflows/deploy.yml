@@ -32,18 +32,41 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
+          # 公開サイトにデプロイ済みのコミットとの差分を見るため（下の site-changes）
+          fetch-depth: 0
       # Node のバージョンは mise.toml で管理
       - uses: jdx/mise-action@v5
       - uses: pnpm/action-setup@v6
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm format:check
-      - run: pnpm test
+      # 公開サイトのデプロイが要るか：デプロイ済みのコミット（公開サイトの version.json）から後の変更が、
+      # 下書きのグループのデータだけなら要らない（プレビューだけデプロイし直す）。手で起動したときはいつもデプロイする
+      - name: Changes for the public site
+        id: changes
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          if [ "$FORCE" = "true" ] || [ -z "$SITE_URL" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          since=$(curl -fsS --max-time 10 "${SITE_URL%/}/version.json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).sha??"")}catch{console.log("")}})' || true)
+          pnpm -s lm site-changes --since "$since"
+      - if: steps.changes.outputs.deploy == 'true'
+        run: pnpm typecheck
+      - if: steps.changes.outputs.deploy == 'true'
+        run: pnpm lint
+      - if: steps.changes.outputs.deploy == 'true'
+        run: pnpm format:check
+      - if: steps.changes.outputs.deploy == 'true'
+        run: pnpm test
       - name: Validate data
+        if: steps.changes.outputs.deploy == 'true'
         run: pnpm -s lm validate all
       - name: Build
-        run: pnpm build
+        if: steps.changes.outputs.deploy == 'true'
+        run: |
+          pnpm build
+          git log -1 --format='{"sha":"%H","committedAt":"%cI"}' > apps/web/dist/version.json
         env:
           # OGP（og:image など）の絶対 URL に使う
           SITE_URL: ${{ vars.SITE_URL }}
@@ -51,6 +74,7 @@ jobs:
           PAGES_HOST: ${{ vars.CLOUDFLARE_PROJECT }}.pages.dev
       # 共有カードの画像のキャッシュ（カードの HTML が同じなら描き直さない。og-pages.ts）
       - name: Restore share card cache
+        if: steps.changes.outputs.deploy == 'true'
         uses: actions/cache/restore@v6
         with:
           path: .og-cache
@@ -59,6 +83,7 @@ jobs:
       # 曲・イベントページごとの共有カード（HTML と画像）。失敗してもサイト共通のカードのままデプロイする
       - name: Share cards
         id: cards
+        if: steps.changes.outputs.deploy == 'true'
         continue-on-error: true
         run: pnpm -s lm og-pages all
         env:
@@ -72,10 +97,11 @@ jobs:
           key: og-${{ github.run_id }}-${{ github.run_attempt }}
       # 実際にデプロイするファイル一式を Chrome で開いて確認する
       - name: Smoke test
+        if: steps.changes.outputs.deploy == 'true'
         run: pnpm smoke
       # wrangler は lockfile で固定した版を使う（Renovate で更新）
       - name: Deploy to Cloudflare Pages
-        if: vars.CLOUDFLARE_PROJECT != ''
+        if: steps.changes.outputs.deploy == 'true' && vars.CLOUDFLARE_PROJECT != ''
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -111,7 +137,9 @@ jobs:
       - name: Validate data
         run: pnpm -s lm validate all
       - name: Build preview with drafts
-        run: pnpm build
+        run: |
+          pnpm build
+          git log -1 --format='{"sha":"%H","committedAt":"%cI"}' > apps/web/dist/version.json
         env:
           INCLUDE_DRAFTS: "1"
           SITE_URL: ${{ vars.SITE_URL }}

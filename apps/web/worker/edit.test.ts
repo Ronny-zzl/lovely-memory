@@ -75,6 +75,9 @@ describe("POST /api/edit", () => {
     const dispatched = stubFetch();
     const res = await post(JSON.stringify(PAYLOAD), await valid());
     expect(res!.status).toBe(202);
+    const body = (await res!.json()) as { at: string; actions: string };
+    expect(Date.parse(body.at)).toBeGreaterThan(Date.now() - 60_000);
+    expect(body.actions).toBe("https://github.com/o/r/actions");
     expect(dispatched).toHaveLength(1);
     expect(dispatched[0]!.url).toBe("https://api.github.com/repos/o/r/actions/workflows/apply-edit.yml/dispatches");
     expect(JSON.parse(dispatched[0]!.body)).toEqual({ ref: "main", inputs: { payload: JSON.stringify(PAYLOAD) } });

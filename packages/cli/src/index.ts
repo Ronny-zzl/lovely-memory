@@ -2,6 +2,7 @@ import { parseArgs } from "node:util";
 import { addSetlist } from "./commands/add-setlist.ts";
 import { applyEdit } from "./commands/apply-edit.ts";
 import { song } from "./commands/song.ts";
+import { siteChanges } from "./commands/site-changes.ts";
 import { analytics } from "./commands/analytics.ts";
 import { errors } from "./commands/errors.ts";
 import { importComment } from "./commands/import-comment.ts";
@@ -71,6 +72,8 @@ commands:
                      --dist <dir>     ビルド結果（既定 apps/web/dist）
                      --skip-images    HTML だけ作る
                      --only <文字列>  画像をパスに含むものだけ描画（確認用）
+  site-changes       公開サイトのデプロイが要るか（下書きのグループのデータだけの変更なら不要）
+                     --since <デプロイ済みのコミット>   GITHUB_OUTPUT に deploy=true/false
   song               曲を登録する・直す：pnpm lm song <artistId> <曲名|id> [options]
                      --new            新しく登録（無いときに打ち間違いで別の曲ができないよう必須）
                      --credits "編曲：X"  (書いた役割だけ上書き)
@@ -103,6 +106,7 @@ const { positionals, values } = parseArgs({
     tieup: { type: "string", multiple: true },
     unset: { type: "string", multiple: true },
     rename: { type: "string" },
+    since: { type: "string" },
     "release-date": { type: "string" },
     "release-title": { type: "string" },
     "release-kind": { type: "string" },
@@ -138,7 +142,7 @@ const [command, artistId] = positionals;
 
 type Command = (id: string, opts: Record<string, any>) => Promise<void>;
 /** artistId を取らないコマンド（対象は引数のファイルなどから決まる） */
-const NO_ARTIST = new Set(["import-comment", "apply-edit", "reply-issues"]);
+const NO_ARTIST = new Set(["import-comment", "apply-edit", "reply-issues", "site-changes"]);
 const commands: Record<string, Command> = {
   sync,
   "list-events": listEvents,
@@ -149,6 +153,7 @@ const commands: Record<string, Command> = {
   "import-wikipedia": importWikipedia,
   "import-youtube": importYoutube as Command,
   song,
+  "site-changes": siteChanges,
   "open-setlist-issues": openSetlistIssues,
   "import-comment": importComment as Command,
   "apply-edit": applyEdit as Command,

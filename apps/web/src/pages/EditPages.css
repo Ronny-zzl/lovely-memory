@@ -251,3 +251,37 @@
 .editor-save p {
   margin: 0;
 }
+
+/* 保存の後、サイトに反映されるまで（DeployProgress） */
+.deploy-progress p {
+  margin: 0;
+}
+
+.deploy-progress.done {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.deploy-spinner {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 6px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  vertical-align: -0.1em;
+  animation: deploy-spin 0.9s linear infinite;
+}
+
+@keyframes deploy-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deploy-spinner {
+    animation: none;
+  }
+}
