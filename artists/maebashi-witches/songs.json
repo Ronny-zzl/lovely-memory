@@ -1,213 +1,438 @@
 [
   {
     "id": "s001",
-    "title": "スゴすぎ前橋ウィッチーズ！"
+    "title": "スゴすぎ前橋ウィッチーズ！",
+    "credits": {
+      "lyrics": "つんく",
+      "music": "TORIENA",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s002",
-    "title": "夢よ、咲け！"
+    "title": "夢よ、咲け！",
+    "credits": {
+      "lyrics": "鈴木まなか",
+      "music": "ArmySlick・常楽寺 澪",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s003",
-    "title": "うちらの花屋は黙ってない！"
+    "title": "うちらの花屋は黙ってない！",
+    "credits": {
+      "lyrics": "岩里祐穂",
+      "music": "清田直人",
+      "arrangement": "菊池博人"
+    }
   },
   {
     "id": "s004",
-    "title": "それぞれのドア"
+    "title": "それぞれのドア",
+    "credits": {
+      "lyrics": "雲居ハルカ",
+      "music": "雲居ハルカ",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s005",
-    "title": "1,2,3 Magic！"
+    "title": "1,2,3 Magic！",
+    "credits": {
+      "lyrics": "ChawongChaw",
+      "music": "ChawongChaw",
+      "arrangement": "ChawongChaw"
+    }
   },
   {
     "id": "s006",
-    "title": "シャボン・テンション！"
+    "title": "シャボン・テンション！",
+    "credits": {
+      "lyrics": "松井洋平",
+      "music": "石黑 剛・常楽寺 澪",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s007",
-    "title": "絢爛SHOWTIME！！"
+    "title": "絢爛SHOWTIME！！",
+    "credits": {
+      "lyrics": "ChawongChaw",
+      "music": "ChawongChaw",
+      "arrangement": "ChawongChaw"
+    }
   },
   {
     "id": "s008",
-    "title": "MAKASETENE"
+    "title": "MAKASETENE",
+    "credits": {
+      "lyrics": "FUJI",
+      "music": "FUJI・宮川麿",
+      "arrangement": "宮川麿"
+    }
   },
   {
     "id": "s009",
-    "title": "ハピハピハッピーバースデー！"
+    "title": "ハピハピハッピーバースデー！",
+    "credits": {
+      "lyrics": "吉田恵里香",
+      "music": "羽深由理",
+      "arrangement": "羽深由理"
+    }
   },
   {
     "id": "s010",
-    "title": "You Are My World"
+    "title": "You Are My World",
+    "credits": {
+      "lyrics": "松﨑涼介",
+      "music": "松﨑涼介・YUU for YOU",
+      "arrangement": "水野谷 怜"
+    }
   },
   {
     "id": "s011",
-    "title": "無敵☆PAYAPAYA"
+    "title": "無敵☆PAYAPAYA",
+    "credits": {
+      "lyrics": "NOVECHIKA・齋藤奏太",
+      "music": "NOVECHIKA・齋藤奏太",
+      "arrangement": "NOVECHIKA・齋藤奏太"
+    }
   },
   {
     "id": "s012",
     "title": "GAPPO＆GAPPO",
     "aliases": [
       "GAPPO&GAPPO"
-    ]
+    ],
+    "credits": {
+      "lyrics": "Giz'Mo (from Jam9)",
+      "music": "Giz'Mo (from Jam9)・YUU for YOU",
+      "arrangement": "YUU for YOU"
+    }
   },
   {
     "id": "s013",
-    "title": "Meteor Shower"
+    "title": "Meteor Shower",
+    "credits": {
+      "lyrics": "宮嶋淳子",
+      "music": "長谷川大介",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s014",
-    "title": "ドリーミードリーミーフラワー"
+    "title": "ドリーミードリーミーフラワー",
+    "credits": {
+      "lyrics": "NOVECHIKA・齋藤奏太",
+      "music": "NOVECHIKA・齋藤奏太",
+      "arrangement": "NOVECHIKA・齋藤奏太"
+    }
   },
   {
     "id": "s015",
-    "title": "MATSURI day PARTY!!"
+    "title": "MATSURI day PARTY!!",
+    "credits": {
+      "lyrics": "牡丹",
+      "music": "清田直人",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s016",
-    "title": "メジルシ"
+    "title": "メジルシ",
+    "credits": {
+      "lyrics": "岩里祐穂",
+      "music": "清田直人",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s017",
-    "title": "今は小さな蕾でも"
+    "title": "今は小さな蕾でも",
+    "credits": {
+      "lyrics": "中村 歩・菊池博人",
+      "music": "中村 歩・菊池博人",
+      "arrangement": "菊池博人・中村 歩"
+    }
   },
   {
     "id": "s018",
-    "title": "ユメミ誇レ！ユメ咲キ踊レ！"
+    "title": "ユメミ誇レ！ユメ咲キ踊レ！",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "岸田勇気",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s019",
-    "title": "花たちはどんな夢を見る"
+    "title": "花たちはどんな夢を見る",
+    "credits": {
+      "lyrics": "高瀬愛虹",
+      "music": "要田 健",
+      "arrangement": "要田 健"
+    }
   },
   {
     "id": "s020",
-    "title": "超越魂 - Braver's Soul –"
+    "title": "超越魂 - Braver's Soul –",
+    "credits": {
+      "lyrics": "宮嶋淳子",
+      "music": "山下洋介",
+      "arrangement": "山下洋介"
+    }
   },
   {
     "id": "s021",
-    "title": "推せる想いをぶつけちゃお？☆"
+    "title": "推せる想いをぶつけちゃお？☆",
+    "credits": {
+      "lyrics": "菊池博人",
+      "music": "菊池博人",
+      "arrangement": "菊池博人"
+    }
   },
   {
     "id": "s022",
-    "title": "キラリForever"
+    "title": "キラリForever",
+    "credits": {
+      "lyrics": "NA.ZU.NA",
+      "music": "NA.ZU.NA",
+      "arrangement": "NA.ZU.NA"
+    }
   },
   {
     "id": "s023",
-    "title": "Shiny☆Shineなスカイブルー"
+    "title": "Shiny☆Shineなスカイブルー",
+    "credits": {
+      "lyrics": "新谷風太",
+      "music": "古河 夕",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s024",
-    "title": "激情≒愛情"
+    "title": "激情≒愛情",
+    "credits": {
+      "lyrics": "園田健太郎",
+      "music": "岸田勇気",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s025",
-    "title": "FLOWER SUPER POWER"
+    "title": "FLOWER SUPER POWER",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "岸田勇気",
+      "arrangement": "岸田勇気"
+    }
   },
   {
     "id": "s026",
-    "title": "天気雨ワンダーランド"
+    "title": "天気雨ワンダーランド",
+    "credits": {
+      "lyrics": "岩里祐穂",
+      "music": "松﨑涼介・YUU for YOU",
+      "arrangement": "齋藤奏太"
+    }
   },
   {
     "id": "s027",
-    "title": "キミ色Brand new day!!"
+    "title": "キミ色Brand new day!!",
+    "credits": {
+      "lyrics": "小池竜暉",
+      "music": "小池竜暉・菊池博人",
+      "arrangement": "菊池博人"
+    }
   },
   {
     "id": "s028",
-    "title": "イッサイ☆カッサイ"
+    "title": "イッサイ☆カッサイ",
+    "credits": {
+      "lyrics": "常楽寺 澪",
+      "music": "YUU for YOU・常楽寺 澪",
+      "arrangement": "YUU for YOU"
+    }
   },
   {
     "id": "s029",
     "title": "らんまんBlooming＊",
-    "unit": "yuina"
+    "unit": "yuina",
+    "credits": {
+      "lyrics": "牡丹",
+      "music": "野崎心平",
+      "arrangement": "野崎心平"
+    }
   },
   {
     "id": "s030",
     "title": "ぐんぐん、進もっ！？",
-    "unit": "yuina"
+    "unit": "yuina",
+    "credits": {
+      "lyrics": "鈴木まなか",
+      "music": "西片瑞樹",
+      "arrangement": "西片瑞樹"
+    }
   },
   {
     "id": "s031",
     "title": "もっとグッデイ！ぶらいたーデイ",
-    "unit": "yuina"
+    "unit": "yuina",
+    "credits": {
+      "lyrics": "鮫島竜輔",
+      "music": "小池竜暉・菊池博人",
+      "arrangement": "菊池博人"
+    }
   },
   {
     "id": "s032",
     "title": "Cross × Millennium",
-    "unit": "azu"
+    "unit": "azu",
+    "credits": {
+      "lyrics": "Uyu",
+      "music": "阿部隆大",
+      "arrangement": "阿部隆大"
+    }
   },
   {
     "id": "s033",
     "title": "モノクローム⊂ヴァイオレット",
-    "unit": "azu"
+    "unit": "azu",
+    "credits": {
+      "lyrics": "松井洋平",
+      "music": "水野谷 怜",
+      "arrangement": "河合 泰志・水野谷 怜"
+    }
   },
   {
     "id": "s034",
     "title": "あゝ赤城山",
-    "unit": "kyoka"
+    "unit": "kyoka",
+    "credits": {
+      "lyrics": "中村 歩・玉木千尋",
+      "music": "中村 歩・玉木千尋",
+      "arrangement": "中村 歩・玉木千尋"
+    }
   },
   {
     "id": "s035",
     "title": "湿原の騎士",
-    "unit": "kyoka"
+    "unit": "kyoka",
+    "credits": {
+      "lyrics": "鮫島竜輔",
+      "music": "小幡康裕",
+      "arrangement": "小幡康裕"
+    }
   },
   {
     "id": "s036",
     "title": "ハピハピになっちゃおっ!",
-    "unit": "choco"
+    "unit": "choco",
+    "credits": {
+      "lyrics": "小池竜暉",
+      "music": "小池竜暉・菊池博人",
+      "arrangement": "菊池博人"
+    }
   },
   {
     "id": "s037",
     "title": "フワフワの約束",
-    "unit": "choco"
+    "unit": "choco",
+    "credits": {
+      "lyrics": "宮嶋淳子",
+      "music": "小池竜暉・菊池博人",
+      "arrangement": "菊池博人"
+    }
   },
   {
     "id": "s038",
     "title": "ごはんPou!Pou!",
-    "unit": "choco"
+    "unit": "choco",
+    "credits": {
+      "lyrics": "磯崎健史",
+      "music": "磯崎健史",
+      "arrangement": "水野谷 怜"
+    }
   },
   {
     "id": "s039",
     "title": "My Special Thanks!!",
-    "unit": "mai"
+    "unit": "mai",
+    "credits": {
+      "lyrics": "新谷風太",
+      "music": "西片瑞樹",
+      "arrangement": "水野谷 怜"
+    }
   },
   {
     "id": "s040",
     "title": "邁進↓↘→Step by Step",
-    "unit": "mai"
+    "unit": "mai",
+    "credits": {
+      "lyrics": "常楽寺 澪",
+      "music": "常楽寺 澪・YAGO",
+      "arrangement": "YAGO"
+    }
   },
   {
     "id": "s041",
     "title": "Wither",
-    "unit": "eiko"
+    "unit": "eiko",
+    "credits": {
+      "lyrics": "唐沢美帆",
+      "music": "水野谷 怜",
+      "arrangement": "水野谷 怜"
+    }
   },
   {
     "id": "s042",
     "title": "Ambivalent",
-    "unit": "eiko"
+    "unit": "eiko",
+    "credits": {
+      "lyrics": "唐沢美帆",
+      "music": "青柳 諒",
+      "arrangement": "水野谷 怜"
+    }
   },
   {
     "id": "s043",
     "title": "雨晴れMake up",
+    "credits": {
+      "lyrics": "岩井勇気",
+      "music": "EFFY",
+      "arrangement": "EFFY"
+    },
     "note": "未披露（シートより）"
   },
   {
     "id": "s044",
     "title": "おねがい@Flowers",
+    "credits": {
+      "lyrics": "常楽寺 澪",
+      "music": "江並哲志",
+      "arrangement": "岸田勇気"
+    },
     "note": "未披露（シートより）"
   },
   {
     "id": "s045",
     "title": "彩雲ランドスケープ",
+    "credits": {
+      "lyrics": "鮫島竜輔",
+      "music": "石黑 剛・Giz'Mo (from Jam9)",
+      "arrangement": "石黑 剛"
+    },
     "note": "未披露（シートより）"
-  },
-  {
-    "id": "s046",
-    "title": "それぞれのアゲラタム",
-    "note": "新ソロ曲・未披露（シートより）"
   },
   {
     "id": "s047",
     "title": "コネクト",
     "era": "cover",
+    "credits": {
+      "lyrics": "渡辺翔",
+      "music": "渡辺翔",
+      "arrangement": "湯浅篤"
+    },
     "cover": {
       "artist": "ClariS"
     }
@@ -216,6 +441,11 @@
     "id": "s048",
     "title": "ヘリコプタオル",
     "era": "cover",
+    "credits": {
+      "lyrics": "Akira Sunset",
+      "music": "Akira Sunset・野口大志",
+      "arrangement": "野口大志"
+    },
     "cover": {
       "artist": "LINKL PLANET"
     },
@@ -225,6 +455,11 @@
     "id": "s049",
     "title": "ハッピー☆マテリアル",
     "era": "cover",
+    "credits": {
+      "lyrics": "うらん",
+      "music": "大川茂伸",
+      "arrangement": "大久保薫"
+    },
     "cover": {
       "artist": "麻帆良学園中等部2-A"
     },
@@ -234,6 +469,11 @@
     "id": "s050",
     "title": "とめどない潮騒に僕たちは何を歌うだろうか",
     "era": "cover",
+    "credits": {
+      "lyrics": "田淵智也",
+      "music": "草野華余子",
+      "arrangement": "堀江晶太"
+    },
     "cover": {
       "artist": "ARCANA PROJECT"
     },
@@ -249,6 +489,11 @@
     "id": "s052",
     "title": "ダイヤモンドハッピー",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "石濱 翔",
+      "arrangement": "石濱 翔"
+    },
     "cover": {
       "artist": "わか・ふうり・すなお from STAR☆ANIS",
       "release": {
@@ -266,10 +511,15 @@
   },
   {
     "id": "s053",
-    "title": "愛♡スクリ〜ム!",
+    "title": "愛♡スクリ～ム！",
     "era": "cover",
+    "credits": {
+      "lyrics": "aim",
+      "music": "DJ Chika a.k.a. INHERIT・Hayato Yamamoto",
+      "arrangement": "Hayato Yamamoto・DJ Chika a.k.a. INHERIT"
+    },
     "cover": {
-      "artist": "AZALEA"
+      "artist": "AiScReam"
     },
     "note": "Lantis DAYZ ALL CAST"
   },
@@ -277,6 +527,11 @@
     "id": "s055",
     "title": "START!! True dreams",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "小幡康裕",
+      "arrangement": "山下洋介"
+    },
     "cover": {
       "artist": "Liella!"
     }
@@ -285,6 +540,11 @@
     "id": "s056",
     "title": "What is my LIFE?",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "光増ハジメ",
+      "arrangement": "光増ハジメ"
+    },
     "cover": {
       "artist": "いきづらい部!"
     }
@@ -293,6 +553,11 @@
     "id": "s057",
     "title": "No brand girls",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "河田貴央",
+      "arrangement": "河田貴央"
+    },
     "cover": {
       "artist": "μ's"
     }
@@ -301,6 +566,11 @@
     "id": "s058",
     "title": "青空Jumping Heart",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "伊藤 賢・光増ハジメ",
+      "arrangement": "EFFY"
+    },
     "cover": {
       "artist": "Aqours"
     }
@@ -309,14 +579,24 @@
     "id": "s059",
     "title": "勇気のReason",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "増谷 賢",
+      "arrangement": "増谷 賢"
+    },
     "cover": {
-      "artist": "μ's"
+      "artist": "園田海未 (CV.三森すずこ)"
     }
   },
   {
     "id": "s060",
     "title": "TOKIMEKI Runners",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "矢鴇つかさ",
+      "arrangement": "矢鴇つかさ"
+    },
     "cover": {
       "artist": "虹ヶ咲学園スクールアイドル同好会"
     }
@@ -325,6 +605,11 @@
     "id": "s061",
     "title": "未来予報ハレルヤ！",
     "era": "cover",
+    "credits": {
+      "lyrics": "宮嶋淳子",
+      "music": "EFFY",
+      "arrangement": "山下洋介"
+    },
     "cover": {
       "artist": "Liella!"
     }
@@ -333,6 +618,11 @@
     "id": "s062",
     "title": "僕らは今のなかで",
     "era": "cover",
+    "credits": {
+      "lyrics": "畑 亜貴",
+      "music": "森慎太郎",
+      "arrangement": "森慎太郎"
+    },
     "cover": {
       "artist": "μ's"
     }
