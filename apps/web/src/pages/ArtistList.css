@@ -23,11 +23,11 @@
   height: 0.8em;
 }
 
-.home-title .sun {
+.home-title .motif-start {
   color: var(--sun-icon);
 }
 
-.home-title .moon {
+.home-title .motif-end {
   color: var(--accent-2);
 }
 

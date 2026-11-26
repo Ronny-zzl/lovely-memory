@@ -1,3 +1,5 @@
+import { THEME_ICONS, type ArtistTheme, type MotifIcon } from "@lovely-memory/core/runtime";
+
 /** 太陽と月の意匠（ユニットのタグ・サイトのロゴ）。色は currentColor */
 
 export function SunIcon() {
@@ -41,8 +43,10 @@ export function CrownIcon() {
   );
 }
 
-/** ヘッダーのロゴ「ラブリィメモリー」の両脇の飾り。グループごとに変える（無ければ太陽と月） */
-export function brandIcons(artistId: string | undefined): [() => React.JSX.Element, () => React.JSX.Element] {
-  if (artistId === "miline-hearts") return [HeartIcon, CrownIcon];
-  return [SunIcon, MoonIcon];
+const MOTIF_ICONS: Record<MotifIcon, () => React.JSX.Element> = { sun: SunIcon, moon: MoonIcon, heart: HeartIcon, crown: CrownIcon };
+
+/** テーマの飾り：[先頭（ロゴの左・1 曲目）, 末尾（ロゴの右・ラスト）]（@lovely-memory/core の THEME_ICONS） */
+export function themeIcons(theme: ArtistTheme): [() => React.JSX.Element, () => React.JSX.Element] {
+  const [start, end] = THEME_ICONS[theme];
+  return [MOTIF_ICONS[start], MOTIF_ICONS[end]];
 }

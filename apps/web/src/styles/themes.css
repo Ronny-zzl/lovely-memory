@@ -1,15 +1,17 @@
 /*
- * グループごとの色。tokens.css の変数を、そのグループのページ（.page[data-artist]）を開いている間だけ上書きする。
- * トップページのカード（.artist-card[data-artist]）にも同じ色を使う。
+ * テーマ（artist.json の theme。packages/core/src/theme.ts）ごとの色。tokens.css の変数を、
+ * そのテーマのグループのページ（.page[data-artist-theme]）を開いている間だけ上書きする。
+ * トップページのカード（.artist-card[data-artist-theme]）にも同じ色を使う。
  * 色を足すときは tokens.css と同じく、文字の色が 4.5:1 以上になるように。
+ * 共有画像（OGP・参戦記録）の色は theme.ts の SHARE_THEMES にあるので、変えたらそちらもそろえる。
  */
 
 /*
- * Mi'Line Hearts：ロゴ・告知画像の「空色とピンクの斜めの光（網点つき）に、白いハート」。
+ * hearts（Mi'Line Hearts）：ロゴ・告知画像の「空色とピンクの斜めの光（網点つき）に、白いハート」。
  * 主な色はピンク、2 つめの色はロゴの文字の紺
  */
-:root:has(.page[data-artist="miline-hearts"]),
-.artist-card[data-artist="miline-hearts"] {
+:root:has(.page[data-artist-theme="hearts"]),
+.artist-card[data-artist-theme="hearts"] {
   --hero-bg:
     radial-gradient(circle, rgb(255 255 255 / 55%) 0 1.1px, transparent 1.5px) 0 0 / 9px 9px,
     linear-gradient(115deg, #bfe3f7 0%, #d9ecfa 30%, #f9d3e3 62%, #f6b6cf 100%);
@@ -32,8 +34,8 @@
   --badge-2nd-fg: #b0245c;
 }
 
-:root[data-theme="dark"]:has(.page[data-artist="miline-hearts"]),
-:root[data-theme="dark"] .artist-card[data-artist="miline-hearts"] {
+:root[data-theme="dark"]:has(.page[data-artist-theme="hearts"]),
+:root[data-theme="dark"] .artist-card[data-artist-theme="hearts"] {
   --hero-bg:
     radial-gradient(circle, rgb(255 255 255 / 9%) 0 1.1px, transparent 1.5px) 0 0 / 9px 9px,
     linear-gradient(115deg, #1b2d5c 0%, #24305f 30%, #4a2650 62%, #5c2448 100%);
@@ -58,7 +60,7 @@
 }
 
 /* 団体名：ロゴと同じ「紺の文字に白とピンクの縁取り」 */
-.page[data-artist="miline-hearts"] .site-title {
+.page[data-artist-theme="hearts"] .site-title {
   padding: 0 0 4px 6px;
   background: none;
   color: #1d3f8f;
@@ -103,7 +105,7 @@
     0 6px 0 #f6b1cb;
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .site-title {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .site-title {
   color: #f4f6ff;
   text-shadow:
     1.5px 0 0 #1d3f8f,
@@ -146,7 +148,7 @@
 }
 
 /* ヘッダーを目立たせる：枠を太く、告知画像の斜めの光、カードの右にレースのハート */
-.page[data-artist="miline-hearts"] .hero {
+.page[data-artist-theme="hearts"] .hero {
   padding: 20px;
   background:
     repeating-conic-gradient(from 0deg at 0% 100%, rgb(255 255 255 / 38%) 0 4deg, transparent 4deg 10deg),
@@ -154,11 +156,11 @@
     var(--hero-bg);
 }
 
-.page[data-artist="miline-hearts"] .hero-card {
+.page[data-artist-theme="hearts"] .hero-card {
   isolation: isolate;
 }
 
-.page[data-artist="miline-hearts"] .hero-card::before {
+.page[data-artist-theme="hearts"] .hero-card::before {
   content: "";
   position: absolute;
   right: 20px;
@@ -173,11 +175,11 @@
 
 @media (width <= 640px) {
   /* 狭い画面では枠を細く（中身の幅を取りすぎないように。ほかのグループの 8px よりは少し太く） */
-  .page[data-artist="miline-hearts"] .hero {
+  .page[data-artist-theme="hearts"] .hero {
     padding: 12px;
   }
 
-  .page[data-artist="miline-hearts"] .hero-card::before {
+  .page[data-artist-theme="hearts"] .hero-card::before {
     right: 8px;
     width: 96px;
     height: 88px;
@@ -185,20 +187,20 @@
   }
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .hero {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .hero {
   background:
     repeating-conic-gradient(from 0deg at 0% 100%, rgb(255 255 255 / 7%) 0 4deg, transparent 4deg 10deg),
     var(--hero-stars),
     var(--hero-bg);
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .hero-card::before {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .hero-card::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'%3E%3Cg fill='none' stroke='%23e8508c' stroke-linecap='round'%3E%3Cpath stroke-width='6' stroke-dasharray='0 9' d='M60 100S10 68 10 36A24 24 0 0 1 60 22a24 24 0 0 1 50 14c0 32-50 64-50 64z'/%3E%3Cpath stroke-width='2' d='M60 92S18 64 18 37A17 17 0 0 1 60 27a17 17 0 0 1 42 10c0 27-42 55-42 55z'/%3E%3C/g%3E%3C/svg%3E");
   opacity: 0.35;
 }
 
 /* ロゴの両脇（ハートと王冠）。太陽・月の色の代わりに */
-.page[data-artist="miline-hearts"] .brand .sun {
+.page[data-artist-theme="hearts"] .brand .motif-start {
   color: var(--accent);
 }
 
@@ -208,55 +210,55 @@
  * - 節目（通算 N 回目のイベントなど）のバッジ：ピンク
  * - 傾向の「1 曲目」のアイコン：ピンクのハート
  */
-.page[data-artist="miline-hearts"] .zone-early {
+.page[data-artist-theme="hearts"] .zone-early {
   background: linear-gradient(120deg, #e3f2fc 0%, #c6e6f8 100%);
   color: #1a5f8a;
 }
 
-.page[data-artist="miline-hearts"] .zone-middle {
+.page[data-artist-theme="hearts"] .zone-middle {
   background: linear-gradient(120deg, #fde7f0 0%, #f9cfe0 100%);
   color: #a3235a;
 }
 
-.page[data-artist="miline-hearts"] .zone-late {
+.page[data-artist-theme="hearts"] .zone-late {
   background:
     radial-gradient(circle, rgb(255 255 255 / 22%) 0 0.8px, transparent 1.2px) 0 0 / 7px 7px,
     linear-gradient(120deg, #1d3f8f 0%, #2d3a8c 100%);
   color: #fff;
 }
 
-.page[data-artist="miline-hearts"] .milestone-event-count,
-.page[data-artist="miline-hearts"] .milestone-total-songs,
-.page[data-artist="miline-hearts"] .milestone-debut-days {
+.page[data-artist-theme="hearts"] .milestone-event-count,
+.page[data-artist-theme="hearts"] .milestone-total-songs,
+.page[data-artist-theme="hearts"] .milestone-debut-days {
   background: linear-gradient(120deg, #fff0f6 0%, #fdd9e8 100%);
   color: #a3235a;
   border-color: #f6b6cf;
 }
 
-.page[data-artist="miline-hearts"] .rank-sun .rank-icon {
+.page[data-artist-theme="hearts"] .rank-first .rank-icon {
   color: var(--accent);
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .zone-early {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .zone-early {
   background: linear-gradient(120deg, #13314a 0%, #18405e 100%);
   color: #9fd3ff;
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .zone-middle {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .zone-middle {
   background: linear-gradient(120deg, #43202f 0%, #55253b 100%);
   color: #ffb3d2;
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .zone-late {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .zone-late {
   background:
     radial-gradient(circle, rgb(255 255 255 / 18%) 0 0.8px, transparent 1.2px) 0 0 / 7px 7px,
     linear-gradient(120deg, #1d3f8f 0%, #2b2f7a 100%);
   color: #fff;
 }
 
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .milestone-event-count,
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .milestone-total-songs,
-:root[data-theme="dark"] .page[data-artist="miline-hearts"] .milestone-debut-days {
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .milestone-event-count,
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .milestone-total-songs,
+:root[data-theme="dark"] .page[data-artist-theme="hearts"] .milestone-debut-days {
   background: linear-gradient(120deg, #4a2238 0%, #5c2448 100%);
   color: #ffd0e4;
   border-color: #6e3552;

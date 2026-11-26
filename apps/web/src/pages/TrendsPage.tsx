@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import type { Song, SongPosition } from "@lovely-memory/core/runtime";
 import { CostumesSection } from "../components/CostumesSection.tsx";
 import { MilestonesSection } from "../components/MilestonesSection.tsx";
-import { brandIcons } from "../components/Icons.tsx";
+import { themeIcons } from "../components/Icons.tsx";
 import { formatPercent } from "../format.ts";
 import { useArtistData } from "./ArtistLayout.tsx";
 import "./TrendsPage.css";
@@ -20,25 +20,25 @@ function SongLink({ song }: { song: Song }) {
 
 function PositionRanking({
   title,
-  icon,
+  position,
   positions,
   pick,
 }: {
   title: string;
-  /** 1 曲目は朝（太陽）、ラストは夜（月）。グループによっては別の飾り（brandIcons） */
-  icon: "sun" | "moon";
+  /** 1 曲目はテーマの先頭の飾り（太陽など）、ラストは末尾の飾り（月など） */
+  position: "first" | "last";
   positions: SongPosition[];
   pick: (p: SongPosition) => number;
 }) {
-  const [FirstIcon, LastIcon] = brandIcons(useArtistData().artist.id);
+  const [FirstIcon, LastIcon] = themeIcons(useArtistData().artist.theme);
   const ranked = positions
     .filter((p) => pick(p) > 0)
     .sort((a, b) => pick(b) - pick(a) || pick(b) / b.count - pick(a) / a.count)
     .slice(0, RANK_SIZE);
   return (
     <section className="trend-card">
-      <h3 className={`section-heading rank-heading rank-${icon}`}>
-        <span className="rank-icon">{icon === "sun" ? <FirstIcon /> : <LastIcon />}</span>
+      <h3 className={`section-heading rank-heading rank-${position}`}>
+        <span className="rank-icon">{position === "first" ? <FirstIcon /> : <LastIcon />}</span>
         {title}
       </h3>
       <ol className="rank-list">
@@ -72,8 +72,8 @@ export function TrendsPage() {
       <MilestonesSection />
 
       <div className="trend-grid">
-        <PositionRanking title="1 曲目" icon="sun" positions={patterns.positions} pick={(p) => p.opener} />
-        <PositionRanking title="ラスト" icon="moon" positions={patterns.positions} pick={(p) => p.closer} />
+        <PositionRanking title="1 曲目" position="first" positions={patterns.positions} pick={(p) => p.opener} />
+        <PositionRanking title="ラスト" position="last" positions={patterns.positions} pick={(p) => p.closer} />
       </div>
 
       <section className="song-section">

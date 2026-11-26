@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ARTIST_THEMES } from "./theme.ts";
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD");
 const hhmm = z.string().regex(/^\d{1,2}:\d{2}$/, "HH:MM");
@@ -50,6 +51,8 @@ export const ArtistConfig = z.object({
    * ビルド時に INCLUDE_DRAFTS=1 のときだけ含める
    */
   draft: z.boolean().optional(),
+  /** 見た目（サイトの配色・共有画像）。theme.ts。無ければ sun-moon（太陽と月） */
+  theme: z.enum(ARTIST_THEMES).default("sun-moon"),
   /**
    * 曲として扱わない収録曲（入場 SE・インスト・ボイスドラマなど）。Wikipedia・公式サイトから曲を取り込むときに足さない
    */

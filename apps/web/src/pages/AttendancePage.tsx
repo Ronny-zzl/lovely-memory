@@ -128,6 +128,7 @@ export function AttendancePage() {
   const card = useMemo<AttendanceCardData>(
     () => ({
       artistName: artist.name,
+      theme: artist.theme,
       subtitle: artist.subtitle,
       date: today,
       attended: past.length,

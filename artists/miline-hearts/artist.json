@@ -4,6 +4,7 @@
   "aliases": ["ミラインハーツ", "みらーつ"],
   "since": "2026-07-11",
   "draft": true,
+  "theme": "hearts",
   "ignoredTracks": ["Welcome to Mi'Line Hearts"],
   "members": [
     { "id": "natsu",  "name": "天ヶ瀬なつ", "colorName": "赤",   "color": "#E60033", "eventernoteId": 78286, "birthday": "2009-08-16" },

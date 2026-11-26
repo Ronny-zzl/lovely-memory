@@ -198,7 +198,11 @@ lovely-memory/
   - `apps/web/src/styles/`：全站共用（`tokens.css` 的变量・`base.css`・头部 `layout.css`・多个页面共用的部件），由 `main.tsx` 统一引入。
   - 只属于某个页面或组件的样式放在它的 `.tsx` 旁边（如 `pages/SongStatsPage.css`），由该 `.tsx` 引入；Vite 会按懒加载的页面拆分 CSS，`preload-route` 插件会把当前页面的 CSS 也提前插入。
   - 颜色・字号・圆角・阴影只能用 `tokens.css` 里的变量；间距只用 0・2・4・6・8・10・12・16・20・24・32・64px。由 stylelint（`.stylelintrc.json`，`pnpm lint` 的一部分）检查。
-  - 团体专属的主题：`themes.css` 在 `.page[data-artist="<id>"]`（团体的页面）和 `.artist-card[data-artist]`（首页的卡片）上覆盖 tokens 的变量，团体的页面打开时用 `:root:has(...)` 连 body 的背景一起换。页头左上角的装饰图标用 `Icons.tsx` 的 `brandIcons()` 切换。Mi'Line Hearts：天蓝→粉色的网点渐变＋白色爱心、海军蓝文字加粉色描边的团体名、爱心和皇冠。
+  - 团体的主题：`artist.json` 的 `theme`（`sun-moon`＝默认，太阳与月亮；`hearts`＝Mi'Line Hearts，天蓝→粉色的网点渐变＋白色爱心、海军蓝文字加粉色描边、爱心和皇冠）。定义在 `packages/core/src/theme.ts`：
+    - 网页：`themes.css` 在 `.page[data-artist-theme]`（团体的页面）和 `.artist-card[data-artist-theme]`（首页的卡片）上覆盖 tokens 的变量，团体的页面打开时用 `:root:has(...)` 连 body 的背景一起换。
+    - 装饰图标（logo 两侧、傾向的 1 曲目／ラスト）：`THEME_ICONS`（先头・末尾），网页用 `Icons.tsx` 的 `themeIcons()`。class 名用中性的 `motif-start`／`motif-end`、`rank-first`／`rank-last`。
+    - 分享图（OGP 卡片 `og/cards.ts`、参戦記録图 `attendance-card.ts`）：配色・背景装饰・大标题的样式・图标形状都取自 `SHARE_THEMES`／`SHARE_ICON_SHAPES`。
+    - 加新主题：`ARTIST_THEMES` 加名字 → `THEME_ICONS`・`SHARE_THEMES` 加一项 → `themes.css` 加一段。
   - 改动不应改变外观时，用 `pnpm visual shoot <目录>` 在改动前后各截一次图，再用 `pnpm visual compare <前> <后> <差异目录>` 逐像素比较（12 个页面 × 浅色/深色 × 手机/桌面）。
 - 页面代码按路由懒加载（`main.tsx` 的 `lazy`）；首次打开时先加载当前页面的代码再渲染，切换页面时在新页面加载完成之前保持显示旧页面。需要仓库变量 `CLOUDFLARE_PROJECT`、secret `CLOUDFLARE_API_TOKEN`（「Edit Cloudflare Workers」模板）・`CLOUDFLARE_ACCOUNT_ID`。
 - 普通路径路由（`createBrowserRouter`，路由表在 `src/routes.tsx`）。资源用绝对路径（`base: "/"`），网站必须放在域名根目录。

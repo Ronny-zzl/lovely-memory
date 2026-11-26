@@ -52,11 +52,11 @@
   height: 16px;
 }
 
-.brand .sun {
+.brand .motif-start {
   color: var(--sun-icon);
 }
 
-.brand .moon {
+.brand .motif-end {
   color: var(--accent-2);
 }
 

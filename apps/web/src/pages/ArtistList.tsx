@@ -29,11 +29,11 @@ export function ArtistList() {
             <ThemeSwitch />
           </div>
           <h1 className="site-title home-title">
-            <span className="sun">
+            <span className="motif-start">
               <SunIcon />
             </span>
             ラブリィメモリー
-            <span className="moon">
+            <span className="motif-end">
               <MoonIcon />
             </span>
           </h1>
@@ -81,7 +81,7 @@ function ArtistCard({ artist, data }: { artist: ArtistConfig; data?: ArtistData 
   const latestSongs = latest?.stages.reduce((n, st) => n + st.entries.length, 0);
 
   return (
-    <article className="artist-card" data-artist={artist.id}>
+    <article className="artist-card" data-artist-theme={artist.theme}>
       {/* グループのページ（/:artistId → 楽曲へ）。smoke テストはこのリンクからグループを見つける */}
       <Link to={base} className="artist-card-head">
         <span className="artist-card-name">{artist.name}</span>

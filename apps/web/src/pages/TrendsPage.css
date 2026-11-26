@@ -20,11 +20,11 @@
   height: 18px;
 }
 
-.rank-sun .rank-icon {
+.rank-first .rank-icon {
   color: var(--sun-icon);
 }
 
-.rank-moon .rank-icon {
+.rank-last .rank-icon {
   color: var(--accent-2);
 }
 

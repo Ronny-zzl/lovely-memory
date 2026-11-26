@@ -1,7 +1,7 @@
 /*
  * 共有カード（OGP 画像, 1200×630）の HTML。Chrome でスクリーンショットして PNG にする。
  * 見た目はサイト全体の画像（tools/og/og.html）と揃える：左が朝の光、右が夜空。
- * グループごとに見た目を変えるときは THEMES に足す（サイトの apps/web/src/styles/themes.css と揃える）。
+ * 色・飾りはグループのテーマ（artist.json の theme）ごとに @lovely-memory/core の SHARE_THEMES から作る。
  */
 import {
   creditParts,
@@ -23,6 +23,13 @@ import {
   type ResolvedEvent,
   type SongPosition,
   type SongStats,
+  LACE_HEART_PATHS,
+  SHARE_ICON_SHAPES,
+  SHARE_THEMES,
+  THEME_ICONS,
+  type ArtistTheme,
+  type MotifIcon,
+  type ShareTheme,
 } from "@lovely-memory/core";
 
 /** メンバーの色の点。白に近い色は白いカードの上で見えないので縁を付ける */
@@ -31,12 +38,14 @@ const dotCss = (color: string | undefined) =>
 
 export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-const SUN = `<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.4" fill="currentColor"/><g stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><line x1="8" y1="1" x2="8" y2="2.8"/><line x1="8" y1="13.2" x2="8" y2="15"/><line x1="1" y1="8" x2="2.8" y2="8"/><line x1="13.2" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.3" y2="4.3"/><line x1="11.7" y1="11.7" x2="12.95" y2="12.95"/><line x1="3.05" y1="12.95" x2="4.3" y2="11.7"/><line x1="11.7" y1="4.3" x2="12.95" y2="3.05"/></g></svg>`;
-const MOON = `<svg viewBox="0 0 16 16"><path d="M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z" fill="currentColor"/></svg>`;
-
-const HEART_PATH = "M8 14s-5.2-3.2-6.4-6.4A3.4 3.4 0 0 1 8 4.4a3.4 3.4 0 0 1 6.4 3.2C13.2 10.8 8 14 8 14Z";
-const HEART = `<svg viewBox="0 0 16 16"><path d="${HEART_PATH}" fill="currentColor"/></svg>`;
-const CROWN = `<svg viewBox="0 0 16 16"><path d="M2 5.2l3.2 2.6L8 3.4l2.8 4.4L14 5.2l-1.3 6.6H3.3Z" fill="currentColor"/><rect x="3.3" y="12.6" width="9.4" height="1.6" rx=".8" fill="currentColor"/></svg>`;
+/** 飾り（太陽・月・ハート・王冠）の SVG。形は @lovely-memory/core の SHARE_ICON_SHAPES */
+function iconSvg(name: MotifIcon): string {
+  const { paths, rays } = SHARE_ICON_SHAPES[name];
+  const lines = rays
+    ? `<g stroke="currentColor" stroke-width="1.1" stroke-linecap="round">${rays.map(([x1, y1, x2, y2]) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`).join("")}</g>`
+    : "";
+  return `<svg viewBox="0 0 16 16">${paths.map((d) => `<path d="${d}" fill="currentColor"/>`).join("")}${lines}</svg>`;
+}
 
 /** 文字の縁取り（text-shadow を円周に並べる）。内側から順に [太さ, 色] */
 function outline(rings: Array<[number, string]>, drop: string): string {
@@ -50,9 +59,11 @@ function outline(rings: Array<[number, string]>, drop: string): string {
   return [...parts, drop].join(",");
 }
 
+const svgUrl = (svg: string) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+
 /** 散らしたハート（背景に敷き詰める 1 枚分） */
 const heartsTile = (color: string, opacities: number[]) =>
-  `url("data:image/svg+xml,${encodeURIComponent(
+  svgUrl(
     `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='96' viewBox='0 0 160 96'><g fill='${color}'>${[
       [18, 14, 0.75, -12],
       [104, 8, 0.5, 14],
@@ -61,55 +72,74 @@ const heartsTile = (color: string, opacities: number[]) =>
     ]
       .map(
         ([x, y, k, r], i) =>
-          `<path opacity='${opacities[i]}' transform='translate(${x} ${y}) scale(${k! * 1.5}) rotate(${r} 8 8)' d='${HEART_PATH}'/>`,
+          `<path opacity='${opacities[i]}' transform='translate(${x} ${y}) scale(${k! * 1.5}) rotate(${r} 8 8)' d='${SHARE_ICON_SHAPES.heart.paths[0]}'/>`,
       )
       .join("")}</g></svg>`,
-  )}")`;
+  );
 
 /** レースのハート（ロゴの意匠） */
 const laceHeart = (color: string) =>
-  `url("data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'><g fill='none' stroke='${color}' stroke-linecap='round'><path stroke-width='6' stroke-dasharray='0 9' d='M60 100S10 68 10 36A24 24 0 0 1 60 22a24 24 0 0 1 50 14c0 32-50 64-50 64z'/><path stroke-width='2' d='M60 92S18 64 18 37A17 17 0 0 1 60 27a17 17 0 0 1 42 10c0 27-42 55-42 55z'/></g></svg>`,
-  )}")`;
+  svgUrl(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'><g fill='none' stroke='${color}' stroke-linecap='round'><path stroke-width='6' stroke-dasharray='0 9' d='${LACE_HEART_PATHS[0]}'/><path stroke-width='2' d='${LACE_HEART_PATHS[1]}'/></g></svg>`,
+  );
 
-type Theme = { icons: [string, string]; css: string };
+const stopsCss = (stops: Array<[number, string]>) => stops.map(([o, c]) => `${c} ${Math.round(o * 100)}%`).join(", ");
 
-/** グループごとの見た目。無いグループは太陽と月（CSS のまま） */
-const THEMES: Record<string, Theme> = {
-  // Mi'Line Hearts：ロゴ・告知画像の「空色とピンクの斜めの光（網点つき）に白いハート」、紺の文字にピンクの縁取り
-  "miline-hearts": {
-    icons: [HEART, CROWN],
-    css: `
-body { color: #22263f; background:
+/** テーマ（@lovely-memory/core の SHARE_THEMES）の色・飾りの CSS */
+function themeCss(t: ShareTheme): string {
+  const bg = `linear-gradient(${t.background.angle}deg, ${stopsCss(t.background.stops)})`;
+  const deco =
+    t.decoration === "stars"
+      ? `body { background: ${bg}; }
+.stars { opacity: .9; background:
+  radial-gradient(circle at 68% 6%, #fff 0 1.6px, transparent 2.4px),
+  radial-gradient(circle at 81% 95%, #fffbe6 0 1.8px, transparent 2.6px),
+  radial-gradient(circle at 97% 40%, #fff 0 1.2px, transparent 2px),
+  radial-gradient(circle at 63% 96%, #fffbe6 0 1.2px, transparent 2px),
+  radial-gradient(circle at 92% 4%, #fff 0 1.2px, transparent 2px); }`
+      : `body { background:
   radial-gradient(circle, rgb(255 255 255 / .55) 0 1.8px, transparent 2.4px) 0 0 / 15px 15px,
-  linear-gradient(115deg, #bfe3f7 0%, #d9ecfa 30%, #f9d3e3 62%, #f6b6cf 100%); }
+  ${bg}; }
 .stars { opacity: 1; background:
   repeating-conic-gradient(from 0deg at 0% 100%, rgb(255 255 255 / .38) 0 4deg, transparent 4deg 10deg),
-  ${heartsTile("#fff", [0.85, 0.7, 0.9, 0.6])} 0 0 / 280px 168px; }
-.card { z-index: 0; box-shadow: 0 18px 50px rgb(40 50 110 / .18); }
-.card::after { content: ""; position: absolute; top: 26px; right: 34px; width: 150px; height: 138px; transform: rotate(8deg); z-index: -1;
-  background: ${laceHeart("#f4a3c4")} center / contain no-repeat; opacity: .5; pointer-events: none; }
-.footer { color: #1d3f8f; text-shadow: ${outline([[2, "#fff"]], "0 2px 8px rgb(255 255 255 / .8)")}; }
-.footer .sun { color: #e8508c; filter: drop-shadow(0 0 4px #fff); }
-.footer .moon { color: #1d3f8f; filter: drop-shadow(0 0 4px #fff); }
-.group, .ev-date, .credit b { color: #1d3f8f; }
-.group small { color: #8f84a8; }
-.song-title { background: none; color: #1d3f8f; padding-left: 10px;
-  text-shadow: ${outline(
-    [
-      [3, "#fff"],
-      [6, "#f27aa9"],
-      [9, "#f27aa9"],
-    ],
-    "0 12px 0 #f6b1cb",
-  )}; }
+  ${heartsTile("#fff", [0.85, 0.7, 0.9, 0.6])} 0 0 / 280px 168px; }`;
+  const h = t.heading;
+  const heading =
+    h.kind === "gradient"
+      ? `.song-title { background: linear-gradient(90deg, ${stopsCss(h.stops)}); -webkit-background-clip: text; background-clip: text; color: transparent; }`
+      : `.song-title { color: ${h.fill}; padding-left: 10px; text-shadow: ${outline(h.rings, `0 ${h.drop[0]}px 0 ${h.drop[1]}`)}; }`;
+  const icon = (i: ShareTheme["icons"][number]) =>
+    `color: ${i.color};${i.glow ? ` filter: drop-shadow(0 0 ${i.glowBlur ?? 0}px ${i.glow});` : ""}`;
+  const f = t.footer;
+  const footerShadow = `0 ${f.shadowY}px ${f.shadowBlur}px ${f.shadow}`;
+  return `
+${deco}
+.card { box-shadow: 0 18px 50px ${t.cardShadow};${t.lace ? " z-index: 0;" : ""} }
+${
+  t.lace
+    ? `.card::after { content: ""; position: absolute; top: 26px; right: 34px; width: 150px; height: 138px; transform: rotate(8deg); z-index: -1;
+  background: ${laceHeart(t.lace)} center / contain no-repeat; opacity: .5; pointer-events: none; }`
+    : ""
+}
+.footer { color: ${f.color}; text-shadow: ${f.outline ? outline([[2, f.outline]], footerShadow) : footerShadow}; }
+.footer .motif-start { ${icon(t.icons[0])} }
+.footer .motif-end { ${icon(t.icons[1])} }
+.group, .ev-date, .credit b { color: ${t.ink}; }
+.group small { color: ${t.inkSoft}; }
+${heading}
+.setlist .debut, .setlist .stage { color: ${t.accent}; }
+`;
+}
+
+/** テーマごとに、共通の色（themeCss）のほかに変えるところ */
+const THEME_EXTRA_CSS: Partial<Record<ArtistTheme, string>> = {
+  hearts: `
+body { color: #22263f; }
 .stat { background: #f7f2fa; }
 .badge.role, .badge.ms { background: #fde4ef; color: #b8245f; }
 .badge.tieup { background: #e0f1fb; color: #1a5f8a; }
-.setlist .debut, .setlist .stage { color: #d23a78; }
 .setlist .ms { color: #1a5f8a; }
 `,
-  },
 };
 
 const CSS = `
@@ -119,34 +149,25 @@ body {
   position: relative;
   font-family: "M PLUS Rounded 1c", sans-serif;
   color: #26222f;
-  background: linear-gradient(105deg, #fff5d6 0%, #ffdca6 24%, #f7ae78 42%, #b4688f 50%, #5a4589 58%, #2f2c6c 74%, #1b1f4d 100%);
 }
-.stars { position: absolute; inset: 0; opacity: .9; background:
-  radial-gradient(circle at 68% 6%, #fff 0 1.6px, transparent 2.4px),
-  radial-gradient(circle at 81% 95%, #fffbe6 0 1.8px, transparent 2.6px),
-  radial-gradient(circle at 97% 40%, #fff 0 1.2px, transparent 2px),
-  radial-gradient(circle at 63% 96%, #fffbe6 0 1.2px, transparent 2px),
-  radial-gradient(circle at 92% 4%, #fff 0 1.2px, transparent 2px); }
+.stars { position: absolute; inset: 0; }
 .card {
   position: absolute; left: 48px; right: 48px; top: 40px; bottom: 92px;
   padding: 36px 48px 32px;
   border-radius: 32px;
   background: rgb(255 255 255 / .94);
-  box-shadow: 0 18px 50px rgb(30 20 60 / .25);
   display: flex; flex-direction: column;
 }
 .footer {
   position: absolute; left: 0; right: 0; bottom: 22px; height: 50px;
   display: flex; align-items: center; justify-content: space-between; padding: 0 56px;
-  font-weight: 800; color: #fff; text-shadow: 0 1px 6px rgb(30 20 60 / .45);
+  font-weight: 800;
 }
 .footer .brand { display: flex; align-items: center; gap: 12px; font-size: 30px; }
 .footer .brand svg { width: 36px; height: 36px; }
-.footer .sun { color: #f39a1e; filter: drop-shadow(0 0 10px rgb(255 190 80 / .9)); }
-.footer .moon { color: #ffe7a6; }
 .footer .host { font-size: 24px; font-weight: 500; opacity: .9; }
-.group { flex-shrink: 0; font-size: 24px; font-weight: 800; color: #4a3f7a; }
-.group small { font-size: 19px; font-weight: 500; color: #8a7fa8; margin-left: 8px; }
+.group { flex-shrink: 0; font-size: 24px; font-weight: 800; }
+.group small { font-size: 19px; font-weight: 500; margin-left: 8px; }
 .fit { overflow: hidden; }
 .badges { flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .badge { font-size: 22px; font-weight: 800; padding: 3px 14px; border-radius: 8px; background: #e8e6f3; color: #3d4b8f; }
@@ -163,14 +184,13 @@ body {
 .unit-moon svg { color: #ffe39a; }
 .muted { color: #7a7488; }
 /* 曲 */
-.song-title { flex-shrink: 0; margin: 6px 0 8px; height: 108px; display: flex; align-items: center; font-size: 92px; font-weight: 800; line-height: 1.15; white-space: nowrap;
-  background: linear-gradient(90deg, #e98a1f 0%, #d9658a 55%, #4b3f9a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.song-title { flex-shrink: 0; margin: 6px 0 8px; height: 108px; display: flex; align-items: center; font-size: 92px; font-weight: 800; line-height: 1.15; white-space: nowrap; }
 /* 作詞・作曲・編曲。長いもの（作曲者が 5 人など）は 2 行まで折り返し、それでも入らなければ .fit で小さくし、最後は … で切る */
 .credit { flex-shrink: 0; margin: 0 0 12px; font-size: 24px; line-height: 1.35; max-height: 2.7em; overflow: hidden; color: #7a7488;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; }
 .credit .cr { margin-right: 1.1em; }
 .credit .cr:last-child { margin-right: 0; }
-.credit b { font-weight: 800; color: #4a3f7a; }
+.credit b { font-weight: 800; }
 .stats { flex-shrink: 0; margin-top: auto; display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 16px; }
 .stat { padding: 14px 18px; border-radius: 16px; background: #f6f3fb; }
 .stat .v { font-size: 46px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
@@ -180,7 +200,7 @@ body {
 .note { flex-shrink: 0; margin-top: 10px; font-size: 22px; color: #5b5470; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .note span + span { margin-left: 1.2em; }
 /* イベント */
-.ev-date { font-size: 26px; font-weight: 800; color: #4a3f7a; display: flex; gap: 14px; align-items: baseline; white-space: nowrap; overflow: hidden; }
+.ev-date { font-size: 26px; font-weight: 800; display: flex; gap: 14px; align-items: baseline; white-space: nowrap; overflow: hidden; }
 .ev-date .venue { font-size: 22px; font-weight: 500; color: #7a7488; overflow: hidden; text-overflow: ellipsis; }
 .ev-title { margin: 6px 0 10px; height: 92px; font-size: 40px; font-weight: 800; line-height: 1.15; display: flex; align-items: center; }
 .ev-meta { display: flex; gap: 16px; align-items: center; }
@@ -193,8 +213,8 @@ body {
 .setlist .mdots { display: inline-flex; gap: 4px; margin-left: 8px; flex-shrink: 0; align-self: center; }
 .setlist .mdots span { width: .5em; height: .5em; border-radius: 50%; }
 .setlist .no { flex-shrink: 0; width: 2.4em; color: #9a93ab; font-size: .8em; font-weight: 500; }
-.setlist .debut { flex-shrink: 0; color: #d4741c; font-size: .7em; font-weight: 800; margin-left: 6px; }
-.setlist .stage { font-weight: 800; color: #d4741c; font-size: .82em; }
+.setlist .debut { flex-shrink: 0; font-size: .7em; font-weight: 800; margin-left: 6px; }
+.setlist .stage { font-weight: 800; font-size: .82em; }
 .setlist .ms { flex-shrink: 0; color: #b0306a; font-size: .7em; font-weight: 800; margin-left: 6px; }
 .ev-meta { flex-wrap: wrap; row-gap: 8px; }
 .badge.ms { background: #fde4cc; color: #9a4a0b; }
@@ -217,14 +237,14 @@ for (const el of document.querySelectorAll(".fit")) {
 `;
 
 function page(artist: ArtistConfig, body: string, host: string | undefined): string {
-  const theme = THEMES[artist.id];
-  const [left, right] = theme?.icons ?? [SUN, MOON];
+  const theme = SHARE_THEMES[artist.theme];
+  const [start, end] = THEME_ICONS[artist.theme];
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=block" rel="stylesheet">
-<style>${CSS}${theme?.css ?? ""}</style></head><body>
+<style>${CSS}${themeCss(theme)}${THEME_EXTRA_CSS[artist.theme] ?? ""}</style></head><body>
 <div class="stars"></div>
 <div class="card">${body}</div>
-<div class="footer"><span class="brand"><span class="sun">${left}</span>ラブリィメモリー<span class="moon">${right}</span></span>${host ? `<span class="host">${esc(host)}</span>` : ""}</div>
+<div class="footer"><span class="brand"><span class="motif-start">${iconSvg(start)}</span>ラブリィメモリー<span class="motif-end">${iconSvg(end)}</span></span>${host ? `<span class="host">${esc(host)}</span>` : ""}</div>
 <script>window.__fit = () => { ${FIT_SCRIPT} };</script>
 </body></html>`;
 }
@@ -247,7 +267,7 @@ export function songCard(
     era && `<span class="badge era-${esc(era.id)}">${esc(era.label)}</span>`,
     unit &&
       (unit.motif
-        ? `<span class="unit unit-${unit.motif}">${unit.motif === "sun" ? SUN : MOON}${esc(unit.label)}</span>`
+        ? `<span class="unit unit-${unit.motif}">${iconSvg(unit.motif)}${esc(unit.label)}</span>`
         : `<span class="badge">${esc(unit.label)}</span>`),
     ...tieupLabels(song.tieups).map((l) => `<span class="badge tieup">${esc(l)}</span>`),
     role && `<span class="badge role">${POSITION_ROLE_LABEL[role]}</span>`,

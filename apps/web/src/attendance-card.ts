@@ -1,14 +1,25 @@
 /*
  * 「参戦記録」のシェア画像（1200×675、X の 1 枚画像で切れない 16:9）をブラウザで描く。
  * 記録はブラウザにしか無いので、サーバーではなくここで作る。
- * 見た目はサイトの共有カード（左が朝の光、右が夜空）に揃える。
+ * 見た目はサイトの共有カード（OGP）に揃える。色・飾りはグループのテーマ（@lovely-memory/core の SHARE_THEMES）から。
  */
+import {
+  LACE_HEART_PATHS,
+  SHARE_ICON_SHAPES,
+  SHARE_THEMES,
+  THEME_ICONS,
+  type ArtistTheme,
+  type MotifIcon,
+  type ShareTheme,
+} from "@lovely-memory/core/runtime";
 
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 675;
 
 export type AttendanceCardData = {
   artistName: string;
+  /** グループのテーマ（色・飾り） */
+  theme: ArtistTheme;
   subtitle?: string;
   /** YYYY-MM-DD（いつ時点の記録か） */
   date: string;
@@ -25,19 +36,6 @@ export type AttendanceCardData = {
 };
 
 const FONT = '"M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif';
-const SUN = "M8 4.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 1 0 0-6.8Z";
-const SUN_RAYS: Array<[number, number, number, number]> = [
-  [8, 1, 8, 2.8],
-  [8, 13.2, 8, 15],
-  [1, 8, 2.8, 8],
-  [13.2, 8, 15, 8],
-  [3.05, 3.05, 4.3, 4.3],
-  [11.7, 11.7, 12.95, 12.95],
-  [3.05, 12.95, 4.3, 11.7],
-  [11.7, 4.3, 12.95, 3.05],
-];
-const MOON = "M10.2 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.2 2.2Z";
-
 /**
  * カードに描く文字をすべて集める。見えないキャンバスに一度描いて、fillText・measureText に渡った文字列を記録する
  * （手で文字の一覧を持つと漏れが出て、その字だけ別のフォントで描かれてしまうため）
@@ -94,27 +92,140 @@ function fit(ctx: CanvasRenderingContext2D, text: string, width: number): string
   return t + "…";
 }
 
-function icon(ctx: CanvasRenderingContext2D, kind: "sun" | "moon", x: number, y: number, size: number) {
+/** 飾り（太陽・月・ハート・王冠）を描く。形は SHARE_ICON_SHAPES（16×16）、色はテーマから */
+function icon(ctx: CanvasRenderingContext2D, name: MotifIcon, style: ShareTheme["icons"][number], x: number, y: number, size: number) {
+  const { paths, rays } = SHARE_ICON_SHAPES[name];
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(size / 16, size / 16);
-  if (kind === "sun") {
-    ctx.fillStyle = ctx.strokeStyle = "#f39a1e";
-    ctx.shadowColor = "rgba(255,190,80,.9)";
-    ctx.shadowBlur = 10;
-    ctx.fill(new Path2D(SUN));
+  ctx.fillStyle = ctx.strokeStyle = style.color;
+  if (style.glow) {
+    ctx.shadowColor = style.glow;
+    ctx.shadowBlur = style.glowBlur ?? 0;
+  }
+  for (const d of paths) ctx.fill(new Path2D(d));
+  if (rays) {
     ctx.lineWidth = 1.1;
     ctx.lineCap = "round";
-    for (const [x1, y1, x2, y2] of SUN_RAYS) {
+    for (const [x1, y1, x2, y2] of rays) {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
     }
-  } else {
-    ctx.fillStyle = "#ffe7a6";
-    ctx.fill(new Path2D(MOON));
   }
+  ctx.restore();
+}
+
+/** 背景の飾り：星、または網点・斜めの光・ハート（OGP の .stars と同じ配置） */
+function decorate(ctx: CanvasRenderingContext2D, t: ShareTheme, W: number, H: number) {
+  if (t.decoration === "stars") {
+    ctx.fillStyle = "rgba(255,255,255,.85)";
+    for (const [x, y, r] of [
+      [0.68, 0.05, 1.8],
+      [0.81, 0.96, 2],
+      [0.97, 0.4, 1.4],
+      [0.63, 0.97, 1.4],
+      [0.92, 0.04, 1.4],
+    ] as const) {
+      ctx.beginPath();
+      ctx.arc(W * x, H * y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return;
+  }
+  // 網点
+  ctx.fillStyle = "rgba(255,255,255,.55)";
+  for (let y = 7.5; y < H; y += 15)
+    for (let x = 7.5; x < W; x += 15) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  // 左下から広がる斜めの光（4° の光と 6° のすき間を繰り返す）
+  ctx.fillStyle = "rgba(255,255,255,.38)";
+  for (let a = 0; a < 90; a += 10) {
+    const from = ((a - 90) * Math.PI) / 180;
+    const to = ((a + 4 - 90) * Math.PI) / 180;
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    ctx.arc(0, H, W * 2, from, to);
+    ctx.closePath();
+    ctx.fill();
+  }
+  // ハート（OGP と同じ 280×168 の繰り返し）
+  const heart = new Path2D(SHARE_ICON_SHAPES.heart.paths[0]);
+  const k = 280 / 160;
+  const hearts: Array<[number, number, number, number, number]> = [
+    [18, 14, 0.75, -12, 0.85],
+    [104, 8, 0.5, 14, 0.7],
+    [130, 54, 0.9, 10, 0.9],
+    [62, 60, 0.45, -8, 0.6],
+  ];
+  ctx.fillStyle = "#fff";
+  for (let ty = 0; ty < H; ty += 168)
+    for (let tx = 0; tx < W; tx += 280)
+      for (const [x, y, s, r, op] of hearts) {
+        ctx.save();
+        ctx.globalAlpha = op;
+        ctx.translate(tx + x * k, ty + y * k);
+        ctx.scale(k * s * 1.5, k * s * 1.5);
+        ctx.translate(8, 8);
+        ctx.rotate((r * Math.PI) / 180);
+        ctx.translate(-8, -8);
+        ctx.fill(heart);
+        ctx.restore();
+      }
+}
+
+/** カードの右上のレースのハート */
+function laceHeart(ctx: CanvasRenderingContext2D, color: string, right: number, top: number) {
+  const w = 150;
+  const h = 138;
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.translate(right - w / 2, top + h / 2);
+  ctx.rotate((8 * Math.PI) / 180);
+  ctx.scale(w / 120, h / 110);
+  ctx.translate(-60, -55);
+  ctx.strokeStyle = color;
+  ctx.lineCap = "round";
+  ctx.lineWidth = 6;
+  ctx.setLineDash([0, 9]);
+  ctx.stroke(new Path2D(LACE_HEART_PATHS[0]));
+  ctx.lineWidth = 2;
+  ctx.setLineDash([]);
+  ctx.stroke(new Path2D(LACE_HEART_PATHS[1]));
+  ctx.restore();
+}
+
+/** 大見出し：グラデーションの文字、または縁取りの文字（縁の太さは 92px の見出しを基準に、大きさに合わせる） */
+function heading(ctx: CanvasRenderingContext2D, t: ShareTheme, text: string, x: number, y: number, size: number) {
+  const h = t.heading;
+  if (h.kind === "gradient") {
+    const tw = ctx.measureText(text).width;
+    const g = ctx.createLinearGradient(x, 0, x + tw, 0);
+    for (const [o, c] of h.stops) g.addColorStop(o, c);
+    ctx.fillStyle = g;
+    ctx.fillText(text, x, y);
+    return;
+  }
+  const k = size / 92;
+  const rings = [...h.rings].reverse();
+  ctx.save();
+  ctx.lineJoin = "round";
+  const outer = rings[0]!;
+  ctx.strokeStyle = ctx.fillStyle = h.drop[1];
+  ctx.lineWidth = outer[0] * 2 * k;
+  ctx.strokeText(text, x, y + h.drop[0] * k);
+  ctx.fillText(text, x, y + h.drop[0] * k);
+  for (const [r, c] of rings) {
+    ctx.strokeStyle = c;
+    ctx.lineWidth = r * 2 * k;
+    ctx.strokeText(text, x, y);
+  }
+  ctx.fillStyle = h.fill;
+  ctx.fillText(text, x, y);
   ctx.restore();
 }
 
@@ -125,33 +236,15 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   const W = CARD_WIDTH;
   const H = CARD_HEIGHT;
 
-  // 背景：朝の光 → 夕暮れ → 夜空
+  const t = SHARE_THEMES[d.theme];
+  const [startIcon, endIcon] = THEME_ICONS[d.theme];
+
+  // 背景（sun-moon なら朝の光 → 夕暮れ → 夜空）
   const bg = ctx.createLinearGradient(0, H * 0.2, W, H * 0.8);
-  for (const [o, c] of [
-    [0, "#fff5d6"],
-    [0.24, "#ffdca6"],
-    [0.42, "#f7ae78"],
-    [0.5, "#b4688f"],
-    [0.58, "#5a4589"],
-    [0.74, "#2f2c6c"],
-    [1, "#1b1f4d"],
-  ] as const) {
-    bg.addColorStop(o, c);
-  }
+  for (const [o, c] of t.background.stops) bg.addColorStop(o, c);
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = "rgba(255,255,255,.85)";
-  for (const [x, y, r] of [
-    [0.68, 0.05, 1.8],
-    [0.81, 0.96, 2],
-    [0.97, 0.4, 1.4],
-    [0.63, 0.97, 1.4],
-    [0.92, 0.04, 1.4],
-  ] as const) {
-    ctx.beginPath();
-    ctx.arc(W * x, H * y, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  decorate(ctx, t, W, H);
 
   // カード
   const cx = 48,
@@ -159,13 +252,14 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
     cw = W - 96,
     ch = H - 40 - 96;
   ctx.save();
-  ctx.shadowColor = "rgba(30,20,60,.25)";
+  ctx.shadowColor = t.cardShadow;
   ctx.shadowBlur = 50;
   ctx.shadowOffsetY = 18;
   ctx.fillStyle = "rgba(255,255,255,.95)";
   roundRect(ctx, cx, cy, cw, ch, 32);
   ctx.fill();
   ctx.restore();
+  if (t.lace) laceHeart(ctx, t.lace, cx + cw - 34, cy + 26);
 
   const px = cx + 48;
   const inner = cw - 96;
@@ -173,12 +267,12 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
 
   // グループ名・日付
   ctx.font = `800 26px ${FONT}`;
-  ctx.fillStyle = "#4a3f7a";
+  ctx.fillStyle = t.ink;
   ctx.fillText(d.artistName, px, cy + 70);
   if (d.subtitle) {
     const w = ctx.measureText(d.artistName).width;
     ctx.font = `500 20px ${FONT}`;
-    ctx.fillStyle = "#8a7fa8";
+    ctx.fillStyle = t.inkSoft;
     ctx.fillText(d.subtitle, px + w + 10, cy + 70);
   }
   ctx.font = `500 22px ${FONT}`;
@@ -189,14 +283,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
 
   // 見出し「参戦記録」
   ctx.font = `800 76px ${FONT}`;
-  const title = "参戦記録";
-  const tw = ctx.measureText(title).width;
-  const tg = ctx.createLinearGradient(px, 0, px + tw, 0);
-  tg.addColorStop(0, "#e98a1f");
-  tg.addColorStop(0.55, "#d9658a");
-  tg.addColorStop(1, "#4b3f9a");
-  ctx.fillStyle = tg;
-  ctx.fillText(title, px, cy + 160);
+  heading(ctx, t, "参戦記録", px, cy + 160, 76);
 
   // 数字 3 つ
   const gap = 20;
@@ -211,7 +298,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   boxes.forEach(([value, unit, label], i) => {
     const bx = px + i * (bw + gap);
     // 背景の夜空が透けても見分けがつくよう、半透明の色を重ねる
-    ctx.fillStyle = "rgba(90, 69, 137, 0.08)";
+    ctx.fillStyle = t.boxFill;
     roundRect(ctx, bx, by, bw, bh, 18);
     ctx.fill();
     ctx.font = `800 64px ${FONT}`;
@@ -229,7 +316,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   const ly = by + bh + 42;
   const split = px + inner * 0.62;
   ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = "#d4741c";
+  ctx.fillStyle = t.accent;
   ctx.fillText("よく聴いた曲", px, ly);
   d.topSongs.slice(0, 3).forEach((s, i) => {
     const y = ly + 40 + i * 38;
@@ -249,7 +336,7 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
   });
 
   ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = "#d4741c";
+  ctx.fillStyle = t.accent;
   ctx.fillText("初参戦", split, ly);
   ctx.font = `800 34px ${FONT}`;
   ctx.fillStyle = "#26222f";
@@ -261,19 +348,28 @@ export function drawAttendanceCard(canvas: HTMLCanvasElement, d: AttendanceCardD
 
   // フッター
   const fy = H - 46;
-  icon(ctx, "sun", 56, fy - 20, 36);
+  icon(ctx, startIcon, t.icons[0], 56, fy - 20, 36);
   ctx.font = `800 30px ${FONT}`;
-  ctx.fillStyle = "#fff";
-  ctx.shadowColor = "rgba(30,20,60,.45)";
-  ctx.shadowBlur = 6;
+  ctx.fillStyle = t.footer.color;
+  ctx.shadowColor = t.footer.shadow;
+  ctx.shadowBlur = t.footer.shadowBlur;
   const brand = "ラブリィメモリー";
+  if (t.footer.outline) {
+    ctx.save();
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = t.footer.outline;
+    ctx.strokeText(brand, 104, fy + 10);
+    ctx.restore();
+    ctx.shadowBlur = 0;
+  }
   ctx.fillText(brand, 104, fy + 10);
   const bwid = ctx.measureText(brand).width;
   ctx.shadowBlur = 0;
-  icon(ctx, "moon", 104 + bwid + 12, fy - 18, 32);
+  icon(ctx, endIcon, t.icons[1], 104 + bwid + 12, fy - 18, 32);
   ctx.font = `500 24px ${FONT}`;
   ctx.textAlign = "right";
-  ctx.fillStyle = "rgba(255,255,255,.92)";
+  ctx.fillStyle = t.footer.hostColor;
   ctx.fillText(d.host, W - 56, fy + 10);
   ctx.textAlign = "left";
 }
