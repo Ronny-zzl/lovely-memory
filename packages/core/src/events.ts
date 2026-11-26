@@ -36,6 +36,13 @@ function sortTypes(types: Iterable<EventType>): EventType[] {
 }
 
 /** タイトルにマッチしたルールの種別をすべて返す（重複なし）。無ければ defaultEventType */
+/**
+ * eventernote のイベント名の先頭に付く、告知を更新した印（【出演者変更】【時間変更】【振替】など）。
+ * 主催者側の告知の都合で、グループには関係ないので表示しない
+ */
+const NOTICE_PREFIX = /^(?:[【［[](?:[^】］\]]*変更|振替(?:公演|開催)?|情報更新|重要)[】］\]][\s　]*)+/;
+export const stripNoticePrefix = (title: string) => title.replace(NOTICE_PREFIX, "") || title;
+
 export function inferEventTypes(title: string, artist: ArtistConfig): EventType[] {
   const types = artist.eventTypeRules
     .filter((r) => new RegExp(r.pattern, "i").test(title))
@@ -103,6 +110,7 @@ export function resolveEvents(events: Event[], overrides: Overrides, artist: Art
 
     out.push({
       ...ev,
+      title: stripNoticePrefix(ev.title),
       types: sortTypes(ovTypes ?? ev.types ?? inferEventTypes(ev.title, artist)),
       members,
       membersSource,

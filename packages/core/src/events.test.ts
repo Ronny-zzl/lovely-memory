@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { eventHasType, inferEventTypes, isLiveEvent, membersOn, memberStatus, orderMembers, resolveEvents } from "./events.ts";
+import {
+  eventHasType,
+  inferEventTypes,
+  isLiveEvent,
+  membersOn,
+  memberStatus,
+  orderMembers,
+  resolveEvents,
+  stripNoticePrefix,
+} from "./events.ts";
 import { ArtistConfig, Overrides, type Event } from "./schema.ts";
 
 const artist = ArtistConfig.parse({
@@ -153,5 +162,23 @@ describe("memberStatus", () => {
     const ms = [{ id: "a" }, { id: "b", until: "2026-11-29" }, { id: "c" }];
     expect(orderMembers(ms, "2026-11-29").map((m) => m.id)).toEqual(["a", "b", "c"]);
     expect(orderMembers(ms, "2026-11-30").map((m) => m.id)).toEqual(["a", "c", "b"]);
+  });
+});
+
+describe("stripNoticePrefix", () => {
+  it("removes notice-update tags that are not about the group", () => {
+    expect(stripNoticePrefix("【出演者変更】NAGANO ANIERA FESTA 2026 DAY1")).toBe("NAGANO ANIERA FESTA 2026 DAY1");
+    expect(stripNoticePrefix("【時間変更】前橋ウィッチーズ ミニアルバムリリースイベント")).toBe(
+      "前橋ウィッチーズ ミニアルバムリリースイベント",
+    );
+    expect(stripNoticePrefix("【振替】『前橋ウィッチーズ』新里アズ バースデーイベント 昼の部")).toBe(
+      "『前橋ウィッチーズ』新里アズ バースデーイベント 昼の部",
+    );
+    expect(stripNoticePrefix("【会場変更】【重要】ライブ")).toBe("ライブ");
+  });
+
+  it("keeps other brackets (dates, parts)", () => {
+    for (const t of ["【9月6日】リリースイベント【第1部】", "【10/10】Jewel Beat!!2026", "ライブ【振替】"])
+      expect(stripNoticePrefix(t)).toBe(t);
   });
 });
