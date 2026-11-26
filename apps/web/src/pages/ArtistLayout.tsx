@@ -1,6 +1,7 @@
 import { Suspense, use, useState } from "react";
 import { Link, Navigate, NavLink, Outlet, useLocation, useNavigation, useOutletContext, useParams } from "react-router";
 import { themeIcons } from "../components/Icons.tsx";
+import { AccountMenu } from "../components/AccountMenu.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { PageSkeleton } from "../components/PageSkeleton.tsx";
 import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
@@ -29,6 +30,7 @@ export function ArtistLayout() {
       <header className="site-header hero">
         <div className="hero-card">
           <div className="hero-actions">
+            {__EDITOR__ && <AccountMenu />}
             <InstallButton />
             <ThemeSwitch />
           </div>

@@ -113,3 +113,17 @@ describe("/api/access", () => {
     expect(JSON.stringify(await res.json())).not.toContain("acc");
   });
 });
+
+describe("/api/me", () => {
+  const me = (email?: string) =>
+    handleApi(new Request("https://x/api/me", { headers: email ? { "x-test-email": email } : {} }), env) as Promise<Response>;
+
+  it("returns the logged-in email and whether it is an admin", async () => {
+    expect(await (await me("OWNER@example.com")).json()).toEqual({ email: "owner@example.com", admin: true });
+    expect(await (await me("a@example.com")).json()).toEqual({ email: "a@example.com", admin: false });
+  });
+
+  it("is 401 without a login", async () => {
+    expect((await me()).status).toBe(401);
+  });
+});

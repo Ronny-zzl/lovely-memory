@@ -3,6 +3,7 @@
  * - 入れる人は Cloudflare Access の「アクセスグループ」のメールアドレスの一覧。プレビューのアプリケーションのポリシーが
  *   このグループを含めている。ここではそのグループの一覧を Cloudflare の API で読み書きする
  * - 使えるのは管理者（ACCESS_ADMIN_EMAILS）だけ。管理者自身はグループではなくポリシーに直接書いておく（消して締め出されないように）
+ * - /api/me はログイン中の人のメールアドレスと、管理者かどうかを返す（ヘッダーのアカウントの表示）
  * - 秘密の値（API トークン・アカウント ID・グループ ID・管理者のメール）は wrangler pages secret put で設定する（リポジトリに書かない）
  */
 import { accessEmail, type EditEnv } from "./edit.ts";
@@ -86,4 +87,13 @@ export async function handleAccess(request: Request, env: AccessEnv): Promise<Re
   // 外した人がログイン中なら、そのセッションを切る（失敗しても、セッションの期限が来れば入れなくなる）
   if (typeof body.remove === "string") await cf(env, "organizations/revoke_user", { method: "POST", body: { email } });
   return json({ me, members: saved.include.map(emailOf).filter((e): e is string => !!e) });
+}
+
+/** GET /api/me → { email, admin }：プレビュー版のヘッダーの「アカウント」に、ログイン中のメールアドレスを出す */
+export async function handleMe(request: Request, env: AccessEnv): Promise<Response> {
+  if (request.method !== "GET") return json({ error: "method not allowed" }, 405);
+  const email = (await accessEmail(request, env))?.toLowerCase();
+  if (!email) return json({ error: "ログインしていません" }, 401);
+  const admins = (env.ACCESS_ADMIN_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase());
+  return json({ email, admin: admins.includes(email) });
 }

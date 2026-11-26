@@ -137,6 +137,11 @@
   padding-right: 64px;
 }
 
+/* プレビュー版の「アカウント」（AccountMenu）があるとき */
+.hero-actions:has(.account) + .site-title {
+  padding-right: 6.5rem;
+}
+
 .hero-actions:has(.install) + .site-title {
   padding-right: 14rem;
 }
@@ -160,13 +165,13 @@
   }
 
   /* トップページ：狭い画面でボタンが 2 つ並ぶときは、タイトルを狭めずにその上の行に置く */
-  .hero-actions:has(.install):has(+ .site-title) {
+  .hero-actions:is(:has(.install), :has(.account)):has(+ .site-title) {
     position: static;
     justify-content: flex-end;
     margin-bottom: 8px;
   }
 
-  .hero-actions:has(.install) + .site-title {
+  .hero-actions:is(:has(.install), :has(.account)) + .site-title {
     padding-right: 0;
   }
 

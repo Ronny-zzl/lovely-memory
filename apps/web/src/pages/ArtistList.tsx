@@ -2,6 +2,7 @@ import { Suspense, use } from "react";
 import { Link } from "react-router";
 import { isDance, isLiveEvent, orderMembers, type ArtistConfig } from "@lovely-memory/core/runtime";
 import { MoonIcon, SunIcon } from "../components/Icons.tsx";
+import { AccountMenu } from "../components/AccountMenu.tsx";
 import { InstallButton } from "../components/InstallButton.tsx";
 import { ThemeSwitch } from "../components/ThemeSwitch.tsx";
 import { artistDataOn, artists, loadArtistData, type ArtistData } from "../data.ts";
@@ -25,6 +26,7 @@ export function ArtistList() {
       <header className="site-header hero">
         <div className="hero-card home-hero">
           <div className="hero-actions">
+            {__EDITOR__ && <AccountMenu />}
             <InstallButton />
             <ThemeSwitch />
           </div>
