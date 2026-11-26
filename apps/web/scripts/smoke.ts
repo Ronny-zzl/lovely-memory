@@ -88,6 +88,23 @@ async function step(
 const visit = (page: Page, path: string, selector: string, check?: (page: Page) => Promise<string | undefined>) =>
   step(page, path, () => page.goto(base + path, { waitUntil: "domcontentloaded" }), selector, { check });
 
+/** 曲・イベントのページを同時に開く数（GitHub Actions のランナーは 4 コア） */
+const PARALLEL = 4;
+
+/** paths を、同じ context の PARALLEL 枚のタブで手分けして開く */
+async function visitAll(context: BrowserContext, targets: Array<[path: string, selector: string]>) {
+  const queue = [...targets];
+  const worker = async () => {
+    const page = await context.newPage();
+    try {
+      for (let t = queue.shift(); t; t = queue.shift()) await visit(page, t[0], t[1]);
+    } finally {
+      await page.close();
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(PARALLEL, queue.length) }, worker));
+}
+
 const hrefs = (page: Page, selector: string) =>
   page.$$eval(selector, (as) => [...new Set(as.map((a) => new URL((a as HTMLAnchorElement).href).pathname))]);
 
@@ -156,8 +173,6 @@ try {
     await visit(page, `${artist}/members`, ".member-cards li");
     await visit(page, `${artist}/attendance`, ".attend-source");
 
-    for (const path of songs) await visit(page, path, ".song-detail-title");
-    for (const path of events) await visit(page, path, ".event-detail-title");
     if (songs.length === 0) failures.push(`${artist}/songs: 曲へのリンクが無い`);
     if (events.length === 0) failures.push(`${artist}/events: イベントへのリンクが無い`);
 
@@ -168,6 +183,12 @@ try {
       );
     }
   }
+
+  // 曲・イベントのページ（数が多いので、タブを分けて同時に開く）
+  await visitAll(context, [
+    ...[...found.values()].flatMap(({ songs }) => songs.map((p): [string, string] => [p, ".song-detail-title"])),
+    ...[...found.values()].flatMap(({ events }) => events.map((p): [string, string] => [p, ".event-detail-title"])),
+  ]);
 
   // サイトの中でリンクを押して移動する（ページを読み直さずに描き替わる）。押すたびにエラーが出ないこと
   const first = artists[0];
@@ -218,157 +239,186 @@ try {
   noReports("見て回る間", reported);
   await context.close();
 
-  // JavaScript なしでも中身が HTML に入っていること（ビルド時の描画。検索エンジンや、JS の読み込み前の表示）
-  const noJs = await browser.newContext({ javaScriptEnabled: false });
-  try {
-    const p = await noJs.newPage();
-    const sample = first ? found.get(first) : undefined;
-    for (const [path, selector] of [
-      ["/", ".artist-list a.artist-card-head"],
-      ...(first
-        ? ([
-            [`${first}/songs`, ".stats-table tbody tr"],
-            [`${first}/events`, ".event-list a.event-row:visible"],
-          ] as const)
-        : []),
-      ...(sample?.songs[0] ? [[sample.songs[0], ".song-detail-title"] as const] : []),
-      ...(sample?.events.at(-1) ? [[sample.events.at(-1)!, ".event-detail-title"] as const] : []),
-    ] as const) {
-      // JS なしでは後から何も出てこないので、待たずにその場で数える
-      await step(p, `[JS なし] ${path}`, () => p.goto(base + path, { waitUntil: "domcontentloaded" }), "body", {
-        check: async (pg) => {
-          if (!(await pg.locator(`#root[data-prerendered="${path}"]`).count()))
-            return "ビルド時に描いた HTML ではない（中身の無い型のまま）";
-          return (await pg.locator(selector).count()) ? undefined : `HTML に ${selector} が無い`;
-        },
-      });
-    }
-  } finally {
-    await noJs.close();
-  }
-
-  // 参戦記録があるとき：引き継ぎの後で印を描き足すので、記録の無いときと別の道筋になる。
-  // 古い方から 2 件（確実に開催済み）を参戦済みにして、一覧・イベント・参戦記録のページを開く
-  const withRecord = first ? found.get(first)?.events.slice(-2) : undefined;
-  if (first && withRecord?.length) {
-    const ids = withRecord.map((p) => Number(p.split("/").at(-1)));
-    const ctx = await browser.newContext();
+  // ここからは、それぞれ別の context で確かめる独立した場面なので、同時に行う
+  const noJsCheck = async () => {
+    // JavaScript なしでも中身が HTML に入っていること（ビルド時の描画。検索エンジンや、JS の読み込み前の表示）
+    const noJs = await browser.newContext({ javaScriptEnabled: false });
     try {
-      const reports = await catchReports(ctx);
-      await ctx.addInitScript(
-        (manual) => {
-          localStorage.setItem("lovely-memory:attendance:v1", JSON.stringify({ manual }));
-        },
-        Object.fromEntries(ids.map((id) => [id, true])),
-      );
-      const p = await ctx.newPage();
-      const marked = (sel: string, label: string) => async (pg: Page) => {
-        // 印は引き継ぎの後で描き足されるので、少し待つ
-        try {
-          await pg.waitForSelector(sel, { timeout: 10_000 });
-          return undefined;
-        } catch {
-          return `${label}が表示されない`;
-        }
-      };
-      await visit(p, `${first}/events`, "a.event-row:visible", marked(".attend-toggle.on", "参戦済みの印"));
-      await visit(p, withRecord[0]!, ".event-detail-title", marked(".attend-toggle.on", "参戦済みの印"));
-      await visit(p, `${first}/attendance`, ".attend-source", async (pg) => {
-        const v = await marked(".attendance .stat-value", "参戦の数")(pg);
-        if (v) return v;
-        const n = (await pg.locator(".attendance .stat-value").first().textContent())?.trim();
-        return n?.startsWith(String(ids.length)) ? undefined : `参戦したイベントが ${ids.length} のはずが「${n}」`;
-      });
-      noReports("[参戦記録あり]", reports);
-    } finally {
-      await ctx.close();
-    }
-  }
-
-  // ページのコードを一度だけ読み込めないとき（サイトの更新直後など）：自動で読み込み直して表示され、報告は送られないこと
-  const flaky = await browser.newContext();
-  try {
-    const p = await flaky.newPage();
-    // 最初に開いたページの間は届かず、読み込み直した後は届く（CDN の切り替わりの途中）
-    // 数えるのはページそのもの（HTML）の読み込み。framenavigated は history.replaceState でも起きるので使わない
-    let navigations = 0;
-    p.on("request", (r) => {
-      if (r.isNavigationRequest() && r.frame() === p.mainFrame()) navigations++;
-    });
-    await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => (navigations <= 1 ? route.abort() : route.continue()));
-    const reports: string[] = [];
-    await p.route("**/api/errors", (route) => {
-      reports.push(route.request().postData() ?? "");
-      return route.fulfill({ status: 204 });
-    });
-    await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
-    try {
-      // 中身はビルド時の HTML で最初から見えているので、スクリプトが引き継ぎ終わる（テーマのスイッチに title が付く）か、
-      // エラーの画面が出るまで待つ
-      await p.waitForSelector(".theme-switch[title], .route-error", { timeout: 15_000 });
-      if (navigations < 2) failures.push("ページのコードを一度読み込めないとき: 読み込み直していない");
-      if (await p.$(".route-error")) failures.push("ページのコードを一度読み込めないとき: エラーの画面が出た");
-      if (reports.length > 0) failures.push(`ページのコードを一度読み込めないとき: 報告が送られた: ${reports.join(" / ")}`);
-    } catch (e) {
-      failures.push(`ページのコードを一度読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
-    }
-    checked++;
-  } finally {
-    await flaky.close();
-  }
-
-  // ページのコードをずっと読み込めないとき：一度だけ読み込み直し、それでもだめならエラーの画面が出て、報告が送られること
-  const broken = await browser.newContext();
-  try {
-    const p = await broken.newPage();
-    let loads = 0;
-    p.on("load", () => loads++);
-    await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => route.abort());
-    // わざと起こしたエラーなので、報告はブラウザ側で受け止める（中身は下で確かめる。サーバーに届くと [client error] と表示されて紛らわしい）
-    await p.route("**/api/errors", (route) => route.fulfill({ status: 204 }));
-    const report = p.waitForRequest((r) => r.method() === "POST" && new URL(r.url()).pathname === "/api/errors", { timeout: 15_000 });
-    await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
-    try {
-      await p.waitForSelector(".route-error", { timeout: 15_000 });
-      const body = JSON.parse((await report).postData() ?? "{}") as { kind?: string; path?: string };
-      if (body.kind !== "render" || !body.path?.endsWith("/songs")) failures.push(`エラーの報告の中身がおかしい: ${JSON.stringify(body)}`);
-      // 最初の表示 + 自動の読み込み直し 1 回（何度も読み込み直さない）
-      if (loads !== 2) failures.push(`ページのコードを読み込めないとき: 読み込み直しの回数がおかしい（ページの表示 ${loads} 回）`);
-    } catch (e) {
-      failures.push(`ページのコードを読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
-    }
-    checked++;
-  } finally {
-    await broken.close();
-  }
-
-  // オフライン：一度開いて Service Worker が有効になった後、ネットワークを切っても
-  // まだ開いていないページを含めて表示できること
-  const offline = await browser.newContext();
-  try {
-    const p = await offline.newPage();
-    await p.goto(base + "/", { waitUntil: "load" });
-    // Service Worker が入らない（事前キャッシュの失敗など）と ready が終わらないので、待つのは 15 秒まで
-    const ready = await p.evaluate(() =>
-      Promise.race([navigator.serviceWorker.ready.then(() => "ok"), new Promise((r) => setTimeout(() => r("timeout"), 15_000))]),
-    );
-    if (ready !== "ok") throw new Error("Service Worker が有効にならない（sw.js の事前キャッシュの失敗など）");
-    const artist = (await hrefs(p, ".artist-list a.artist-card-head"))[0];
-    await offline.setOffline(true);
-    if (artist) {
+      const p = await noJs.newPage();
+      const sample = first ? found.get(first) : undefined;
       for (const [path, selector] of [
-        [`${artist}/trends`, ".trend-grid"],
-        [`${artist}/songs`, ".stats-table tbody tr"],
-        [`${artist}/members`, ".member-cards li"],
+        ["/", ".artist-list a.artist-card-head"],
+        ...(first
+          ? ([
+              [`${first}/songs`, ".stats-table tbody tr"],
+              [`${first}/events`, ".event-list a.event-row:visible"],
+            ] as const)
+          : []),
+        ...(sample?.songs[0] ? [[sample.songs[0], ".song-detail-title"] as const] : []),
+        ...(sample?.events.at(-1) ? [[sample.events.at(-1)!, ".event-detail-title"] as const] : []),
       ] as const) {
-        const before = failures.length;
-        await visit(p, path, selector);
-        if (failures.length > before) failures[failures.length - 1] = `[オフライン] ${failures.at(-1)}`;
+        // JS なしでは後から何も出てこないので、待たずにその場で数える
+        await step(p, `[JS なし] ${path}`, () => p.goto(base + path, { waitUntil: "domcontentloaded" }), "body", {
+          check: async (pg) => {
+            if (!(await pg.locator(`#root[data-prerendered="${path}"]`).count()))
+              return "ビルド時に描いた HTML ではない（中身の無い型のまま）";
+            return (await pg.locator(selector).count()) ? undefined : `HTML に ${selector} が無い`;
+          },
+        });
+      }
+    } finally {
+      await noJs.close();
+    }
+  };
+
+  const withRecordCheck = async () => {
+    // 参戦記録があるとき：引き継ぎの後で印を描き足すので、記録の無いときと別の道筋になる。
+    // 古い方から 2 件（確実に開催済み）を参戦済みにして、一覧・イベント・参戦記録のページを開く
+    const withRecord = first ? found.get(first)?.events.slice(-2) : undefined;
+    if (first && withRecord?.length) {
+      const ids = withRecord.map((p) => Number(p.split("/").at(-1)));
+      const ctx = await browser.newContext();
+      try {
+        const reports = await catchReports(ctx);
+        await ctx.addInitScript(
+          (manual) => {
+            localStorage.setItem("lovely-memory:attendance:v1", JSON.stringify({ manual }));
+          },
+          Object.fromEntries(ids.map((id) => [id, true])),
+        );
+        const p = await ctx.newPage();
+        const marked = (sel: string, label: string) => async (pg: Page) => {
+          // 印は引き継ぎの後で描き足されるので、少し待つ
+          try {
+            await pg.waitForSelector(sel, { timeout: 10_000 });
+            return undefined;
+          } catch {
+            return `${label}が表示されない`;
+          }
+        };
+        await visit(p, `${first}/events`, "a.event-row:visible", marked(".attend-toggle.on", "参戦済みの印"));
+        await visit(p, withRecord[0]!, ".event-detail-title", marked(".attend-toggle.on", "参戦済みの印"));
+        await visit(p, `${first}/attendance`, ".attend-source", async (pg) => {
+          const v = await marked(".attendance .stat-value", "参戦の数")(pg);
+          if (v) return v;
+          const n = (await pg.locator(".attendance .stat-value").first().textContent())?.trim();
+          return n?.startsWith(String(ids.length)) ? undefined : `参戦したイベントが ${ids.length} のはずが「${n}」`;
+        });
+        noReports("[参戦記録あり]", reports);
+      } finally {
+        await ctx.close();
       }
     }
-  } finally {
-    await offline.close();
-  }
+  };
+
+  const flakyCheck = async () => {
+    // ページのコードを一度だけ読み込めないとき（サイトの更新直後など）：自動で読み込み直して表示され、報告は送られないこと
+    const flaky = await browser.newContext();
+    try {
+      const p = await flaky.newPage();
+      // 最初に開いたページの間は届かず、読み込み直した後は届く（CDN の切り替わりの途中）
+      // 数えるのはページそのもの（HTML）の読み込み。framenavigated は history.replaceState でも起きるので使わない
+      let navigations = 0;
+      p.on("request", (r) => {
+        if (r.isNavigationRequest() && r.frame() === p.mainFrame()) navigations++;
+      });
+      await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => (navigations <= 1 ? route.abort() : route.continue()));
+      const reports: string[] = [];
+      await p.route("**/api/errors", (route) => {
+        reports.push(route.request().postData() ?? "");
+        return route.fulfill({ status: 204 });
+      });
+      await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
+      try {
+        // 中身はビルド時の HTML で最初から見えているので、スクリプトが引き継ぎ終わる（テーマのスイッチに title が付く）か、
+        // エラーの画面が出るまで待つ
+        await p.waitForSelector(".theme-switch[title], .route-error", { timeout: 15_000 });
+        if (navigations < 2) failures.push("ページのコードを一度読み込めないとき: 読み込み直していない");
+        if (await p.$(".route-error")) failures.push("ページのコードを一度読み込めないとき: エラーの画面が出た");
+        if (reports.length > 0) failures.push(`ページのコードを一度読み込めないとき: 報告が送られた: ${reports.join(" / ")}`);
+      } catch (e) {
+        failures.push(`ページのコードを一度読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+      }
+      checked++;
+    } finally {
+      await flaky.close();
+    }
+  };
+
+  const brokenCheck = async () => {
+    // ページのコードをずっと読み込めないとき：一度だけ読み込み直し、それでもだめならエラーの画面が出て、報告が送られること
+    const broken = await browser.newContext();
+    try {
+      const p = await broken.newPage();
+      let loads = 0;
+      p.on("load", () => loads++);
+      await p.route(/\/assets\/SongStatsPage-[^/]+\.js$/, (route) => route.abort());
+      // わざと起こしたエラーなので、報告はブラウザ側で受け止める（中身は下で確かめる。サーバーに届くと [client error] と表示されて紛らわしい）
+      await p.route("**/api/errors", (route) => route.fulfill({ status: 204 }));
+      const report = p.waitForRequest((r) => r.method() === "POST" && new URL(r.url()).pathname === "/api/errors", { timeout: 15_000 });
+      await p.goto(base + `${artists[0] ?? ""}/songs`, { waitUntil: "domcontentloaded" });
+      try {
+        await p.waitForSelector(".route-error", { timeout: 15_000 });
+        const body = JSON.parse((await report).postData() ?? "{}") as { kind?: string; path?: string };
+        if (body.kind !== "render" || !body.path?.endsWith("/songs"))
+          failures.push(`エラーの報告の中身がおかしい: ${JSON.stringify(body)}`);
+        // 最初の表示 + 自動の読み込み直し 1 回（何度も読み込み直さない）
+        if (loads !== 2) failures.push(`ページのコードを読み込めないとき: 読み込み直しの回数がおかしい（ページの表示 ${loads} 回）`);
+      } catch (e) {
+        failures.push(`ページのコードを読み込めないとき: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+      }
+      checked++;
+    } finally {
+      await broken.close();
+    }
+  };
+
+  const offlineCheck = async () => {
+    // オフライン：一度開いて Service Worker が有効になった後、ネットワークを切っても
+    // まだ開いていないページを含めて表示できること
+    const offline = await browser.newContext();
+    try {
+      const p = await offline.newPage();
+      await p.goto(base + "/", { waitUntil: "load" });
+      // Service Worker が入らない（事前キャッシュの失敗など）と ready が終わらないので、待つのは 15 秒まで
+      const ready = await p.evaluate(() =>
+        Promise.race([navigator.serviceWorker.ready.then(() => "ok"), new Promise((r) => setTimeout(() => r("timeout"), 15_000))]),
+      );
+      if (ready !== "ok") throw new Error("Service Worker が有効にならない（sw.js の事前キャッシュの失敗など）");
+      const artist = (await hrefs(p, ".artist-list a.artist-card-head"))[0];
+      await offline.setOffline(true);
+      if (artist) {
+        for (const [path, selector] of [
+          [`${artist}/trends`, ".trend-grid"],
+          [`${artist}/songs`, ".stats-table tbody tr"],
+          [`${artist}/members`, ".member-cards li"],
+        ] as const) {
+          const before = failures.length;
+          await visit(p, path, selector);
+          if (failures.length > before) failures[failures.length - 1] = `[オフライン] ${failures.at(-1)}`;
+        }
+      }
+    } finally {
+      await offline.close();
+    }
+  };
+
+  // 途中で例外が出ても、ほかの場面は最後まで行い、問題はまとめて報告する
+  const scenes: Array<[string, () => Promise<void>]> = [
+    ["JS なし", noJsCheck],
+    ["参戦記録あり", withRecordCheck],
+    ["コードを一度読み込めない", flakyCheck],
+    ["コードをずっと読み込めない", brokenCheck],
+    ["オフライン", offlineCheck],
+  ];
+  await Promise.all(
+    scenes.map(([label, run]) =>
+      run().catch((e: unknown) => {
+        checked++;
+        failures.push(`[${label}] ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+      }),
+    ),
+  );
 } finally {
   await browser.close();
   await new Promise<void>((resolve) => server.httpServer.close(() => resolve()));
