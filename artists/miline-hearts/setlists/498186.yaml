@@ -2,18 +2,20 @@
 
 event: 498186
 source: https://x.com/MiLineHearts/status/2119049103686680811
-items:
-  - song: 無限大アップデート
-    members:
-      - rei
-      - momoko
-      - natsu
-  - song: ミライライン
-    members:
-      - momoko
-      - rei
-      - natsu
-  - We are Mi'Line Hearts
-  - 積極的ヒロイン+♡
-  - Our Melody
-  - 僕と君の特別
+stages:
+  - name: 下北沢シャングリラ
+    items:
+      - song: 無限大アップデート
+        members:
+          - rei
+          - momoko
+          - natsu
+      - song: ミライライン
+        members:
+          - momoko
+          - rei
+          - natsu
+      - We are Mi'Line Hearts
+      - 積極的ヒロイン+♡
+      - Our Melody
+      - 僕と君の特別
