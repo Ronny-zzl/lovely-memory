@@ -1,7 +1,7 @@
 /* 入力画面（EditIndexPage・SetlistEditorPage。プレビュー版だけ）の見た目 */
 
 /* 一覧 */
-.edit-index .chip {
+.edit-index .chips {
   margin: 8px 0;
 }
 
