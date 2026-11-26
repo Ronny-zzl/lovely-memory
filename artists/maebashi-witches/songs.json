@@ -2,24 +2,53 @@
   {
     "id": "s001",
     "title": "スゴすぎ前橋ウィッチーズ！",
+    "release": {
+      "date": "2024-09-28",
+      "title": "スゴすぎ前橋ウィッチーズ！",
+      "kind": "single"
+    },
     "credits": {
       "lyrics": "つんく",
       "music": "TORIENA",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "オープニングテーマ"
+      }
+    ]
   },
   {
     "id": "s002",
     "title": "夢よ、咲け！",
+    "release": {
+      "date": "2025-04-07",
+      "title": "夢よ、咲け！",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "鈴木まなか",
       "music": "ArmySlick・常楽寺 澪",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第1話挿入歌"
+      }
+    ]
   },
   {
     "id": "s003",
     "title": "うちらの花屋は黙ってない！",
+    "release": {
+      "date": "2024-09-28",
+      "title": "スゴすぎ前橋ウィッチーズ！",
+      "kind": "single"
+    },
     "credits": {
       "lyrics": "岩里祐穂",
       "music": "清田直人",
@@ -29,15 +58,32 @@
   {
     "id": "s004",
     "title": "それぞれのドア",
+    "release": {
+      "date": "2024-12-01",
+      "title": "それぞれのドア",
+      "kind": "single"
+    },
     "credits": {
       "lyrics": "雲居ハルカ",
       "music": "雲居ハルカ",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "エンディングテーマ"
+      }
+    ]
   },
   {
     "id": "s005",
     "title": "1,2,3 Magic！",
+    "release": {
+      "date": "2024-12-01",
+      "title": "それぞれのドア",
+      "kind": "single"
+    },
     "credits": {
       "lyrics": "ChawongChaw",
       "music": "ChawongChaw",
@@ -47,15 +93,32 @@
   {
     "id": "s006",
     "title": "シャボン・テンション！",
+    "release": {
+      "date": "2025-04-21",
+      "title": "シャボン・テンション！",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "松井洋平",
       "music": "石黑 剛・常楽寺 澪",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第3話挿入歌"
+      }
+    ]
   },
   {
     "id": "s007",
     "title": "絢爛SHOWTIME！！",
+    "release": {
+      "date": "2025-05-28",
+      "title": "スゴすぎ前橋ウィッチーズ！ / それぞれのドア（オープニング盤）",
+      "kind": "single"
+    },
     "credits": {
       "lyrics": "ChawongChaw",
       "music": "ChawongChaw",
@@ -65,6 +128,11 @@
   {
     "id": "s008",
     "title": "MAKASETENE",
+    "release": {
+      "date": "2025-05-28",
+      "title": "スゴすぎ前橋ウィッチーズ！ / それぞれのドア（エンディング盤）",
+      "kind": "single"
+    },
     "credits": {
       "lyrics": "FUJI",
       "music": "FUJI・宮川麿",
@@ -74,29 +142,65 @@
   {
     "id": "s009",
     "title": "ハピハピハッピーバースデー！",
+    "release": {
+      "date": "2025-07-30",
+      "title": "TVアニメ『前橋ウィッチーズ』Original Soundtrack",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "吉田恵里香",
       "music": "羽深由理",
       "arrangement": "羽深由理"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第6話挿入歌"
+      }
+    ]
   },
   {
     "id": "s010",
     "title": "You Are My World",
+    "release": {
+      "date": "2025-05-05",
+      "title": "You Are My World",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "松﨑涼介",
       "music": "松﨑涼介・YUU for YOU",
       "arrangement": "水野谷 怜"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第5話挿入歌"
+      }
+    ]
   },
   {
     "id": "s011",
     "title": "無敵☆PAYAPAYA",
+    "release": {
+      "date": "2025-05-12",
+      "title": "無敵☆PAYAPAYA",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "NOVECHIKA・齋藤奏太",
       "music": "NOVECHIKA・齋藤奏太",
       "arrangement": "NOVECHIKA・齋藤奏太"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第6話挿入歌"
+      }
+    ]
   },
   {
     "id": "s012",
@@ -104,6 +208,11 @@
     "aliases": [
       "GAPPO&GAPPO"
     ],
+    "release": {
+      "date": "2025-07-30",
+      "title": "アゲラタム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "Giz'Mo (from Jam9)",
       "music": "Giz'Mo (from Jam9)・YUU for YOU",
@@ -113,15 +222,32 @@
   {
     "id": "s013",
     "title": "Meteor Shower",
+    "release": {
+      "date": "2025-05-26",
+      "title": "Meteor Shower",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "宮嶋淳子",
       "music": "長谷川大介",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第8話挿入歌"
+      }
+    ]
   },
   {
     "id": "s014",
     "title": "ドリーミードリーミーフラワー",
+    "release": {
+      "date": "2025-07-30",
+      "title": "アゲラタム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "NOVECHIKA・齋藤奏太",
       "music": "NOVECHIKA・齋藤奏太",
@@ -131,42 +257,95 @@
   {
     "id": "s015",
     "title": "MATSURI day PARTY!!",
+    "release": {
+      "date": "2025-06-02",
+      "title": "MATSURI day PARTY!!",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "牡丹",
       "music": "清田直人",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第9話挿入歌"
+      }
+    ]
   },
   {
     "id": "s016",
     "title": "メジルシ",
+    "release": {
+      "date": "2025-06-09",
+      "title": "メジルシ",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "岩里祐穂",
       "music": "清田直人",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第10話挿入歌"
+      }
+    ]
   },
   {
     "id": "s017",
     "title": "今は小さな蕾でも",
+    "release": {
+      "date": "2025-06-23",
+      "title": "今は小さな蕾でも",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "中村 歩・菊池博人",
       "music": "中村 歩・菊池博人",
       "arrangement": "菊池博人・中村 歩"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第12話挿入歌"
+      }
+    ]
   },
   {
     "id": "s018",
     "title": "ユメミ誇レ！ユメ咲キ踊レ！",
+    "release": {
+      "date": "2025-06-30",
+      "title": "ユメミ誇レ！ユメ咲キ踊レ！",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "畑 亜貴",
       "music": "岸田勇気",
       "arrangement": "岸田勇気"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第12話挿入歌"
+      }
+    ]
   },
   {
     "id": "s019",
     "title": "花たちはどんな夢を見る",
+    "release": {
+      "date": "2025-07-30",
+      "title": "アゲラタム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "高瀬愛虹",
       "music": "要田 健",
@@ -176,6 +355,11 @@
   {
     "id": "s020",
     "title": "超越魂 - Braver's Soul –",
+    "release": {
+      "date": "2025-09-24",
+      "title": "ゼラニウム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "宮嶋淳子",
       "music": "山下洋介",
@@ -185,6 +369,11 @@
   {
     "id": "s021",
     "title": "推せる想いをぶつけちゃお？☆",
+    "release": {
+      "date": "2025-07-30",
+      "title": "アゲラタム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "菊池博人",
       "music": "菊池博人",
@@ -194,6 +383,11 @@
   {
     "id": "s022",
     "title": "キラリForever",
+    "release": {
+      "date": "2025-09-24",
+      "title": "ゼラニウム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "NA.ZU.NA",
       "music": "NA.ZU.NA",
@@ -203,6 +397,11 @@
   {
     "id": "s023",
     "title": "Shiny☆Shineなスカイブルー",
+    "release": {
+      "date": "2025-09-24",
+      "title": "ゼラニウム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "新谷風太",
       "music": "古河 夕",
@@ -212,6 +411,11 @@
   {
     "id": "s024",
     "title": "激情≒愛情",
+    "release": {
+      "date": "2025-10-29",
+      "title": "TVアニメ『前橋ウィッチーズ』Blu-ray 第6巻（特装限定版）特典CD",
+      "kind": "other"
+    },
     "credits": {
       "lyrics": "園田健太郎",
       "music": "岸田勇気",
@@ -221,6 +425,11 @@
   {
     "id": "s025",
     "title": "FLOWER SUPER POWER",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "畑 亜貴",
       "music": "岸田勇気",
@@ -230,6 +439,11 @@
   {
     "id": "s026",
     "title": "天気雨ワンダーランド",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "岩里祐穂",
       "music": "松﨑涼介・YUU for YOU",
@@ -239,6 +453,11 @@
   {
     "id": "s027",
     "title": "キミ色Brand new day!!",
+    "release": {
+      "date": "2026-09-05",
+      "title": "キミ色Brand new day!!",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "小池竜暉",
       "music": "小池竜暉・菊池博人",
@@ -248,6 +467,11 @@
   {
     "id": "s028",
     "title": "イッサイ☆カッサイ",
+    "release": {
+      "date": "2026-09-30",
+      "title": "春化",
+      "kind": "ep"
+    },
     "credits": {
       "lyrics": "常楽寺 澪",
       "music": "YUU for YOU・常楽寺 澪",
@@ -258,6 +482,11 @@
     "id": "s029",
     "title": "らんまんBlooming＊",
     "unit": "yuina",
+    "release": {
+      "date": "2025-05-28",
+      "title": "TVアニメ『前橋ウィッチーズ』Blu-ray 第1巻（特装限定版）特典CD",
+      "kind": "other"
+    },
     "credits": {
       "lyrics": "牡丹",
       "music": "野崎心平",
@@ -268,6 +497,11 @@
     "id": "s030",
     "title": "ぐんぐん、進もっ！？",
     "unit": "yuina",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "鈴木まなか",
       "music": "西片瑞樹",
@@ -278,6 +512,11 @@
     "id": "s031",
     "title": "もっとグッデイ！ぶらいたーデイ",
     "unit": "yuina",
+    "release": {
+      "date": "2026-03-23",
+      "title": "それぞれのアゲラタム -ユイナ-",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "鮫島竜輔",
       "music": "小池竜暉・菊池博人",
@@ -288,6 +527,11 @@
     "id": "s032",
     "title": "Cross × Millennium",
     "unit": "azu",
+    "release": {
+      "date": "2025-06-25",
+      "title": "TVアニメ『前橋ウィッチーズ』Blu-ray 第2巻（特装限定版）特典CD",
+      "kind": "other"
+    },
     "credits": {
       "lyrics": "Uyu",
       "music": "阿部隆大",
@@ -298,6 +542,11 @@
     "id": "s033",
     "title": "モノクローム⊂ヴァイオレット",
     "unit": "azu",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "松井洋平",
       "music": "水野谷 怜",
@@ -308,6 +557,11 @@
     "id": "s034",
     "title": "あゝ赤城山",
     "unit": "kyoka",
+    "release": {
+      "date": "2025-08-27",
+      "title": "TVアニメ『前橋ウィッチーズ』Blu-ray 第4巻（特装限定版）特典CD",
+      "kind": "other"
+    },
     "credits": {
       "lyrics": "中村 歩・玉木千尋",
       "music": "中村 歩・玉木千尋",
@@ -318,6 +572,11 @@
     "id": "s035",
     "title": "湿原の騎士",
     "unit": "kyoka",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "鮫島竜輔",
       "music": "小幡康裕",
@@ -328,6 +587,11 @@
     "id": "s036",
     "title": "ハピハピになっちゃおっ!",
     "unit": "choco",
+    "release": {
+      "date": "2025-09-24",
+      "title": "TVアニメ『前橋ウィッチーズ』Blu-ray 第5巻（特装限定版）特典CD",
+      "kind": "other"
+    },
     "credits": {
       "lyrics": "小池竜暉",
       "music": "小池竜暉・菊池博人",
@@ -338,6 +602,11 @@
     "id": "s037",
     "title": "フワフワの約束",
     "unit": "choco",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "宮嶋淳子",
       "music": "小池竜暉・菊池博人",
@@ -348,6 +617,11 @@
     "id": "s038",
     "title": "ごはんPou!Pou!",
     "unit": "choco",
+    "release": {
+      "date": "2026-06-24",
+      "title": "それぞれのアゲラタム -チョコ-",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "磯崎健史",
       "music": "磯崎健史",
@@ -358,6 +632,11 @@
     "id": "s039",
     "title": "My Special Thanks!!",
     "unit": "mai",
+    "release": {
+      "date": "2025-07-30",
+      "title": "TVアニメ『前橋ウィッチーズ』Blu-ray 第3巻（特装限定版）特典CD",
+      "kind": "other"
+    },
     "credits": {
       "lyrics": "新谷風太",
       "music": "西片瑞樹",
@@ -368,6 +647,11 @@
     "id": "s040",
     "title": "邁進↓↘→Step by Step",
     "unit": "mai",
+    "release": {
+      "date": "2026-03-18",
+      "title": "ストレリチア",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "常楽寺 澪",
       "music": "常楽寺 澪・YAGO",
@@ -378,16 +662,33 @@
     "id": "s041",
     "title": "Wither",
     "unit": "eiko",
+    "release": {
+      "date": "2025-06-16",
+      "title": "Wither",
+      "kind": "digital"
+    },
     "credits": {
       "lyrics": "唐沢美帆",
       "music": "水野谷 怜",
       "arrangement": "水野谷 怜"
-    }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "前橋ウィッチーズ",
+        "role": "第11話挿入歌"
+      }
+    ]
   },
   {
     "id": "s042",
     "title": "Ambivalent",
     "unit": "eiko",
+    "release": {
+      "date": "2025-09-24",
+      "title": "ゼラニウム",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "唐沢美帆",
       "music": "青柳 諒",
@@ -397,16 +698,33 @@
   {
     "id": "s043",
     "title": "雨晴れMake up",
+    "release": {
+      "date": "2026-09-30",
+      "title": "春化",
+      "kind": "ep"
+    },
     "credits": {
       "lyrics": "岩井勇気",
       "music": "EFFY",
       "arrangement": "EFFY"
     },
+    "tieups": [
+      {
+        "type": "movie",
+        "work": "劇場版 前橋ウィッチーズ～魔女見習いのエモエモリーズ～",
+        "role": "主題歌"
+      }
+    ],
     "note": "未披露（シートより）"
   },
   {
     "id": "s044",
     "title": "おねがい@Flowers",
+    "release": {
+      "date": "2026-09-08",
+      "title": "それぞれのアゲラタム -アズ-",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "常楽寺 澪",
       "music": "江並哲志",
@@ -417,6 +735,11 @@
   {
     "id": "s045",
     "title": "彩雲ランドスケープ",
+    "release": {
+      "date": "2026-11-24",
+      "title": "それぞれのアゲラタム -キョウカ-",
+      "kind": "album"
+    },
     "credits": {
       "lyrics": "鮫島竜輔",
       "music": "石黑 剛・Giz'Mo (from Jam9)",
@@ -434,8 +757,19 @@
       "arrangement": "湯浅篤"
     },
     "cover": {
-      "artist": "ClariS"
-    }
+      "artist": "ClariS",
+      "release": {
+        "date": "2011-02-02",
+        "title": "コネクト"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "魔法少女まどか☆マギカ",
+        "role": "オープニングテーマ"
+      }
+    ]
   },
   {
     "id": "s048",
@@ -447,7 +781,11 @@
       "arrangement": "野口大志"
     },
     "cover": {
-      "artist": "LINKL PLANET"
+      "artist": "LINKL PLANET",
+      "release": {
+        "date": "2025-07-30",
+        "title": "プラトモ"
+      }
     },
     "note": "コラボ"
   },
@@ -461,8 +799,19 @@
       "arrangement": "大久保薫"
     },
     "cover": {
-      "artist": "麻帆良学園中等部2-A"
+      "artist": "麻帆良学園中等部2-A",
+      "release": {
+        "date": "2005-02-16",
+        "title": "ハッピー☆マテリアル"
+      }
     },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "魔法先生ネギま!",
+        "role": "オープニングテーマ"
+      }
+    ],
     "note": "ANIMAX ALL CAST"
   },
   {
@@ -475,8 +824,19 @@
       "arrangement": "堀江晶太"
     },
     "cover": {
-      "artist": "ARCANA PROJECT"
+      "artist": "ARCANA PROJECT",
+      "release": {
+        "date": "2021-10-27",
+        "title": "とめどない潮騒に僕たちは何を歌うだろうか"
+      }
     },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "白い砂のアクアトープ",
+        "role": "第2クールオープニングテーマ"
+      }
+    ],
     "note": "コラボ"
   },
   {
@@ -491,13 +851,14 @@
     "era": "cover",
     "credits": {
       "lyrics": "畑 亜貴",
-      "music": "石濱 翔",
-      "arrangement": "石濱 翔"
+      "music": "石濱 翔（MONACA）",
+      "arrangement": "石濱 翔（MONACA）"
     },
     "cover": {
       "artist": "わか・ふうり・すなお from STAR☆ANIS",
       "release": {
-        "date": "2013-06-26"
+        "date": "2013-06-26",
+        "title": "ダイヤモンドハッピー/ヒラリ/ヒトリ/キラリ"
       }
     },
     "tieups": [
@@ -519,7 +880,11 @@
       "arrangement": "Hayato Yamamoto・DJ Chika a.k.a. INHERIT"
     },
     "cover": {
-      "artist": "AiScReam"
+      "artist": "AiScReam",
+      "release": {
+        "date": "2025-01-22",
+        "title": "愛♡スクリ～ム！"
+      }
     },
     "note": "Lantis DAYZ ALL CAST"
   },
@@ -533,8 +898,19 @@
       "arrangement": "山下洋介"
     },
     "cover": {
-      "artist": "Liella!"
-    }
+      "artist": "Liella!",
+      "release": {
+        "date": "2021-07-21",
+        "title": "START!! True dreams"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ラブライブ!スーパースター!!",
+        "role": "第1期オープニングテーマ"
+      }
+    ]
   },
   {
     "id": "s056",
@@ -542,11 +918,15 @@
     "era": "cover",
     "credits": {
       "lyrics": "畑 亜貴",
-      "music": "光増ハジメ",
-      "arrangement": "光増ハジメ"
+      "music": "光増ハジメ (FirstCall)",
+      "arrangement": "光増ハジメ (FirstCall)"
     },
     "cover": {
-      "artist": "いきづらい部!"
+      "artist": "いきづらい部!",
+      "release": {
+        "date": "2025-07-30",
+        "title": "What is my LIFE?"
+      }
     }
   },
   {
@@ -559,8 +939,19 @@
       "arrangement": "河田貴央"
     },
     "cover": {
-      "artist": "μ's"
-    }
+      "artist": "μ's",
+      "release": {
+        "date": "2013-04-03",
+        "title": "No brand girls/START:DASH!!"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ラブライブ!",
+        "role": "第1期第11話挿入歌"
+      }
+    ]
   },
   {
     "id": "s058",
@@ -568,12 +959,23 @@
     "era": "cover",
     "credits": {
       "lyrics": "畑 亜貴",
-      "music": "伊藤 賢・光増ハジメ",
-      "arrangement": "EFFY"
+      "music": "伊藤 賢・光増ハジメ(FirstCall)",
+      "arrangement": "EFFY(FirstCall)"
     },
     "cover": {
-      "artist": "Aqours"
-    }
+      "artist": "Aqours",
+      "release": {
+        "date": "2016-07-20",
+        "title": "青空Jumping Heart"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ラブライブ!サンシャイン!!",
+        "role": "第1期オープニングテーマ"
+      }
+    ]
   },
   {
     "id": "s059",
@@ -585,7 +987,11 @@
       "arrangement": "増谷 賢"
     },
     "cover": {
-      "artist": "園田海未 (CV.三森すずこ)"
+      "artist": "園田海未 (CV.三森すずこ)",
+      "release": {
+        "date": "2012-07-25",
+        "title": "soldier game"
+      }
     }
   },
   {
@@ -594,12 +1000,23 @@
     "era": "cover",
     "credits": {
       "lyrics": "畑 亜貴",
-      "music": "矢鴇つかさ",
-      "arrangement": "矢鴇つかさ"
+      "music": "矢鴇つかさ(Arte Refact)",
+      "arrangement": "矢鴇つかさ(Arte Refact)"
     },
     "cover": {
-      "artist": "虹ヶ咲学園スクールアイドル同好会"
-    }
+      "artist": "虹ヶ咲学園スクールアイドル同好会",
+      "release": {
+        "date": "2018-11-21",
+        "title": "TOKIMEKI Runners"
+      }
+    },
+    "tieups": [
+      {
+        "type": "game",
+        "work": "ラブライブ!スクールアイドルフェスティバル ALL STARS",
+        "role": "オープニングテーマ"
+      }
+    ]
   },
   {
     "id": "s061",
@@ -611,8 +1028,19 @@
       "arrangement": "山下洋介"
     },
     "cover": {
-      "artist": "Liella!"
-    }
+      "artist": "Liella!",
+      "release": {
+        "date": "2021-08-25",
+        "title": "未来予報ハレルヤ！/Tiny Stars"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ラブライブ!スーパースター!!",
+        "role": "第1期第1話挿入歌"
+      }
+    ]
   },
   {
     "id": "s062",
@@ -624,7 +1052,18 @@
       "arrangement": "森慎太郎"
     },
     "cover": {
-      "artist": "μ's"
-    }
+      "artist": "μ's",
+      "release": {
+        "date": "2013-01-23",
+        "title": "僕らは今のなかで"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "ラブライブ!",
+        "role": "第1期オープニングテーマ"
+      }
+    ]
   }
 ]
