@@ -1,0 +1,14 @@
+# 2025-11-15 東武鉄道 presents ANIMAX MUSIX 2025 YOKOHAMA supported by Lemino
+
+event: 438899
+source: https://docs.google.com/spreadsheets/d/1pPBSlolVxwQdQIzUe31bDRXl7E9JwO79cG7AnWPLTJY
+stages:
+  - items:
+      - コネクト
+      - スゴすぎ前橋ウィッチーズ！
+      - シャボン・テンション！
+  - name: ALL CAST
+    collab: true
+    items:
+      - song: ハッピー☆マテリアル
+        note: ALL CAST

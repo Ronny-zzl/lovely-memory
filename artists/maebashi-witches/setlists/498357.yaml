@@ -1,0 +1,30 @@
+# 2026-11-15 LoveLive! Series 15th Anniversary ラブライブ！フェス Day.2 JOYSOUND presents『ラブライブ！シリーズのど自慢大会』
+
+event: 498357
+source: https://docs.google.com/spreadsheets/d/1pPBSlolVxwQdQIzUe31bDRXl7E9JwO79cG7AnWPLTJY
+stages:
+  - name: 1回目
+    items:
+      - 青空Jumping Heart
+      - スゴすぎ前橋ウィッチーズ！
+  - name: 2回目
+    items:
+      - song: 勇気のReason
+        members:
+          - sakikawa
+        note: ワンコーラス
+      - song: START!! True dreams
+        members:
+          - kasuga
+        note: ワンコーラス
+      - song: TOKIMEKI Runners
+        members:
+          - minami
+        note: ワンコーラス
+      - song: 未来予報ハレルヤ！
+        members:
+          - momose
+        note: ワンコーラス
+      - 僕らは今のなかで
+      - song: スゴすぎ前橋ウィッチーズ！
+        note: 4人ver.

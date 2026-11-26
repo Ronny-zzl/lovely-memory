@@ -1,0 +1,17 @@
+# 2026-07-19 Shibuya LOVEZ OPENING SERIES「Lantis DAYZ」DAY.2
+
+event: 471458
+source: https://docs.google.com/spreadsheets/d/1pPBSlolVxwQdQIzUe31bDRXl7E9JwO79cG7AnWPLTJY
+stages:
+  - items:
+      - スゴすぎ前橋ウィッチーズ！
+      - シャボン・テンション！
+      - song: ダイヤモンドハッピー
+        with:
+          - ARCANA PROJECT
+        collab: true
+  - name: ALL CAST
+    collab: true
+    items:
+      - song: 愛♡スクリ〜ム!
+        note: ALL CAST

@@ -1,0 +1,44 @@
+{
+  "id": "maebashi-witches",
+  "name": "前橋ウィッチーズ",
+  "aliases": ["前ウィ", "まえうぃ"],
+  "since": "2024-09-28",
+  "draft": true,
+  "theme": "rainbow",
+  "order": 3,
+  "members": [
+    { "id": "kasuga",   "name": "春日さくら", "colorName": "ピンク", "color": "#FA7ABC", "eventernoteId": 63283 },
+    { "id": "sakikawa", "name": "咲川ひなの", "colorName": "紫",     "color": "#A085D7", "eventernoteId": 80112 },
+    { "id": "motomura", "name": "本村玲奈",   "colorName": "緑",     "color": "#82D25A", "eventernoteId": 80113 },
+    { "id": "minami",   "name": "三波春香",   "colorName": "黄色",   "color": "#FFB400", "eventernoteId": 65986 },
+    { "id": "momose",   "name": "百瀬帆南",   "colorName": "水色",   "color": "#28C3FF", "eventernoteId": 69358 }
+  ],
+  "eras": [{ "id": "original", "label": "オリジナル" }, { "id": "cover", "label": "カバー曲" }],
+  "defaultEra": "original",
+  "units": [
+    { "id": "all",   "label": "前橋ウィッチーズ" },
+    { "id": "yuina", "label": "赤城ユイナ（春日さくら）" },
+    { "id": "azu",   "label": "新里アズ（咲川ひなの）" },
+    { "id": "kyoka", "label": "北原キョウカ（本村玲奈）" },
+    { "id": "choco", "label": "三俣チョコ（三波春香）" },
+    { "id": "mai",   "label": "上泉マイ（百瀬帆南）" },
+    { "id": "eiko",  "label": "膳栄子（芹澤優）" }
+  ],
+  "defaultUnit": "all",
+  "shareHashtags": ["前橋ウィッチーズ"],
+  "sources": {
+    "eventernote": { "actorId": 80126 }
+  },
+  "partialLineupRules": ["バースデーイベント", "公開録音", "表彰式", "」＆「"],
+  "eventTypeRules": [
+    { "pattern": "特典会|お渡し|サイン会|抽選会|販売会|手売り|即売会|Autograph", "type": "tokuten" },
+    { "pattern": "舞台挨拶|上映|トーク|観覧|公開生放送|公開収録|授賞式|表彰式|式典|インタビュー|お手伝い|郵便局長|駅長|特別番組|オープニングセレモニー|『劇場版 前橋ウィッチーズ", "type": "talk" },
+    { "pattern": "リリースイベント|リリイベ", "type": "release" },
+    { "pattern": "お披露目イベント|商店街イベント|歌唱イベント|トーク＆ミニライブ|トークショー＆ミニライブ|ブース(?!.*(お渡し|特典))", "type": "free" },
+    { "pattern": "Blu-ray第\\d+巻発売記念イベント", "type": "release" },
+    { "pattern": "ザスパ|競輪(?!.*表彰式)|焼きまんじゅう|寬仁親王牌(?!.*インタビュー)", "type": "guest" },
+    { "pattern": "フリーライブ|フリーミニライブ|FREE LIVE|フリーLIVE", "type": "free" },
+    { "pattern": "ワンマン|ONE MAN|周年記念ライブ(?!.*(Blu-ray|上映|特典))|『前橋ウィッチーズ』ライブ(?!.*(手売り|即売|Blu-ray|上映|特典))|Special Fan Meeting|We are DayRe|バースデーイベント|公開録音", "type": "oneman" }
+  ],
+  "defaultEventType": "external"
+}

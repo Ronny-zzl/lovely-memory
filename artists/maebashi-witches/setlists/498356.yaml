@@ -1,0 +1,19 @@
+# 2026-11-14 LoveLive! Series 15th Anniversary ラブライブ！フェス Day.1 JOYSOUND presents『ラブライブ！シリーズのど自慢大会』
+
+event: 498356
+source: https://docs.google.com/spreadsheets/d/1pPBSlolVxwQdQIzUe31bDRXl7E9JwO79cG7AnWPLTJY
+stages:
+  - name: 1回目
+    items:
+      - song: START!! True dreams
+        note: ワンコーラス
+      - START!! True dreams
+      - スゴすぎ前橋ウィッチーズ！
+  - name: 2回目
+    items:
+      - What is my LIFE?
+      - FLOWER SUPER POWER
+  - name: 3回目
+    items:
+      - No brand girls
+      - シャボン・テンション！

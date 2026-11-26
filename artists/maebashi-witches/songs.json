@@ -1,0 +1,340 @@
+[
+  {
+    "id": "s001",
+    "title": "スゴすぎ前橋ウィッチーズ！"
+  },
+  {
+    "id": "s002",
+    "title": "夢よ、咲け！"
+  },
+  {
+    "id": "s003",
+    "title": "うちらの花屋は黙ってない！"
+  },
+  {
+    "id": "s004",
+    "title": "それぞれのドア"
+  },
+  {
+    "id": "s005",
+    "title": "1,2,3 Magic！"
+  },
+  {
+    "id": "s006",
+    "title": "シャボン・テンション！"
+  },
+  {
+    "id": "s007",
+    "title": "絢爛SHOWTIME！！"
+  },
+  {
+    "id": "s008",
+    "title": "MAKASETENE"
+  },
+  {
+    "id": "s009",
+    "title": "ハピハピハッピーバースデー！"
+  },
+  {
+    "id": "s010",
+    "title": "You Are My World"
+  },
+  {
+    "id": "s011",
+    "title": "無敵☆PAYAPAYA"
+  },
+  {
+    "id": "s012",
+    "title": "GAPPO＆GAPPO",
+    "aliases": [
+      "GAPPO&GAPPO"
+    ]
+  },
+  {
+    "id": "s013",
+    "title": "Meteor Shower"
+  },
+  {
+    "id": "s014",
+    "title": "ドリーミードリーミーフラワー"
+  },
+  {
+    "id": "s015",
+    "title": "MATSURI day PARTY!!"
+  },
+  {
+    "id": "s016",
+    "title": "メジルシ"
+  },
+  {
+    "id": "s017",
+    "title": "今は小さな蕾でも"
+  },
+  {
+    "id": "s018",
+    "title": "ユメミ誇レ！ユメ咲キ踊レ！"
+  },
+  {
+    "id": "s019",
+    "title": "花たちはどんな夢を見る"
+  },
+  {
+    "id": "s020",
+    "title": "超越魂 - Braver's Soul –"
+  },
+  {
+    "id": "s021",
+    "title": "推せる想いをぶつけちゃお？☆"
+  },
+  {
+    "id": "s022",
+    "title": "キラリForever"
+  },
+  {
+    "id": "s023",
+    "title": "Shiny☆Shineなスカイブルー"
+  },
+  {
+    "id": "s024",
+    "title": "激情≒愛情"
+  },
+  {
+    "id": "s025",
+    "title": "FLOWER SUPER POWER"
+  },
+  {
+    "id": "s026",
+    "title": "天気雨ワンダーランド"
+  },
+  {
+    "id": "s027",
+    "title": "キミ色Brand new day!!"
+  },
+  {
+    "id": "s028",
+    "title": "イッサイ☆カッサイ"
+  },
+  {
+    "id": "s029",
+    "title": "らんまんBlooming＊",
+    "unit": "yuina"
+  },
+  {
+    "id": "s030",
+    "title": "ぐんぐん、進もっ！？",
+    "unit": "yuina"
+  },
+  {
+    "id": "s031",
+    "title": "もっとグッデイ！ぶらいたーデイ",
+    "unit": "yuina"
+  },
+  {
+    "id": "s032",
+    "title": "Cross × Millennium",
+    "unit": "azu"
+  },
+  {
+    "id": "s033",
+    "title": "モノクローム⊂ヴァイオレット",
+    "unit": "azu"
+  },
+  {
+    "id": "s034",
+    "title": "あゝ赤城山",
+    "unit": "kyoka"
+  },
+  {
+    "id": "s035",
+    "title": "湿原の騎士",
+    "unit": "kyoka"
+  },
+  {
+    "id": "s036",
+    "title": "ハピハピになっちゃおっ!",
+    "unit": "choco"
+  },
+  {
+    "id": "s037",
+    "title": "フワフワの約束",
+    "unit": "choco"
+  },
+  {
+    "id": "s038",
+    "title": "ごはんPou!Pou!",
+    "unit": "choco"
+  },
+  {
+    "id": "s039",
+    "title": "My Special Thanks!!",
+    "unit": "mai"
+  },
+  {
+    "id": "s040",
+    "title": "邁進↓↘→Step by Step",
+    "unit": "mai"
+  },
+  {
+    "id": "s041",
+    "title": "Wither",
+    "unit": "eiko"
+  },
+  {
+    "id": "s042",
+    "title": "Ambivalent",
+    "unit": "eiko"
+  },
+  {
+    "id": "s043",
+    "title": "雨晴れMake up",
+    "note": "未披露（シートより）"
+  },
+  {
+    "id": "s044",
+    "title": "おねがい@Flowers",
+    "note": "未披露（シートより）"
+  },
+  {
+    "id": "s045",
+    "title": "彩雲ランドスケープ",
+    "note": "未披露（シートより）"
+  },
+  {
+    "id": "s046",
+    "title": "それぞれのアゲラタム",
+    "note": "新ソロ曲・未披露（シートより）"
+  },
+  {
+    "id": "s047",
+    "title": "コネクト",
+    "era": "cover",
+    "cover": {
+      "artist": "ClariS"
+    }
+  },
+  {
+    "id": "s048",
+    "title": "ヘリコプタオル",
+    "era": "cover",
+    "cover": {
+      "artist": "LINKL PLANET"
+    },
+    "note": "コラボ"
+  },
+  {
+    "id": "s049",
+    "title": "ハッピー☆マテリアル",
+    "era": "cover",
+    "cover": {
+      "artist": "麻帆良学園中等部2-A"
+    },
+    "note": "ANIMAX ALL CAST"
+  },
+  {
+    "id": "s050",
+    "title": "とめどない潮騒に僕たちは何を歌うだろうか",
+    "era": "cover",
+    "cover": {
+      "artist": "ARCANA PROJECT"
+    },
+    "note": "コラボ"
+  },
+  {
+    "id": "s051",
+    "title": "ザスパンダダンス",
+    "era": "original",
+    "kind": "dance"
+  },
+  {
+    "id": "s052",
+    "title": "ダイヤモンドハッピー",
+    "era": "cover",
+    "cover": {
+      "artist": "わか・ふうり・すなお from STAR☆ANIS",
+      "release": {
+        "date": "2013-06-26"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "アイカツ!",
+        "role": "オープニングテーマ"
+      }
+    ],
+    "note": "コラボ"
+  },
+  {
+    "id": "s053",
+    "title": "愛♡スクリ〜ム!",
+    "era": "cover",
+    "cover": {
+      "artist": "AZALEA"
+    },
+    "note": "Lantis DAYZ ALL CAST"
+  },
+  {
+    "id": "s055",
+    "title": "START!! True dreams",
+    "era": "cover",
+    "cover": {
+      "artist": "Liella!"
+    }
+  },
+  {
+    "id": "s056",
+    "title": "What is my LIFE?",
+    "era": "cover",
+    "cover": {
+      "artist": "いきづらい部!"
+    }
+  },
+  {
+    "id": "s057",
+    "title": "No brand girls",
+    "era": "cover",
+    "cover": {
+      "artist": "μ's"
+    }
+  },
+  {
+    "id": "s058",
+    "title": "青空Jumping Heart",
+    "era": "cover",
+    "cover": {
+      "artist": "Aqours"
+    }
+  },
+  {
+    "id": "s059",
+    "title": "勇気のReason",
+    "era": "cover",
+    "cover": {
+      "artist": "μ's"
+    }
+  },
+  {
+    "id": "s060",
+    "title": "TOKIMEKI Runners",
+    "era": "cover",
+    "cover": {
+      "artist": "虹ヶ咲学園スクールアイドル同好会"
+    }
+  },
+  {
+    "id": "s061",
+    "title": "未来予報ハレルヤ！",
+    "era": "cover",
+    "cover": {
+      "artist": "Liella!"
+    }
+  },
+  {
+    "id": "s062",
+    "title": "僕らは今のなかで",
+    "era": "cover",
+    "cover": {
+      "artist": "μ's"
+    }
+  }
+]
