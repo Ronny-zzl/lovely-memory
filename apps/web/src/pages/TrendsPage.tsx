@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import type { Song, SongPosition } from "@lovely-memory/core/runtime";
+import type { Chain, Song, SongPosition } from "@lovely-memory/core/runtime";
 import { CostumesSection } from "../components/CostumesSection.tsx";
 import { MilestonesSection } from "../components/MilestonesSection.tsx";
 import { themeIcons } from "../components/Icons.tsx";
@@ -80,29 +80,7 @@ export function TrendsPage() {
         <h3 className="section-heading">
           定番の流れ<span className="muted small"> 3 曲以上が同じ順で 3 回以上</span>
         </h3>
-        {patterns.chains.length === 0 ? (
-          <p className="muted small">まだありません。</p>
-        ) : (
-          <ul className="chain-list trend-card flow-chains">
-            {patterns.chains.map((c) => (
-              <li key={c.songs.map((s) => s.id).join(">")}>
-                <span className="chain">
-                  {c.songs.map((s, i) => (
-                    <span key={`${s.id}-${i}`} className="chain-step">
-                      {i > 0 && (
-                        <span className="arrow" aria-label="の次に">
-                          →
-                        </span>
-                      )}
-                      <SongLink song={s} />
-                    </span>
-                  ))}
-                </span>
-                <span className="rank-count">{c.count}回</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        {patterns.chains.length === 0 ? <p className="muted small">まだありません。</p> : <FlowChains chains={patterns.chains} />}
       </section>
 
       <section className="song-section">
@@ -141,6 +119,39 @@ export function TrendsPage() {
         セトリのある {patterns.stages} ステージ（コラボステージを除く）から集計。1
         曲目・ラストは本編（アンコールを除く）での位置で、割合は本編でその曲が歌われた回数に対するもの。つながりは本編どうし・アンコールどうしで続いた曲。
       </p>
+    </div>
+  );
+}
+
+/** 定番の流れ。長さが何通りかあるときは、長いものから曲数ごとに分けて並べる（同じ長さの中は回数の多い順） */
+function FlowChains({ chains }: { chains: Chain[] }) {
+  const item = (c: Chain) => (
+    <li key={c.songs.map((s) => s.id).join(">")}>
+      <span className="chain">
+        {c.songs.map((s, i) => (
+          <span key={`${s.id}-${i}`} className="chain-step">
+            {i > 0 && (
+              <span className="arrow" aria-label="の次に">
+                →
+              </span>
+            )}
+            <SongLink song={s} />
+          </span>
+        ))}
+      </span>
+      <span className="rank-count">{c.count}回</span>
+    </li>
+  );
+  const lengths = [...new Set(chains.map((c) => c.songs.length))].sort((a, b) => b - a);
+  if (lengths.length === 1) return <ul className="chain-list trend-card flow-chains">{chains.map(item)}</ul>;
+  return (
+    <div className="trend-card flow-groups">
+      {lengths.map((n) => (
+        <div key={n} className="flow-group">
+          <h4 className="flow-group-heading">{n} 曲の流れ</h4>
+          <ul className="chain-list flow-chains">{chains.filter((c) => c.songs.length === n).map(item)}</ul>
+        </div>
+      ))}
     </div>
   );
 }

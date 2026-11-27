@@ -74,3 +74,21 @@
 .trends-note {
   margin: 24px 0 0;
 }
+
+/* 定番の流れを曲数ごとに分けるとき（長さが何通りかあるとき）。1 枚のカードの中に見出しと一覧を重ねる */
+.flow-groups {
+  display: grid;
+  gap: 12px;
+  padding: 12px 16px 4px;
+}
+
+.flow-group-heading {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.flow-groups .chain-list li:last-child {
+  border-bottom: 0;
+}
