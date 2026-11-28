@@ -201,5 +201,29 @@
       }
     },
     "note": "現・純情のアフィリア"
+  },
+  {
+    "id": "s015",
+    "title": "Realize!",
+    "era": "cover",
+    "credits": {
+      "lyrics": "板倉孝徳",
+      "music": "板倉孝徳",
+      "arrangement": "板倉孝徳"
+    },
+    "cover": {
+      "artist": "i☆Ris",
+      "release": {
+        "date": "2015-02-18",
+        "title": "Realize!"
+      }
+    },
+    "tieups": [
+      {
+        "type": "anime",
+        "work": "プリパラ",
+        "role": "オープニングテーマ"
+      }
+    ]
   }
 ]
