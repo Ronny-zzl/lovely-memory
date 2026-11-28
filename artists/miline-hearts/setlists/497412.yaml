@@ -2,10 +2,26 @@
 
 event: 497412
 items:
-  - 初恋の合図
-  - 無限大アップデート
-  - 好きで好きで好きで好きです！
-  - ミライライン
+  - song: 初恋の合図
+    members:
+      - natsu
+      - rei
+      - momoko
+  - song: 無限大アップデート
+    members:
+      - natsu
+      - rei
+      - momoko
+  - song: 好きで好きで好きで好きです！
+    members:
+      - natsu
+      - rei
+      - momoko
+  - song: ミライライン
+    members:
+      - natsu
+      - rei
+      - momoko
   - We are Mi'Line Hearts
   - 積極的ヒロイン+♡
   - 僕と君の特別
