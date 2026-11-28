@@ -144,6 +144,30 @@ jobs:
           INCLUDE_DRAFTS: "1"
           SITE_URL: ${{ vars.SITE_URL }}
           PAGES_HOST: ${{ vars.CLOUDFLARE_PROJECT }}.pages.dev
+      # 共有カードも作る（無いと下書きのグループの「画像」共有が読み込めない）。キャッシュは公開サイトとは別の名前で持ち、
+      # 無ければ公開サイトのものから始める（中身は HTML のハッシュ名なので共用できる）
+      - name: Restore share card cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .og-cache
+          key: draft-og-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            draft-og-
+            og-
+      - name: Share cards
+        id: cards
+        continue-on-error: true
+        run: pnpm -s lm og-pages all
+        env:
+          INCLUDE_DRAFTS: "1"
+          SITE_URL: ${{ vars.SITE_URL }}
+          OG_CACHE_DIR: .og-cache
+      - name: Save share card cache
+        if: steps.cards.outcome == 'success'
+        uses: actions/cache/save@v6
+        with:
+          path: .og-cache
+          key: draft-og-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Smoke test
         run: pnpm smoke
       - name: Deploy preview
