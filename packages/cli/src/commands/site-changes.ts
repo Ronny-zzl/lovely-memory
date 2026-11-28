@@ -1,6 +1,5 @@
 import { execFileSync } from "node:child_process";
 import { appendFile, readdir } from "node:fs/promises";
-import { join } from "node:path";
 import { ARTISTS_DIR, loadArtist, REPO_ROOT } from "../repo.ts";
 
 /**
@@ -38,7 +37,7 @@ function changedFiles(since: string): string[] | undefined {
 export function needsPublicDeploy(files: string[] | undefined, drafts: string[]): { deploy: boolean; reason: string } {
   if (!files) return { deploy: true, reason: "デプロイ済みのコミットが分からない" };
   if (files.length === 0) return { deploy: false, reason: "デプロイ済みのコミットから変更なし" };
-  const inDraft = (f: string) => drafts.some((d) => f.startsWith(join("artists", d) + "/"));
+  const inDraft = (f: string) => drafts.some((d) => f.startsWith(`artists/${d}/`));
   const others = files.filter((f) => !inDraft(f));
   if (others.length === 0)
     return { deploy: false, reason: `変わったのは下書きのグループ（${drafts.join("・")}）のデータだけ（${files.length} ファイル）` };
