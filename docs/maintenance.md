@@ -8,7 +8,7 @@
 | 每月 2 日 04:00 JST | 全量同步 | `sync.yml` |
 | 官方发推时（Webhook）＋每小时 | 读取官方 X 的歌单推文并自动导入（见下文「从 X 自动导入」） | `watch-x.yml` |
 | 同步之后 | 为**当天**的每场演出开一个「[セトリ] …」Issue（指派给仓库所有者；过去 7 天内漏开的也会补开） | `sync.yml` |
-| 随时（Renovate） | 依赖更新 PR。CI（类型检查・测试・数据检查・构建・冒烟测试〔用 Chrome 打开全部页面〕）通过后自动合并；npm 包发布满 3 天才会更新，lockfile 每周一整理 | `renovate.json` / `ci.yml` |
+| 随时（Renovate） | 依赖更新 PR。CI（类型检查・测试・数据检查・构建・冒烟测试〔用 Chrome 打开全部页面〕）通过后自动合并（只在冲突时 rebase：main 常有歌单等提交，落后就 rebase 的话永远等不到合并；合并后 deploy 会在 main 上重跑全部检查）；npm 包发布满 3 天才会更新，lockfile 每周一整理 | `renovate.json` / `ci.yml` |
 | 同步・歌单导入・push 之后 | 先跑和 CI 相同的检查（再加上对最终产物的冒烟测试），全部通过才部署到 Cloudflare Pages（https://lovely-memory.moe/）；有一项失败就不部署，网站保持上一个版本 | `deploy.yml` |
 
 ## 录入歌单
